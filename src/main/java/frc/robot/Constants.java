@@ -16,14 +16,17 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
-    public static int leftDriveMotorOne = 10;
-    public static int leftDriveMotorTwo = 11;
-
-    public static int rightDriveMotorOne = 20;
-    public static int rightDriveMotorTwo = 21; 
-
-    public static double wheelCircumference = 6.1; //TODO set wheel diameter with actual robot values
+    public static final class DriveConstants{
+        public static int leftDriveMotorOne = 10;
+        public static int leftDriveMotorTwo = 11;
     
-    public static int encoderTicksPerRevolution = 2048; //TODO set ticks per rev with actual values
+        public static int rightDriveMotorOne = 20;
+        public static int rightDriveMotorTwo = 21; 
+    
+        public static double wheelDiameter = 6.1; //TODO set wheel diameter with actual robot values
+        public static double wheelCircumference = 6.1 * Math.PI / 2;
+        
+        public static int encoderTicksPerRevolution = 2048; //TODO set ticks per rev with actual values
+    }
+    
 }

@@ -8,8 +8,12 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.robot.commands.*;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.subsystems.*;
 import frc.robot.subsystems.ExampleSubsystem;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -25,7 +29,12 @@ public class RobotContainer {
 
   private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
+  private final DriveTrain driveTrain = new DriveTrain();
 
+  public Joystick leftJoystick = new Joystick(0);
+  public Joystick rightJoystick = new Joystick(1);
+  public Joystick coPanel = new Joystick(2);
+  public Joystick xBoxControler = new Joystick(3);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -33,6 +42,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    // Config shuffleboard
+    configureShuffleboard();
+
+    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick));
   }
 
   /**
@@ -42,6 +55,11 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+  }
+
+  private void configureShuffleboard(){
+    
   }
 
 

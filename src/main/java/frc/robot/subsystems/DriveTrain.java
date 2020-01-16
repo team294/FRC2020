@@ -19,8 +19,10 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.DriveConstants;
 
 
 public class DriveTrain extends SubsystemBase {
@@ -29,10 +31,10 @@ public class DriveTrain extends SubsystemBase {
    */
 
  
-  private final WPI_TalonFX leftMotor1 = new WPI_TalonFX(Constants.leftDriveMotorOne);
-  private final WPI_TalonFX leftMotor2 = new WPI_TalonFX(Constants.leftDriveMotorTwo);
-  private final WPI_TalonFX rightMotor1 = new WPI_TalonFX(Constants.rightDriveMotorOne);
-  private final WPI_TalonFX rightMotor2 = new WPI_TalonFX(Constants.rightDriveMotorTwo);
+  private final WPI_TalonFX leftMotor1 = new WPI_TalonFX(DriveConstants.leftDriveMotorOne);
+  private final WPI_TalonFX leftMotor2 = new WPI_TalonFX(DriveConstants.leftDriveMotorTwo);
+  private final WPI_TalonFX rightMotor1 = new WPI_TalonFX(DriveConstants.rightDriveMotorOne);
+  private final WPI_TalonFX rightMotor2 = new WPI_TalonFX(DriveConstants.rightDriveMotorTwo);
 
   private double leftEncoderZero = 0, rightEncoderZero = 0;
 
@@ -58,8 +60,8 @@ public class DriveTrain extends SubsystemBase {
 		}
     ahrs.zeroYaw();
 
-    leftMotor2.set(ControlMode.Follower, Constants.leftDriveMotorOne);
-    rightMotor2.set(ControlMode.Follower, Constants.rightDriveMotorOne);
+    leftMotor2.set(ControlMode.Follower, DriveConstants.leftDriveMotorOne);
+    rightMotor2.set(ControlMode.Follower, DriveConstants.rightDriveMotorOne);
 
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
@@ -69,8 +71,10 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.setInverted(true);
     rightMotor2.setInverted(true);
 
-    leftMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.SensorDifference, 0, 0);
-    rightMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.SensorDifference, 0, 0);
+    setDriveModeCoast(false);
+
+    leftMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
+    rightMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
     
     leftMotor1.setSensorPhase(true); //TODO invert encoders based on actual robot
     rightMotor1.setSensorPhase(true);
@@ -82,6 +86,8 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.configVoltageCompSaturation(12.0);
     rightMotor2.configVoltageCompSaturation(12.0);
     
+    zeroLeftEncoder();
+    zeroRightEncoder();
   }
   /**
    * Set percent output for tank drive.
@@ -183,7 +189,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double encoderTicksToInches(double ticks) {
-    return ticks * Constants.wheelCircumference / Constants.encoderTicksPerRevolution;
+    return ticks / 1812;
   }
 
   public double getLeftEncoderInches() {
@@ -209,7 +215,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double inchesToEncoderTicks(double inches) {
-    return (inches / Constants.wheelCircumference) * Constants.encoderTicksPerRevolution;
+    return inches * 1812;
   }
 
   /**
@@ -278,5 +284,7 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
+    SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
   }
 }
