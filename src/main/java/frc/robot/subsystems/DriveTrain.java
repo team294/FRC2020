@@ -7,8 +7,6 @@
 
 package frc.robot.subsystems;
 
-import javax.management.loading.PrivateMLet;
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -17,11 +15,11 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.DriveConstants;
 
 
@@ -104,7 +102,7 @@ public class DriveTrain extends SubsystemBase {
    * @param powerRight percent output, right side
    * @param squaredInputs true if want to have exponential control of speed
    */
-  public void setPercentOutputTank(double powerLeft, double powerRight, boolean squaredInputs) {
+  public void tankDrive(double powerLeft, double powerRight, boolean squaredInputs) {
     driveTrain.tankDrive(powerLeft, powerRight, squaredInputs);
   }
 
@@ -286,5 +284,18 @@ public class DriveTrain extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
+  }
+
+  public Pose2d getPose() {
+    return null;
+  }
+
+  public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+    return new DifferentialDriveWheelSpeeds(leftMotor1.getSelectedSensorVelocity(), rightMotor1.getSelectedSensorVelocity());
+  }
+
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    leftMotor1.setVoltage(leftVolts);
+    rightMotor1.setVoltage(-rightVolts);
   }
 }

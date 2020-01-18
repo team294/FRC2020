@@ -27,6 +27,29 @@ public final class Constants {
         public static double wheelCircumference = 6.1 * Math.PI / 2;
         
         public static int encoderTicksPerRevolution = 2048; //TODO set ticks per rev with actual values
+
+        public static final int MOTOR_LEFT_MASTER = 10;
+        public static final int MOTOR_LEFT_SLAVE_1 = 11;
+        public static final int MOTOR_RIGHT_MASTER = 20;
+        public static final int MOTOR_RIGHT_SLAVE_2 = 21;
+    
+        // suggested from tutorial
+        public static final double kRamseteB = 2.0;
+        public static final double kRamseteZeta = 0.70;
+    
+        // from robot characteristics
+        public static final double kS = 0.35; // static gain
+        public static final double kV = 0.0055; // velocity gain
+        public static final double kA = 0.000706; // acceleration gain
+    
+        public static final double kP = 0.0121; // 
+        public static final double kD = 0.00572;
+        public static final double MAX_VOLTAGE = 6.0;
+        public static final double TRACK_WIDTH = 7.038154525;
+    
+        // verify these
+        public static final double kMaxSpeedMetersPerSecond = 3.0;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
     }
     
 }
