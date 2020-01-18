@@ -80,8 +80,8 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
     rightMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
     
-    leftMotor1.setSensorPhase(true); //TODO invert encoders based on actual robot
-    rightMotor1.setSensorPhase(true);
+    leftMotor1.setSensorPhase(false); //TODO invert encoders based on actual robot
+    rightMotor1.setSensorPhase(false);
 
     leftMotor1.configVoltageCompSaturation(12.0);
     leftMotor2.configVoltageCompSaturation(12.0);
@@ -134,7 +134,7 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.set(ControlMode.PercentOutput, percent);
   }
 
-  public void setPercentOutputArade(double speedPct, double rotation) {
+  public void arcadeDrive(double speedPct, double rotation) {
     driveTrain.arcadeDrive(speedPct, rotation, false);
   }
 
@@ -307,16 +307,23 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    double degrees = getGyroRotation();
+    double leftMeters = inchesToMeters(getLeftEncoderInches());
+    double rightMeters = inchesToMeters(getRightEncoderInches());
+
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
+    SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
 
-    odometry.update(Rotation2d.fromDegrees(getGyroRotation()), inchesToMeters(getLeftEncoderInches()), inchesToMeters(getRightEncoderInches()));
-    System.out.println("Gyro Rotation" + getGyroRotation());
-    System.out.println("Right pos meters" + inchesToMeters(getRightEncoderInches()));
-    System.out.println("Left pos meters" + inchesToMeters(getLeftEncoderInches()));
+    odometry.update(Rotation2d.fromDegrees(degrees), leftMeters, rightMeters);
+    
   }
 
   public Pose2d getPose() {
+    System.out.println("Position" + odometry.getPoseMeters());
+    System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
+    inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
+    inchesToMeters(getLeftEncoderInches()));
     return odometry.getPoseMeters();
   }
 
@@ -326,8 +333,8 @@ public class DriveTrain extends SubsystemBase {
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     leftMotor1.setVoltage(leftVolts);
-    rightMotor1.setVoltage(rightVolts);
+    rightMotor1.setVoltage(-rightVolts);
     System.out.println("left Volts " + leftVolts);
-    System.out.println("right Volts " + rightVolts);
+    System.out.println("right Volts " + -rightVolts);
   }
 }

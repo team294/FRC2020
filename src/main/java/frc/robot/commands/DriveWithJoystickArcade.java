@@ -49,7 +49,7 @@ public class DriveWithJoystickArcade extends CommandBase {
       rightPercent = 0;
     }
 
-    driveTrain.setPercentOutputArade(leftPercent, rightPercent);
+    driveTrain.arcadeDrive(leftPercent, rightPercent);
   }
 
   // Called once the command ends or is interrupted.

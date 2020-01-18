@@ -35,13 +35,13 @@ public final class Constants {
     
         // from robot characteristics
         public static final double kS = 0.35; // static gain was 
-        public static final double kV = 0.0055; // velocity gain was 1.98
-        public static final double kA = 0.000706; // acceleration gain was 0.2
+        public static final double kV = 0.00551; // velocity gain was 1.98
+        public static final double kA = 0.000647; // acceleration gain was 0.2
     
-        public static final double kP = 0.0121;  // was 0.0121
-        public static final double kD = 0.00572;
-        public static final double MAX_VOLTAGE = 6.0;
-        public static final double TRACK_WIDTH = 7.038154525;
+        public static final double kP = 0.069;  // was 0.0121
+        public static final double kD = 0.0303;
+        public static final double MAX_VOLTAGE = 12.0;
+        public static final double TRACK_WIDTH = 7.286626058797765;
     
         // verify these
         public static final double kMaxSpeedMetersPerSecond = 3.0;

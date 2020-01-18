@@ -89,8 +89,12 @@ public class RobotContainer {
 
   public Command getTestTrajectory() {
 
+    driveTrain.zeroLeftEncoder();
+    driveTrain.zeroRightEncoder();
+    driveTrain.zeroGyroRotation();
     // use starting angle to control trajectory
-    double startAngle = driveTrain.getGyroRaw();
+    double startAngle = driveTrain.getGyroRotation();
+    System.out.println(startAngle);
 
     DifferentialDriveKinematics driveKinematics = getDriveKinematics(DriveConstants.TRACK_WIDTH);
 
