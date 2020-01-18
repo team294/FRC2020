@@ -17,6 +17,8 @@ import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,6 +39,8 @@ public class DriveTrain extends SubsystemBase {
   private double leftEncoderZero = 0, rightEncoderZero = 0;
 
   private final DifferentialDrive driveTrain = new DifferentialDrive(leftMotor1, rightMotor1);
+
+  private final DifferentialDriveOdometry odometry;
 
   AHRS ahrs;
   private double yawZero = 0;
@@ -83,9 +87,12 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2.configVoltageCompSaturation(12.0);
     rightMotor1.configVoltageCompSaturation(12.0);
     rightMotor2.configVoltageCompSaturation(12.0);
+
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
     
     zeroLeftEncoder();
     zeroRightEncoder();
+    zeroGyroRotation();
   }
   /**
    * Set percent output for tank drive.
@@ -187,7 +194,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double encoderTicksToInches(double ticks) {
-    return ticks / 1812;
+    return ticks / DriveConstants.ticksPerInch;
   }
 
   public double getLeftEncoderInches() {
@@ -198,7 +205,12 @@ public class DriveTrain extends SubsystemBase {
     return encoderTicksToInches(getRightEncoderTicks());
   }
 
+  public double inchesToMeters(double number){
+    return number * 0.0254;
+  }
+
   /**
+   * 
    * @return left encoder velocity in inches / sec
    */
   public double getLeftEncoderVelocity() {
@@ -213,7 +225,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double inchesToEncoderTicks(double inches) {
-    return inches * 1812;
+    return inches * DriveConstants.ticksPerInch;
   }
 
   /**
@@ -284,10 +296,12 @@ public class DriveTrain extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
+
+    odometry.update(Rotation2d.fromDegrees(getGyroRotation()), inchesToMeters(getLeftEncoderInches()), inchesToMeters(getRightEncoderInches()));
   }
 
   public Pose2d getPose() {
-    return null;
+    return odometry.getPoseMeters();
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
