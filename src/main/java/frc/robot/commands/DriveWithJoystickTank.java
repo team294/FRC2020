@@ -49,7 +49,7 @@ public class DriveWithJoystickTank extends CommandBase {
       rightPercent = 0;
     }
 
-    driveTrain.setPercentOutputTank(leftPercent, rightPercent);
+    driveTrain.tankDrive(leftPercent, rightPercent);
   }
 
   // Called once the command ends or is interrupted.

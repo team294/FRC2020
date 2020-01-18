@@ -89,11 +89,15 @@ public class RobotContainer {
 
   public Command getTestTrajectory() {
 
+    // use starting angle to control trajectory
+    double startAngle = driveTrain.getGyroRaw();
+
     DifferentialDriveKinematics driveKinematics = getDriveKinematics(DriveConstants.TRACK_WIDTH);
 
     // Create a voltage constraint to ensure we don't accelerate too fast
     DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), driveKinematics,
+        new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
+        driveKinematics,
         DriveConstants.MAX_VOLTAGE);
 
     // Create config for trajectory
@@ -108,12 +112,12 @@ public class RobotContainer {
     // Pass through these two interior waypoints, making an 's' curve path
     // End 3 meters straight ahead of where we started, facing forward
     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
+        new Pose2d(0, 0, new Rotation2d(startAngle)),
         List.of(
             new Translation2d(1,0)
             //new Translation2d(2,0)
         ),
-        new Pose2d(2, 0, new Rotation2d(0)),
+        new Pose2d(2, 0, new Rotation2d(startAngle)),
         config
     );
 
@@ -121,9 +125,7 @@ public class RobotContainer {
         exampleTrajectory,
         driveTrain::getPose,
         new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(DriveConstants.kS,
-            DriveConstants.kV,
-        DriveConstants.kA),
+        new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA),
         driveKinematics,
         driveTrain::getWheelSpeeds,
         new PIDController(DriveConstants.kP, 0, 0),

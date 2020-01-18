@@ -26,41 +26,43 @@ import frc.robot.Constants.DriveConstants;
 
 
 public class DriveTrain extends SubsystemBase {
-  /**
-   * Creates a new DriveTrain.
-   */
-
  
-  private final WPI_TalonFX leftMotor1 = new WPI_TalonFX(DriveConstants.leftDriveMotorOne);
-  private final WPI_TalonFX leftMotor2 = new WPI_TalonFX(DriveConstants.leftDriveMotorTwo);
-  private final WPI_TalonFX rightMotor1 = new WPI_TalonFX(DriveConstants.rightDriveMotorOne);
-  private final WPI_TalonFX rightMotor2 = new WPI_TalonFX(DriveConstants.rightDriveMotorTwo);
+  private final WPI_TalonFX leftMotor1;
+  private final WPI_TalonFX leftMotor2;
+  private final WPI_TalonFX rightMotor1;
+  private final WPI_TalonFX rightMotor2;
 
-  private double leftEncoderZero = 0, rightEncoderZero = 0;
-
-  private final DifferentialDrive driveTrain = new DifferentialDrive(leftMotor1, rightMotor1);
-
+  private final DifferentialDrive driveTrain;
   private final DifferentialDriveOdometry odometry;
 
-  AHRS ahrs;
+  private double leftEncoderZero = 0;
+  private double rightEncoderZero = 0;
+
+  private final AHRS ahrs;
   private double yawZero = 0;
 
   
   public DriveTrain() {
     // Configure navX
+    AHRS gyro = null;
 		try {
-			/* Communicate w/navX MXP via the MXP SPI Bus.
-			 * Alternatively: I2C.Port.kMXP, SerialPort.Port.kMXP or SerialPort.Port.kUSB
-			 * See http://navx-mxp.kauailabs.com/guidance/selecting-an-interface/ for
-			 * details.
-			 */
-
-			ahrs = new AHRS(I2C.Port.kMXP);
-
+      gyro = new AHRS(I2C.Port.kMXP);
+      gyro.zeroYaw();
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
-		}
-    ahrs.zeroYaw();
+    }
+    ahrs = gyro;
+    
+    // configure motors
+    leftMotor1 = new WPI_TalonFX(DriveConstants.leftDriveMotorOne);
+    leftMotor2 = new WPI_TalonFX(DriveConstants.leftDriveMotorTwo);
+    rightMotor1 = new WPI_TalonFX(DriveConstants.rightDriveMotorOne);
+    rightMotor2 = new WPI_TalonFX(DriveConstants.rightDriveMotorTwo);
+
+    leftMotor1.configFactoryDefault();
+    leftMotor2.configFactoryDefault();
+    rightMotor1.configFactoryDefault();
+    rightMotor2.configFactoryDefault();
 
     leftMotor2.set(ControlMode.Follower, DriveConstants.leftDriveMotorOne);
     rightMotor2.set(ControlMode.Follower, DriveConstants.rightDriveMotorOne);
@@ -81,36 +83,47 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.setSensorPhase(true); //TODO invert encoders based on actual robot
     rightMotor1.setSensorPhase(true);
 
-    driveTrain.setDeadband(0.12); //TODO set deadband based on robot is currently set to last year's value
-
     leftMotor1.configVoltageCompSaturation(12.0);
     leftMotor2.configVoltageCompSaturation(12.0);
     rightMotor1.configVoltageCompSaturation(12.0);
     rightMotor2.configVoltageCompSaturation(12.0);
 
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
+    // create the drive train AFTER configuring the motors
+    driveTrain = new DifferentialDrive(leftMotor1, rightMotor1);
+    driveTrain.setDeadband(0.05);
     
     zeroLeftEncoder();
     zeroRightEncoder();
+
     zeroGyroRotation();
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
   }
+
+
   /**
-   * Set percent output for tank drive.
-   * @param leftOut percent output, left side
-   * @param rightOut percent output, right side
+   * Tank drive method for differential drive platform.
+   * The calculated values will be squared to decrease sensitivity at low speeds.
+   *
+   * @param leftPercent  The robot's left side percent along the X axis [-1.0..1.0]. Forward is
+   *                   positive.
+   * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is
+   *                   positive.
    */
-  public void setPercentOutputTank(double leftOut, double rightOut) {
-    driveTrain.tankDrive(leftOut, rightOut);
+  public void tankDrive(double leftPercent, double rightPercent) {
+    driveTrain.tankDrive(leftPercent, rightPercent, true);
   }
 
   /**
-   * 
-   * @param powerLeft percent output, left side
-   * @param powerRight percent output, right side
-   * @param squaredInputs true if want to have exponential control of speed
+   * Tank drive method for differential drive platform.
+   *
+   * @param leftPercent  The robot's left side percent along the X axis [-1.0..1.0]. Forward is
+   *                   positive.
+   * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is
+   *                   positive.
+   * @param squareInputs If set, decreases the input sensitivity at low speeds.
    */
-  public void tankDrive(double powerLeft, double powerRight, boolean squaredInputs) {
-    driveTrain.tankDrive(powerLeft, powerRight, squaredInputs);
+  public void tankDrive(double leftPercent, double rightPercent, boolean squareInputs) {
+    driveTrain.tankDrive(leftPercent, rightPercent, squareInputs);
   }
 
   public void setLeftMotorOutput(double percent) {
@@ -193,7 +206,7 @@ public class DriveTrain extends SubsystemBase {
     return -(getRightEncoderRaw() - rightEncoderZero);
   }
 
-  public double encoderTicksToInches(double ticks) {
+  public static double encoderTicksToInches(double ticks) {
     return ticks / DriveConstants.ticksPerInch;
   }
 
@@ -205,7 +218,7 @@ public class DriveTrain extends SubsystemBase {
     return encoderTicksToInches(getRightEncoderTicks());
   }
 
-  public double inchesToMeters(double number){
+  public static double inchesToMeters(double number){
     return number * 0.0254;
   }
 
@@ -229,7 +242,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Gets the raw value of the gyro
+   * Gets the raw value of the gyro in degrees
    * @return
    */
   public double getGyroRaw() {
@@ -273,7 +286,7 @@ public class DriveTrain extends SubsystemBase {
 	 * 
 	 * @return Normalized angle
 	 */
-	public double normalizeAngle(double angle) {
+	public static double normalizeAngle(double angle) {
 		angle = angle % 360;
 		angle = (angle <= -180) ? (angle + 360) : angle;
     angle = (angle > 180) ? (angle - 360) : angle;
@@ -284,7 +297,7 @@ public class DriveTrain extends SubsystemBase {
    * Stops the motors by calling tankDrive(0, 0)
    */
   public void stop() {
-    setPercentOutputTank(0.0, 0.0);
+    tankDrive(0.0, 0.0);
   }
 
   public double getAverageDistance() {
@@ -304,7 +317,6 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    
     return odometry.getPoseMeters();
   }
 
@@ -316,7 +328,6 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.setVoltage(leftVolts);
     rightMotor1.setVoltage(rightVolts);
     System.out.println("left Volts " + leftVolts);
-    System.out.println("right Volts" + rightVolts);
-    
+    System.out.println("right Volts " + rightVolts);
   }
 }
