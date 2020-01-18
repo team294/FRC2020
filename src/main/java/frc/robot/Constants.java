@@ -39,11 +39,11 @@ public final class Constants {
         public static final double kRamseteZeta = 0.70;
     
         // from robot characteristics
-        public static final double kS = 0.35; // static gain
-        public static final double kV = 0.0055; // velocity gain
-        public static final double kA = 0.000706; // acceleration gain
+        public static final double kS = 0.35; // static gain was 
+        public static final double kV = 0.0055; // velocity gain was 1.98
+        public static final double kA = 0.000706; // acceleration gain was 0.2
     
-        public static final double kP = 0.0121; // 
+        public static final double kP = 0.0121;  // was 0.0121
         public static final double kD = 0.00572;
         public static final double MAX_VOLTAGE = 6.0;
         public static final double TRACK_WIDTH = 7.038154525;

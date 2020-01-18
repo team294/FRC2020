@@ -298,9 +298,13 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
 
     odometry.update(Rotation2d.fromDegrees(getGyroRotation()), inchesToMeters(getLeftEncoderInches()), inchesToMeters(getRightEncoderInches()));
+    System.out.println("Gyro Rotation" + getGyroRotation());
+    System.out.println("Right pos meters" + inchesToMeters(getRightEncoderInches()));
+    System.out.println("Left pos meters" + inchesToMeters(getLeftEncoderInches()));
   }
 
   public Pose2d getPose() {
+    
     return odometry.getPoseMeters();
   }
 
@@ -310,6 +314,9 @@ public class DriveTrain extends SubsystemBase {
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
     leftMotor1.setVoltage(leftVolts);
-    rightMotor1.setVoltage(-rightVolts);
+    rightMotor1.setVoltage(rightVolts);
+    System.out.println("left Volts " + leftVolts);
+    System.out.println("right Volts" + rightVolts);
+    
   }
 }
