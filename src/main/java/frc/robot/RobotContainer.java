@@ -11,7 +11,6 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
-
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -24,10 +23,13 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
-import frc.robot.commands.*;
-import frc.robot.subsystems.*;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
+import frc.robot.utilities.*;
 import frc.robot.Constants.DriveConstants;
 
 /**
@@ -38,8 +40,8 @@ import frc.robot.Constants.DriveConstants;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-
-  private final DriveTrain driveTrain = new DriveTrain();
+  private final FileLog log = new FileLog("A1");
+  private final DriveTrain driveTrain = new DriveTrain(log);
 
   public Joystick leftJoystick = new Joystick(0);
   public Joystick rightJoystick = new Joystick(1);

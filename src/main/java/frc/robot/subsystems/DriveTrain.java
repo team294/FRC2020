@@ -12,8 +12,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.I2C;
 
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -23,11 +23,15 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import frc.robot.utilities.*;
 import frc.robot.Constants.DriveConstants;
 
 
 public class DriveTrain extends SubsystemBase {
  
+  private FileLog log; // reference to the fileLog
+
   private final WPI_TalonFX leftMotor1;
   private final WPI_TalonFX leftMotor2;
   private final WPI_TalonFX rightMotor1;
@@ -43,7 +47,9 @@ public class DriveTrain extends SubsystemBase {
   private double yawZero = 0;
 
   
-  public DriveTrain() {
+  public DriveTrain(FileLog log) {
+    this.log = log; // save reference to the fileLog
+
     // Configure navX
     AHRS gyro = null;
 		try {
@@ -224,14 +230,13 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * 
    * @return left encoder velocity in inches / sec
    */
   public double getLeftEncoderVelocity() {
     return encoderTicksToInches(getLeftEncoderVelocityRaw()) * 10;
   }
 
-    /**
+  /**
    * @return right encoder velocity in inches / sec
    */
   public double getRightEncoderVelocity() {
@@ -305,12 +310,30 @@ public class DriveTrain extends SubsystemBase {
 		return (getRightEncoderInches() + getLeftEncoderInches()) / 2.0;
   }
 
+  /**
+   * Writes information about the drive train to the filelog
+   * @param logWhenDisabled true will log when disabled, false will discard the string
+   */
+  public void updateDriveLog(boolean logWhenDisabled) {
+    log.writeLog(logWhenDisabled, "DriveTrain", "updateVariables", 
+      "Drive L1 Volts", leftMotor1.getMotorOutputVoltage(), "Drive L2 Volts", leftMotor2.getMotorOutputVoltage(),
+      "Drive R1 Volts", rightMotor1.getMotorOutputVoltage(), "Drive R2 Volts", rightMotor2.getMotorOutputVoltage(),
+      "L Enc Ticks", getLeftEncoderTicks(), "L Enc Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
+      "R Enc Ticks", getRightEncoderTicks(), "R Enc Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
+      "Gyro Angle", getGyroRotation()
+      );
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     double degrees = getGyroRotation();
     double leftMeters = inchesToMeters(getLeftEncoderInches());
     double rightMeters = inchesToMeters(getRightEncoderInches());
+
+    if (log.getLogRotation() == log.DRIVE_CYCLE) {
+      updateDriveLog(false);
+    }
 
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
