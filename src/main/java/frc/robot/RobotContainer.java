@@ -7,11 +7,28 @@
 
 package frc.robot;
 
+import java.util.List;
+
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
+
 import edu.wpi.first.wpilibj.XboxController;
-import frc.robot.commands.ExampleCommand;
-import frc.robot.subsystems.ExampleSubsystem;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import frc.robot.commands.*;
+import frc.robot.subsystems.*;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.Constants.DriveConstants;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -21,11 +38,13 @@ import edu.wpi.first.wpilibj2.command.Command;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
-  private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
-  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
+  private final DriveTrain driveTrain = new DriveTrain();
 
-
+  public Joystick leftJoystick = new Joystick(0);
+  public Joystick rightJoystick = new Joystick(1);
+  public Joystick coPanel = new Joystick(2);
+  public Joystick xBoxControler = new Joystick(3);
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -33,6 +52,10 @@ public class RobotContainer {
   public RobotContainer() {
     // Configure the button bindings
     configureButtonBindings();
+    // Config shuffleboard
+    configureShuffleboard();
+
+    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick));
   }
 
   /**
@@ -42,6 +65,11 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
+
+  }
+
+  private void configureShuffleboard(){
+    
   }
 
 
@@ -52,6 +80,65 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return m_autoCommand;
+    return getTestTrajectory();
+  }
+
+  private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
+    return new DifferentialDriveKinematics(trackWidth);
+  }
+
+  public Command getTestTrajectory() {
+
+    driveTrain.zeroLeftEncoder();
+    driveTrain.zeroRightEncoder();
+    driveTrain.zeroGyroRotation();
+    // use starting angle to control trajectory
+    double startAngle = driveTrain.getGyroRotation();
+    System.out.println(startAngle);
+
+    DifferentialDriveKinematics driveKinematics = getDriveKinematics(DriveConstants.TRACK_WIDTH);
+
+    // Create a voltage constraint to ensure we don't accelerate too fast
+    DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+        new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
+        driveKinematics,
+        DriveConstants.MAX_VOLTAGE);
+
+    // Create config for trajectory
+    TrajectoryConfig config =
+        new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
+        DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+            .setKinematics(driveKinematics)
+            .addConstraint(autoVoltageConstraint);
+
+    // An example trajectory to follow.  All units in meters.
+    // Start at the origin facing the +X direction
+    // Pass through these two interior waypoints, making an 's' curve path
+    // End 3 meters straight ahead of where we started, facing forward
+    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, new Rotation2d(0)),
+        List.of(
+            new Translation2d(1,0)
+           // new Translation2d(2,-1)
+        ),
+        new Pose2d(3, 0, new Rotation2d(0)),
+        config
+    );
+
+    RamseteCommand ramseteCommand = new RamseteCommand(
+        exampleTrajectory,
+        driveTrain::getPose,
+        new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+        new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA),
+        driveKinematics,
+        driveTrain::getWheelSpeeds,
+        new PIDController(DriveConstants.kP, 0, 0),
+        new PIDController(DriveConstants.kP, 0, 0),
+        driveTrain::tankDriveVolts,
+        driveTrain
+    );
+
+    // Run path following command, then stop at the end.
+    return ramseteCommand.andThen(() -> driveTrain.tankDrive(0.0, 0.0, false));
   }
 }
