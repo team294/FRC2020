@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.DriveConstants;
 
@@ -145,7 +146,7 @@ public class DriveTrain extends SubsystemBase {
     rightMotor2.enableVoltageCompensation(turnOn);
   }
   public double getLeftEncoderRaw() {
-    return leftMotor2.getSelectedSensorPosition(0);
+    return leftMotor1.getSelectedSensorPosition(0);
   }
 
   public double getRightEncoderRaw() {
@@ -153,11 +154,11 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double getLeftEncoderVelocityRaw() {
-    return leftMotor2.getSelectedSensorVelocity(0);
+    return leftMotor1.getSelectedSensorVelocity(0);
   }
 
   public double getRightEncoderVelocityRaw() {
-    return rightMotor2.getSelectedSensorVelocity(0);
+    return rightMotor1.getSelectedSensorVelocity(0);
   }
 
   public void setDriveModeCoast(boolean setCoast) {
@@ -322,13 +323,13 @@ public class DriveTrain extends SubsystemBase {
   public Pose2d getPose() {
     System.out.println("Position" + odometry.getPoseMeters());
     System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
-    inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
-    inchesToMeters(getLeftEncoderInches()));
+      inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
+      inchesToMeters(getLeftEncoderInches()));
     return odometry.getPoseMeters();
   }
 
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(leftMotor1.getSelectedSensorVelocity(), rightMotor1.getSelectedSensorVelocity());
+    return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), Units.inchesToMeters(getRightEncoderVelocity()));
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
