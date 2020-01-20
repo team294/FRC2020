@@ -36,11 +36,11 @@ public final class Constants {
         public static final double kRamseteZeta = 0.70;
     
         // from robot characteristics
-        public static final double kS = 0.35 * 0; // static gain was 
-        public static final double kV = 0.00551 * 100; // velocity gain was 1.98
-        public static final double kA = 0.000647 * 0; // acceleration gain was 0.2
+        public static final double kS = 0.35 * 1; // static gain was
+        public static final double kV = 1.665; // velocity gain was 0.551
+        public static final double kA = 0.1 * 1; // acceleration gain was 0.000647
     
-        public static final double kP = 0.0;  // was 0.069
+        public static final double kP = 0.069 * 1;  // was 0.069
         public static final double kD = 0.0303;
         public static final double MAX_VOLTAGE = 10.0;
         public static final double TRACK_WIDTH = Units.inchesToMeters(25.35); // was 7.286626058797765
