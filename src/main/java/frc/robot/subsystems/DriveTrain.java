@@ -324,11 +324,13 @@ public class DriveTrain extends SubsystemBase {
    * @param logWhenDisabled true will log when disabled, false will discard the string
    */
   public void updateDriveLog(boolean logWhenDisabled) {
-    log.writeLog(logWhenDisabled, "DriveTrain", "updateVariables", 
-      "Drive L1 Volts", leftMotor1.getMotorOutputVoltage(), "Drive L2 Volts", leftMotor2.getMotorOutputVoltage(),
-      "Drive R1 Volts", rightMotor1.getMotorOutputVoltage(), "Drive R2 Volts", rightMotor2.getMotorOutputVoltage(),
-      "L Enc Ticks", getLeftEncoderTicks(), "L Enc Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
-      "R Enc Ticks", getRightEncoderTicks(), "R Enc Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
+    log.writeLog(logWhenDisabled, "Drive", "updates", 
+      "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
+      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(), // left motor(s) supply current
+      "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
+      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), // right motor(s) supply current
+      "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
+      "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
       "Gyro Angle", getGyroRotation()
       );
   }
@@ -340,9 +342,7 @@ public class DriveTrain extends SubsystemBase {
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
-    if (log.getLogRotation() == log.DRIVE_CYCLE) {
-      updateDriveLog(false);
-    }
+    updateDriveLog(false);
 
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
