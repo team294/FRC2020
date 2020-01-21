@@ -50,6 +50,11 @@ public class DriveTrain extends SubsystemBase {
 
   private Timer autoTimer;
 
+   // variables to help calculate angular velocity for turnGyro
+   private double prevAng; // last recorded gyro angle
+   private double currAng; // current recorded gyro angle
+   private double prevTime; // last time gyro angle was recorded
+   private double currTime; // current time gyro angle is being recorded
   
   public DriveTrain(FileLog log) {
     this.log = log; // save reference to the fileLog
@@ -108,6 +113,12 @@ public class DriveTrain extends SubsystemBase {
 
     zeroGyroRotation();
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
+
+    // initialize angular velocity variables
+    prevAng = getGyroRaw();
+    currAng = getGyroRaw();
+    prevTime = System.currentTimeMillis();
+    currTime = System.currentTimeMillis();
   }
 
 
@@ -331,7 +342,7 @@ public class DriveTrain extends SubsystemBase {
       "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), // right motor(s) supply current
       "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
       "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
-      "Gyro Angle", getGyroRotation()
+      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
       );
   }
 
@@ -347,10 +358,24 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
     SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
+    SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
     //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
-    
+
+     // save new current value for calculating angVel
+     currAng = getGyroRaw();
+     currTime = System.currentTimeMillis();
+ 
+     // calculate angVel
+     double angVel = (currAng - prevAng) / (currTime - prevTime);
+ 
+     // convert angVel to degrees per sec & put on SmartDashboard
+     SmartDashboard.putNumber("AngVel", angVel * 1000);
+ 
+     // save current angVel values as previous values for next calculation
+     prevAng = currAng;
+     prevTime = currTime; 
   }
 
   public Pose2d getPose() {
