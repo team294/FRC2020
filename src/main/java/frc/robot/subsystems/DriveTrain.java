@@ -14,6 +14,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -25,6 +26,7 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.utilities.*;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 
 
@@ -45,6 +47,8 @@ public class DriveTrain extends SubsystemBase {
 
   private final AHRS ahrs;
   private double yawZero = 0;
+
+  private Timer autoTimer;
 
   
   public DriveTrain(FileLog log) {
@@ -225,10 +229,6 @@ public class DriveTrain extends SubsystemBase {
     return encoderTicksToInches(getRightEncoderTicks());
   }
 
-  public static double inchesToMeters(double number){
-    return number * 0.0254;
-  }
-
   /**
    * @return left encoder velocity in inches / sec
    */
@@ -237,10 +237,19 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
+   * 
    * @return right encoder velocity in inches / sec
    */
   public double getRightEncoderVelocity() {
     return encoderTicksToInches(getRightEncoderVelocityRaw()) * 10;
+  }
+
+  /**
+   * 
+   * @return average velocity in inches / sec
+   */
+  public double getAverageEncoderVelocity(){
+    return (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
   }
 
   public double inchesToEncoderTicks(double inches) {
@@ -328,8 +337,8 @@ public class DriveTrain extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     double degrees = getGyroRotation();
-    double leftMeters = inchesToMeters(getLeftEncoderInches());
-    double rightMeters = inchesToMeters(getRightEncoderInches());
+    double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
+    double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
     if (log.getLogRotation() == log.DRIVE_CYCLE) {
       updateDriveLog(false);
@@ -339,15 +348,16 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
     SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
 
-    odometry.update(Rotation2d.fromDegrees(degrees), leftMeters, rightMeters);
+    odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
+    //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
     
   }
 
   public Pose2d getPose() {
-    System.out.println("Position" + odometry.getPoseMeters());
-    System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
-      inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
-      inchesToMeters(getLeftEncoderInches()));
+    //System.out.println("Position" + odometry.getPoseMeters());
+    //System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
+      //inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
+      //inchesToMeters(getLeftEncoderInches()));
     return odometry.getPoseMeters();
   }
 
@@ -356,9 +366,23 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void tankDriveVolts(double leftVolts, double rightVolts) {
+    if(autoTimer == null) {
+      autoTimer = new Timer();
+      autoTimer.reset();
+      autoTimer.start();
+    }
     leftMotor1.setVoltage(leftVolts);
     rightMotor1.setVoltage(-rightVolts);
-    System.out.println("left Volts " + leftVolts);
-    System.out.println("right Volts " + -rightVolts);
+    System.out.printf("Time:%f LEnc:%f REnc:%f LVel:%f RVel:%f LV:%f RV:%f Gyro:%f %n", 
+      autoTimer.get(),
+      Units.inchesToMeters(getLeftEncoderInches()), 
+      Units.inchesToMeters(getRightEncoderInches()),
+      Units.inchesToMeters(getLeftEncoderVelocity()), 
+      Units.inchesToMeters(getRightEncoderVelocity()), 
+      leftVolts, 
+      rightVolts, 
+      getGyroRotation());
+    //System.out.println("left Volts " + leftVolts);
+    //System.out.println("right Volts " + -rightVolts);
   }
 }

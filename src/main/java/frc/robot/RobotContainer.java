@@ -11,6 +11,8 @@ import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -22,6 +24,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -47,6 +50,8 @@ public class RobotContainer {
   public Joystick rightJoystick = new Joystick(1);
   public Joystick coPanel = new Joystick(2);
   public Joystick xBoxControler = new Joystick(3);
+
+  
 
   /**
    * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -120,12 +125,18 @@ public class RobotContainer {
     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
-            new Translation2d(1,0)
-           // new Translation2d(2,-1)
+            new Translation2d(4,1),
+            new Translation2d(6,1)
         ),
-        new Pose2d(3, 0, new Rotation2d(0)),
+        new Pose2d(10, 0, new Rotation2d(0)),
         config
     );
+    int i = 1;
+    for(State s : exampleTrajectory.getStates()) {
+      Pose2d pose = s.poseMeters;
+      System.out.printf("%f %s %f %n", s.timeSeconds, pose, s.velocityMetersPerSecond);
+      i++;
+    }
 
     RamseteCommand ramseteCommand = new RamseteCommand(
         exampleTrajectory,
