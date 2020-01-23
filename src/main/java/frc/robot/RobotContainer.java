@@ -78,7 +78,7 @@ public class RobotContainer {
 
   private void configureShuffleboard(){
     // buttons for testing turnGyro
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(driveTrain, 90, 0.25, 0.25));
+    SmartDashboard.putData("DriveStraight", new DriveStraightTrapezoid(driveTrain, 2, 0.33333333, 0.333333333));
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("DriveWJoysticks", new DriveSetPercentOutput(driveTrain, 1, -1));
   }
