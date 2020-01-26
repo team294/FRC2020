@@ -15,17 +15,21 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utilities.FileLog;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotor1 = new WPI_TalonFX(Constants.ShooterConstants.shooter1Port);
   private final WPI_TalonFX shooterMotor2 = new WPI_TalonFX(Constants.ShooterConstants.shooter2Port);
+  private FileLog log; // reference to the fileLog
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   
-  public Shooter() {
+  public Shooter(FileLog log) {
+    this.log = log; // save reference to the fileLog
+
     shooterMotor1.configFactoryDefault();
     shooterMotor2.configFactoryDefault();
     shooterMotor1.setInverted(true);
@@ -124,5 +128,19 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotor1.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotor2.getSupplyCurrent());
 
+    updateShooterLog(false);
+  }
+
+  /**
+   * Writes information about the subsystem to the filelog
+   * @param logWhenDisabled true will log when disabled, false will discard the string
+   */
+	public void updateShooterLog(boolean logWhenDisabled) {
+		log.writeLog(logWhenDisabled, "Shooter", "Update Variables",  
+      "Motor RPM", shooterMotor1.getSelectedSensorVelocity(0) *  ticksPer100ms,
+      "Motor Volt", shooterMotor1.getMotorOutputVoltage(), 
+      "Motor1 Amps", shooterMotor1.getSupplyCurrent(),
+      "Motor2 Amps", shooterMotor2.getSupplyCurrent()
+    );
   }
 }

@@ -15,17 +15,22 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.utilities.FileLog;
 
 public class Feeder extends SubsystemBase {
   private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederPort);
+  private FileLog log; // reference to the fileLog
 
   private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 30;
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   private double ff, p, i, d; // for shuffleboard
+  // NOTE: 9:1 gear ratio
 
-  public Feeder() {
+  public Feeder(FileLog log) {
+    this.log = log; // save reference to the fileLog
+
     feederMotor.configFactoryDefault();
     feederMotor.setInverted(false);
     feederMotor.setNeutralMode(NeutralMode.Coast);
@@ -37,9 +42,9 @@ public class Feeder extends SubsystemBase {
     kP = 0;
     kI = 0;
     kD = 0;
-    kFF = 0.043;
+    kFF = 0.06;
     kMaxOutput = 1; 
-    kMinOutput = -1;
+    kMinOutput = 0;
 
     // set PID coefficients
     feederMotor.config_kP(0, kP, timeoutMs);
@@ -83,9 +88,22 @@ public class Feeder extends SubsystemBase {
     return feederMotor.getClosedLoopError() * ticksPer100ms;
   }
 
+  /**
+   * Writes information about the drive train to the filelog
+   * @param logWhenDisabled true will log when disabled, false will discard the string
+   */
+  public void updateDriveLog(boolean logWhenDisabled) {
+    log.writeLog(logWhenDisabled, "Feeder", "updates", 
+      "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
+      "Feeder Amps", feederMotor.getSupplyCurrent(), 
+      "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
+      );
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    updateDriveLog(false);
 
     // read PID coefficients from SmartDashboard
     ff = SmartDashboard.getNumber("Feeder FF", 0);

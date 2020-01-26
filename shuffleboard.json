@@ -79,32 +79,6 @@
               "_title": "IntakeSetPercentOutput(1)"
             }
           },
-          "4,0": {
-            "size": [
-              3,
-              3
-            ],
-            "content": {
-              "_type": "Graph",
-              "_source0": "network_table:///SmartDashboard/Loader RPM",
-              "_title": "Loader RPM",
-              "Graph/Visible time": 30.0,
-              "Y-axis/Automatic bounds": true,
-              "Y-axis/Upper bound": 1.0,
-              "Y-axis/Lower bound": -1.0
-            }
-          },
-          "7,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/ShooterLoaderHopperSequence",
-              "_title": "ShooterLoaderHopperSequence"
-            }
-          },
           "7,1": {
             "size": [
               2,
@@ -173,14 +147,74 @@
                 }
               ]
             }
+          },
+          "7,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
+              "_title": "ShooterFeederHopperSequence"
+            }
+          },
+          "4,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/FeederSetVoltage(5)",
+              "_title": "FeederSetVoltage(5)"
+            }
+          },
+          "4,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Feeder Encoder",
+              "_title": "Feeder Encoder"
+            }
+          },
+          "5,4": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Feeder Voltage",
+              "_title": "Feeder Voltage"
+            }
+          },
+          "4,0": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/Feeder RPM",
+              "_title": "Feeder RPM",
+              "Graph/Visible time": 30.0,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Visible data/SmartDashboard/Feeder RPM": true
+            }
           }
         }
       }
     }
   ],
   "windowGeometry": {
-    "x": 0.0,
-    "y": 23.0,
+    "x": 2.0,
+    "y": 82.0,
     "width": 1680.0,
     "height": 975.0
   }

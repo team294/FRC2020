@@ -47,11 +47,11 @@ import frc.triggers.POVTrigger;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final Shooter shooter = new Shooter();
-  private final Feeder feeder = new Feeder();
+  private final FileLog log = new FileLog("A1");
+  private final Shooter shooter = new Shooter(log);
+  private final Feeder feeder = new Feeder(log);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
-  private final FileLog log = new FileLog("A1");
   private final DriveTrain driveTrain = new DriveTrain(log);
 
   Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
@@ -79,7 +79,7 @@ public class RobotContainer {
     SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
     SmartDashboard.putData("Feeder STOP", new FeederSetVoltage(0, feeder));
     SmartDashboard.putData("FeederSetVoltage(5)", new FeederSetVoltage(5, feeder));
-    SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 1000);
+    SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 2000);
 
     // intake subsystem
     SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
