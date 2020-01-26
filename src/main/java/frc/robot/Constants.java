@@ -16,4 +16,44 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    public static final class ShooterConstants {
+        public static final int shooter1Port = 30;
+        public static final int shooter2Port = 31;
+    }
+
+    public static final class IntakeConstants {
+        public static final int intakePort = 50;
+    }
+
+    public static final class HopperConstants {
+        public static final int hopperPort = 51;
+        public static final double hopperDefaultPercentOutput = 0.8;
+    }
+
+    public static final class FeederConstants {
+        public static final int feederPort = 40;
+    }
+
+    public static final class OIConstants {
+        public static final int xboxControllerPort = 0;
+  
+        public enum Button {
+            kBumperLeft(5),
+            kBumperRight(6),
+            kStickLeft(9),
+            kStickRight(10),
+            kA(1),
+            kB(2),
+            kX(3),
+            kY(4),
+            kBack(7),
+            kStart(8);
+    
+            @SuppressWarnings({"MemberName", "PMD.SingularField"})
+            public final int value;
+
+            Button(int value) { this.value = value; }
+        } 
+    }
 }
