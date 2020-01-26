@@ -10,9 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 
 import frc.robot.subsystems.*;
 import frc.robot.utilities.FileLog;

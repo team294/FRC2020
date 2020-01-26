@@ -10,12 +10,10 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.State;
-import edu.wpi.first.wpilibj.util.Units;
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
-
 
 import frc.robot.subsystems.*;
+import frc.robot.utilities.FileLog;
+
 import static frc.robot.Constants.DriveConstants.*;
 
 public class DriveTurnGyro extends CommandBase {
@@ -23,36 +21,50 @@ public class DriveTurnGyro extends CommandBase {
    * Uses wpilib TrapezoidProfile generator to generate a motion profile for drive train turning
    */
 
+  // references to other classes
   private DriveTrain driveTrain; // reference to driveTrain
-  private double target; // how many more degrees to the right to turn
+  private FileLog log; // reference to the file log
+
+  // kinematics
   private double maxVelMultiplier; // multiplier between 0.0 and 1.0 for limiting max velocity
   private double maxAccelMultiplier; // multiplier between 0.0 and 1.0 for limiting max acceleration
-  private long profileStartTime; // initial time (time of starting point)
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
-  private double targetVoltage; // voltage to pass to the motors to follow profile
+  private double targetOutput; // percentOutput to pass to the motors to follow profile, should be between -1.0 and 1.0
+  
+  // angle values
+  private double target; // how many degrees to the right to turn
   private double startAng; // initial angle (in degrees) (starts as 0 deg for relative turns)
   private double targetAng; // target angle to the right (in degrees)
   private double prevAng;
   private double currAng;
   private double angVel;
-  private long prevUpdateTime;
-  private long currUpdateTime;
 
+  // time values
+  private double profileEndTime; // time that profile should take to finish
+  private double profileRunTime; // time since profile was started
+  private long profileStartTime; // initial time (time of starting point)
+  private double changeInTime; // time since last scheduler cycle
+  private long prevUpdateTime; // time of last scheduler cycle
+  private long currUpdateTime; // time of current scheduler cycle
+
+  // Trapezoid profile objects
   private TrapezoidProfile tProfile; // wpilib trapezoid profile generator
-  private State tStateCurr; // initial state of the system (position in deg and time in sec)
-  private State tStateNext; // next state of the system as calculated by the profile generator
-  private State tStateFinal; // goal state of the system (position in deg and time in sec)
-  private Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
+  private TrapezoidProfile.State tStateCurr; // initial state of the system (position in deg and time in sec)
+  private TrapezoidProfile.State tStateNext; // next state of the system as calculated by the profile generator
+  private TrapezoidProfile.State tStateFinal; // goal state of the system (position in deg and time in sec)
+  private TrapezoidProfile.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
   /**
    * @param driveTrain reference to the drive train subsystem
+   * @param log reference to the file log utility
    * @param target degrees to turn to the right
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveTurnGyro(DriveTrain driveTrain, double target, double maxVelMultiplier, double maxAccelMultiplier) {
+  public DriveTurnGyro(DriveTrain driveTrain, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.log = log;
     this.target = target;
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
@@ -62,56 +74,84 @@ public class DriveTurnGyro extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    tStateFinal = new State(target, 0.0);
-    tStateCurr = new State(0.0, 0.0);
+    tStateFinal = new TrapezoidProfile.State(target, 0.0); // set goal/target (degrees to turn to the right)
+    tStateCurr = new TrapezoidProfile.State(0.0, 0.0); // set inital state (relative turning, so assume initPos is 0 degrees)
 
-    tConstraints = new Constraints(kMaxSpeedMetersPerSecond * maxVelMultiplier, kMaxAccelerationMetersPerSecondSquared * maxAccelMultiplier); // initialize velocity
-                                                                                                                          // and accel limits
+    tConstraints = new TrapezoidProfile.Constraints(kMaxAngularVelocity * maxVelMultiplier, kMaxAngularAcceleration * maxAccelMultiplier); // initialize velocity
+                                                                                                                                           // and accel limits
     tProfile = new TrapezoidProfile(tConstraints, tStateFinal, tStateCurr); // generate profile
     
-    // profileStartTime = System.currentTimeMillis(); // save starting time of profile
-    // prevUpdateTime = profileStartTime;
-    // currUpdateTime = profileStartTime;
+    profileEndTime = tProfile.totalTime(); // save time profile should take to run
+    profileStartTime = System.currentTimeMillis(); // save starting time of profile
+    prevUpdateTime = profileStartTime; // used to calculate change in time between scheduler cycles
+    currUpdateTime = profileStartTime; // used to calculate change in time between scheduler cycles
     
-    startAng = Units.inchesToMeters(driveTrain.getAverageDistance()); // save initial angle
-    // prevAng = startAng;
-    // targetAng = startAng + target; // calculate final angle based on how many degrees are to be turned
+    startAng = driveTrain.getGyroRaw(); // use raw gyro angle to prevent wrap-around
+    prevAng = startAng; // used to calculate actual angular velocity
+    currAng = startAng; // used to calculate actual angular velocity
+    targetAng = startAng + target; // calculate final angle based on how many degrees are to be turned
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // currUpdateTime = System.currentTimeMillis();
-    tStateNext = tProfile.calculate(((double)(currUpdateTime - prevUpdateTime)) / 1000);
-    // prevUpdateTime = currUpdateTime;
+    currUpdateTime = System.currentTimeMillis();
+    // calculate change in time between scheduler cycles
+    // type-cast from long to double to not lose data from System.currentTimeMillis (super long number)
+    // divide by 1000 to convert from milliseconds to seconds
+    changeInTime = ((double)(currUpdateTime - prevUpdateTime)) / 1000.0;
+    profileRunTime = (double)(currUpdateTime - profileStartTime) / 1000.0;
+
+    // time parameter for tProfile.calculate is time 
+    // since calculate() was last called, in seconds
+    // aka change in time between scheduler cycles
+    tStateNext = tProfile.calculate(changeInTime);
+
     targetVel = tStateNext.velocity;
-    targetVoltage = targetVel * kV;
+    targetOutput = targetVel * kVAngular; // TODO tune kVAngular
 
-    System.out.println("pos: " + tStateNext.position);
-    System.out.println("vel: " + targetVel);
-    System.out.println("V: " + targetVoltage);
-    driveTrain.setRightMotorOutput(-targetVoltage);
-    driveTrain.setLeftMotorOutput(targetVoltage);
+    // calculate actual angular velocity
+    currAng = driveTrain.getGyroRaw();
+    angVel = (currAng - prevAng) / (changeInTime);
 
-    currAng = Units.inchesToMeters(driveTrain.getAverageDistance()) - startAng;
-    angVel = driveTrain.getLeftEncoderVelocity() * 2.54 / 100;
-    tStateCurr = new State(currAng, angVel);
-    tProfile = new TrapezoidProfile(tConstraints, tStateFinal, tStateCurr);
+    // write to fileLog, can be removed after testing
+    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, // theoretical values
+                                                    "posA", driveTrain.getGyroRaw(), "velA", angVel, // actual values
+                                                    "%", targetOutput); // percentOutput passed to motor
+
+
+
+    System.out.println("pos: " + tStateNext.position); // can be removed after testing
+    System.out.println("vel: " + targetVel); // can be removed after testing
+    System.out.println("V: " + targetOutput); // can be removed after testing
+
+    driveTrain.setRightMotorOutput(targetOutput);
+    driveTrain.setLeftMotorOutput(targetOutput);
+    driveTrain.feedTheDog(); // to prevent watchdog from shutting down motor
+
+    tProfile = new TrapezoidProfile(tConstraints, tStateFinal, tStateNext); // update profile with next point
+
+    prevAng = currAng;
+    prevUpdateTime = currUpdateTime;
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    driveTrain.setLeftMotorOutput(0);
-    driveTrain.setRightMotorOutput(0);
+    // stop motors at end of profile
+    driveTrain.setLeftMotorOutput(0); 
+    driveTrain.setRightMotorOutput(0); 
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // if(Math.abs(targetAng - startAng) < 1) {
-    //   return true;
-    // }
+    if(profileRunTime >= profileEndTime) {
+      System.out.println("Start Ang: " + startAng); // can be removed after testing
+      System.out.println("Theoretical End Ang: " + (startAng + target)); // can be removed after testing
+      System.out.println("Actual End Ang: " + driveTrain.getGyroRaw()); // can be removed after testing
+      return true;
+    }
     return false;
   }
 }

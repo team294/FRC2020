@@ -26,7 +26,6 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.utilities.*;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.DriveConstants;
 
 
@@ -367,9 +366,10 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
     SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
 
-    // odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
+    odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
     //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
 
+    // TODO keep in code until values can be tuned for ACTUAL 2020 robot
      // save new current value for calculating angVel
      currAng = getGyroRaw();
      currTime = System.currentTimeMillis();
