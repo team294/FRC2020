@@ -46,6 +46,7 @@ public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final FileLog log = new FileLog("A1");
   private final DriveTrain driveTrain = new DriveTrain(log);
+  private final Test test = new Test();
 
   public Joystick leftJoystick = new Joystick(0);
   public Joystick rightJoystick = new Joystick(1);
@@ -63,7 +64,7 @@ public class RobotContainer {
     // Config shuffleboard
     configureShuffleboard();
 
-    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick));
+    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick)); //TODO uncomment after testing
   }
 
   /**
@@ -78,9 +79,11 @@ public class RobotContainer {
 
   private void configureShuffleboard(){
     // buttons for testing turnGyro
-    SmartDashboard.putData("DriveStraight", new DriveStraightTrapezoid(driveTrain, 2, 0.33333333, 0.333333333));
+    SmartDashboard.putData("DriveStraight", new DriveStraightTrapezoid(driveTrain, log, 2, 0.33333333, 0.333333333));
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("DriveWJoysticks", new DriveSetPercentOutput(driveTrain, 1, -1));
+    SmartDashboard.putData("Drive With Percent Output", new DriveSetPercentOutput(driveTrain, 0.3, 0.3));
+    SmartDashboard.putData("SetTest", new setTestMotor(test, 0.5));
   }
 
 
@@ -94,6 +97,7 @@ public class RobotContainer {
     return getTestTrajectory();
   }
 
+  
   private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
     return new DifferentialDriveKinematics(trackWidth);
   }
@@ -129,10 +133,10 @@ public class RobotContainer {
     Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
         new Pose2d(0, 0, new Rotation2d(0)),
         List.of(
-            new Translation2d(4,1),
-            new Translation2d(6,1)
+            new Translation2d(2,0)
+            // new Translation2d(3,0)
         ),
-        new Pose2d(10, 0, new Rotation2d(0)),
+        new Pose2d(4, 0, new Rotation2d(0)),
         config
     );
     int i = 1;

@@ -8,44 +8,35 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.Test;
 
-import frc.robot.subsystems.DriveTrain;
-
-public class DriveSetPercentOutput extends CommandBase {
+public class setTestMotor extends CommandBase {
   /**
-   * Sets drive motors to percent output
+   * Creates a new setTestMotor.
    */
+  private Test test;
+  private double percent;
 
-   private DriveTrain driveTrain;
-   private double lPercent;
-   private double rPercent;
-  public DriveSetPercentOutput(DriveTrain driveTrain, double lPercent, double rPercent) {
+  public setTestMotor(Test test, double percent) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.driveTrain = driveTrain;
-    this.lPercent = lPercent;
-    this.rPercent = rPercent;
+    this.test = test;
+    this.percent = percent;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.setLeftMotorOutput(lPercent);
-    driveTrain.setRightMotorOutput(rPercent);
+    test.setMotor(percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("L output:" + lPercent);
-    System.out.println("R output:" + rPercent);
-    //driveTrain.tankDrive(lPercent, rPercent, false);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //driveTrain.setLeftMotorOutput(0);
-    //driveTrain.setRightMotorOutput(0);
   }
 
   // Returns true when the command should end.

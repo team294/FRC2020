@@ -121,7 +121,6 @@ public class DriveTrain extends SubsystemBase {
     currTime = System.currentTimeMillis();
   }
 
-
   /**
    * Tank drive method for differential drive platform.
    * The calculated values will be squared to decrease sensitivity at low speeds.
@@ -214,7 +213,7 @@ public class DriveTrain extends SubsystemBase {
 	 * Get the position of the left encoder, in encoder ticks since last zeroLeftEncoder()
 	 * 
 	 * @return encoder position, in ticks
-	 */
+   */
   public double getLeftEncoderTicks() {
     return getLeftEncoderRaw() - leftEncoderZero;
   }
@@ -260,7 +259,7 @@ public class DriveTrain extends SubsystemBase {
    * @return average velocity in inches / sec
    */
   public double getAverageEncoderVelocity(){
-    return (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
+    return (-getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
   }
 
   public double inchesToEncoderTicks(double inches) {
@@ -360,7 +359,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
     SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
 
-    odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
+    // odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
     //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
 
      // save new current value for calculating angVel
