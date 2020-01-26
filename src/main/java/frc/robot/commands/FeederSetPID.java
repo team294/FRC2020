@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.Feeder;
 
 /**
@@ -26,18 +27,24 @@ public class FeederSetPID extends CommandBase {
   public FeederSetPID(int rpm, Feeder feeder) {
     this.feeder = feeder;
     this.rpm = rpm;
-    getRPMFromShuffleboard = false;
+    this.getRPMFromShuffleboard = false;
     addRequirements(feeder);
   }
 
   public FeederSetPID(Feeder feeder) {
     this.feeder = feeder;
-    rpm = 0;
+    this.rpm = 0;
     getRPMFromShuffleboard = true;
     addRequirements(feeder);
 
     if (SmartDashboard.getNumber("Feeder Manual SetPoint RPM", -9999) == -9999)
       SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 1000);
+  }
+
+  public FeederSetPID(boolean fromShuffleboard, Feeder feeder) {
+    this.feeder = feeder;
+    this.getRPMFromShuffleboard = false;
+    this.rpm = Constants.FeederConstants.feederDefaultRPM;
   }
 
   // Called when the command is initially scheduled.

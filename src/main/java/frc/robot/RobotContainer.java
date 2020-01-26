@@ -8,6 +8,7 @@
 package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,7 +32,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
 
-  XboxController xBoxDriver = new XboxController(Constants.OIConstants.xboxControllerPort);
+  XboxController xBoxController = new XboxController(Constants.OIConstants.xboxControllerPort);
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -48,8 +49,10 @@ public class RobotContainer {
    * {@link edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
   private void configureButtonBindings() {
-    new JoystickButton(xBoxDriver, Button.kX.value).whenPressed(new ShooterSetPID(2500, shooter));
-    new JoystickButton(xBoxDriver, Button.kX.value).whenReleased(new ShooterSetVoltage(0, shooter));
+    new JoystickButton(xBoxController, Button.kX.value).whenPressed(new Wait(0));
+    new JoystickButton(xBoxController, Button.kY.value).whenPressed(new Wait(0));
+    new JoystickButton(xBoxController, Button.kB.value).whenPressed(new Wait(0));
+    new JoystickButton(xBoxController, Button.kA.value).whenPressed(new Wait(0));
   }
 
   public void configureShuffleboard() {

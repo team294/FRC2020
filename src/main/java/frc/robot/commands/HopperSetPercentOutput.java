@@ -30,7 +30,7 @@ public class HopperSetPercentOutput extends CommandBase {
   }
 
   /**
-   * Set the hopper percent output to 0.8.
+   * Set the hopper percent output to default percent output from constants.
    * @param hopper hopper subsystem to use
    */
   public HopperSetPercentOutput(Hopper hopper) {
