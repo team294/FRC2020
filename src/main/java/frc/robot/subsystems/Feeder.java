@@ -18,12 +18,12 @@ import frc.robot.Constants;
 
 public class Feeder extends SubsystemBase {
   private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederPort);
-  private double kP, kI, kD, kFF, kMaxOutput, kMinOutput;
-  private final int timeoutMs = 30;
-  private double measuredVelocityRaw, measuredRPM;
-  private double ticksPer100ms = 600.0 / 4096.0;
-  private double FeederRPM, setPoint;
-  private double ff, p, i, d;
+
+  private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
+  private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
+  private int timeoutMs = 30;
+  private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
+  private double ff, p, i, d; // for shuffleboard
 
   public Feeder() {
     feederMotor.configFactoryDefault();
@@ -50,8 +50,8 @@ public class Feeder extends SubsystemBase {
     feederMotor.configPeakOutputReverse(kMinOutput);
     feederMotor.setSensorPhase(false);
 
-    SmartDashboard.putNumber("Feeder SetPoint RPM", FeederRPM);
-    SmartDashboard.putNumber("Feeder Manual SetPoint RPM", FeederRPM);
+    SmartDashboard.putNumber("Feeder SetPoint RPM", feederRPM);
+    SmartDashboard.putNumber("Feeder Manual SetPoint RPM", feederRPM);
 
     // display PID coefficients on SmartDashboard
     SmartDashboard.putNumber("Feeder P", kP);
@@ -64,12 +64,12 @@ public class Feeder extends SubsystemBase {
    * @param voltage voltage
    */
   public void FeederSetVoltage(double voltage) {
-    feederMotor.setVoltage(-voltage);
+    feederMotor.setVoltage(voltage);
   }
 
   public void setFeederPID(double FeederRPM) {
-    this.FeederRPM = FeederRPM;
-    setPoint = this.FeederRPM / ticksPer100ms;
+    this.feederRPM = FeederRPM;
+    setPoint = this.feederRPM / ticksPer100ms;
     feederMotor.set(ControlMode.Velocity, setPoint);
 
     SmartDashboard.putNumber("Feeder SetPoint RPM", FeederRPM);
@@ -77,7 +77,7 @@ public class Feeder extends SubsystemBase {
   }
 
   /**
-   * @return PID error, in rpm
+   * @return PID error, in RPM
    */
   public double getFeederPIDError() {
     return feederMotor.getClosedLoopError() * ticksPer100ms;
