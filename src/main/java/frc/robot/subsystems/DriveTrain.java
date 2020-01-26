@@ -147,6 +147,14 @@ public class DriveTrain extends SubsystemBase {
     driveTrain.tankDrive(leftPercent, rightPercent, squareInputs);
   }
 
+  /**
+   * Call when not using arcade drive or tank drive to turn motors
+   * Ensures that motor will not cut out due to differential drive safety
+   */
+  public void feedTheDog() {
+    driveTrain.feed();
+  }
+
   public void setLeftMotorOutput(double percent) {
     leftMotor1.set(ControlMode.PercentOutput, percent);
   }

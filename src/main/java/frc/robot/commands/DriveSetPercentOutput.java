@@ -38,7 +38,9 @@ public class DriveSetPercentOutput extends CommandBase {
   public void execute() {
     System.out.println("L output:" + lPercent);
     System.out.println("R output:" + rPercent);
-    //driveTrain.tankDrive(lPercent, rPercent, false);
+    driveTrain.setLeftMotorOutput(lPercent);
+    driveTrain.setRightMotorOutput(rPercent);
+    driveTrain.feedTheDog();
   }
 
   // Called once the command ends or is interrupted.
@@ -51,6 +53,6 @@ public class DriveSetPercentOutput extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }
