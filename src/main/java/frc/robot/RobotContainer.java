@@ -35,10 +35,11 @@ import frc.robot.subsystems.DriveTrain;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
-import frc.triggers.AxisTrigger;
-import frc.triggers.POVTrigger;
+import frc.robot.triggers.AxisTrigger;
+import frc.robot.triggers.POVTrigger;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -53,6 +54,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
   private final DriveTrain driveTrain = new DriveTrain(log);
+  private final LED led = new LED();
 
   Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
   Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
@@ -86,6 +88,13 @@ public class RobotContainer {
 
     // hopper subsystem
     SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
+
+    // led subsystem
+    SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
+    SmartDashboard.putData("LEDSetStrip YELLOW", new LEDSetStrip("Yellow", led));
+    SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
+    SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
+    SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper));

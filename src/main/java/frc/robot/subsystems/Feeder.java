@@ -39,7 +39,7 @@ public class Feeder extends SubsystemBase {
     feederMotor.setSensorPhase(false);
 
     // PID coefficients
-    kP = 0;
+    kP = 0.1;
     kI = 0;
     kD = 0;
     kFF = 0.06;
