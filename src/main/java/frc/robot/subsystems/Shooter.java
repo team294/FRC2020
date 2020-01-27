@@ -43,7 +43,7 @@ public class Shooter extends SubsystemBase {
     shooterMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
     shooterMotor2.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
 
-    shooterMotor2.set(ControlMode.Follower, Constants.ShooterConstants.shooter1Port);
+    // shooterMotor2.set(ControlMode.Follower, Constants.ShooterConstants.shooter1Port);     Redundant with line 67
     
     // PID coefficients initial
     kP = 0.25;
