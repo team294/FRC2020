@@ -7,25 +7,23 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 
-/**
- * Command sequence to get the shooter and feeder up to speed, and then run the hopper.
- */
-public class ShooterFeederHopperSequence extends SequentialCommandGroup {
+// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
+// information, see:
+// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+public class ShooterFeederHopperStop extends ParallelCommandGroup {
   /**
-   * @param shooter shooter subsystem to use
-   * @param feeder feeder subsystem to use
-   * @param hopper hopper subsystem to use
+   * Creates a new ShooterFeederHopperStop.
    */
-  public ShooterFeederHopperSequence(Shooter shooter, Feeder feeder, Hopper hopper) {
-    addCommands( 
-      new ShooterSetPID(shooter),
-      new FeederSetPID(feeder),
-      new HopperSetPercentOutput(hopper)
+  public ShooterFeederHopperStop(Shooter shooter, Feeder feeder, Hopper hopper) {
+    addCommands(
+      new ShooterSetVoltage(0, shooter),
+      new FeederSetVoltage(0, feeder),
+      new HopperSetPercentOutput(0, hopper)
     );
   }
 }
