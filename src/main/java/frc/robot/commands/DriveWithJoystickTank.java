@@ -11,19 +11,21 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 
+/**
+ * Command to control the drive train with joysticks using tank drive.
+ */
 public class DriveWithJoystickTank extends CommandBase {
-  
   private final DriveTrain driveTrain;
   private final Joystick leftJoystick;
   private final Joystick rightJoystick;
-  
   private double leftPercent, rightPercent;
 
   /**
-   * Creates a new DriveWithJoystickArcade.
+   * @param driveTrain drive train subsystem to use
+   * @param leftJoystick left joystick
+   * @param rightJoystick right joystick
    */
   public DriveWithJoystickTank(DriveTrain driveTrain, Joystick leftJoystick, Joystick rightJoystick) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.leftJoystick = leftJoystick;
     this.rightJoystick = rightJoystick;
@@ -33,7 +35,6 @@ public class DriveWithJoystickTank extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,12 +43,8 @@ public class DriveWithJoystickTank extends CommandBase {
     leftPercent = -leftJoystick.getY();
     rightPercent = -rightJoystick.getY();
 
-    if(Math.abs(leftPercent) < 0.05){
-      leftPercent = 0;
-    }
-    if(Math.abs(rightPercent) < 0.05){
-      rightPercent = 0;
-    }
+    if(Math.abs(leftPercent) < 0.05) leftPercent = 0;
+    if(Math.abs(rightPercent) < 0.05) rightPercent = 0;
 
     driveTrain.tankDrive(leftPercent, rightPercent);
   }

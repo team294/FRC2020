@@ -19,7 +19,6 @@ public class HopperSetPercentOutput extends CommandBase {
   private double percent;
 
   /**
-   * Set the hopper percent output.
    * @param percent percent output (0 to 1)
    * @param hopper hopper subsystem to use
    */
@@ -53,7 +52,7 @@ public class HopperSetPercentOutput extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (interrupted) hopper.hopperSetPercentOutput(0);
+    if(interrupted) hopper.hopperSetPercentOutput(0);
   }
 
   // Returns true when the command should end.

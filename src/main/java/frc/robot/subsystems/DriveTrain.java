@@ -30,9 +30,6 @@ import frc.robot.Constants.DriveConstants;
 
 
 public class DriveTrain extends SubsystemBase {
- 
-  private FileLog log; // reference to the fileLog
-
   private final WPI_TalonFX leftMotor1;
   private final WPI_TalonFX leftMotor2;
   private final WPI_TalonFX rightMotor1;
@@ -48,12 +45,12 @@ public class DriveTrain extends SubsystemBase {
   private double yawZero = 0;
 
   private Timer autoTimer;
-
+  private FileLog log;
   
   public DriveTrain(FileLog log) {
     this.log = log; // save reference to the fileLog
 
-    // Configure navX
+    // configure navX
     AHRS gyro = null;
 		try {
       gyro = new AHRS(I2C.Port.kMXP);
@@ -80,7 +77,7 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
 
-    leftMotor1.setInverted(true); //TODO invert motors based on actual robot
+    leftMotor1.setInverted(true);
     leftMotor2.setInverted(true);
     rightMotor1.setInverted(true);
     rightMotor2.setInverted(true);
@@ -90,7 +87,7 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
     rightMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, 0);
     
-    leftMotor1.setSensorPhase(false); //TODO invert encoders based on actual robot
+    leftMotor1.setSensorPhase(false);
     rightMotor1.setSensorPhase(false);
 
     leftMotor1.configVoltageCompSaturation(12.0);
@@ -104,20 +101,17 @@ public class DriveTrain extends SubsystemBase {
     
     zeroLeftEncoder();
     zeroRightEncoder();
-
     zeroGyroRotation();
+
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
   }
 
 
   /**
-   * Tank drive method for differential drive platform.
-   * The calculated values will be squared to decrease sensitivity at low speeds.
-   *
-   * @param leftPercent  The robot's left side percent along the X axis [-1.0..1.0]. Forward is
-   *                   positive.
-   * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is
-   *                   positive.
+   * Tank drive method for differential drive platform. The calculated 
+   * values will be squared to decrease sensitivity at low speeds.
+   * @param leftPercent The robot's left side percent along the X axis [-1.0..1.0]. Forward is positive.
+   * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is positive.
    */
   public void tankDrive(double leftPercent, double rightPercent) {
     driveTrain.tankDrive(leftPercent, rightPercent, true);
@@ -125,11 +119,8 @@ public class DriveTrain extends SubsystemBase {
 
   /**
    * Tank drive method for differential drive platform.
-   *
-   * @param leftPercent  The robot's left side percent along the X axis [-1.0..1.0]. Forward is
-   *                   positive.
-   * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is
-   *                   positive.
+   * @param leftPercent  The robot's left side percent along the X axis [-1.0..1.0]. Forward is positive.
+   * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is positive.
    * @param squareInputs If set, decreases the input sensitivity at low speeds.
    */
   public void tankDrive(double leftPercent, double rightPercent, boolean squareInputs) {
@@ -137,18 +128,24 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Call when not using arcade drive or tank drive to turn motors
-   * Ensures that motor will not cut out due to differential drive safety
+   * Call when not using arcade drive or tank drive to turn motors to
+   * ensure that motor will not cut out due to differential drive safety.
    */
   public void feedTheDog() {
     driveTrain.feed();
   }
 
+  /**
+   * @param percent percent output
+   */
   public void setLeftMotorOutput(double percent) {
     leftMotor1.set(ControlMode.PercentOutput, percent);
     feedTheDog();
   }
 
+  /**
+   * @param percent percent output
+   */
   public void setRightMotorOutput(double percent) {
     rightMotor1.set(ControlMode.PercentOutput, percent);
     feedTheDog();
@@ -158,28 +155,47 @@ public class DriveTrain extends SubsystemBase {
     driveTrain.arcadeDrive(speedPct, rotation, false);
   }
 
+  /**
+   * @param turnOn true = turn on voltage compensation, false = don't turn on voltage compensation
+   */
   public void setVoltageCompensation(boolean turnOn) {
     leftMotor1.enableVoltageCompensation(turnOn);
     leftMotor2.enableVoltageCompensation(turnOn);
     rightMotor1.enableVoltageCompensation(turnOn);
     rightMotor2.enableVoltageCompensation(turnOn);
   }
+
+  /**
+   * @return left encoder position, in ticks
+   */
   public double getLeftEncoderRaw() {
     return leftMotor1.getSelectedSensorPosition(0);
   }
 
+  /**
+   * @return right encoder position, in ticks
+   */
   public double getRightEncoderRaw() {
     return rightMotor1.getSelectedSensorPosition(0);
   }
 
+  /**
+   * @return left encoder velocity, in ticks per 100ms
+   */
   public double getLeftEncoderVelocityRaw() {
     return leftMotor1.getSelectedSensorVelocity(0);
   }
 
+  /**
+   * @return right encoder velocity, in ticks per 100ms
+   */
   public double getRightEncoderVelocityRaw() {
     return rightMotor1.getSelectedSensorVelocity(0);
   }
 
+  /**
+   * @param setCoast true = coast mode, false = brake mode
+   */
   public void setDriveModeCoast(boolean setCoast) {
     if (setCoast) {
       leftMotor1.setNeutralMode(NeutralMode.Coast);
@@ -194,23 +210,22 @@ public class DriveTrain extends SubsystemBase {
     }
   }
 
-   /**
-	 * Zeros the left encoder position in software
+  /**
+	 * Zero the left encoder position in software.
 	 */
   public void zeroLeftEncoder() {
     leftEncoderZero = getLeftEncoderRaw();
   }
 
   /**
-	 * Zeros the right encoder position in software
+	 * Zero the right encoder position in software.
 	 */
   public void zeroRightEncoder() {
     rightEncoderZero = getRightEncoderRaw();
   }
 
   /**
-	 * Get the position of the left encoder, in encoder ticks since last zeroLeftEncoder()
-	 * 
+	 * Get the position of the left encoder since last zeroLeftEncoder().
 	 * @return encoder position, in ticks
 	 */
   public double getLeftEncoderTicks() {
@@ -218,73 +233,82 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-	 * Get the position of the right encoder, in encoder ticks since last zeroRightEncoder()
-	 * 
+	 * Get the position of the right encoder since last zeroRightEncoder().
 	 * @return encoder position, in ticks
 	 */
   public double getRightEncoderTicks() {
     return -(getRightEncoderRaw() - rightEncoderZero);
   }
 
+  /**
+   * @param ticks encoder ticks
+   * @return parameter encoder ticks converted to equivalent inches
+   */
   public static double encoderTicksToInches(double ticks) {
     return ticks / DriveConstants.ticksPerInch;
   }
 
+  /**
+   * @return left encoder position, in inches
+   */
   public double getLeftEncoderInches() {
     return encoderTicksToInches(getLeftEncoderTicks());
   }
 
+  /**
+   * @return right encoder position, in inches
+   */
   public double getRightEncoderInches() {
     return encoderTicksToInches(getRightEncoderTicks());
   }
 
   /**
-   * @return left encoder velocity in inches / sec
+   * @return left encoder velocity, in inches per second
    */
   public double getLeftEncoderVelocity() {
     return encoderTicksToInches(getLeftEncoderVelocityRaw()) * 10;
   }
 
   /**
-   * 
-   * @return right encoder velocity in inches / sec
+   * @return right encoder velocity, in inches per second
    */
   public double getRightEncoderVelocity() {
     return encoderTicksToInches(getRightEncoderVelocityRaw()) * 10;
   }
 
   /**
-   * 
-   * @return average velocity in inches / sec
+   * @return average velocity, in inches per second
    */
   public double getAverageEncoderVelocity(){
     return (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
   }
 
+  /**
+   * @param inches inches
+   * @return parameter inches converted to equivalent encoder ticks
+   */
   public double inchesToEncoderTicks(double inches) {
     return inches * DriveConstants.ticksPerInch;
   }
 
   /**
-   * Gets the raw value of the gyro in degrees
-   * @return
+   * Gets the raw gyro angle (can be greater than 360).
+   * @return raw gyro angle, in degrees.
    */
   public double getGyroRaw() {
     return ahrs.getAngle();
   }
 
   /**
-	 * Zeros the gyro position in software
+	 * Zero the gyro position in software.
 	 */
 	public void zeroGyroRotation() {
-		// set yawZero to gryo angle
-    yawZero = getGyroRaw();
+    yawZero = getGyroRaw(); // set yawZero to gyro angle
   }
   
   /**
-	 * Resets the gyro position in software to a specified angle
-	 * 
-	 * @param currentHeading Gyro heading to reset to, in degrees
+	 * Resets the gyro position in software to a specified angle.
+	 * @param currentHeading gyro heading to reset to, in degrees
 	 */
 	public void setGyroRotation(double currentHeading) {
 		// set yawZero to gryo angle, offset to currentHeading
@@ -293,22 +317,18 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-	 * Gets the rotation of the gyro
-	 * 
-	 * @return Current angle from -180 to 180 degrees
+	 * @return gyro angle from -180 to 180, in degrees
 	 */
 	public double getGyroRotation() {
 		double angle = getGyroRaw() - yawZero;
-		// Angle will be in terms of raw gyro units (-inf,inf), so you need to convert
-		// to (-180, 180]
+		// Angle will be in terms of raw gyro units (-inf,inf), so you need to convert to (-180, 180]
 		angle = normalizeAngle(angle);
 		return angle;
   }
 
   /**
-	 * Converts the input angle to a number between -179.999 and +180.0
-	 * 
-	 * @return Normalized angle
+	 * Converts input angle to a number between -179.999 and +180.0.
+	 * @return normalized angle
 	 */
 	public static double normalizeAngle(double angle) {
 		angle = angle % 360;
@@ -318,19 +338,22 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Stops the motors by calling tankDrive(0, 0)
+   * Stops motors by calling tankDrive(0, 0).
    */
   public void stop() {
     tankDrive(0.0, 0.0);
   }
 
+  /**
+   * @return average between left and right encoders, in inches
+   */
   public double getAverageDistance() {
 		return (getRightEncoderInches() + getLeftEncoderInches()) / 2.0;
   }
 
   /**
-   * Writes information about the drive train to the filelog
-   * @param logWhenDisabled true will log when disabled, false will discard the string
+   * Write information about drive train to fileLog.
+   * @param logWhenDisabled true = log when disabled, false = discard the string
    */
   public void updateDriveLog(boolean logWhenDisabled) {
     log.writeLog(logWhenDisabled, "Drive", "updates", 
@@ -359,17 +382,19 @@ public class DriveTrain extends SubsystemBase {
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
     //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
-    
   }
 
   public Pose2d getPose() {
-    //System.out.println("Position" + odometry.getPoseMeters());
-    //System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
-      //inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
-      //inchesToMeters(getLeftEncoderInches()));
+    /*System.out.println("Position" + odometry.getPoseMeters());
+    System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
+      inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
+      inchesToMeters(getLeftEncoderInches()));*/
     return odometry.getPoseMeters();
   }
 
+  /**
+   * @return wheel speeds, in meters per second
+   */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
     return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), Units.inchesToMeters(getRightEncoderVelocity()));
   }
@@ -380,8 +405,10 @@ public class DriveTrain extends SubsystemBase {
       autoTimer.reset();
       autoTimer.start();
     }
+
     leftMotor1.setVoltage(leftVolts);
     rightMotor1.setVoltage(-rightVolts);
+
     System.out.printf("Time:%f LEnc:%f REnc:%f LVel:%f RVel:%f LV:%f RV:%f Gyro:%f %n", 
       autoTimer.get(),
       Units.inchesToMeters(getLeftEncoderInches()), 
@@ -390,7 +417,8 @@ public class DriveTrain extends SubsystemBase {
       Units.inchesToMeters(getRightEncoderVelocity()), 
       leftVolts, 
       rightVolts, 
-      getGyroRotation());
+      getGyroRotation()
+    );
     //System.out.println("left Volts " + leftVolts);
     //System.out.println("right Volts " + -rightVolts);
   }

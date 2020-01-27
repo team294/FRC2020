@@ -18,15 +18,15 @@ import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
 
 public class Feeder extends SubsystemBase {
-  private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederPort);
-  private FileLog log; // reference to the fileLog
+  private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederPort); // 9:1 gear ratio
 
   private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 30;
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   private double ff, p, i, d; // for shuffleboard
-  // NOTE: 9:1 gear ratio
+
+  private FileLog log;
 
   public Feeder(FileLog log) {
     this.log = log; // save reference to the fileLog
@@ -72,6 +72,11 @@ public class Feeder extends SubsystemBase {
     feederMotor.setVoltage(voltage);
   }
 
+  /**
+   * Run feeder in a velocity closed loop mode.
+   * If setPoint RPM is 0, this uses Shuffleboard as input.
+   * @param feederRPM setPoint RPM
+   */  
   public void setFeederPID(double FeederRPM) {
     this.feederRPM = FeederRPM;
     setPoint = this.feederRPM / ticksPer100ms;
@@ -88,22 +93,10 @@ public class Feeder extends SubsystemBase {
     return feederMotor.getClosedLoopError() * ticksPer100ms;
   }
 
-  /**
-   * Writes information about the drive train to the filelog
-   * @param logWhenDisabled true will log when disabled, false will discard the string
-   */
-  public void updateDriveLog(boolean logWhenDisabled) {
-    log.writeLog(logWhenDisabled, "Feeder", "updates", 
-      "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
-      "Feeder Amps", feederMotor.getSupplyCurrent(), 
-      "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
-      );
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updateDriveLog(false);
+    updateFeederLog(false);
 
     // read PID coefficients from SmartDashboard
     ff = SmartDashboard.getNumber("Feeder FF", 0);
@@ -126,5 +119,17 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder Voltage", feederMotor.getMotorOutputVoltage());
     SmartDashboard.putNumber("Feeder SetPoint", setPoint);
     SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
+  }
+
+  /**
+   * Write information about feeder to filelog.
+   * @param logWhenDisabled true = log when disabled, false = discard the string
+   */
+  public void updateFeederLog(boolean logWhenDisabled) {
+    log.writeLog(logWhenDisabled, "Feeder", "updates", 
+      "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
+      "Feeder Amps", feederMotor.getSupplyCurrent(), 
+      "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
+    );
   }
 }

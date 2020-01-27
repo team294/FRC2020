@@ -27,6 +27,11 @@ public final class Constants {
         public static final double shooterDefaultRPM = 3000;
     }
 
+    public static final class FeederConstants {
+        public static final int feederPort = 40;
+        public static final double feederDefaultRPM = 2000;
+    }
+
     public static final class IntakeConstants {
         public static final int intakePort = 50;
         public static final double intakeDefaultPercentOutput = 1;
@@ -35,11 +40,6 @@ public final class Constants {
     public static final class HopperConstants {
         public static final int hopperPort = 51;
         public static final double hopperDefaultPercentOutput = 0.8;
-    }
-
-    public static final class FeederConstants {
-        public static final int feederPort = 40;
-        public static final double feederDefaultRPM = 1000;
     }
 
     public static final class DriveConstants{

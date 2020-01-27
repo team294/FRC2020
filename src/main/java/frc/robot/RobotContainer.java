@@ -31,15 +31,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.LED;
-import frc.robot.subsystems.Shooter;
-import frc.robot.utilities.FileLog;
-import frc.robot.triggers.AxisTrigger;
-import frc.robot.triggers.POVTrigger;
+import frc.robot.subsystems.*;
+import frc.robot.utilities.*;
+import frc.robot.triggers.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -128,30 +122,30 @@ public class RobotContainer {
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterFeederHopperStop(shooter, feeder, hopper));
     xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper));
-    xb[3].whenPressed(new Wait(0));
-    xb[4].whenPressed(new Wait(0));
+    // xb[3].whenPressed(new Wait(0));
+    // xb[4].whenPressed(new Wait(0));
 
     // LB = 5, RB = 6
-    xb[5].whenPressed(new Wait(0));
-    xb[6].whenPressed(new Wait(0));
+    // xb[5].whenPressed(new Wait(0));
+    // xb[6].whenPressed(new Wait(0));
 
     // back = 7, start = 8
-    xb[7].whenPressed(new Wait(0));
-    xb[8].whenPressed(new Wait(0));
+    // xb[7].whenPressed(new Wait(0));
+    // xb[8].whenPressed(new Wait(0));
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
-    xb[9].whenPressed(new Wait(0));
-    xb[10].whenPressed(new Wait(0));
+    // xb[9].whenPressed(new Wait(0));
+    // xb[10].whenPressed(new Wait(0));
 
     // pov is the d-pad (up, down, left, right)
-    xbPOVUp.whenActive(new Wait(0));
+    // xbPOVUp.whenActive(new Wait(0));
     xbPOVDown.whileActiveOnce(new IntakeSetPercentOutput(intake));
-    xbPOVLeft.whenActive(new Wait(0));
-    xbPOVRight.whenActive(new Wait(0));
+    // xbPOVLeft.whenActive(new Wait(0));
+    // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
-    xbLT.whenActive(new Wait(0));
-    xbRT.whenActive(new Wait(0));
+    // xbLT.whenActive(new Wait(0));
+    // xbRT.whenActive(new Wait(0));
   }
 
   public void configureJoystickButtons() {

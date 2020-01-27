@@ -14,14 +14,13 @@ import frc.robot.subsystems.*;
  * Command to send a pattern to the LED strip.
  */
 public class LEDSetPattern extends CommandBase {
-  
   private LED led;
   private int rowNumber;
   private double intensity; 
   
   /**
-   * @param led subsystem to use
-   * @param rowNumber Row in the patternLibrary
+   * @param led LED subsystem to use
+   * @param rowNumber row in the patternLibrary
    * @param intensity LED intensity (0 to 1)
    */
   public LEDSetPattern(LED led, int rowNumber, double intensity) {
@@ -29,7 +28,7 @@ public class LEDSetPattern extends CommandBase {
     this.led = led;
     this.rowNumber = rowNumber;
     addRequirements(led);
-}    
+  }    
 
   // Called when the command is initially scheduled.
   @Override

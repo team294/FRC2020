@@ -84,7 +84,7 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * This runs the Shooter in a velocity closed loop mode.
+   * Run shooter in a velocity closed loop mode.
    * If setPoint RPM is 0, this uses Shuffleboard as input.
    * @param shooterRPM setPoint RPM
    */
@@ -107,6 +107,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    updateShooterLog(false);
 
     // read PID coefficients from SmartDashboard
     double ff = SmartDashboard.getNumber("Shooter FF", 0);
@@ -127,13 +128,11 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter RPM", measuredRPM);
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotor1.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotor2.getSupplyCurrent());
-
-    updateShooterLog(false);
   }
 
   /**
-   * Writes information about the subsystem to the filelog
-   * @param logWhenDisabled true will log when disabled, false will discard the string
+   * Write information about shooter to fileLog.
+   * @param logWhenDisabled true = log when disabled, false = discard the string
    */
 	public void updateShooterLog(boolean logWhenDisabled) {
 		log.writeLog(logWhenDisabled, "Shooter", "Update Variables",  

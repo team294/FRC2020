@@ -18,7 +18,6 @@ public class FeederSetVoltage extends CommandBase {
   private double voltage;
 
   /**
-   * Set the feeder voltage.
    * @param voltage voltage
    * @param feeder feeder subsystem to use
    */

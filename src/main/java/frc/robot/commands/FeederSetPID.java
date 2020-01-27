@@ -21,7 +21,7 @@ public class FeederSetPID extends CommandBase {
   private boolean getRPMFromShuffleboard;
 
   /**
-   * @param rpm setpoint
+   * @param rpm setpoint in RPM
    * @param feeder feeder subsystem to use
    */
   public FeederSetPID(int rpm, Feeder feeder) {
@@ -31,13 +31,17 @@ public class FeederSetPID extends CommandBase {
     addRequirements(feeder);
   }
 
+  /**
+   * Turn on the feeder PID using RPM from Shuffleboard.
+   * @param feeder feeder subsystem to use
+   */
   public FeederSetPID(Feeder feeder) {
     this.feeder = feeder;
     this.rpm = 0;
     getRPMFromShuffleboard = true;
     addRequirements(feeder);
 
-    if (SmartDashboard.getNumber("Feeder Manual SetPoint RPM", -9999) == -9999)
+    if(SmartDashboard.getNumber("Feeder Manual SetPoint RPM", -9999) == -9999)
       SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 2000);
   }
 
@@ -50,7 +54,7 @@ public class FeederSetPID extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if (getRPMFromShuffleboard) rpm = SmartDashboard.getNumber("Feeder Manual SetPoint RPM", 2000);
+    if(getRPMFromShuffleboard) rpm = SmartDashboard.getNumber("Feeder Manual SetPoint RPM", 2000);
     feeder.setFeederPID(rpm);
   }
 

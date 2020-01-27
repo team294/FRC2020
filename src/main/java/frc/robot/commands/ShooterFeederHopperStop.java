@@ -12,12 +12,14 @@ import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
+/**
+ * Command group to stop the shooter, feeder, and hopper.
+ */
 public class ShooterFeederHopperStop extends ParallelCommandGroup {
   /**
-   * Creates a new ShooterFeederHopperStop.
+   * @param shooter shooter subsystem to use
+   * @param feeder feeder subsystem to use
+   * @param hopper hopper subsystem to use
    */
   public ShooterFeederHopperStop(Shooter shooter, Feeder feeder, Hopper hopper) {
     addCommands(
