@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.util.Units;
 
 import frc.robot.subsystems.*;
-import frc.robot.utilities.FileLog;
+import frc.robot.utilities.*;
 
 import static frc.robot.Constants.DriveConstants.*;
 
@@ -27,7 +27,9 @@ public class DriveStraightTrapezoid extends CommandBase {
   private double maxVelMultiplier; // multiplier between 0.0 and 1.0 for limiting max velocity
   private double maxAccelMultiplier; // multiplier between 0.0 and 1.0 for limiting max acceleration
   private long profileStartTime; // initial time (time of starting point)
+  private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
+  private double targetAccel;
   private double targetVoltage; // voltage to pass to the motors to follow profile
   private double startAng; // initial angle (in degrees) (starts as 0 deg for relative turns)
   private double targetAng; // target angle to the right (in degrees)
@@ -36,17 +38,13 @@ public class DriveStraightTrapezoid extends CommandBase {
   private double angVel;
   private double endTime;
   private double timeSinceStart;
-  private long currUpdateTime;
-  private long prevUpdateTime;
-  private double changeInTime;
   private FileLog log;
 
-
-  private TrapezoidProfile tProfile; // wpilib trapezoid profile generator
-  private TrapezoidProfile.State tStateCurr; // initial state of the system (position in deg and time in sec)
-  private TrapezoidProfile.State tStateNext; // next state of the system as calculated by the profile generator
-  private TrapezoidProfile.State tStateFinal; // goal state of the system (position in deg and time in sec)
-  private TrapezoidProfile.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
+  private TrapezoidProfileBCR tProfile; // wpilib trapezoid profile generator
+  private TrapezoidProfileBCR.State tStateCurr; // initial state of the system (position in deg and time in sec)
+  private TrapezoidProfileBCR.State tStateNext; // next state of the system as calculated by the profile generator
+  private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
+  private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
   /**
    * @param driveTrain reference to the drive train subsystem
@@ -67,19 +65,17 @@ public class DriveStraightTrapezoid extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    tStateFinal = new TrapezoidProfile.State(target, 0.0); // initialize goal state (degrees to turn)
-    tStateCurr = new TrapezoidProfile.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
+    tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
+    tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
-    tConstraints = new TrapezoidProfile.Constraints(kMaxSpeedMetersPerSecond * maxVelMultiplier, kMaxAccelerationMetersPerSecondSquared * maxAccelMultiplier); // initialize velocity
+    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxSpeedMetersPerSecond * maxVelMultiplier, kMaxAccelerationMetersPerSecondSquared * maxAccelMultiplier); // initialize velocity
                                                                                                                           // and accel limits
-    tProfile = new TrapezoidProfile(tConstraints, tStateFinal, tStateCurr); // generate profile
+    tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
     System.out.println(tProfile.totalTime());
     
     endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
-    prevUpdateTime = profileStartTime;
-    currUpdateTime = profileStartTime;
-    
+    currProfileTime = profileStartTime;
     startAng = Units.inchesToMeters(driveTrain.getAverageDistance());
     // prevAng = startAng;
     // targetAng = startAng + target; // calculate final angle based on how many degrees are to be turned
@@ -88,20 +84,14 @@ public class DriveStraightTrapezoid extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currUpdateTime = System.currentTimeMillis();
-    changeInTime = ((double)(currUpdateTime - prevUpdateTime)) / 1000.0;
-    // System.out.println(changeInTime);
+    driveTrain.feedTheDog();
+    currProfileTime = System.currentTimeMillis();
+    timeSinceStart = (double)(currProfileTime - profileStartTime) / 1000.0;
+    tStateNext = tProfile.calculate(timeSinceStart);
 
-    timeSinceStart = (double)(currUpdateTime - profileStartTime) / 1000.0;
-    tStateNext = tProfile.calculate(changeInTime);
-
-    prevUpdateTime = currUpdateTime;
-    
     targetVel = tStateNext.velocity;
-    targetVoltage = targetVel * kVAngular;
-    // targetVoltage = (targetVoltage < 0.11) ? 0.11 : targetVoltage;
-    // targetVoltage = (targetVoltage > 0.5) ? 0.5 : targetVoltage;
-
+    targetAccel = tStateNext.acceleration;
+    targetVoltage = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
 
     SmartDashboard.putNumber("pos: ", tStateNext.position);
     SmartDashboard.putNumber("vel: ", targetVel);
@@ -117,12 +107,15 @@ public class DriveStraightTrapezoid extends CommandBase {
     driveTrain.setRightMotorOutput(-targetVoltage);
     driveTrain.setLeftMotorOutput(targetVoltage);
 
-    // currAng = Units.inchesToMeters(driveTrain.getAverageDistance()) - startAng;
-    // angVel = driveTrain.getAverageEncoderVelocity() * 2.54 / 100;
-    // System.out.println(currAng);
-    // System.out.println(angVel);
-    // tStateCurr = new TrapezoidProfile.State(currAng, angVel);
-    tProfile = new TrapezoidProfile(tConstraints, tStateFinal, tStateNext);
+    currAng = Units.inchesToMeters(driveTrain.getAverageDistance()) - startAng;
+    angVel = driveTrain.getAverageEncoderVelocity() * 2.54 / 100;
+    tStateCurr = new TrapezoidProfileBCR.State(currAng, angVel);
+    tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
+    profileStartTime = currProfileTime;
+    endTime = tProfile.totalTime();
+    System.out.println(endTime);
+
+    driveTrain.feedTheDog();
     // prevAng = currAng;
   }
 

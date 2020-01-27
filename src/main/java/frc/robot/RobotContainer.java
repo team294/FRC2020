@@ -64,7 +64,7 @@ public class RobotContainer {
     // Config shuffleboard
     configureShuffleboard();
 
-    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick)); //TODO uncomment after testing
+    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, log ,leftJoystick, rightJoystick)); //TODO uncomment after testing
   }
 
   /**
@@ -79,9 +79,12 @@ public class RobotContainer {
 
   private void configureShuffleboard(){
     // buttons for testing turnGyro
-    SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.25, 0.25));
+    SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
-    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, -1)); // to calculate max angular velocity
+    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
+    SmartDashboard.putData("DriveStraight", new DriveStraightTrapezoid(driveTrain, log, -2, 0.3333333, 0.3333333));
+    SmartDashboard.putData("DriveBack", new DriveSetPercentOutput(driveTrain, -0.2, 0.2));
+
   }
 
 

@@ -9,10 +9,8 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile;
-
 import frc.robot.subsystems.*;
-import frc.robot.utilities.FileLog;
+import frc.robot.utilities.*;
 
 import static frc.robot.Constants.DriveConstants.*;
 
@@ -48,11 +46,11 @@ public class DriveTurnGyro extends CommandBase {
   private long currUpdateTime; // time of current scheduler cycle
 
   // Trapezoid profile objects
-  private TrapezoidProfile tProfile; // wpilib trapezoid profile generator
-  private TrapezoidProfile.State tStateCurr; // initial state of the system (position in deg and time in sec)
-  private TrapezoidProfile.State tStateNext; // next state of the system as calculated by the profile generator
-  private TrapezoidProfile.State tStateFinal; // goal state of the system (position in deg and time in sec)
-  private TrapezoidProfile.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
+  private TrapezoidProfileBCR tProfile; // wpilib trapezoid profile generator
+  private TrapezoidProfileBCR.State tStateCurr; // initial state of the system (position in deg and time in sec)
+  private TrapezoidProfileBCR.State tStateNext; // next state of the system as calculated by the profile generator
+  private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
+  private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
   /**
    * @param driveTrain reference to the drive train subsystem
@@ -74,12 +72,12 @@ public class DriveTurnGyro extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    tStateFinal = new TrapezoidProfile.State(target, 0.0); // set goal/target (degrees to turn to the right)
-    tStateCurr = new TrapezoidProfile.State(0.0, 0.0); // set inital state (relative turning, so assume initPos is 0 degrees)
+    tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // set goal/target (degrees to turn to the right)
+    tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // set inital state (relative turning, so assume initPos is 0 degrees)
 
-    tConstraints = new TrapezoidProfile.Constraints(kMaxAngularVelocity * maxVelMultiplier, kMaxAngularAcceleration * maxAccelMultiplier); // initialize velocity
+    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxAngularVelocity * maxVelMultiplier, kMaxAngularAcceleration * maxAccelMultiplier); // initialize velocity
                                                                                                                                            // and accel limits
-    tProfile = new TrapezoidProfile(tConstraints, tStateFinal, tStateCurr); // generate profile
+    tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
     
     profileEndTime = tProfile.totalTime(); // save time profile should take to run
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
@@ -127,9 +125,8 @@ public class DriveTurnGyro extends CommandBase {
 
     driveTrain.setRightMotorOutput(targetOutput);
     driveTrain.setLeftMotorOutput(targetOutput);
-    driveTrain.feedTheDog(); // to prevent watchdog from shutting down motor
 
-    tProfile = new TrapezoidProfile(tConstraints, tStateFinal, tStateNext); // update profile with next point
+    tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateNext); // update profile with next point
 
     prevAng = currAng;
     prevUpdateTime = currUpdateTime;

@@ -156,10 +156,12 @@ public class DriveTrain extends SubsystemBase {
 
   public void setLeftMotorOutput(double percent) {
     leftMotor1.set(ControlMode.PercentOutput, percent);
+    feedTheDog();
   }
 
   public void setRightMotorOutput(double percent) {
     rightMotor1.set(ControlMode.PercentOutput, percent);
+    feedTheDog();
   }
 
   public void arcadeDrive(double speedPct, double rotation) {

@@ -40,7 +40,6 @@ public class DriveSetPercentOutput extends CommandBase {
     System.out.println("R output:" + rPercent);
     driveTrain.setLeftMotorOutput(lPercent);
     driveTrain.setRightMotorOutput(rPercent);
-    driveTrain.feedTheDog();
   }
 
   // Called once the command ends or is interrupted.
