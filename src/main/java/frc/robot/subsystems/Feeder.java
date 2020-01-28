@@ -68,7 +68,7 @@ public class Feeder extends SubsystemBase {
   /**
    * @param voltage voltage
    */
-  public void FeederSetVoltage(double voltage) {
+  public void feederSetVoltage(double voltage) {
     feederMotor.setVoltage(voltage);
   }
 
@@ -84,6 +84,13 @@ public class Feeder extends SubsystemBase {
 
     SmartDashboard.putNumber("Feeder SetPoint RPM", FeederRPM);
     System.out.println("Starting setFeederPID");
+  }
+
+  /**
+   * @return output voltage
+   */
+  public double feederGetVoltage() {
+    return feederMotor.getMotorOutputVoltage();
   }
 
   /**

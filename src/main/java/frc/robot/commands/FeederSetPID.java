@@ -66,7 +66,7 @@ public class FeederSetPID extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (interrupted) feeder.FeederSetVoltage(0);
+    if (interrupted) feeder.feederSetVoltage(0);
   }
 
   // Returns true when the command should end.

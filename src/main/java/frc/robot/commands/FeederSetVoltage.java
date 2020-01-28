@@ -30,7 +30,7 @@ public class FeederSetVoltage extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.FeederSetVoltage(voltage);
+    feeder.feederSetVoltage(voltage);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,7 +41,7 @@ public class FeederSetVoltage extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.FeederSetVoltage(0);
+    feeder.feederSetVoltage(0);
   }
 
   // Returns true when the command should end.
