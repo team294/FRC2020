@@ -101,7 +101,7 @@ public class Shooter extends SubsystemBase {
    * @return PID error, in RPM
    */
   public double getShooterPIDError() {
-    return shooterMotor1.getClosedLoopError() / ticksPer100ms;
+    return shooterMotor1.getClosedLoopError() * ticksPer100ms;
   }
 
   @Override
@@ -128,6 +128,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter RPM", measuredRPM);
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotor1.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotor2.getSupplyCurrent());
+    SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
   }
 
   /**

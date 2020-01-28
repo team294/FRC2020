@@ -24,8 +24,9 @@ public class ShooterFeederHopperSequence extends SequentialCommandGroup {
    */
   public ShooterFeederHopperSequence(Shooter shooter, Feeder feeder, Hopper hopper) {
     addCommands( 
-      new ShooterSetPID(shooter),
-      // new ParallelCommandGroup(new FeederSetPID(feeder), new HopperSetPercentOutput(hopper))
+      new ShooterSetPID(2800, shooter),
+      //new ParallelCommandGroup(new FeederSetPID(feeder), new HopperSetPercentOutput(hopper))
+      new Wait(0.5),
       new FeederSetPID(feeder),
       new HopperSetPercentOutput(hopper)
     );

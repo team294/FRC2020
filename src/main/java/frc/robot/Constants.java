@@ -34,7 +34,7 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static final int intakePort = 50;
-        public static final double intakeDefaultPercentOutput = 1;
+        public static final double intakeDefaultPercentOutput = 0.8;
     }
 
     public static final class HopperConstants {
