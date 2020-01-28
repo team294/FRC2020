@@ -62,7 +62,7 @@ public class RobotContainer {
     configureButtonBindings(); // configure button bindings
     configureShuffleboard(); // configure shuffleboard
 
-    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick));
+    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick, log));
   }
 
   public void configureShuffleboard() {

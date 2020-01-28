@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.utilities.FileLog;
 
 /**
  * Command to control the drive train with joysticks using arcade drive.
@@ -19,16 +20,19 @@ public class DriveWithJoystickArcade extends CommandBase {
   private final Joystick leftJoystick;
   private final Joystick rightJoystick;
   private double leftPercent, rightPercent;
+  private FileLog log;
 
   /**
    * @param driveTrain drive train subsystem to use
    * @param leftJoystick left joystick
    * @param rightJoystick right joystick
+   * @param log filelog to use
    */
-  public DriveWithJoystickArcade(DriveTrain driveTrain, Joystick leftJoystick, Joystick rightJoystick) {
+  public DriveWithJoystickArcade(DriveTrain driveTrain, Joystick leftJoystick, Joystick rightJoystick, FileLog log) {
     this.driveTrain = driveTrain;
     this.leftJoystick = leftJoystick;
     this.rightJoystick = rightJoystick;
+    this.log = log;
     addRequirements(driveTrain);
   }
 
@@ -42,6 +46,8 @@ public class DriveWithJoystickArcade extends CommandBase {
   public void execute() {
     leftPercent = -leftJoystick.getY();
     rightPercent = rightJoystick.getX();
+
+    log.writeLog(false, "DriveWithJoystickArcade", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
 
     if(Math.abs(leftPercent) < 0.05) leftPercent = 0;
     if(Math.abs(rightPercent) < 0.05) rightPercent = 0;

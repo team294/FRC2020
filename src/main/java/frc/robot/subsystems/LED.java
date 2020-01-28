@@ -83,7 +83,7 @@ public class LED extends SubsystemBase {
     else if (color.equals("Orange")) ledBuffer.setRGB(index, (int)(255*intensity), (int)(102*intensity), 0);
     else if (color.equals("Turquoise")) ledBuffer.setRGB(index, 0, (int)(255*intensity), (int)(128*intensity));
     else ledBuffer.setRGB(index, 0, 0, 0);
-    ledBuffer.setRGB(index, 255, 0, 0);
+   //ledBuffer.setRGB(index, 255, 0, 0);
    //System.out.println(index);
   }
 
