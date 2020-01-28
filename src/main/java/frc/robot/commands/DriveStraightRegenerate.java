@@ -16,13 +16,14 @@ import frc.robot.utilities.*;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-public class DriveStraightTrapezoid extends CommandBase {
+public class DriveStraightRegenerate extends CommandBase {
   /**
    * Uses wpilib TrapezoidProfile generator to generate a motion profile for drive train turning
-   * Does not regenerate the profile every time
    */
 
   private DriveTrain driveTrain; // reference to driveTrain
+  private FileLog log;
+
   private double target; // how many more degrees to the right to turn
   private double maxVelMultiplier; // multiplier between 0.0 and 1.0 for limiting max velocity
   private double maxAccelMultiplier; // multiplier between 0.0 and 1.0 for limiting max acceleration
@@ -32,9 +33,10 @@ public class DriveStraightTrapezoid extends CommandBase {
   private double targetAccel;
   private double targetVoltage; // voltage to pass to the motors to follow profile
   private double startDist; // initial angle (in degrees) (starts as 0 deg for relative turns)
+  private double currDist;
+  private double linearVel;
   private double endTime;
   private double timeSinceStart;
-  private FileLog log;
 
   private TrapezoidProfileBCR tProfile; // wpilib trapezoid profile generator
   private TrapezoidProfileBCR.State tStateCurr; // initial state of the system (position in deg and time in sec)
@@ -48,7 +50,7 @@ public class DriveStraightTrapezoid extends CommandBase {
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveStraightTrapezoid(DriveTrain driveTrain, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
+  public DriveStraightRegenerate(DriveTrain driveTrain, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.log = log;
@@ -73,7 +75,8 @@ public class DriveStraightTrapezoid extends CommandBase {
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
     startDist = Units.inchesToMeters(driveTrain.getAverageDistance());
-
+    // prevAng = startAng;
+    // targetAng = startAng + target; // calculate final angle based on how many degrees are to be turned
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -102,7 +105,16 @@ public class DriveStraightTrapezoid extends CommandBase {
     driveTrain.setRightMotorOutput(-targetVoltage);
     driveTrain.setLeftMotorOutput(targetVoltage);
 
+    currDist = Units.inchesToMeters(driveTrain.getAverageDistance()) - startDist;
+    linearVel = driveTrain.getAverageEncoderVelocity() * 2.54 / 100;
+    tStateCurr = new TrapezoidProfileBCR.State(currDist, linearVel);
+    tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
+    profileStartTime = currProfileTime;
+    endTime = tProfile.totalTime();
+    System.out.println(endTime);
+
     driveTrain.feedTheDog();
+    // prevAng = currAng;
   }
 
   // Called once the command ends or is interrupted.
