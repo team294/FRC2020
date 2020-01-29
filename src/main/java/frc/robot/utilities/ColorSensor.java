@@ -50,21 +50,14 @@ public class ColorSensor {
      */
     public String getColor() {
         Color detectedColor = getColorNumber();
-
         String colorString;
         ColorMatchResult match = colorMatcher.matchClosestColor(detectedColor);
         
-        if (match.color == kBlueTarget) {
-            colorString = "Blue";
-        } else if (match.color == kRedTarget) {
-            colorString = "Red";
-        } else if (match.color == kGreenTarget) {
-            colorString = "Green";
-        } else if (match.color == kYellowTarget) {
-            colorString = "Yellow";
-        } else {
-            colorString = "Unknown";
-        }
+        if (match.color == kBlueTarget) colorString = "Blue";
+        else if (match.color == kRedTarget) colorString = "Red";
+        else if (match.color == kGreenTarget) colorString = "Green";
+        else if (match.color == kYellowTarget) colorString = "Yellow";
+        else colorString = "Unknown";
         
         return colorString;
     }
@@ -98,4 +91,17 @@ public class ColorSensor {
         return colorSensor.getProximity();
     }
     
+    /**
+     * This method assumes that the color detected by the control panel
+     * sensor will be two colors to the right of the color that the
+     * robot's color sensor is detecting.
+     * @return String of color that is detected by control panel sensor
+     */
+    public String getControlPanelSensorColor() {
+        if (getColor().equals("Red")) return "Blue";
+        else if (getColor().equals("Yellow")) return "Green";
+        else if (getColor().equals("Blue")) return "Red";
+        else if (getColor().equals("Green")) return "Yellow";
+        else return "";
+    }
 }

@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.util.Units;
  * wherever the constants are needed, to reduce verbosity.
  */
 public final class Constants {
-
     public static final class ShooterConstants {
         public static final int shooter1Port = 30;
         public static final int shooter2Port = 31;
@@ -42,7 +41,14 @@ public final class Constants {
         public static final double hopperDefaultPercentOutput = 0.8;
     }
 
-    public static final class DriveConstants{
+    public static final class ColorWheelConstants {
+        public static final int colorWheelPort = 60;
+        public static final double colorWheelRotationVoltage = 3.5;
+        public static final double colorWheelPositionVoltage = 2.5;
+        public static final double timerCheck = 0.11;
+    }
+
+    public static final class DriveConstants {
         public static int leftDriveMotorOne = 10;
         public static int leftDriveMotorTwo = 11;
     
