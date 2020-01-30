@@ -12,6 +12,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -31,14 +32,9 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Shooter;
-import frc.robot.utilities.FileLog;
-import frc.triggers.AxisTrigger;
-import frc.triggers.POVTrigger;
+import frc.robot.subsystems.*;
+import frc.robot.utilities.*;
+import frc.robot.triggers.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -53,6 +49,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
   private final DriveTrain driveTrain = new DriveTrain(log);
+  private final LED led = new LED();
 
   Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
   Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
@@ -66,7 +63,7 @@ public class RobotContainer {
     configureButtonBindings(); // configure button bindings
     configureShuffleboard(); // configure shuffleboard
 
-    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick));
+    driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick, log));
   }
 
   public void configureShuffleboard() {
@@ -86,6 +83,13 @@ public class RobotContainer {
 
     // hopper subsystem
     SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
+
+    // led subsystem
+    SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
+    SmartDashboard.putData("LEDSetStrip YELLOW", new LEDSetStrip("Yellow", led));
+    SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
+    SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
+    SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper));
@@ -117,32 +121,32 @@ public class RobotContainer {
     }
 
     // A = 1, B = 2, X = 3, Y = 4
-    xb[1].whenPressed(new Wait(0));
+    xb[1].whenPressed(new ShooterFeederHopperStop(shooter, feeder, hopper));
     xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper));
-    xb[3].whenPressed(new Wait(0));
-    xb[4].whenPressed(new Wait(0));
+    xb[3].whenPressed(new ShooterSetPID(shooter));
+    // xb[4].whenPressed(new Wait(0));
 
     // LB = 5, RB = 6
-    xb[5].whenPressed(new Wait(0));
-    xb[6].whenPressed(new Wait(0));
+    // xb[5].whenPressed(new Wait(0));
+    // xb[6].whenPressed(new Wait(0));
 
     // back = 7, start = 8
-    xb[7].whenPressed(new Wait(0));
-    xb[8].whenPressed(new Wait(0));
+    // xb[7].whenPressed(new Wait(0));
+    // xb[8].whenPressed(new Wait(0));
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
-    xb[9].whenPressed(new Wait(0));
-    xb[10].whenPressed(new Wait(0));
+    // xb[9].whenPressed(new Wait(0));
+    // xb[10].whenPressed(new Wait(0));
 
     // pov is the d-pad (up, down, left, right)
-    xbPOVUp.whenActive(new Wait(0));
+    // xbPOVUp.whenActive(new Wait(0));
     xbPOVDown.whileActiveOnce(new IntakeSetPercentOutput(intake));
-    xbPOVLeft.whenActive(new Wait(0));
-    xbPOVRight.whenActive(new Wait(0));
+    // xbPOVLeft.whenActive(new Wait(0));
+    // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
-    xbLT.whenActive(new Wait(0));
-    xbRT.whenActive(new Wait(0));
+    // xbLT.whenActive(new Wait(0));
+    // xbRT.whenActive(new Wait(0));
   }
 
   public void configureJoystickButtons() {
@@ -224,6 +228,15 @@ public class RobotContainer {
 
     // bottom row DOWN, from left to right
     coP[16].whenPressed(new Wait(0));*/
+  }
+
+  /**
+	 * Set xbox controller rumble percent.
+	 * @param percentRumble percent rumble (0 to 1)
+	 */
+	public void setXBoxRumble(double percentRumble) {
+		xboxController.setRumble(RumbleType.kLeftRumble, percentRumble);
+    xboxController.setRumble(RumbleType.kRightRumble, percentRumble);
   }
 
   /**
