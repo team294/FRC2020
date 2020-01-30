@@ -37,8 +37,8 @@ import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
-import frc.triggers.AxisTrigger;
 import frc.triggers.POVTrigger;
+import frc.triggers.AxisTrigger;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -239,15 +239,15 @@ public class RobotContainer {
   }
 
   public void autonomousInit() {
-    log.writeLog(false, "Auto", "Mode Init");
+    log.writeLog(true, "Auto", "Mode Init");
   }
 
   public void teleopInit() {
-    log.writeLog(false, "Teleop", "Mode Init");
+    log.writeLog(true, "Teleop", "Mode Init");
   }
 
   public void disabledInit() {
-    log.writeLog(false, "Disabled", "Mode Init");
+    log.writeLog(true, "Disabled", "Mode Init");
   }
 
   private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
