@@ -20,6 +20,7 @@ public class LEDSetStrip extends CommandBase {
  
 
   /**
+   * Only use this to turn off LEDs.
    * @param color color as a string (first letter capital)
    * @param led LED subsystem to use
    **/
@@ -35,7 +36,7 @@ public class LEDSetStrip extends CommandBase {
    * @param intensity LED intensity (0 to 1)
    * @param led LED subsystem to use
    **/
-	public LEDSetStrip(String color, int intensity, LED led) {
+	public LEDSetStrip(String color, double intensity, LED led) {
     this.led = led;
     this.color = color;
 	  addRequirements(led);

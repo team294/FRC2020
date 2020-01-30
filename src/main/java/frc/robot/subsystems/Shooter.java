@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,8 +42,9 @@ public class Shooter extends SubsystemBase {
     shooterMotor1.configClosedloopRamp(0.05); //seconds from neutral to full
     shooterMotor2.configClosedloopRamp(0.05);
     shooterMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
-    shooterMotor2.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
-
+    // shooterMotor2.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs);
+    shooterMotor1.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
+    
     // shooterMotor2.set(ControlMode.Follower, Constants.ShooterConstants.shooter1Port);     Redundant with line 67
     
     // PID coefficients initial
@@ -101,7 +103,7 @@ public class Shooter extends SubsystemBase {
    * @return PID error, in RPM
    */
   public double getShooterPIDError() {
-    return shooterMotor1.getClosedLoopError() / ticksPer100ms;
+    return shooterMotor1.getClosedLoopError() * ticksPer100ms;
   }
 
   @Override
@@ -128,6 +130,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter RPM", measuredRPM);
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotor1.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotor2.getSupplyCurrent());
+    SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
   }
 
   /**
@@ -139,7 +142,9 @@ public class Shooter extends SubsystemBase {
       "Motor RPM", shooterMotor1.getSelectedSensorVelocity(0) *  ticksPer100ms,
       "Motor Volt", shooterMotor1.getMotorOutputVoltage(), 
       "Motor1 Amps", shooterMotor1.getSupplyCurrent(),
-      "Motor2 Amps", shooterMotor2.getSupplyCurrent()
+      "Motor2 Amps", shooterMotor2.getSupplyCurrent(),
+      "Measured RPM", measuredRPM,
+      "PID Error", getShooterPIDError()
     );
   }
 }

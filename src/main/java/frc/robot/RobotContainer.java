@@ -12,6 +12,7 @@ import java.util.List;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
@@ -123,7 +124,7 @@ public class RobotContainer {
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterFeederHopperStop(shooter, feeder, hopper));
     xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper));
-    // xb[3].whenPressed(new Wait(0));
+    xb[3].whenPressed(new ShooterSetPID(shooter));
     // xb[4].whenPressed(new Wait(0));
 
     // LB = 5, RB = 6
@@ -228,6 +229,15 @@ public class RobotContainer {
 
     // bottom row DOWN, from left to right
     coP[16].whenPressed(new Wait(0));*/
+  }
+
+  /**
+	 * Set xbox controller rumble percent.
+	 * @param percentRumble percent rumble (0 to 1)
+	 */
+	public void setXBoxRumble(double percentRumble) {
+		xboxController.setRumble(RumbleType.kLeftRumble, percentRumble);
+    xboxController.setRumble(RumbleType.kRightRumble, percentRumble);
   }
 
   /**
