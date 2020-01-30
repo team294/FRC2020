@@ -17,7 +17,7 @@ public class LEDSetPattern extends CommandBase {
   private LED led;
   private int rowNumber;
   private double intensity;
- // private LED led2; 
+ 
   
   /**
    * @param led LED subsystem to use
