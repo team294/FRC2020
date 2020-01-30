@@ -54,8 +54,8 @@ public final class Constants {
         // verify these
         public static final double kMaxSpeedMetersPerSecond = 3.0;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
-        public static final double kVLinear = 0.1;
-        public static final double kALinear = 0.09;
+        public static final double kVLinear = 0.07;
+        public static final double kALinear = 0.0;
         public static final double kSLinear = 0.055; // 0.11 for working on a drive base
     }
     

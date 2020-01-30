@@ -30,11 +30,17 @@ public class DriveStraightTrapezoid extends CommandBase {
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
-  private double targetVoltage; // voltage to pass to the motors to follow profile
   private double startDist; // initial angle (in degrees) (starts as 0 deg for relative turns)
   private double endTime;
   private double timeSinceStart;
   private FileLog log;
+
+  private double kP;
+  private double kI;
+  private double kD;
+  private double aFF;
+
+  private int accuracyCounter = 0;
 
   private TrapezoidProfileBCR tProfile; // wpilib trapezoid profile generator
   private TrapezoidProfileBCR.State tStateCurr; // initial state of the system (position in deg and time in sec)
@@ -55,7 +61,15 @@ public class DriveStraightTrapezoid extends CommandBase {
     this.target = target;
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
+
     addRequirements(driveTrain);
+
+    kP = 0.0;
+    kI = 0.0;
+    kD = 0.0;
+    aFF = 0.0;
+
+    driveTrain.setUpTrapezoidPID(kP, kI, kD);
   }
 
   // Called when the command is initially scheduled.
@@ -72,37 +86,32 @@ public class DriveStraightTrapezoid extends CommandBase {
     endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
-    startDist = Units.inchesToMeters(driveTrain.getAverageDistance());
-
+    startDist = Units.inchesToMeters(driveTrain.getLeftEncoderInches()); //getAverageDistance());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveTrain.feedTheDog();
     currProfileTime = System.currentTimeMillis();
     timeSinceStart = (double)(currProfileTime - profileStartTime) / 1000.0;
     tStateNext = tProfile.calculate(timeSinceStart);
-
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
-    targetVoltage = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
+    aFF = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
+    System.out.println(targetVel);
 
     SmartDashboard.putNumber("pos: ", tStateNext.position);
     SmartDashboard.putNumber("vel: ", targetVel);
-    SmartDashboard.putNumber("V: ", targetVoltage);
+    SmartDashboard.putNumber("%: ", aFF);
 
     log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, 
-    "posA", (Units.inchesToMeters(driveTrain.getAverageDistance()) - startDist), 
-    "velLA", (driveTrain.getLeftEncoderVelocity()*2.52 / 100), "velRA", (driveTrain.getRightEncoderVelocity()*2.52 / 100), "V", targetVoltage);
+    "posA", (Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDist), 
+    "velLA", (driveTrain.getLeftEncoderVelocity()*2.54 / 100), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "V", aFF);
     System.out.println("pos: " + tStateNext.position);
     System.out.println("vel: " + targetVel);
-    System.out.println("V: " + targetVoltage);
+    System.out.println("V: " + aFF);
 
-    driveTrain.setRightMotorOutput(-targetVoltage);
-    driveTrain.setLeftMotorOutput(targetVoltage);
-
-    driveTrain.feedTheDog();
+    driveTrain.setTrapezoidPID(aFF, (driveTrain.inchesToEncoderTicks(Units.metersToInches(targetVel)) / 10), true);
   }
 
   // Called once the command ends or is interrupted.
@@ -121,10 +130,17 @@ public class DriveStraightTrapezoid extends CommandBase {
     //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
     //   return true;
     // }
-    if(timeSinceStart >= endTime) {
+    if(Math.abs((startDist + target) - Units.inchesToMeters(driveTrain.getLeftEncoderInches())) < 0.025) {
+      accuracyCounter++;
       System.out.println("Start: " + startDist);
       System.out.println("theoretical: " + (startDist + target));
-      System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
+      System.out.println("actual: " + Units.inchesToMeters(driveTrain.getLeftEncoderInches()));
+      System.out.println(accuracyCounter);
+    } else {
+      accuracyCounter = 0;
+    }
+
+    if(accuracyCounter >= 5) {
       return true;
     }
     return false;

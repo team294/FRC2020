@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -54,7 +55,7 @@ public class DriveTrain extends SubsystemBase {
    private double currAng; // current recorded gyro angle
    private double prevTime; // last time gyro angle was recorded
    private double currTime; // current time gyro angle is being recorded
-  
+
   public DriveTrain(FileLog log) {
     this.log = log; // save reference to the fileLog
 
@@ -336,6 +337,26 @@ public class DriveTrain extends SubsystemBase {
 
   public double getAverageDistance() {
 		return (getRightEncoderInches() + getLeftEncoderInches()) / 2.0;
+  }
+
+  public void setUpTrapezoidPID(double kP, double kI, double kD) {
+    leftMotor1.config_kP(1, kP);
+    leftMotor1.config_kI(1, kI);
+    leftMotor1.config_kD(1, kD);
+
+    rightMotor1.config_kP(1, kP);
+    rightMotor1.config_kI(1, kI);
+    rightMotor1.config_kD(1, kD);
+
+    leftMotor1.selectProfileSlot(1, 0);
+    rightMotor1.selectProfileSlot(1, 0);
+  }
+
+  public void setTrapezoidPID(double aFF, double targetVel, boolean reverseRight) {
+    int direction = (reverseRight) ? -1 : 1;
+    leftMotor1.set(ControlMode.Velocity, targetVel, DemandType.ArbitraryFeedForward, aFF);
+    rightMotor1.set(ControlMode.Velocity, targetVel*direction, DemandType.ArbitraryFeedForward, aFF);
+    feedTheDog();
   }
 
   /**
