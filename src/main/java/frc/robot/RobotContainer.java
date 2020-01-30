@@ -69,6 +69,9 @@ public class RobotContainer {
     driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick));
   }
 
+  /**
+   * Use this method to define your Shuffleboard mappings.
+   */
   public void configureShuffleboard() {
     // shooter subsystem
     SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
@@ -233,6 +236,18 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
     return getTestTrajectory();
+  }
+
+  public void autonomousInit() {
+    log.writeLog(false, "Auto", "Mode Init");
+  }
+
+  public void teleopInit() {
+    log.writeLog(false, "Teleop", "Mode Init");
+  }
+
+  public void disabledInit() {
+    log.writeLog(false, "Disabled", "Mode Init");
   }
 
   private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
