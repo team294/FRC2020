@@ -43,6 +43,11 @@ public final class Constants {
         public static final double hopperDefaultPercentOutput = 0.8;
     }
 
+    public static final class TurretConstants {
+        public static final int turretPort = 20;
+        public static final double ticksPerDegree = 2048; // TODO set turret ticks per degree
+    }
+
     public static final class DriveConstants{
         public static int leftDriveMotorOne = 10;
         public static int leftDriveMotorTwo = 11;

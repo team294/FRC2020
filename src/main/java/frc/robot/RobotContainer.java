@@ -7,30 +7,30 @@
 
 package frc.robot;
 
-import java.util.List;
+// import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.controller.PIDController;
+/*import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;*/
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
+/*import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;*/
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
+//import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.DriveConstants;
+//import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -49,6 +49,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
   private final DriveTrain driveTrain = new DriveTrain(log);
+  private final Turret turret = new Turret(log);
   private final LED led = new LED();
 
   Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
@@ -83,6 +84,12 @@ public class RobotContainer {
 
     // hopper subsystem
     SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
+
+    // turret subsystem
+    SmartDashboard.putData("TurretZeroAngle()", new TurretZeroAngle(turret));
+    SmartDashboard.putData("TurretSetPercentOutput(0.5)", new TurretSetPercentOutput(0.5, turret));
+    SmartDashboard.putData("TurretSetPercentOutput(-0.5)", new TurretSetPercentOutput(-0.5, turret));
+    SmartDashboard.putData("Turret STOP", new TurretSetPercentOutput(0, turret));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
@@ -245,10 +252,10 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // An ExampleCommand will run in autonomous
-    return getTestTrajectory();
+    return new Wait(0);
   }
 
-  private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
+  /*private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
     return new DifferentialDriveKinematics(trackWidth);
   }
 
@@ -311,5 +318,5 @@ public class RobotContainer {
 
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> driveTrain.tankDrive(0.0, 0.0, false));
-  }
+  }*/
 }
