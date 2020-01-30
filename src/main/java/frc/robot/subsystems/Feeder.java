@@ -10,6 +10,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -37,6 +38,7 @@ public class Feeder extends SubsystemBase {
     feederMotor.configClosedloopRamp(0.1); // seconds from neutral to full
     feederMotor.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs);
     feederMotor.setSensorPhase(false);
+    feederMotor.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
 
     // PID coefficients
     kP = 0.1;

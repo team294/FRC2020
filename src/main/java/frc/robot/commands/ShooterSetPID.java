@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
@@ -18,6 +19,7 @@ public class ShooterSetPID extends CommandBase {
   private final Shooter shooter;
   private double rpm;
   private final boolean getRpmFromShuffleboard;
+  private Timer timer;
   
   /**
    * @param rpm setpoint in RPM
@@ -27,6 +29,7 @@ public class ShooterSetPID extends CommandBase {
     this.shooter = shooter;
     this.rpm = rpm;
     this.getRpmFromShuffleboard = false;
+    timer = new Timer();
     addRequirements(shooter);
   }
 
@@ -38,6 +41,7 @@ public class ShooterSetPID extends CommandBase {
     this.shooter = shooter;
     this.rpm = 0;
     getRpmFromShuffleboard = true;
+    timer = new Timer();
     addRequirements(shooter);
 
     if(SmartDashboard.getNumber("Shooter Manual SetPoint RPM", -9999) == -9999)
@@ -49,6 +53,8 @@ public class ShooterSetPID extends CommandBase {
   public void initialize() {
     if(getRpmFromShuffleboard) rpm = SmartDashboard.getNumber("Shooter Manual SetPoint RPM", 3000);
     shooter.setShooterPID(rpm);
+    timer.reset();
+    timer.start();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -60,12 +66,13 @@ public class ShooterSetPID extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     if(interrupted) shooter.setShooterVoltage(0);
+    timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(shooter.getShooterPIDError()) < 200) return true;
+    if(timer.hasPeriodPassed(0.1) && Math.abs(shooter.getShooterPIDError()) < 200) return true;
     else return false;
   }
 }

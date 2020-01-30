@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
@@ -19,6 +20,7 @@ public class FeederSetPID extends CommandBase {
   private Feeder feeder;
   private double rpm;
   private boolean getRPMFromShuffleboard;
+  private Timer timer;
 
   /**
    * @param rpm setpoint in RPM
@@ -28,6 +30,7 @@ public class FeederSetPID extends CommandBase {
     this.feeder = feeder;
     this.rpm = rpm;
     this.getRPMFromShuffleboard = false;
+    timer = new Timer();
     addRequirements(feeder);
   }
 
@@ -39,6 +42,7 @@ public class FeederSetPID extends CommandBase {
     this.feeder = feeder;
     this.rpm = 0;
     getRPMFromShuffleboard = true;
+    timer = new Timer();
     addRequirements(feeder);
 
     if(SmartDashboard.getNumber("Feeder Manual SetPoint RPM", -9999) == -9999)
@@ -55,6 +59,8 @@ public class FeederSetPID extends CommandBase {
   @Override
   public void initialize() {
     if(getRPMFromShuffleboard) rpm = SmartDashboard.getNumber("Feeder Manual SetPoint RPM", 2000);
+    timer.reset();
+    timer.start();
     feeder.setFeederPID(rpm);
   }
 
@@ -67,12 +73,13 @@ public class FeederSetPID extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     if (interrupted) feeder.feederSetVoltage(0);
+    timer.stop();
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(feeder.getFeederPIDError()) < 200) return true;
+    if (timer.hasPeriodPassed(0.1) && Math.abs(feeder.getFeederPIDError()) < 200) return true;
     else return false;
   }
 }
