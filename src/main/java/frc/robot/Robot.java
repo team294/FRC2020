@@ -46,10 +46,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-
-    // turn on xbox controller rumble when feeder is running
-    if (robotContainer.getFeeder().feederGetVoltage() > 2) robotContainer.setXBoxRumble(1);
-    else robotContainer.setXBoxRumble(0);
   }
 
   /**
