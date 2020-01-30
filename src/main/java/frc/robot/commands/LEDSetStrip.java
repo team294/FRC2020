@@ -17,6 +17,7 @@ public class LEDSetStrip extends CommandBase {
   private LED led;
   private String color;
   private double intensity = -1;
+ 
 
   /**
    * @param color color as a string (first letter capital)
@@ -25,7 +26,8 @@ public class LEDSetStrip extends CommandBase {
 	public LEDSetStrip(String color, LED led) {
     this.led = led;
     this.color = color;
-	  addRequirements(led);
+    addRequirements(led);
+  
   }
   
   /**
