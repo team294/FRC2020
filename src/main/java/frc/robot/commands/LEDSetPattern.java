@@ -8,29 +8,32 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.*;
 
 /**
- * Command to set the feeder voltage.
+ * Command to send a pattern to the LED strip.
  */
-public class FeederSetVoltage extends CommandBase {
-  private Feeder feeder;
-  private double voltage;
-
+public class LEDSetPattern extends CommandBase {
+  private LED led;
+  private int rowNumber;
+  private double intensity; 
+  
   /**
-   * @param voltage voltage
-   * @param feeder feeder subsystem to use
+   * @param led LED subsystem to use
+   * @param rowNumber row in the patternLibrary
+   * @param intensity LED intensity (0 to 1)
    */
-  public FeederSetVoltage(double voltage, Feeder feeder) {
-    this.feeder = feeder;
-    this.voltage = voltage;
-    addRequirements(feeder);
-  }
+  public LEDSetPattern(LED led, int rowNumber, double intensity) {
+    this.intensity = intensity;
+    this.led = led;
+    this.rowNumber = rowNumber;
+    addRequirements(led);
+  }    
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.feederSetVoltage(voltage);
+    led.setPattern(LED.patternLibrary[rowNumber], intensity);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -41,12 +44,11 @@ public class FeederSetVoltage extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    feeder.feederSetVoltage(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
