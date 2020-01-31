@@ -7,30 +7,15 @@
 
 package frc.robot;
 
-import java.util.List;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.controller.RamseteController;
-import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
-import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
-import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
-import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -244,72 +229,6 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // An ExampleCommand will run in autonomous
-    return getTestTrajectory();
-  }
-
-  private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
-    return new DifferentialDriveKinematics(trackWidth);
-  }
-
-  public Command getTestTrajectory() {
-
-    driveTrain.zeroLeftEncoder();
-    driveTrain.zeroRightEncoder();
-    driveTrain.zeroGyroRotation();
-    // use starting angle to control trajectory
-    double startAngle = driveTrain.getGyroRotation();
-    System.out.println(startAngle);
-
-    DifferentialDriveKinematics driveKinematics = getDriveKinematics(DriveConstants.TRACK_WIDTH);
-
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
-        driveKinematics,
-        DriveConstants.MAX_VOLTAGE);
-
-    // Create config for trajectory
-    TrajectoryConfig config =
-        new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
-        DriveConstants.kMaxAccelerationMetersPerSecondSquared)
-            .setKinematics(driveKinematics)
-            .addConstraint(autoVoltageConstraint);
-
-    // An example trajectory to follow.  All units in meters.
-    // Start at the origin facing the +X direction
-    // Pass through these two interior waypoints, making an 's' curve path
-    // End 3 meters straight ahead of where we started, facing forward
-    Trajectory exampleTrajectory = TrajectoryGenerator.generateTrajectory(
-        new Pose2d(0, 0, new Rotation2d(0)),
-        List.of(
-            new Translation2d(4,1),
-            new Translation2d(6,1)
-        ),
-        new Pose2d(10, 0, new Rotation2d(0)),
-        config
-    );
-    int i = 1;
-    for(State s : exampleTrajectory.getStates()) {
-      Pose2d pose = s.poseMeters;
-      System.out.printf("%f %s %f %n", s.timeSeconds, pose, s.velocityMetersPerSecond);
-      i++;
-    }
-
-    RamseteCommand ramseteCommand = new RamseteCommand(
-        exampleTrajectory,
-        driveTrain::getPose,
-        new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA),
-        driveKinematics,
-        driveTrain::getWheelSpeeds,
-        new PIDController(DriveConstants.kP, 0, 0),
-        new PIDController(DriveConstants.kP, 0, 0),
-        driveTrain::tankDriveVolts,
-        driveTrain
-    );
-
-    // Run path following command, then stop at the end.
-    return ramseteCommand.andThen(() -> driveTrain.tankDrive(0.0, 0.0, false));
+    return new AutoTrench(driveTrain);
   }
 }
