@@ -90,7 +90,7 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip YELLOW", new LEDSetStrip("Yellow", led));
     SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
     SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
-    SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
+    SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));    // Why Red?  maybe use black?
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper));
