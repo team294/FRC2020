@@ -19,15 +19,30 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveTrain;
 
+
+/**
+ * Auto routine starting at the initiation line and getting balls from the trench
+ */
 public class AutoTrench extends SequentialCommandGroup {
 
   // holds the trajectory we are going to follow
+  // calcTrajectory() needs to be called in robotInit to populate this
   private static Trajectory trajectory;
 
   // holds the kinematics for this driveTrain
   private static DifferentialDriveKinematics driveKinematics = new DifferentialDriveKinematics(DriveConstants.TRACK_WIDTH);
 
+  /**
+   * AutoTrench constructor for command group
+   * @param driveTrain  The driveTrain to use to get the pose, wheel speeds and set the tankDriveVolts
+   */  
   public AutoTrench(DriveTrain driveTrain) {
+
+    // this should have been calculated in robotInit but check just in case
+    if (trajectory == null) {
+      System.out.println("WARNING: AutoTrench trajectory not pre-calculated");
+      calcTrajectory();
+    }
 
     addCommands(
       new RamseteCommand(
@@ -43,36 +58,55 @@ public class AutoTrench extends SequentialCommandGroup {
         driveTrain
       ).andThen(() -> driveTrain.tankDrive(0.0, 0.0, false))
     );
+
   }
 
+  /**
+   * Calculate the trajectory that will be followed. 
+   * This should be called ahead of time so as not to waste time in auto.
+  */
   public static void calcTrajectory() {
-
     // use starting angle to control trajectory
-    // double startAngle = driveTrain.getGyroRotation();
-    double startAngle = 0;
-    // System.out.println(startAngle);
+    // gyro must be zeroed prior to starting
+    double startAngle = 0.0;
 
     // Create a voltage constraint to ensure we don't accelerate too fast
     DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), driveKinematics,
+        new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
+        driveKinematics,
         DriveConstants.MAX_VOLTAGE);
 
     // Create config for trajectory
     TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
-        DriveConstants.kMaxAccelerationMetersPerSecondSquared).setKinematics(driveKinematics)
-            .addConstraint(autoVoltageConstraint);
+      DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+        .setKinematics(driveKinematics)
+        .addConstraint(autoVoltageConstraint);
 
-    // An example trajectory to follow. All units in meters.
-    // Start at the origin facing the +X direction
+    // the trajectory to follow
+    // all units in meters
+    // start at the origin facing the +X direction
     // Y is distance forward
-    trajectory = TrajectoryGenerator.generateTrajectory(new Pose2d(0, 0, new Rotation2d(startAngle)),
-        List.of(new Translation2d(1, 0)), new Pose2d(3, 0, new Rotation2d(startAngle)), config);
+    trajectory = TrajectoryGenerator.generateTrajectory(
+      new Pose2d(0, 0, new Rotation2d(startAngle)),
+      List.of(
+        new Translation2d(1, 0)
+      ), 
+      new Pose2d(3, 0, new Rotation2d(startAngle)), config);
 
     // dump trajectory for debugging
     for (State s : trajectory.getStates()) {
-      Pose2d pose = s.poseMeters;
-      System.out.printf("%f %s %f %n", s.timeSeconds, pose, s.velocityMetersPerSecond);
+      var pose = s.poseMeters;
+      var translation = pose.getTranslation();
+      var rotation = pose.getRotation();
+
+      System.out.printf("time:%f x:%f y:%f deg:%f vel:%f %n", 
+        s.timeSeconds, 
+        translation.getX(), 
+        translation.getY(), 
+        rotation.getDegrees(), 
+        s.velocityMetersPerSecond);
     }
+
   }
 
 }

@@ -49,6 +49,14 @@ public class RobotContainer {
     configureShuffleboard(); // configure shuffleboard
 
     driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick, log));
+
+    // calculate trajectory on robotInit so it's ready when the auto runs
+    try {
+      AutoTrench.calcTrajectory();
+    } catch (Exception e) {
+      System.err.println(e);
+    }
+
   }
 
   public void configureShuffleboard() {
