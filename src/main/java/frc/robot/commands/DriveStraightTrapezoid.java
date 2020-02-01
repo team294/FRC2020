@@ -69,7 +69,7 @@ public class DriveStraightTrapezoid extends CommandBase {
     kD = 0.0;
     aFF = 0.0;
 
-    driveTrain.setTalonPIDConstants(kP, kI, kD);
+    driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
   }
 
   // Called when the command is initially scheduled.

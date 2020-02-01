@@ -341,21 +341,24 @@ public class DriveTrain extends SubsystemBase {
 
   /**
    * Set up PID parameters for the drive train Talons
-   * @param kP
-   * @param kI
-   * @param kD
+   * @param kP Proportional term
+   * @param kI Integral term 
+   * @param kD Differential term
+   * @param kF Feed forward term (multiplied by setpoint)
    */
-  public void setTalonPIDConstants(double kP, double kI, double kD) {
-    leftMotor1.config_kP(1, kP);
-    leftMotor1.config_kI(1, kI);
-    leftMotor1.config_kD(1, kD);
+  public void setTalonPIDConstants(double kP, double kI, double kD, double kF) {
+    leftMotor1.config_kP(0, kP);
+    leftMotor1.config_kI(0, kI);
+    leftMotor1.config_kD(0, kD);
+    leftMotor1.config_kF(0, kF);
 
-    rightMotor1.config_kP(1, kP);
-    rightMotor1.config_kI(1, kI);
-    rightMotor1.config_kD(1, kD);
+    rightMotor1.config_kP(0, kP);
+    rightMotor1.config_kI(0, kI);
+    rightMotor1.config_kD(0, kD);
+    rightMotor1.config_kF(0, kF);
 
-    leftMotor1.selectProfileSlot(1, 0);
-    rightMotor1.selectProfileSlot(1, 0);
+    leftMotor1.selectProfileSlot(0, 0);
+    rightMotor1.selectProfileSlot(0, 0);
   }
 
   /**
