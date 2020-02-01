@@ -12,8 +12,10 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.*;
 
+/**
+ * Command to control the drive train with joysticks using arcade drive.
+ */
 public class DriveWithJoystickArcade extends CommandBase {
-  
   private final DriveTrain driveTrain;
   private final Joystick leftJoystick;
   private final Joystick rightJoystick;
@@ -22,13 +24,12 @@ public class DriveWithJoystickArcade extends CommandBase {
   private double leftPercent, rightPercent;
 
   /**
-   * Creates a new DriveWithJoystickArcade.
-   * 
-   * 
+   * @param driveTrain drive train subsystem to use
+   * @param leftJoystick left joystick
+   * @param rightJoystick right joystick
+   * @param log filelog to use
    */
-  public <Filelog> DriveWithJoystickArcade(DriveTrain driveTrain, FileLog log, Joystick leftJoystick,
-      Joystick rightJoystick) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public DriveWithJoystickArcade(DriveTrain driveTrain, Joystick leftJoystick, Joystick rightJoystick, FileLog log) {
     this.driveTrain = driveTrain;
     this.log = log;
     this.leftJoystick = leftJoystick;
@@ -39,7 +40,6 @@ public class DriveWithJoystickArcade extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -48,13 +48,10 @@ public class DriveWithJoystickArcade extends CommandBase {
     leftPercent = -leftJoystick.getY();
     rightPercent = rightJoystick.getX();
 
-    log.writeLog(false, "DriveWithJoysticks", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
-    if(Math.abs(leftPercent) < 0.05){
-      leftPercent = 0;
-    }
-    if(Math.abs(rightPercent) < 0.05){
-      rightPercent = 0;
-    }
+    log.writeLog(false, "DriveWithJoystickArcade", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
+
+    if(Math.abs(leftPercent) < 0.05) leftPercent = 0;
+    if(Math.abs(rightPercent) < 0.05) rightPercent = 0;
 
     driveTrain.arcadeDrive(leftPercent, rightPercent * 0.7);
   }

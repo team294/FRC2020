@@ -1,0 +1,254 @@
+{
+  "tabPane": [
+    {
+      "title": "Dashboard",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {
+          "0,0": {
+            "size": [
+              2,
+              5
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Shooter PID",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter P",
+                  "_title": "Shooter P"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter I",
+                  "_title": "Shooter I"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter D",
+                  "_title": "Shooter D"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter FF",
+                  "_title": "Shooter FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter SetPoint RPM",
+                  "_title": "Shooter SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
+                  "_title": "Shooter RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint RPM",
+                  "_title": "Shooter Manual SetPoint RPM"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint",
+                  "_title": "Shooter Manual SetPoint"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
+                  "_title": "Shooter STOP"
+                }
+              ]
+            }
+          },
+          "4,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/IntakeSetPercentOutput(1)",
+              "_title": "IntakeSetPercentOutput(1)"
+            }
+          },
+          "4,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/HopperSetPercentOutput(0.8)",
+              "_title": "HopperSetPercentOutput(0.8)"
+            }
+          },
+          "2,0": {
+            "size": [
+              2,
+              5
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Feeder PID",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder P",
+                  "_title": "Feeder P"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder I",
+                  "_title": "Feeder I"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder D",
+                  "_title": "Feeder D"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder FF",
+                  "_title": "Feeder FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder SetPoint RPM",
+                  "_title": "Feeder SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder RPM",
+                  "_title": "Feeder RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint RPM",
+                  "_title": "Feeder Manual SetPoint RPM"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint",
+                  "_title": "Feeder Manual SetPoint"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder STOP",
+                  "_title": "Feeder STOP"
+                }
+              ]
+            }
+          },
+          "7,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
+              "_title": "ShooterFeederHopperSequence"
+            }
+          },
+          "4,0": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/Feeder RPM",
+              "_title": "Feeder RPM",
+              "Graph/Visible time": 30.0,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Visible data/SmartDashboard/Feeder RPM": true
+            }
+          },
+          "9,0": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "LEDs",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/LEDSetStrip RED",
+                  "_title": "LEDSetStrip RED"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/LEDSetStrip YELLOW",
+                  "_title": "LEDSetStrip YELLOW"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/LEDSetStrip BLUE",
+                  "_title": "LEDSetStrip BLUE"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/LEDSetStrip GREEN",
+                  "_title": "LEDSetStrip GREEN"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/LEDSetStrip OFF",
+                  "_title": "LEDSetStrip OFF"
+                }
+              ]
+            }
+          },
+          "7,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Feeder",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/FeederSetVoltage(5)",
+                  "_title": "FeederSetVoltage(5)"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Encoder",
+                  "_title": "Feeder Encoder"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Voltage",
+                  "_title": "Feeder Voltage"
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  ],
+  "windowGeometry": {
+    "x": -8.0,
+    "y": -8.0,
+    "width": 1936.0,
+    "height": 1056.0
+  }
+}
