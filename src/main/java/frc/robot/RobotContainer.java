@@ -252,15 +252,15 @@ public class RobotContainer {
   }
 
   public void autonomousInit() {
-    log.writeLog(true, "Auto", "Mode Init");
+    log.writeLogEcho(true, "Auto", "Mode Init");
   }
 
   public void teleopInit() {
-    log.writeLog(true, "Teleop", "Mode Init");
+    log.writeLogEcho(true, "Teleop", "Mode Init");
   }
 
   public void disabledInit() {
-    log.writeLog(true, "Disabled", "Mode Init");
+    log.writeLogEcho(true, "Disabled", "Mode Init");
   }
 
   private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
