@@ -152,19 +152,22 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
-    prevColor = currColor;
-    currColor = colorSensor.getColor();
 
-    // change color of LED Strip if ColorSensor reads a new color
-    if (!prevColor.equals(currColor)) setStrip(currColor);
-    
-    // ColorSensor updated values on dashboard
-    SmartDashboard.putBoolean("Yellow", currColor == ("Yellow"));
-    SmartDashboard.putBoolean("Red", (currColor=="Red"));
-    SmartDashboard.putBoolean("Green", (currColor == "Green"));
-    SmartDashboard.putBoolean("Blue", (currColor == "Blue"));
-    SmartDashboard.putString("Color", currColor);
     SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+    if (colorSensor.getProximity() <1000) {
+    
+      prevColor = currColor;
+      currColor = colorSensor.getColor();
+
+      // change color of LED Strip if ColorSensor reads a new color
+      if (!prevColor.equals(currColor)) setStrip(currColor);
+      
+      // ColorSensor updated values on dashboard
+      SmartDashboard.putBoolean("Yellow", currColor == ("Yellow"));
+      SmartDashboard.putBoolean("Red", (currColor=="Red"));
+      SmartDashboard.putBoolean("Green", (currColor == "Green"));
+      SmartDashboard.putBoolean("Blue", (currColor == "Blue"));
+      SmartDashboard.putString("Color", currColor);
+    }
   }
 }

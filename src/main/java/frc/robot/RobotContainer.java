@@ -249,6 +249,10 @@ public class RobotContainer {
     return getTestTrajectory();
   }
 
+  public LED getLED() {
+    return led;
+  }
+
   private DifferentialDriveKinematics getDriveKinematics(double trackWidth) {
     return new DifferentialDriveKinematics(trackWidth);
   }

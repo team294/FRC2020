@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.LED; 
+import frc.robot.commands.*;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -21,7 +22,6 @@ import frc.robot.subsystems.LED;
 public class Robot extends TimedRobot {
   private Command autonomousCommand; // placeholder
   private RobotContainer robotContainer;
-  private LED led;
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -43,6 +43,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+    new LEDSetStrip("Red", 0.5, robotContainer.getLED());
+    System.out.println("PERIODIC");
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -55,11 +57,14 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
-    LED.setStrip("Purple");
+    //LED.setStrip("Purple");
+    new LEDSetStrip("Blue", 0.5, robotContainer.getLED());
   }
 
   @Override
   public void disabledPeriodic() {
+    new LEDSetStrip("Blue",  robotContainer.getLED());
+    System.out.println("DISABLED");
   }
 
   /**
