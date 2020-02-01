@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.utilities.*;
-import frc.robot.Constants.DriveConstants;
+import static frc.robot.Constants.DriveConstants.*;
 
 
 public class DriveTrain extends SubsystemBase {
@@ -70,18 +70,18 @@ public class DriveTrain extends SubsystemBase {
     ahrs = gyro;
     
     // configure motors
-    leftMotor1 = new WPI_TalonFX(DriveConstants.leftDriveMotorOne);
-    leftMotor2 = new WPI_TalonFX(DriveConstants.leftDriveMotorTwo);
-    rightMotor1 = new WPI_TalonFX(DriveConstants.rightDriveMotorOne);
-    rightMotor2 = new WPI_TalonFX(DriveConstants.rightDriveMotorTwo);
+    leftMotor1 = new WPI_TalonFX(leftDriveMotorOne);
+    leftMotor2 = new WPI_TalonFX(leftDriveMotorTwo);
+    rightMotor1 = new WPI_TalonFX(rightDriveMotorOne);
+    rightMotor2 = new WPI_TalonFX(rightDriveMotorTwo);
 
     leftMotor1.configFactoryDefault();
     leftMotor2.configFactoryDefault();
     rightMotor1.configFactoryDefault();
     rightMotor2.configFactoryDefault();
 
-    leftMotor2.set(ControlMode.Follower, DriveConstants.leftDriveMotorOne);
-    rightMotor2.set(ControlMode.Follower, DriveConstants.rightDriveMotorOne);
+    leftMotor2.set(ControlMode.Follower, leftDriveMotorOne);
+    rightMotor2.set(ControlMode.Follower, rightDriveMotorOne);
 
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
@@ -238,7 +238,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public static double encoderTicksToInches(double ticks) {
-    return ticks / DriveConstants.ticksPerInch;
+    return ticks / ticksPerInch;
   }
 
   public double getLeftEncoderInches() {
@@ -273,7 +273,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public double inchesToEncoderTicks(double inches) {
-    return inches * DriveConstants.ticksPerInch;
+    return inches * ticksPerInch;
   }
 
   /**
@@ -339,7 +339,13 @@ public class DriveTrain extends SubsystemBase {
 		return (getRightEncoderInches() + getLeftEncoderInches()) / 2.0;
   }
 
-  public void setUpTrapezoidPID(double kP, double kI, double kD) {
+  /**
+   * Set up PID parameters for the drive train Talons
+   * @param kP
+   * @param kI
+   * @param kD
+   */
+  public void setTalonPIDConstants(double kP, double kI, double kD) {
     leftMotor1.config_kP(1, kP);
     leftMotor1.config_kI(1, kI);
     leftMotor1.config_kD(1, kD);
@@ -352,10 +358,18 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.selectProfileSlot(1, 0);
   }
 
-  public void setTrapezoidPID(double aFF, double targetVel, boolean reverseRight) {
+  /**
+   * Sets Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
+   * @param targetVel Target velocity, in inches per second
+   * @param aFF Feed foward term to add to the contorl loop (-1 to +1)
+   * @param reverseRight True = reverse velocity and FF term for right Talon
+   */
+  public void setTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
     int direction = (reverseRight) ? -1 : 1;
-    leftMotor1.set(ControlMode.Velocity, targetVel, DemandType.ArbitraryFeedForward, aFF);
-    rightMotor1.set(ControlMode.Velocity, targetVel*direction, DemandType.ArbitraryFeedForward, aFF);
+    leftMotor1.set(ControlMode.Velocity, 
+      targetVel / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF);
+    rightMotor1.set(ControlMode.Velocity, 
+      targetVel*direction  / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF);
     feedTheDog();
   }
 

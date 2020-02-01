@@ -69,7 +69,7 @@ public class DriveStraightTrapezoid extends CommandBase {
     kD = 0.0;
     aFF = 0.0;
 
-    driveTrain.setUpTrapezoidPID(kP, kI, kD);
+    driveTrain.setTalonPIDConstants(kP, kI, kD);
   }
 
   // Called when the command is initially scheduled.
@@ -111,7 +111,7 @@ public class DriveStraightTrapezoid extends CommandBase {
     System.out.println("vel: " + targetVel);
     System.out.println("V: " + aFF);
 
-    driveTrain.setTrapezoidPID(aFF, (driveTrain.inchesToEncoderTicks(Units.metersToInches(targetVel)) / 10), true);
+    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
   }
 
   // Called once the command ends or is interrupted.
