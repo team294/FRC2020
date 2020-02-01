@@ -59,6 +59,9 @@ public class RobotContainer {
 
   }
 
+  /**
+   * Use this method to define your Shuffleboard mappings.
+   */
   public void configureShuffleboard() {
     // shooter subsystem
     SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
@@ -239,4 +242,27 @@ public class RobotContainer {
   public Command getAutonomousCommand() {
     return new AutoTrench(driveTrain);
   }
+
+  /**
+   * Method called when auto mode is initialized/enabled.
+   */
+  public void autonomousInit() {
+    log.writeLogEcho(true, "Auto", "Mode Init");
+  }
+
+  /**
+   * Method called when teleop mode is initialized/enabled.
+   */
+  public void teleopInit() {
+    log.writeLogEcho(true, "Teleop", "Mode Init");
+  }
+
+  /**
+   * Method called robot is disabled.
+   */
+  public void disabledInit() {
+    log.writeLogEcho(true, "Disabled", "Mode Init");
+  }
+
+  
 }
