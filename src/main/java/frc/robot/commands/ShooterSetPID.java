@@ -72,7 +72,8 @@ public class ShooterSetPID extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(timer.hasPeriodPassed(0.1) && Math.abs(shooter.getShooterPIDError()) < 200) return true;
+    //if(timer.hasPeriodPassed(0.1) && Math.abs(shooter.getShooterPIDError()) < 200) return true;
+    if (Math.abs(shooter.getMeasuredRPM() - rpm) < 200) return true;
     else return false;
   }
 }
