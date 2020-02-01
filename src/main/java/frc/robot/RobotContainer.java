@@ -251,14 +251,23 @@ public class RobotContainer {
     return getTestTrajectory();
   }
 
+  /**
+   * Method called when auto mode is initialized/enabled.
+   */
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
   }
 
+  /**
+   * Method called when teleop mode is initialized/enabled.
+   */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
   }
 
+  /**
+   * Method called robot is disabled.
+   */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
   }
