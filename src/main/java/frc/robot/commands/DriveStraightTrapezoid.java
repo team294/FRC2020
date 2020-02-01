@@ -106,7 +106,7 @@ public class DriveStraightTrapezoid extends CommandBase {
 
     log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, 
     "posA", (Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDist), 
-    "velLA", (driveTrain.getLeftEncoderVelocity()*2.54 / 100), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "V", aFF);
+    "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "V", aFF);
     System.out.println("pos: " + tStateNext.position);
     System.out.println("vel: " + targetVel);
     System.out.println("V: " + aFF);
@@ -130,7 +130,7 @@ public class DriveStraightTrapezoid extends CommandBase {
     //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
     //   return true;
     // }
-    if(Math.abs((startDist + target) - Units.inchesToMeters(driveTrain.getLeftEncoderInches())) < 0.025) {
+    if(Math.abs((startDist + target) - Units.inchesToMeters(driveTrain.getLeftEncoderInches())) < 0.0125) {
       accuracyCounter++;
       System.out.println("Start: " + startDist);
       System.out.println("theoretical: " + (startDist + target));
