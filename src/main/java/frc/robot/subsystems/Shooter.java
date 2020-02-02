@@ -106,10 +106,20 @@ public class Shooter extends SubsystemBase {
     return shooterMotor1.getClosedLoopError() * ticksPer100ms;
   }
 
+  /**
+   * @return measured rpm
+   */
   public double getMeasuredRPM() {
     measuredVelocityRaw = shooterMotor1.getSelectedSensorVelocity(0);
     measuredRPM = measuredVelocityRaw * ticksPer100ms; // converts ticks per 100ms to RPM
     return measuredRPM;
+  }
+
+  /**
+   * @return output voltage
+   */
+  public double getVoltage() {
+    return shooterMotor1.getMotorOutputVoltage();
   }
 
   @Override
@@ -137,6 +147,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotor2.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
     SmartDashboard.putNumber("Shooter PercentOutput", shooterMotor1.getMotorOutputPercent());
+    SmartDashboard.putNumber("Shooter Voltage", shooterMotor1.getMotorOutputVoltage());
   }
 
   /**
