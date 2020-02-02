@@ -25,6 +25,7 @@ public final class Constants {
         public static final int shooter1Port = 30;
         public static final int shooter2Port = 31;
         public static final double shooterDefaultRPM = 3000;
+        public static final double voltageCheck = 10;
     }
 
     public static final class FeederConstants {
@@ -43,7 +44,7 @@ public final class Constants {
         public static final double hopperDefaultPercentOutput = 0.8;
     }
 
-    public static final class DriveConstants{
+    public static final class DriveConstants {
         public static int leftDriveMotorOne = 10;
         public static int leftDriveMotorTwo = 11;
     
