@@ -106,6 +106,12 @@ public class Shooter extends SubsystemBase {
     return shooterMotor1.getClosedLoopError() * ticksPer100ms;
   }
 
+  public double getMeasuredRPM() {
+    measuredVelocityRaw = shooterMotor1.getSelectedSensorVelocity(0);
+    measuredRPM = measuredVelocityRaw * ticksPer100ms; // converts ticks per 100ms to RPM
+    return measuredRPM;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -123,14 +129,14 @@ public class Shooter extends SubsystemBase {
     if(i != kI) shooterMotor1.config_kI(0, i, timeoutMs); kI = i;
     if(d != kD) shooterMotor1.config_kD(0, d, timeoutMs); kD = d;
     
-    measuredVelocityRaw = shooterMotor1.getSelectedSensorVelocity(0);
-    measuredRPM = measuredVelocityRaw * ticksPer100ms; // converts ticks per 100ms to RPM
+    measuredRPM = getMeasuredRPM();
     
     SmartDashboard.putNumber("Shooter SetPoint RPM", setPoint * ticksPer100ms);
     SmartDashboard.putNumber("Shooter RPM", measuredRPM);
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotor1.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotor2.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
+    SmartDashboard.putNumber("Shooter PercentOutput", shooterMotor1.getMotorOutputPercent());
   }
 
   /**

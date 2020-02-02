@@ -88,7 +88,7 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
 
     // command sequences
-    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper));
+    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
   }
 
   /**
@@ -117,10 +117,12 @@ public class RobotContainer {
     }
 
     // A = 1, B = 2, X = 3, Y = 4
-    xb[1].whenPressed(new ShooterFeederHopperStop(shooter, feeder, hopper));
-    xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper));
-    xb[3].whenPressed(new ShooterSetPID(shooter));
-    // xb[4].whenPressed(new Wait(0));
+    ///xb[1].whenPressed(new FeederSetPiston(false, feeder));
+    xb[1].whenHeld(new HopperSetPercentOutput(-0.8, hopper));
+    xb[1].whenReleased(new HopperSetPercentOutput(hopper));
+    xb[2].whenPressed(new ShooterFeederHopperSequenceNoPiston(shooter, feeder, hopper, intake));
+    xb[3].whenPressed(new ShooterFeederHopperStop(shooter, feeder, hopper));
+    //xb[4].whenPressed(new FeederSetPiston(true, feeder));
 
     // LB = 5, RB = 6
     // xb[5].whenPressed(new Wait(0));
