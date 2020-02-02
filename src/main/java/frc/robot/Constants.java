@@ -51,7 +51,7 @@ public final class Constants {
         public static int rightDriveMotorTwo = 21; 
     
         public static double wheelDiameter = 6.1; // TODO set wheel diameter with actual robot values
-        public static double wheelCircumference = 6.1 * Math.PI / 2;
+        public static double wheelCircumference = wheelDiameter * Math.PI;
         public static double ticksPerInch = 830.8;
         
         public static int encoderTicksPerRevolution = 2048; // TODO set ticks per rev with actual values

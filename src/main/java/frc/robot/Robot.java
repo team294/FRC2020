@@ -57,10 +57,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    robotContainer.disabledInit();
   }
 
   @Override
   public void disabledPeriodic() {
+   
   }
 
   /**
@@ -68,8 +70,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+
     autonomousCommand = robotContainer.getAutonomousCommand();
-    if (autonomousCommand != null) autonomousCommand.schedule();
+    if (autonomousCommand != null) {
+      autonomousCommand.schedule();
+    }
+
+    robotContainer.autonomousInit();
   }
 
   /**
@@ -86,6 +93,7 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     if (autonomousCommand != null) autonomousCommand.cancel();
+    robotContainer.teleopInit();
   }
 
   /**
