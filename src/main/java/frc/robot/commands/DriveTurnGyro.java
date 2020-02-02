@@ -72,6 +72,8 @@ public class DriveTurnGyro extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driveTrain.setDriveModeCoast(true);
+
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // set goal/target (degrees to turn to the right)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // set inital state (relative turning, so assume initPos is 0 degrees)
 
@@ -138,6 +140,7 @@ public class DriveTurnGyro extends CommandBase {
     // stop motors at end of profile
     driveTrain.setLeftMotorOutput(0); 
     driveTrain.setRightMotorOutput(0); 
+    driveTrain.setDriveModeCoast(false);
   }
 
   // Returns true when the command should end.

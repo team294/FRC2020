@@ -103,6 +103,8 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.configVoltageCompSaturation(12.0);
     rightMotor2.configVoltageCompSaturation(12.0);
 
+    setVoltageCompensation(true);
+
     // create the drive train AFTER configuring the motors
     driveTrain = new DifferentialDrive(leftMotor1, rightMotor1);
     driveTrain.setDeadband(0.05);
@@ -149,7 +151,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @param percent percent output
+   * @param percent percent output (+1 = forward, -1 = reverse)
    */
   public void setLeftMotorOutput(double percent) {
     leftMotor1.set(ControlMode.PercentOutput, percent);
@@ -157,10 +159,10 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @param percent percent output
+   * @param percent percent output (+1 = forward, -1 = reverse)
    */
   public void setRightMotorOutput(double percent) {
-    rightMotor1.set(ControlMode.PercentOutput, percent);
+    rightMotor1.set(ControlMode.PercentOutput, -percent);
     feedTheDog();
   }
 

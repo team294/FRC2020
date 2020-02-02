@@ -79,11 +79,11 @@ public final class Constants {
         public static final double kAAngular = 0.001;
 
         // verify these
-        public static final double kMaxSpeedMetersPerSecond = 3.0;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
-        public static final double kVLinear = 0.09;// was 0.07
-        public static final double kALinear = 0.07;
-        public static final double kSLinear = 0.035; // 0.11 for working on a drive base was 0.055
+        public static final double kMaxSpeedMetersPerSecond = 1.776;
+        public static final double kMaxAccelerationMetersPerSecondSquared = 4; // was 0.352
+        public static final double kVLinear = 0.148; // was 0.09
+        public static final double kALinear = 0.0293;  // was 0.07
+        public static final double kSLinear = 0.022; // 0.11 for working on a drive base was 0.055
     }
 
     public static final class OIConstants {

@@ -30,8 +30,12 @@ public class DriveStraightTrapezoid extends CommandBase {
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
-  private double startDist; // initial angle (in degrees) (starts as 0 deg for relative turns)
+  private double startDistLeft;
+  private double startDistRight;
   private double endTime;
+  private double currDist;
+  private double currDistLeft;
+  private double currDistRight;
   private double timeSinceStart;
   private FileLog log;
 
@@ -64,9 +68,9 @@ public class DriveStraightTrapezoid extends CommandBase {
 
     addRequirements(driveTrain);
 
-    kP = 0.0008;
-    kI = 0.0;
-    kD = 0.02;
+    kP = 0;  //0.0008;
+    kI = 0;  //0.0;
+    kD = 0;  //0.02;
     aFF = 0.0;
 
     driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
@@ -75,6 +79,8 @@ public class DriveStraightTrapezoid extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driveTrain.setDriveModeCoast(true);
+
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
@@ -86,32 +92,40 @@ public class DriveStraightTrapezoid extends CommandBase {
     endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
-    startDist = Units.inchesToMeters(driveTrain.getLeftEncoderInches()); //getAverageDistance());
+    startDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches());
+    startDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     currProfileTime = System.currentTimeMillis();
-    timeSinceStart = (double)(currProfileTime - profileStartTime) / 1000.0;
+    currDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDistLeft;
+    currDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches()) - startDistRight;
+    currDist = (currDistLeft + currDistRight) * 0.5;
+
+    timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart);
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
     aFF = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
     System.out.println(targetVel);
 
+
     SmartDashboard.putNumber("pos: ", tStateNext.position);
     SmartDashboard.putNumber("vel: ", targetVel);
     SmartDashboard.putNumber("%: ", aFF);
 
-    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, 
-    "posA", (Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDist), 
-    "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "V", aFF);
+    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+      "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
+      "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "V", aFF);
     System.out.println("pos: " + tStateNext.position);
     System.out.println("vel: " + targetVel);
     System.out.println("V: " + aFF);
 
-    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
+    driveTrain.setLeftMotorOutput(aFF);
+    driveTrain.setRightMotorOutput(aFF);
+    // driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, false);
   }
 
   // Called once the command ends or is interrupted.
@@ -119,6 +133,7 @@ public class DriveStraightTrapezoid extends CommandBase {
   public void end(boolean interrupted) {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
+    driveTrain.setDriveModeCoast(false);
   }
 
   // Returns true when the command should end.
@@ -130,11 +145,10 @@ public class DriveStraightTrapezoid extends CommandBase {
     //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
     //   return true;
     // }
-    if(Math.abs((startDist + target) - Units.inchesToMeters(driveTrain.getLeftEncoderInches())) < 0.0125) {
+    if(Math.abs(target) - currDist < 0.0125) {
       accuracyCounter++;
-      System.out.println("Start: " + startDist);
-      System.out.println("theoretical: " + (startDist + target));
-      System.out.println("actual: " + Units.inchesToMeters(driveTrain.getLeftEncoderInches()));
+      System.out.println("theoretical: " + target);
+      System.out.println("actual: " + currDist);
       System.out.println(accuracyCounter);
     } else {
       accuracyCounter = 0;

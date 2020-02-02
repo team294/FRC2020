@@ -63,6 +63,8 @@ public class DriveStraightRegenerate extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driveTrain.setDriveModeCoast(true);
+
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
@@ -122,6 +124,7 @@ public class DriveStraightRegenerate extends CommandBase {
   public void end(boolean interrupted) {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
+    driveTrain.setDriveModeCoast(false);
   }
 
   // Returns true when the command should end.
