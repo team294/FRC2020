@@ -64,9 +64,9 @@ public class DriveStraightTrapezoid extends CommandBase {
 
     addRequirements(driveTrain);
 
-    kP = 0.0;
+    kP = 0.0008;
     kI = 0.0;
-    kD = 0.0;
+    kD = 0.02;
     aFF = 0.0;
 
     driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
