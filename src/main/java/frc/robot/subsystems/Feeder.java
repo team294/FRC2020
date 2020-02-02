@@ -137,6 +137,7 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder Voltage", feederMotor.getMotorOutputVoltage());
     SmartDashboard.putNumber("Feeder SetPoint", setPoint);
     SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
+    SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
   }
 
   /**
