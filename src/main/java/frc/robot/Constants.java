@@ -29,6 +29,7 @@ public final class Constants {
 
     public static final class FeederConstants {
         public static final int feederPort = 40;
+        public static final int feederPiston = 0;
         public static final double feederDefaultRPM = 2000;
     }
 
