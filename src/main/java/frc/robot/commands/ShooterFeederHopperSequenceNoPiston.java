@@ -24,13 +24,10 @@ public class ShooterFeederHopperSequenceNoPiston extends SequentialCommandGroup 
    */
   public ShooterFeederHopperSequenceNoPiston(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake) {
     addCommands( 
-      //new FeederSetPiston(true, feeder),
       new ShooterSetPID(2800, shooter),
       new FeederSetPID(feeder),
-      new ParallelCommandGroup(new HopperSetPercentOutput(hopper), new IntakeSetPercentOutput(0.5, intake))
-      /*new ShooterSetPID(2800, shooter),
-      new FeederSetPID(feeder),
-      new HopperSetPercentOutput(hopper)*/
+      new ParallelCommandGroup(new HopperSetPercentOutput(hopper), new IntakeSetPercentOutput(0.5, intake)),
+      new HopperReverse(hopper, shooter)
     );
   }
 }

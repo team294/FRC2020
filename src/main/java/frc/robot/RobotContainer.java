@@ -127,7 +127,7 @@ public class RobotContainer {
     xb[1].whenHeld(new HopperSetPercentOutput(-0.8, hopper));
     xb[1].whenReleased(new HopperSetPercentOutput(hopper));
     xb[2].whenPressed(new ShooterFeederHopperSequenceNoPiston(shooter, feeder, hopper, intake));
-    xb[3].whenPressed(new ShooterFeederHopperStop(shooter, feeder, hopper));
+    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     //xb[4].whenPressed(new FeederSetPiston(true, feeder));
 
     // LB = 5, RB = 6
