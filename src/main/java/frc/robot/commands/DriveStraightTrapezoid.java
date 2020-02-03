@@ -68,7 +68,7 @@ public class DriveStraightTrapezoid extends CommandBase {
 
     addRequirements(driveTrain);
 
-    kP = 0;  //0.0008;
+    kP = 0.1;  //0.0008;
     kI = 0;  //0.0;
     kD = 0;  //0.02;
     aFF = 0.0;
@@ -115,16 +115,19 @@ public class DriveStraightTrapezoid extends CommandBase {
     SmartDashboard.putNumber("vel: ", targetVel);
     SmartDashboard.putNumber("%: ", aFF);
 
-    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
-      "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
-      "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "V", aFF);
     // System.out.println("pos: " + tStateNext.position);
     // System.out.println("vel: " + targetVel);
     // System.out.println("V: " + aFF);
 
-    driveTrain.setLeftMotorOutput(aFF);
-    driveTrain.setRightMotorOutput(aFF);
-    // driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, false);
+    //driveTrain.setLeftMotorOutput(aFF);
+    //driveTrain.setRightMotorOutput(aFF);
+    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
+
+    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+      "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
+      "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "aFF", aFF,
+      "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
+      "pctOutLA", driveTrain.getLeftOutputPercent(), "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());
   }
 
   // Called once the command ends or is interrupted.

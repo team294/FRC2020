@@ -51,12 +51,13 @@ public final class Constants {
     
         public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
         public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;
-        public static double ticksPerInch = 830.8;
+        public static double ticksPerInch = 830.8;   // Measured with PracticeBot gearbox between wheels and the Falcons
         
         public static int encoderTicksPerRevolution = 2048; //TODO set ticks per rev with actual values
         public static final double kEncoderDistanceInchesPerPulse =
             // Assumes the encoders are directly mounted on the wheel shafts
-            (wheelDiameterInches * Math.PI) / (double) encoderTicksPerRevolution;
+            // (wheelDiameterInches * Math.PI) / (double) encoderTicksPerRevolution;
+            1/ticksPerInch;
 
         // suggested from tutorial
         public static final double kRamseteB = 2.0;

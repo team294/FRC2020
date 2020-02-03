@@ -399,8 +399,20 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.set(ControlMode.Velocity, 
       targetVel / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF);
     rightMotor1.set(ControlMode.Velocity, 
-      targetVel*direction  / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF);
+      targetVel*direction  / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
     feedTheDog();
+  }
+
+  public double getLeftOutputPercent() {
+    return leftMotor1.getMotorOutputPercent();
+  }
+
+  public double getTalonLeftClosedLoopError() {
+    return leftMotor1.getClosedLoopError();
+  }
+
+  public double getTalonLeftClosedLoopTarget() {
+    return leftMotor1.getClosedLoopTarget();
   }
 
   /**
