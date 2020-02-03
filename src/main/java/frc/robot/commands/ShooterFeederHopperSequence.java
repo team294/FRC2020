@@ -22,17 +22,14 @@ public class ShooterFeederHopperSequence extends SequentialCommandGroup {
    * @param shooter shooter subsystem to use
    * @param feeder feeder subsystem to use
    * @param hopper hopper subsystem to use
+   * @param intake intake subsystem to use
    */
   public ShooterFeederHopperSequence(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake) {
     addCommands( 
-      //new ParallelCommandGroup(new FeederSetPID(feeder), new ShooterSetPID(2800, shooter)),
       new ShooterSetPID(2800, shooter),
       new FeederSetPID(feeder),
       new FeederSetPiston(true, feeder),
       new ParallelCommandGroup(new HopperSetPercentOutput(hopper), new IntakeSetPercentOutput(0.5, intake))
-      /*new ShooterSetPID(2800, shooter),
-      new FeederSetPID(feeder),
-      new HopperSetPercentOutput(hopper)*/
     );
   }
 }

@@ -11,24 +11,27 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 /**
- * Command group to stop the shooter, feeder, and hopper.
+ * Command group to stop the shooter, feeder, hopper, and intake.
  */
-public class ShooterFeederHopperStop extends SequentialCommandGroup {
+public class ShooterFeederHopperIntakeStop extends SequentialCommandGroup {
   /**
    * @param shooter shooter subsystem to use
    * @param feeder feeder subsystem to use
    * @param hopper hopper subsystem to use
+   * @param intake intake subsystem to use
    */
-  public ShooterFeederHopperStop(Shooter shooter, Feeder feeder, Hopper hopper) {
+  public ShooterFeederHopperIntakeStop(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake) {
     addCommands(
       //new FeederSetPiston(false, feeder),
       new ParallelCommandGroup(
         new ShooterSetVoltage(0, shooter),
         new FeederSetVoltage(0, feeder),
-        new HopperSetPercentOutput(0, hopper)
+        new HopperSetPercentOutput(0, hopper),
+        new IntakeSetPercentOutput(0, intake)
       )
     );
   }
