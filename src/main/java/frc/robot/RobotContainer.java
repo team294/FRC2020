@@ -52,7 +52,7 @@ public class RobotContainer {
 
     // calculate trajectory on robotInit so it's ready when the auto runs
     try {
-      AutoTrench.calcTrajectory();
+      AutoTrench.calcTrajectory(log);
     } catch (Exception e) {
       System.err.println(e);
     }
@@ -105,12 +105,12 @@ public class RobotContainer {
 
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
-    Trigger xbPOVRight = new POVTrigger(xboxController, 90);
+    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
-    Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
-    Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
+    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
+    // Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
     for (int i = 1; i < xb.length; i++) {
       xb[i] = new JoystickButton(xboxController, i);
@@ -242,7 +242,7 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoTrench(driveTrain);
+    return new AutoTrench(driveTrain, log);
   }
 
   /**
@@ -250,6 +250,10 @@ public class RobotContainer {
    */
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
+    driveTrain.zeroGyroRotation();
+    driveTrain.zeroLeftEncoder();
+    driveTrain.zeroRightEncoder();
+    driveTrain.startAutoTimer();
   }
 
   /**

@@ -399,27 +399,38 @@ public class DriveTrain extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), Units.inchesToMeters(getRightEncoderVelocity()));
   }
 
+  /**
+   * Start the timer for the autonomous period. Useful for comparing to generated trajectories.
+   */
+  public void startAutoTimer() {
+    if (this.autoTimer == null) this.autoTimer = new Timer();
+    this.autoTimer.reset();
+    this.autoTimer.start();
+  }
+
+  /**
+   * Set the voltage for the left and right motors (compensates for the current bus voltage)
+   * @param leftVolts volts to output to the left motor
+   * @param rightVolts volts to output to the right motor
+   */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    if(autoTimer == null) {
-      autoTimer = new Timer();
-      autoTimer.reset();
-      autoTimer.start();
+    if (autoTimer == null) {
+      this.startAutoTimer();
     }
 
     leftMotor1.setVoltage(leftVolts);
-    rightMotor1.setVoltage(-rightVolts);
+    rightMotor1.setVoltage(rightVolts);
+    feedTheDog();
 
-    System.out.printf("Time:%f LEnc:%f REnc:%f LVel:%f RVel:%f LV:%f RV:%f Gyro:%f %n", 
-      autoTimer.get(),
-      Units.inchesToMeters(getLeftEncoderInches()), 
-      Units.inchesToMeters(getRightEncoderInches()),
-      Units.inchesToMeters(getLeftEncoderVelocity()), 
-      Units.inchesToMeters(getRightEncoderVelocity()), 
-      leftVolts, 
-      rightVolts, 
-      getGyroRotation()
-    );
-    //System.out.println("left Volts " + leftVolts);
-    //System.out.println("right Volts " + -rightVolts);
+    log.writeLogEcho(true, "TankDriveVolts", "Update", 
+      "Time", autoTimer.get(), 
+      "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
+      "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
+      "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
+      "R Velocity", Units.inchesToMeters(getRightEncoderVelocity()), 
+      "L Volts", leftVolts, 
+      "R Volts", rightVolts, 
+      "Gyro", getGyroRotation());
+
   }
 }
