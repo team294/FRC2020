@@ -46,9 +46,9 @@ public final class Constants {
     public static final class ClimbConstants {
         public static final int climbMotorPort1 = 45;
         public static final int climbMotorPort2 = 46;
-
         public static final int climbPistonPort1 = 47;
         public static final int climbPistonPort2 = 48;
+        public static final double ticksPerInch = 2048; // TODO determine climb ticks per inch
     }
 
     public static final class DriveConstants{
