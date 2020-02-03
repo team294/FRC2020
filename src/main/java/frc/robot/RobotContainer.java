@@ -165,7 +165,7 @@ public class RobotContainer {
     SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
-    SmartDashboard.putData("DriveStraight", new DriveStraightTrapezoid(driveTrain, log, 3, 0.5, 0.5));
+    SmartDashboard.putData("DriveStraight", new DriveStraightTrapezoid(driveTrain, log, 3, 0.5, 1.0));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
 
     // shooter subsystem
@@ -197,15 +197,6 @@ public class RobotContainer {
 
   }
 
-  public void autoInit(){
-    log.writeLog(true, "auto init", "initialize", "");
-  }
-
-  public void teleopInit(){
-    log.writeLog(true, "teleop init", "initialize", "");
-  }
-
-  public void disabledInit(){
   /** CoPanel Layout
    *     
    *  1  3  5  8
@@ -217,7 +208,6 @@ public class RobotContainer {
    *  15
    *  16
    */
-  }
   public void configureCopanel() {
     /*JoystickButton[] coP = new JoystickButton[20];
 
@@ -282,6 +272,19 @@ public class RobotContainer {
     log.writeLogEcho(true, "Auto", "Mode Init");
   }
 
+  /**
+   * Method called when teleop mode is initialized/enabled.
+   */
+  public void teleopInit() {
+    log.writeLogEcho(true, "Teleop", "Mode Init");
+  }
+
+  /**
+   * Method called robot is disabled.
+   */
+  public void disabledInit() {
+    log.writeLogEcho(true, "Disabled", "Mode Init");
+  }
 
   
 }

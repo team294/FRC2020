@@ -106,11 +106,10 @@ public class DriveStraightTrapezoid extends CommandBase {
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart);
+
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
     aFF = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
-    System.out.println(targetVel);
-
 
     SmartDashboard.putNumber("pos: ", tStateNext.position);
     SmartDashboard.putNumber("vel: ", targetVel);
@@ -119,9 +118,9 @@ public class DriveStraightTrapezoid extends CommandBase {
     log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
       "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "V", aFF);
-    System.out.println("pos: " + tStateNext.position);
-    System.out.println("vel: " + targetVel);
-    System.out.println("V: " + aFF);
+    // System.out.println("pos: " + tStateNext.position);
+    // System.out.println("vel: " + targetVel);
+    // System.out.println("V: " + aFF);
 
     driveTrain.setLeftMotorOutput(aFF);
     driveTrain.setRightMotorOutput(aFF);

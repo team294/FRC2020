@@ -201,22 +201,23 @@ public class TrapezoidProfileBCR {
       result.velocity += t * m_constraints.maxAcceleration;
       result.position += (m_initial.velocity + t * m_constraints.maxAcceleration / 2.0) * t;
       result.acceleration = m_constraints.maxAcceleration;
+      // System.out.println("Accelerating");
     } else if (t < m_timeToStartDeccel) {
       result.velocity = m_constraints.maxVelocity;
       result.position += (m_initial.velocity + m_timeToMaxVel * m_constraints.maxAcceleration
           / 2.0) * m_timeToMaxVel + m_constraints.maxVelocity * (t - m_timeToMaxVel);
       result.acceleration = 0;
-
+      // System.out.println("Constant");
     } else if (t <= m_timeToEndProfile) {
       result.velocity = m_goal.velocity + (m_timeToEndProfile - t) * m_constraints.maxAcceleration;
       double timeLeft = m_timeToEndProfile - t;
       result.position = m_goal.position - (m_goal.velocity + timeLeft
           * m_constraints.maxAcceleration / 2.0) * timeLeft;
       result.acceleration = -m_constraints.maxAcceleration;
+      // System.out.println("Deccelerating");
     } else {
       result = m_goal;
     }
-
     return direct(result);
   }
 
@@ -322,9 +323,10 @@ public class TrapezoidProfileBCR {
 
   // Flip the sign of the velocity and position if the profile is inverted
   private State direct(State in) {
-    State result = new State(in.position, in.velocity);
+    State result = new State(in.position, in.velocity, in.acceleration);
     result.position = result.position * m_direction;
     result.velocity = result.velocity * m_direction;
+    result.acceleration = result.acceleration * m_direction;
     return result;
   }
 }
