@@ -42,7 +42,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
-    System.out.println("PERIODIC");
     // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
     // commands, running already-scheduled commands, removing finished or interrupted commands,
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -55,13 +54,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void disabledInit() {
+    System.out.println("DISABLED");
     new LEDSetStrip("Blue", 0.5, robotContainer.getLED());
   }
 
   @Override
   public void disabledPeriodic() {
-    System.out.println("DISABLED");
-    new LEDSetStrip("Blue",  robotContainer.getLED());
+    new LEDSetStrip("Blue", 0.5,  robotContainer.getLED());
    
   }
 
@@ -83,6 +82,8 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    System.out.println("TELEOP");
+    new LEDSetStrip("Green", 0.5, robotContainer.getLED());
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
