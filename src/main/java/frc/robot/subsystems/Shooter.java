@@ -17,11 +17,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
+import frc.robot.commands.*;
+import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotor1 = new WPI_TalonFX(Constants.ShooterConstants.shooter1Port);
   private final WPI_TalonFX shooterMotor2 = new WPI_TalonFX(Constants.ShooterConstants.shooter2Port);
   private FileLog log; // reference to the fileLog
+  private RobotContainer robotContainer;
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
@@ -95,7 +98,7 @@ public class Shooter extends SubsystemBase {
     setPoint = shooterRPM / ticksPer100ms; // setPoint is in ticks per 100ms
     shooterMotor1.set(ControlMode.Velocity, setPoint);
     SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM );
-    
+    //new LEDSetStrip("Blue",  robotContainer.getLED());
     System.out.println("Starting setShooterPID");
   }
 

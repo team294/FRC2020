@@ -35,6 +35,7 @@ public class RobotContainer {
   private final Hopper hopper = new Hopper();
   private final DriveTrain driveTrain = new DriveTrain(log);
   private final LED led = new LED();
+ // private final LED led2 = new LED();
 
   Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
   Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
@@ -261,6 +262,7 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
+    led.setStrip("Green");
   }
 
   /**
@@ -268,7 +270,7 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
+    led.setStrip("Purple");
   }
-
   
 }
