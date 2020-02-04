@@ -40,6 +40,7 @@ public class LEDSetStrip extends CommandBase {
 	public LEDSetStrip(String color, double intensity, LED led) {
     this.led = led;
     this.color = color;
+    this.intensity = intensity;
 	  addRequirements(led);
   }
 
