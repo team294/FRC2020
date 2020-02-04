@@ -317,4 +317,12 @@ public class RobotContainer {
     // Run path following command, then stop at the end.
     return ramseteCommand.andThen(() -> driveTrain.tankDrive(0.0, 0.0, false));
   }
+
+  public void disabledInit() {
+    led.setStrip("Purple");
+  }
+
+  public void teleopInit() {
+    led.setStrip("Green");
+  }
 }
