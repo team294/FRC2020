@@ -25,10 +25,12 @@ public final class Constants {
         public static final int shooter1Port = 30;
         public static final int shooter2Port = 31;
         public static final double shooterDefaultRPM = 3000;
+        public static final double voltageCheck = 10;
     }
 
     public static final class FeederConstants {
         public static final int feederPort = 40;
+        public static final int feederPiston = 0;
         public static final double feederDefaultRPM = 2000;
     }
 
@@ -42,7 +44,7 @@ public final class Constants {
         public static final double hopperDefaultPercentOutput = 0.8;
     }
 
-    public static final class DriveConstants{
+    public static final class DriveConstants {
         public static int leftDriveMotorOne = 10;
         public static int leftDriveMotorTwo = 11;
     
@@ -50,7 +52,7 @@ public final class Constants {
         public static int rightDriveMotorTwo = 21; 
     
         public static double wheelDiameter = 6.1; // TODO set wheel diameter with actual robot values
-        public static double wheelCircumference = 6.1 * Math.PI / 2;
+        public static double wheelCircumference = wheelDiameter * Math.PI;
         public static double ticksPerInch = 830.8;
         
         public static int encoderTicksPerRevolution = 2048; // TODO set ticks per rev with actual values

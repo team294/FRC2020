@@ -13,7 +13,7 @@
           "0,0": {
             "size": [
               2,
-              5
+              6
             ],
             "content": {
               "_type": "List Layout",
@@ -64,6 +64,11 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Shooter STOP",
                   "_title": "Shooter STOP"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter PercentOutput",
+                  "_title": "/SmartDashboard/Shooter PercentOutput"
                 }
               ]
             }
@@ -93,7 +98,7 @@
           "2,0": {
             "size": [
               2,
-              5
+              6
             ],
             "content": {
               "_type": "List Layout",
@@ -144,6 +149,11 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Feeder STOP",
                   "_title": "Feeder STOP"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder PercentOutput",
+                  "_title": "/SmartDashboard/Feeder PercentOutput"
                 }
               ]
             }
@@ -239,6 +249,38 @@
                   "_title": "Feeder Voltage"
                 }
               ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Camera",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {
+          "1,0": {
+            "size": [
+              11,
+              6
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://USB Camera 0",
+              "_title": "USB Camera 0",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
             }
           }
         }
