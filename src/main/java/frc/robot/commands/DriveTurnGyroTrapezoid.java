@@ -16,7 +16,7 @@ import frc.robot.utilities.*;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-public class DriveStraightTrapezoid extends CommandBase {
+public class DriveTurnGyroTrapezoid extends CommandBase {
   /**
    * Uses wpilib TrapezoidProfile generator to generate a motion profile for drive train turning
    * Does not regenerate the profile every time
@@ -30,12 +30,9 @@ public class DriveStraightTrapezoid extends CommandBase {
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
-  private double startDistLeft;
-  private double startDistRight;
+  private double startAngle; // starting angle in degrees
   private double endTime;
-  private double currDist;
-  private double currDistLeft;
-  private double currDistRight;
+  private double currAngle;
   private double timeSinceStart;
   private FileLog log;
 
@@ -54,11 +51,11 @@ public class DriveStraightTrapezoid extends CommandBase {
 
   /**
    * @param driveTrain reference to the drive train subsystem
-   * @param target degrees to turn to the right
+   * @param target degrees to turn to the right from -180 to 180
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveStraightTrapezoid(DriveTrain driveTrain, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
+  public DriveTurnGyroTrapezoid(DriveTrain driveTrain, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.log = log;
@@ -68,12 +65,12 @@ public class DriveStraightTrapezoid extends CommandBase {
 
     addRequirements(driveTrain);
 
-    kP = 0.1;  //0.0008;
+    kP = 0.0;  //0.0008;
     kI = 0;  //0.0;
     kD = 0;  //0.02;
     aFF = 0.0;
 
-    driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
+    //driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
   }
 
   // Called when the command is initially scheduled.
@@ -84,7 +81,7 @@ public class DriveStraightTrapezoid extends CommandBase {
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
-    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxSpeedMetersPerSecond * maxVelMultiplier, kMaxAccelerationMetersPerSecondSquared * maxAccelMultiplier); // initialize velocity
+    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxAngularVelocity * maxVelMultiplier, kMaxAngularAcceleration * maxAccelMultiplier); // initialize velocity
                                                                                                                           // and accel limits
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
     System.out.println(tProfile.totalTime());
@@ -92,26 +89,25 @@ public class DriveStraightTrapezoid extends CommandBase {
     endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
-    startDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches());
-    startDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches());
+    startAngle = driveTrain.getGyroRotation();
+
+    log.writeLog(false, "DriveTurnGyro", "initialize");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     currProfileTime = System.currentTimeMillis();
-    currDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDistLeft;
-    currDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches()) - startDistRight;
-    currDist = (currDistLeft + currDistRight) * 0.5;
+    currAngle = driveTrain.getGyroRotation() - startAngle;
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart);
 
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
-    aFF = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
+    aFF = (kSAngular * Math.signum(targetVel)) + (targetVel * kVAngular) + (targetAccel * kAAngular);
 
-    SmartDashboard.putNumber("pos: ", tStateNext.position);
+    SmartDashboard.putNumber("angle: ", tStateNext.position);
     SmartDashboard.putNumber("vel: ", targetVel);
     SmartDashboard.putNumber("%: ", aFF);
 
@@ -119,15 +115,12 @@ public class DriveStraightTrapezoid extends CommandBase {
     // System.out.println("vel: " + targetVel);
     // System.out.println("V: " + aFF);
 
-    //driveTrain.setLeftMotorOutput(aFF);
-    //driveTrain.setRightMotorOutput(aFF);
-    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
+    driveTrain.setLeftMotorOutput(aFF);
+    driveTrain.setRightMotorOutput(-aFF);
+    //driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
 
-    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
-      "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
-      "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "aFF", aFF,
-      "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
-      "pctOutLA", driveTrain.getLeftOutputPercent(), "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());
+    log.writeLog(false, "DriveTurnGyro", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+      "posA", currAngle, "velA", driveTrain.getAngularVelocity(), "aFF", aFF);
   }
 
   // Called once the command ends or is interrupted.
@@ -136,6 +129,8 @@ public class DriveStraightTrapezoid extends CommandBase {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
     driveTrain.setDriveModeCoast(false);
+
+    log.writeLog(false, "DriveTurnGyro", "end");
   }
 
   // Returns true when the command should end.
@@ -147,10 +142,10 @@ public class DriveStraightTrapezoid extends CommandBase {
     //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
     //   return true;
     // }
-    if(Math.abs(target - currDist) < 0.0125) {
+    if(Math.abs(target - currAngle) < 1) {
       accuracyCounter++;
       System.out.println("theoretical: " + target);
-      System.out.println("actual: " + currDist);
+      System.out.println("actual: " + currAngle);
       System.out.println(accuracyCounter);
     } else {
       accuracyCounter = 0;

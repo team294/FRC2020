@@ -165,9 +165,10 @@ public class RobotContainer {
     SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
-    SmartDashboard.putData("DriveStraight", new DriveStraightTrapezoid(driveTrain, log, 3, 0.5, 1.0));
+    SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
     SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyroTrapezoid(driveTrain, log, 160, 0.5, 0.8));
 
     // shooter subsystem
     SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));

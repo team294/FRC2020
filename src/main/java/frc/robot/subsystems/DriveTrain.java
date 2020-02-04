@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.LinearFilter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -52,8 +53,12 @@ public class DriveTrain extends SubsystemBase {
    private double currAng; // current recorded gyro angle
    private double prevTime; // last time gyro angle was recorded
    private double currTime; // current time gyro angle is being recorded
+   private double angularVelocity;  // Robot angular velocity in degrees per second
+   private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
 
   private FileLog log;
+
+  
   
   public DriveTrain(FileLog log) {
     this.log = log; // save reference to the fileLog
@@ -120,6 +125,7 @@ public class DriveTrain extends SubsystemBase {
     currAng = getGyroRaw();
     prevTime = System.currentTimeMillis();
     currTime = System.currentTimeMillis();
+    lfRunningAvg.reset();
   }
 
   /**
@@ -341,6 +347,10 @@ public class DriveTrain extends SubsystemBase {
 		return angle;
   }
 
+  public double getAngularVelocity () {
+    return angularVelocity;
+  }
+
   /**
 	 * Converts input angle to a number between -179.999 and +180.0.
 	 * @return normalized angle
@@ -454,10 +464,10 @@ public class DriveTrain extends SubsystemBase {
      currTime = System.currentTimeMillis();
  
      // calculate angVel
-     double angVel = (currAng - prevAng) / (currTime - prevTime);
+     angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
  
      // convert angVel to degrees per sec & put on SmartDashboard
-     SmartDashboard.putNumber("AngVel", angVel * 1000);
+     SmartDashboard.putNumber("AngVel", angularVelocity);
  
      // save current angVel values as previous values for next calculation
      prevAng = currAng;

@@ -64,9 +64,9 @@ public final class Constants {
         public static final double kRamseteZeta = 0.70;
     
         // from robot characteristics
-        public static final double kS = 0.35 * 1; // static gain was
+        public static final double kS = 0.35; // static gain was
         public static final double kV = 1.665; // velocity gain was 0.551
-        public static final double kA = 0.1 * 1; // acceleration gain was 0.000647
+        public static final double kA = 0.1; // acceleration gain was 0.000647
     
         public static final double kP = 0.069 * 1; // was 0.069
         public static final double kD = 0.0303;
@@ -74,10 +74,11 @@ public final class Constants {
         public static final double TRACK_WIDTH = Units.inchesToMeters(25.35); // was 7.286626058797765
     
         // turnGyro constants
-        public static final double kMaxAngularVelocity = 550; // degrees per second TODO calculate on actual 2020 robot
-        public static final double kMaxAngularAcceleration = 1500; // degrees per second per second TODO calculate on actual 2020 robot
-        public static final double kVAngular = 0.001; // TODO calculate on actual 2020 robot
-        public static final double kAAngular = 0.001;
+        public static final double kMaxAngularVelocity = 100; // degrees per second TODO calculate on actual 2020 robot
+        public static final double kMaxAngularAcceleration = 20000; // degrees per second per second TODO calculate on actual 2020 robot
+        public static final double kVAngular = 0.0100; // was 0.0203
+        public static final double kAAngular = 0.000;
+        public static final double kSAngular = 0.105;
 
         // verify these
         public static final double kMaxSpeedMetersPerSecond = 5.0;

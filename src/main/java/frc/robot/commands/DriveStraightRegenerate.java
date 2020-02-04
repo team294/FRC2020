@@ -19,11 +19,10 @@ import static frc.robot.Constants.DriveConstants.*;
 public class DriveStraightRegenerate extends CommandBase {
   /**
    * Uses wpilib TrapezoidProfile generator to generate a motion profile for drive train turning
+   * Does not regenerate the profile every time
    */
 
   private DriveTrain driveTrain; // reference to driveTrain
-  private FileLog log;
-
   private double target; // how many more degrees to the right to turn
   private double maxVelMultiplier; // multiplier between 0.0 and 1.0 for limiting max velocity
   private double maxAccelMultiplier; // multiplier between 0.0 and 1.0 for limiting max acceleration
@@ -31,12 +30,21 @@ public class DriveStraightRegenerate extends CommandBase {
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
-  private double targetVoltage; // voltage to pass to the motors to follow profile
-  private double startDist; // initial angle (in degrees) (starts as 0 deg for relative turns)
-  private double currDist;
-  private double linearVel;
+  private double startDistLeft;
+  private double startDistRight;
   private double endTime;
+  private double currDist;
+  private double currDistLeft;
+  private double currDistRight;
   private double timeSinceStart;
+  private FileLog log;
+
+  private double kP;
+  private double kI;
+  private double kD;
+  private double aFF;
+
+  private int accuracyCounter = 0;
 
   private TrapezoidProfileBCR tProfile; // wpilib trapezoid profile generator
   private TrapezoidProfileBCR.State tStateCurr; // initial state of the system (position in deg and time in sec)
@@ -57,7 +65,15 @@ public class DriveStraightRegenerate extends CommandBase {
     this.target = target;
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
+
     addRequirements(driveTrain);
+
+    kP = 0.1;  //0.0008;
+    kI = 0;  //0.0;
+    kD = 0;  //0.02;
+    aFF = 0.0;
+
+    driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
   }
 
   // Called when the command is initially scheduled.
@@ -76,47 +92,47 @@ public class DriveStraightRegenerate extends CommandBase {
     endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
-    startDist = Units.inchesToMeters(driveTrain.getAverageDistance());
-    // prevAng = startAng;
-    // targetAng = startAng + target; // calculate final angle based on how many degrees are to be turned
+    startDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches());
+    startDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches());
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    driveTrain.feedTheDog();
     currProfileTime = System.currentTimeMillis();
-    timeSinceStart = (double)(currProfileTime - profileStartTime) / 1000.0;
+    currDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDistLeft;
+    currDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches()) - startDistRight;
+    currDist = (currDistLeft + currDistRight) * 0.5;
+
+    timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart);
 
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
-    targetVoltage = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
+    aFF = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
 
     SmartDashboard.putNumber("pos: ", tStateNext.position);
     SmartDashboard.putNumber("vel: ", targetVel);
-    SmartDashboard.putNumber("V: ", targetVoltage);
+    SmartDashboard.putNumber("%: ", aFF);
 
-    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, 
-    "posA", (Units.inchesToMeters(driveTrain.getAverageDistance()) - startDist), 
-    "velLA", (driveTrain.getLeftEncoderVelocity()*2.52 / 100), "velRA", (driveTrain.getRightEncoderVelocity()*2.52 / 100), "V", targetVoltage);
-    System.out.println("pos: " + tStateNext.position);
-    System.out.println("vel: " + targetVel);
-    System.out.println("V: " + targetVoltage);
+    // System.out.println("pos: " + tStateNext.position);
+    // System.out.println("vel: " + targetVel);
+    // System.out.println("V: " + aFF);
 
-    driveTrain.setRightMotorOutput(-targetVoltage);
-    driveTrain.setLeftMotorOutput(targetVoltage);
+    //driveTrain.setLeftMotorOutput(aFF);
+    //driveTrain.setRightMotorOutput(aFF);
+    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
 
-    currDist = Units.inchesToMeters(driveTrain.getAverageDistance()) - startDist;
-    linearVel = driveTrain.getAverageEncoderVelocity() * 2.54 / 100;
+    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+      "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
+      "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "aFF", aFF,
+      "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
+      "pctOutLA", driveTrain.getLeftOutputPercent(), "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());
+
+    double linearVel = Units.inchesToMeters(driveTrain.getAverageEncoderVelocity());
     tStateCurr = new TrapezoidProfileBCR.State(currDist, linearVel);
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
     profileStartTime = currProfileTime;
-    endTime = tProfile.totalTime();
-    System.out.println(endTime);
-
-    driveTrain.feedTheDog();
-    // prevAng = currAng;
   }
 
   // Called once the command ends or is interrupted.
@@ -136,10 +152,16 @@ public class DriveStraightRegenerate extends CommandBase {
     //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
     //   return true;
     // }
-    if(timeSinceStart >= endTime) {
-      System.out.println("Start: " + startDist);
-      System.out.println("theoretical: " + (startDist + target));
-      System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
+    if(Math.abs(target - currDist) < 0.0125) {
+      accuracyCounter++;
+      System.out.println("theoretical: " + target);
+      System.out.println("actual: " + currDist);
+      System.out.println(accuracyCounter);
+    } else {
+      accuracyCounter = 0;
+    }
+
+    if(accuracyCounter >= 5) {
       return true;
     }
     return false;
