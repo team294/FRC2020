@@ -355,7 +355,7 @@ public class DriveTrain extends SubsystemBase {
 	 * Converts input angle to a number between -179.999 and +180.0.
 	 * @return normalized angle
 	 */
-	public static double normalizeAngle(double angle) {
+	public double normalizeAngle(double angle) {
 		angle = angle % 360;
 		angle = (angle <= -180) ? (angle + 360) : angle;
     angle = (angle > 180) ? (angle - 360) : angle;

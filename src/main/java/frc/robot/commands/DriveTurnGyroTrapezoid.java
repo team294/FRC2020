@@ -98,7 +98,7 @@ public class DriveTurnGyroTrapezoid extends CommandBase {
   @Override
   public void execute() {
     currProfileTime = System.currentTimeMillis();
-    currAngle = driveTrain.getGyroRotation() - startAngle;
+    currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart);
