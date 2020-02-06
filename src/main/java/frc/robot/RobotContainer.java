@@ -168,7 +168,7 @@ public class RobotContainer {
     SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
     SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyroTrapezoid(driveTrain, log, 160, 0.5, 0.8));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyroTrapezoid(driveTrain, log, 160, 0.04, 1.0));
 
     // shooter subsystem
     SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
