@@ -21,42 +21,34 @@ import frc.robot.Constants;
 import frc.robot.Constants.*;
 
 public class Climb extends SubsystemBase {
-  private final WPI_TalonFX climbMotor1;
-  private final WPI_TalonFX climbMotor2;
-  private final Solenoid climbPiston1;
-  private final Solenoid climbPiston2;
+  private final WPI_TalonFX climbMotorLeft = new WPI_TalonFX(ClimbConstants.climbMotorLeft);
+  private final WPI_TalonFX climbMotorRight = new WPI_TalonFX(ClimbConstants.climbMotorRight);
+  private final Solenoid climbPistons = new Solenoid(ClimbConstants.climbPistons);
 
   private FileLog log;
 
-  private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 30;
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
-  private double ff, p, i, d; // for shuffleboard
 
   public Climb(FileLog log) {
-    climbMotor1 = new WPI_TalonFX(ClimbConstants.climbMotorPort1);
-    climbMotor2 = new WPI_TalonFX(ClimbConstants.climbMotorPort2);
-    climbPiston1 = new Solenoid(ClimbConstants.climbPistonPort1);
-    climbPiston2 = new Solenoid(ClimbConstants.climbPistonPort2);
-
     this.log = log;
 
-    climbMotor1.configFactoryDefault();
-    climbMotor2.configFactoryDefault();
+    climbMotorLeft.configFactoryDefault();
+    climbMotorRight.configFactoryDefault();
 
-    climbMotor1.setInverted(true);
-    climbMotor2.setInverted(false);
+    climbMotorLeft.setInverted(true);
+    climbMotorRight.setInverted(false);
 
-    climbMotor1.setNeutralMode(NeutralMode.Brake);
-    climbMotor1.configClosedloopRamp(0.05); // seconds from neutral to full
-    climbMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
-    climbMotor1.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
+    climbMotorLeft.setNeutralMode(NeutralMode.Brake);
+    climbMotorLeft.configClosedloopRamp(0.05); // seconds from neutral to full
+    climbMotorLeft.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
+    climbMotorLeft.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
 
-    climbMotor2.setNeutralMode(NeutralMode.Brake);
-    climbMotor2.configClosedloopRamp(0.05); // seconds from neutral to full
-    climbMotor2.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
-    climbMotor2.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
+    climbMotorRight.setNeutralMode(NeutralMode.Brake);
+    climbMotorRight.configClosedloopRamp(0.05); // seconds from neutral to full
+    climbMotorRight.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
+    climbMotorRight.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
     
     // PID coefficients
     kP = 0;
@@ -65,86 +57,85 @@ public class Climb extends SubsystemBase {
     kFF = 0;
     
     // set climb1 PID coefficients
-    climbMotor1.config_kF(0, kFF, timeoutMs);
-    climbMotor1.config_kP(0, kP, timeoutMs);
-    climbMotor1.config_kI(0, kI, timeoutMs);
-    climbMotor1.config_kD(0, kD, timeoutMs);
+    climbMotorLeft.config_kF(0, kFF, timeoutMs);
+    climbMotorLeft.config_kP(0, kP, timeoutMs);
+    climbMotorLeft.config_kI(0, kI, timeoutMs);
+    climbMotorLeft.config_kD(0, kD, timeoutMs);
 
     // set climb2 PID coefficients
-    climbMotor2.config_kF(0, kFF, timeoutMs);
-    climbMotor2.config_kP(0, kP, timeoutMs);
-    climbMotor2.config_kI(0, kI, timeoutMs);
-    climbMotor2.config_kD(0, kD, timeoutMs);
+    climbMotorRight.config_kF(0, kFF, timeoutMs);
+    climbMotorRight.config_kP(0, kP, timeoutMs);
+    climbMotorRight.config_kI(0, kI, timeoutMs);
+    climbMotorRight.config_kD(0, kD, timeoutMs);
 
     kMaxOutput = 1; 
     kMinOutput = -1;
 
-    climbMotor1.configPeakOutputForward(kMaxOutput);
-    climbMotor1.configPeakOutputReverse(kMinOutput);
-    climbMotor1.setSensorPhase(false);
+    climbMotorLeft.configPeakOutputForward(kMaxOutput);
+    climbMotorLeft.configPeakOutputReverse(kMinOutput);
+    climbMotorLeft.setSensorPhase(false);
 
-    climbMotor2.configPeakOutputForward(kMaxOutput);
-    climbMotor2.configPeakOutputReverse(kMinOutput);
-    climbMotor2.setSensorPhase(false);
+    climbMotorRight.configPeakOutputForward(kMaxOutput);
+    climbMotorRight.configPeakOutputReverse(kMinOutput);
+    climbMotorRight.setSensorPhase(false);
   }
 
   /**
    * @param extend true = extend, false = retract
    */
   public void climbPistonsSetPosition(boolean extend) {
-    climbPiston1.set(extend);
-    climbPiston2.set(extend);
+    climbPistons.set(extend);
   }
 
   /**
    * @return true = extended, false = retracted
    */
   public boolean climbPistonsGetPosition() {
-    return climbPiston1.get();
+    return climbPistons.get();
   }
 
   /**
    * @param percent percent output (0 to 1)
    */
   public void climbMotorsSetPercentOutput(double percent) {
-    climbMotor1SetPercentOutput(percent);
-    climbMotor2SetPercentOutput(percent);
+    climbMotorLeftSetPercentOutput(percent);
+    climbMotorRightSetPercentOutput(percent);
   }
 
   /**
    * @param inches position, inches
    */
   public void climbMotorsSetPosition(double inches) {
-    climbMotor1SetPosition(inches);
-    climbMotor2SetPosition(inches);
+    climbMotorLeftSetPosition(inches);
+    climbMotorRightSetPosition(inches);
   }
 
   /**
    * @param percent percent output (0 to 1)
    */
-  public void climbMotor1SetPercentOutput(double percent) {
-    climbMotor1.set(ControlMode.PercentOutput, percent);
+  public void climbMotorLeftSetPercentOutput(double percent) {
+    climbMotorLeft.set(ControlMode.PercentOutput, percent);
   }
 
   /**
    * @param percent percent output (0 to 1)
    */
-  public void climbMotor2SetPercentOutput(double percent) {
-    climbMotor2.set(ControlMode.PercentOutput, percent);
+  public void climbMotorRightSetPercentOutput(double percent) {
+    climbMotorRight.set(ControlMode.PercentOutput, percent);
   }
 
   /**
    * @param inches position, inches
    */
-  public void climbMotor1SetPosition(double inches) {
-    climbMotor1.set(ControlMode.Position, inchesToEncoderTicks(inches), DemandType.ArbitraryFeedForward, kFF);
+  public void climbMotorLeftSetPosition(double inches) {
+    climbMotorLeft.set(ControlMode.Position, inchesToEncoderTicks(inches), DemandType.ArbitraryFeedForward, kFF);
   }
 
   /**
    * @param inches position, inches
    */
-  public void climbMotor2SetPosition(double inches) {
-    climbMotor2.set(ControlMode.Position, inchesToEncoderTicks(inches), DemandType.ArbitraryFeedForward, kFF);
+  public void climbMotorRightSetPosition(double inches) {
+    climbMotorRight.set(ControlMode.Position, inchesToEncoderTicks(inches), DemandType.ArbitraryFeedForward, kFF);
   }
 
   /**
@@ -175,10 +166,10 @@ public class Climb extends SubsystemBase {
    */
   public void updateClimbLog(boolean logWhenDisabled) {
     log.writeLog(logWhenDisabled, "Climb", "Update Variables",  
-      "Motor1 Volt", climbMotor1.getMotorOutputVoltage(), 
-      "Motor2 Volt", climbMotor2.getMotorOutputVoltage(),
-      "Motor1 Amps", climbMotor1.getSupplyCurrent(),
-      "Motor2 Amps", climbMotor2.getSupplyCurrent()
+      "Left Motor Volt", climbMotorLeft.getMotorOutputVoltage(), 
+      "Right Motor Volt", climbMotorRight.getMotorOutputVoltage(),
+      "Left Motor Amps", climbMotorLeft.getSupplyCurrent(),
+      "Right Motor Amps", climbMotorRight.getSupplyCurrent()
     );
   }
 }
