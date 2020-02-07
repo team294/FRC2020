@@ -22,25 +22,25 @@ import edu.wpi.first.wpilibj.util.Units;
 public final class Constants {
 
     public static final class ShooterConstants {
-        public static final int shooter1Port = 30;
-        public static final int shooter2Port = 31;
+        public static final int shooterMotorLeft = 30;
+        public static final int shooterMotorRight = 31;
         public static final double shooterDefaultRPM = 3000;
         public static final double voltageCheck = 10;
     }
 
     public static final class FeederConstants {
-        public static final int feederPort = 40;
+        public static final int feederMotor = 40;
         public static final int feederPiston = 0;
         public static final double feederDefaultRPM = 2000;
     }
 
     public static final class IntakeConstants {
-        public static final int intakePort = 50;
+        public static final int intakeMotor = 50;
         public static final double intakeDefaultPercentOutput = 0.8;
     }
 
     public static final class HopperConstants {
-        public static final int hopperPort = 51;
+        public static final int hopperMotor = 51;
         public static final double hopperDefaultPercentOutput = 0.8;
     }
 

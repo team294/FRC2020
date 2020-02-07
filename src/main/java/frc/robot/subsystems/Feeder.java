@@ -20,7 +20,7 @@ import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
 
 public class Feeder extends SubsystemBase {
-  private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederPort); // 9:1 gear ratio
+  private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederMotor); // 9:1 gear ratio
   private final Solenoid feederPiston = new Solenoid(Constants.FeederConstants.feederPiston);
 
   private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;

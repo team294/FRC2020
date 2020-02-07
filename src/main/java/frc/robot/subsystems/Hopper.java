@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Hopper extends SubsystemBase {
-  private final WPI_VictorSPX hopperMotor = new WPI_VictorSPX(Constants.HopperConstants.hopperPort);
+  private final WPI_VictorSPX hopperMotor = new WPI_VictorSPX(Constants.HopperConstants.hopperMotor);
   
   public Hopper() {
     hopperMotor.configFactoryDefault();

@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-  private final WPI_VictorSPX intakeMotor = new WPI_VictorSPX(Constants.IntakeConstants.intakePort);
+  private final WPI_VictorSPX intakeMotor = new WPI_VictorSPX(Constants.IntakeConstants.intakeMotor);
  
   public Intake() {
     intakeMotor.configFactoryDefault();
