@@ -52,7 +52,9 @@ public class RobotContainer {
   private final LimeLight limeLight = new LimeLight(log);
   private final Test test = new Test();
   private final LED led = new LED();
-  private UsbCamera intakeCamera;
+  private final UsbCamera intakeCamera;
+ // private final LED led2 = new LED();
+  private final RobotPreferences robotPrefs = new RobotPreferences();
 
   Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
   Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
@@ -72,14 +74,57 @@ public class RobotContainer {
 
     // calculate trajectory on robotInit so it's ready when the auto runs
     try {
-      AutoTrench.calcTrajectory();
+      AutoTrench.calcTrajectory(log);
     } catch (Exception e) {
       System.err.println(e);
     }
 
   }
 
-  
+  /**
+   * Use this method to define your Shuffleboard mappings.
+   */
+  public void configureShuffleboard() {
+    // shooter subsystem
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
+    SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
+    SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
+
+    // feeder subsystem
+    SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
+    SmartDashboard.putData("Feeder STOP", new FeederSetVoltage(0, feeder));
+    SmartDashboard.putData("FeederSetVoltage(5)", new FeederSetVoltage(5, feeder));
+    SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 2000);
+
+    // intake subsystem
+    SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
+
+    // hopper subsystem
+    SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
+
+    // led subsystem
+    SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
+    SmartDashboard.putData("LEDSetStrip YELLOW", new LEDSetStrip("Yellow", led));
+    SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
+    SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
+    SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
+
+    // command sequences
+    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
+
+    // testing turn with camera
+    SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
+
+    // buttons for testing turnGyro
+    SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
+    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
+    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
+    SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
+    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
+    SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0));
+  }
 
   /**
    * Use this method to define your button->command mappings.  Buttons can be created by
@@ -95,22 +140,24 @@ public class RobotContainer {
 
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
-    Trigger xbPOVRight = new POVTrigger(xboxController, 90);
+    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
-    Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
-    Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
+    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
+    // Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
     for (int i = 1; i < xb.length; i++) {
       xb[i] = new JoystickButton(xboxController, i);
     }
 
     // A = 1, B = 2, X = 3, Y = 4
-    xb[1].whenPressed(new ShooterFeederHopperStop(shooter, feeder, hopper));
-    xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper));
-    xb[3].whenPressed(new ShooterSetPID(shooter));
-    // xb[4].whenPressed(new Wait(0));
+    ///xb[1].whenPressed(new FeederSetPiston(false, feeder));
+    xb[1].whenHeld(new HopperSetPercentOutput(-0.8, hopper));
+    xb[1].whenReleased(new HopperSetPercentOutput(hopper));
+    xb[2].whenPressed(new ShooterFeederHopperSequenceNoPiston(shooter, feeder, hopper, intake));
+    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
+    //xb[4].whenPressed(new FeederSetPiston(true, feeder));
 
     // LB = 5, RB = 6
     // xb[5].whenPressed(new Wait(0));
@@ -165,48 +212,6 @@ public class RobotContainer {
     right[5].whenPressed(new Wait(0));*/
   }
 
-  private void configureShuffleboard(){
-    // buttons for testing turnGyro
-    SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
-    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
-    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
-    SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
-    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
-    SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0));
-
-    // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
-    SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
-    SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
-
-    // feeder subsystem
-    SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
-    SmartDashboard.putData("Feeder STOP", new FeederSetVoltage(0, feeder));
-    SmartDashboard.putData("FeederSetVoltage(5)", new FeederSetVoltage(5, feeder));
-    SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 2000);
-
-    // intake subsystem
-    SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
-
-    // hopper subsystem
-    SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
-
-    // turn with camera
-    SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
-
-    // led subsystem
-    SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
-    SmartDashboard.putData("LEDSetStrip YELLOW", new LEDSetStrip("Yellow", led));
-    SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
-    SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
-    SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
-
-    // command sequences
-    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper));
-
-  }
 
   /** CoPanel Layout
    *     
@@ -273,7 +278,13 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoTrench(driveTrain);
+    return new AutoTrench(driveTrain, log);
+  }
+
+  /**method called when robot is initialized */
+
+  public void robotInit() {
+    robotPrefs.doExist();   // Sets up Robot Preferences if they do not exist : ie you just replaced RoboRio
   }
 
   /**
@@ -281,6 +292,10 @@ public class RobotContainer {
    */
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
+    driveTrain.zeroGyroRotation();
+    driveTrain.zeroLeftEncoder();
+    driveTrain.zeroRightEncoder();
+    driveTrain.startAutoTimer();
   }
 
   /**
@@ -288,6 +303,7 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
+    led.setStrip("Green");
   }
 
   /**
@@ -295,7 +311,7 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
+    led.setStrip("Purple");
   }
-
   
 }

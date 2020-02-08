@@ -39,6 +39,7 @@ public class DriveTrain extends SubsystemBase {
 
   private final DifferentialDrive driveTrain;
   private final DifferentialDriveOdometry odometry;
+  private final RobotPreferences robotPrefs;
 
   private double leftEncoderZero = 0;
   private double rightEncoderZero = 0;
@@ -78,6 +79,7 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2 = new WPI_TalonFX(leftDriveMotorTwo);
     rightMotor1 = new WPI_TalonFX(rightDriveMotorOne);
     rightMotor2 = new WPI_TalonFX(rightDriveMotorTwo);
+    robotPrefs = new RobotPreferences();
 
     leftMotor1.configFactoryDefault();
     leftMotor2.configFactoryDefault();
@@ -90,10 +92,18 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
 
-    leftMotor1.setInverted(true);
-    leftMotor2.setInverted(true);
-    rightMotor1.setInverted(true);
-    rightMotor2.setInverted(true);
+    if (robotPrefs.prototypeBot) {
+      leftMotor1.setInverted(true);
+      leftMotor2.setInverted(true);
+      rightMotor1.setInverted(true);
+      rightMotor2.setInverted(true);
+    }
+    else{ 
+      leftMotor1.setInverted(false);
+      leftMotor2.setInverted(false);
+      rightMotor1.setInverted(false);
+      rightMotor2.setInverted(false);
+    }
 
     setDriveModeCoast(false);
 
@@ -432,9 +442,11 @@ public class DriveTrain extends SubsystemBase {
   public void updateDriveLog(boolean logWhenDisabled) {
     log.writeLog(logWhenDisabled, "Drive", "updates", 
       "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
-      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(), // left motor(s) supply current
+      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
+      "L1 Temp",leftMotor1.getTemperature(), "L2 Temp",leftMotor2.getTemperature(),
       "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
-      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), // right motor(s) supply current
+      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), 
+      "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
       "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
       "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
       "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
@@ -489,27 +501,38 @@ public class DriveTrain extends SubsystemBase {
     return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), Units.inchesToMeters(getRightEncoderVelocity()));
   }
 
+  /**
+   * Start the timer for the autonomous period. Useful for comparing to generated trajectories.
+   */
+  public void startAutoTimer() {
+    if (this.autoTimer == null) this.autoTimer = new Timer();
+    this.autoTimer.reset();
+    this.autoTimer.start();
+  }
+
+  /**
+   * Set the voltage for the left and right motors (compensates for the current bus voltage)
+   * @param leftVolts volts to output to the left motor
+   * @param rightVolts volts to output to the right motor
+   */
   public void tankDriveVolts(double leftVolts, double rightVolts) {
-    if(autoTimer == null) {
-      autoTimer = new Timer();
-      autoTimer.reset();
-      autoTimer.start();
+    if (autoTimer == null) {
+      this.startAutoTimer();
     }
 
     leftMotor1.setVoltage(leftVolts);
-    rightMotor1.setVoltage(-rightVolts);
+    rightMotor1.setVoltage(rightVolts);
+    feedTheDog();
 
-    System.out.printf("Time:%f LEnc:%f REnc:%f LVel:%f RVel:%f LV:%f RV:%f Gyro:%f %n", 
-      autoTimer.get(),
-      Units.inchesToMeters(getLeftEncoderInches()), 
-      Units.inchesToMeters(getRightEncoderInches()),
-      Units.inchesToMeters(getLeftEncoderVelocity()), 
-      Units.inchesToMeters(getRightEncoderVelocity()), 
-      leftVolts, 
-      rightVolts, 
-      getGyroRotation()
-    );
-    //System.out.println("left Volts " + leftVolts);
-    //System.out.println("right Volts " + -rightVolts);
+    log.writeLogEcho(true, "TankDriveVolts", "Update", 
+      "Time", autoTimer.get(), 
+      "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
+      "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
+      "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
+      "R Velocity", Units.inchesToMeters(getRightEncoderVelocity()), 
+      "L Volts", leftVolts, 
+      "R Volts", rightVolts, 
+      "Gyro", getGyroRotation());
+
   }
 }

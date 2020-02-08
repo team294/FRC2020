@@ -13,13 +13,15 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
 
 public class Feeder extends SubsystemBase {
-  private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederPort); // 9:1 gear ratio
+  private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederMotor); // 9:1 gear ratio
+  private final Solenoid feederPiston = new Solenoid(Constants.FeederConstants.feederPiston);
 
   private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
@@ -102,6 +104,13 @@ public class Feeder extends SubsystemBase {
     return feederMotor.getClosedLoopError() * ticksPer100ms;
   }
 
+  /**
+   * @param retract true = retract, false = extend
+   */
+  public void setFeederPiston(boolean retract) {
+    feederPiston.set(retract);
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -128,6 +137,7 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder Voltage", feederMotor.getMotorOutputVoltage());
     SmartDashboard.putNumber("Feeder SetPoint", setPoint);
     SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
+    SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
   }
 
   /**
@@ -138,6 +148,7 @@ public class Feeder extends SubsystemBase {
     log.writeLog(logWhenDisabled, "Feeder", "updates", 
       "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
       "Feeder Amps", feederMotor.getSupplyCurrent(), 
+      "Feeder Temp",feederMotor.getTemperature(),
       "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
     );
   }

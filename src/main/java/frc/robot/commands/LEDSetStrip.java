@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LED;
 
+
 /**
  * Command to send a solid color to the LED strip.
  */
@@ -17,6 +18,7 @@ public class LEDSetStrip extends CommandBase {
   private LED led;
   private String color;
   private double intensity = -1;
+ 
 
   /**
    * Only use this to turn off LEDs.
@@ -26,7 +28,8 @@ public class LEDSetStrip extends CommandBase {
 	public LEDSetStrip(String color, LED led) {
     this.led = led;
     this.color = color;
-	  addRequirements(led);
+    addRequirements(led);
+  
   }
   
   /**
@@ -37,6 +40,7 @@ public class LEDSetStrip extends CommandBase {
 	public LEDSetStrip(String color, double intensity, LED led) {
     this.led = led;
     this.color = color;
+    this.intensity = intensity;
 	  addRequirements(led);
   }
 
@@ -44,7 +48,7 @@ public class LEDSetStrip extends CommandBase {
 	@Override
 	public void initialize() {
     if (intensity >= 0) led.setStrip(color, intensity);
-		else led.setStrip(color);
+    else led.setStrip(color);
   }
     
   // Called every time the scheduler runs while the command is scheduled.
