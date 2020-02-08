@@ -18,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
-import frc.robot.commands.*;
 import frc.robot.RobotContainer;
 
 public class Shooter extends SubsystemBase {
@@ -130,6 +129,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateShooterLog(false);
+    updateOverheatingMotors();
 
     // read PID coefficients from SmartDashboard
     double ff = SmartDashboard.getNumber("Shooter FF", 0);
@@ -152,13 +152,6 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
     SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
-
-    // if (overheatingMotors().length() > 0) SmartDashboard.putBoolean("Overheating", true);
-    // else SmartDashboard.putBoolean("Overheating", false);
-    updateOverheatingMotors();
-
-    SmartDashboard.putNumber("ShooterLeftTemp", shooterMotorLeft.getTemperature());
-    SmartDashboard.putNumber("ShooterRightTemp", shooterMotorRight.getTemperature());
   }
 
   /**
@@ -179,17 +172,17 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * @return string of motors that are overheating
+   * Update TemperatureCheck utility with motors that are and are not overheating.
    */
   public void updateOverheatingMotors() {
-    if (shooterMotorLeft.getTemperature() > Constants.ShooterConstants.temperatureCheck)
+    if (shooterMotorLeft.getTemperature() >= Constants.ShooterConstants.temperatureCheck)
       tempCheck.recordOverheatingMotor("ShooterLeft");
-    if (shooterMotorRight.getTemperature() > Constants.ShooterConstants.temperatureCheck)
+    if (shooterMotorRight.getTemperature() >= Constants.ShooterConstants.temperatureCheck)
       tempCheck.recordOverheatingMotor("ShooterRight");
 
-    if (shooterMotorLeft.getTemperature() > Constants.ShooterConstants.temperatureCheck)
+    if (shooterMotorLeft.getTemperature() < Constants.ShooterConstants.temperatureCheck)
       tempCheck.notOverheatingMotor("ShooterLeft");
-    if (shooterMotorRight.getTemperature() > Constants.ShooterConstants.temperatureCheck)
+    if (shooterMotorRight.getTemperature() < Constants.ShooterConstants.temperatureCheck)
       tempCheck.notOverheatingMotor("ShooterRight");
   }
 }

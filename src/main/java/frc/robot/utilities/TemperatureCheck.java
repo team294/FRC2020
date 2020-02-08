@@ -23,12 +23,11 @@ public class TemperatureCheck {
     public void recordOverheatingMotor(String motor) {
         if (overheatingMotors.indexOf(motor) == -1) {
             if (overheatingMotors.length() != 0) {
-                overheatingMotors += ", ";
+                overheatingMotors += ",";
             }
             overheatingMotors += motor;
         }
         if (!motorOverheating) motorOverheating = true;
-        overheatingMotors = overheatingMotors.replaceAll(",,", ",");
     }
 
     /**
@@ -37,8 +36,10 @@ public class TemperatureCheck {
      */
     public void notOverheatingMotor(String motor) {
         if (overheatingMotors.indexOf(motor) != -1) {
-            overheatingMotors = overheatingMotors.replaceAll(motor, "");
+            overheatingMotors = overheatingMotors.replaceAll("," + motor, "");
+            overheatingMotors = overheatingMotors.replaceAll(motor + ",", "");
         }
+        if (overheatingMotors.length() == 0) motorOverheating = false;
     }
 
     /**

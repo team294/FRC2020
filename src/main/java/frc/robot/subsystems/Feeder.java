@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.TemperatureCheck;
 
 public class Feeder extends SubsystemBase {
   private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederMotor); // 9:1 gear ratio
@@ -30,9 +31,11 @@ public class Feeder extends SubsystemBase {
   private double ff, p, i, d; // for shuffleboard
 
   private FileLog log;
+  private TemperatureCheck tempCheck;
 
-  public Feeder(FileLog log) {
+  public Feeder(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
+    this.tempCheck = tempCheck;
 
     feederMotor.configFactoryDefault();
     feederMotor.setInverted(false);
@@ -115,6 +118,7 @@ public class Feeder extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateFeederLog(false);
+    updateOverheatingMotors();
 
     // read PID coefficients from SmartDashboard
     ff = SmartDashboard.getNumber("Feeder FF", 0);
@@ -139,8 +143,6 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
     SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
 
-    if (overheatingMotors().length() > 0) SmartDashboard.putBoolean("Overheating", true);
-    else SmartDashboard.putBoolean("Overheating", false);
   }
 
   /**
@@ -157,11 +159,13 @@ public class Feeder extends SubsystemBase {
   }
 
   /**
-   * @return string of motors that are overheating
+   * Update TemperatureCheck utility with motors that are and are not overheating.
    */
-  public String overheatingMotors() {
-    String motorString = "";
-    if (feederMotor.getTemperature() > Constants.FeederConstants.temperatureCheck) motorString += "Feeder,";
-    return motorString;
+  public void updateOverheatingMotors() {
+    if (feederMotor.getTemperature() >= Constants.FeederConstants.temperatureCheck)
+      tempCheck.recordOverheatingMotor("Feeder");
+    
+    if (feederMotor.getTemperature() < Constants.FeederConstants.temperatureCheck)
+      tempCheck.notOverheatingMotor("Feeder");
   }
 }

@@ -31,10 +31,10 @@ public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final Shooter shooter = new Shooter(log, tempCheck);
-  private final Feeder feeder = new Feeder(log);
+  private final Feeder feeder = new Feeder(log, tempCheck);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
-  private final DriveTrain driveTrain = new DriveTrain(log);
+  private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final LED led = new LED();
  // private final LED led2 = new LED();
 
@@ -91,9 +91,6 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
-
-    // motor temperatures
-    // SmartDashboard.putString("Overheating Motors", driveTrain.overheatingMotors() + shooter.overheatingMotors() + feeder.overheatingMotors());
   }
 
   /**
@@ -270,17 +267,24 @@ public class RobotContainer {
   }
 
   /**
+   * Method called periodically during teleop.
+   */
+  public void teleopPeriodic() {
+    tempCheck.displayOverheatingMotors();
+  }
+
+  /**
    * Method called robot is disabled.
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
     led.setStrip("Purple");
   }
-  
+
   /**
-   * Method called periodically during teleop.
+   * Method called periodically during disabled.
    */
-  public void teleopPeriodic() {
+  public void disabledPeriodic() {
     tempCheck.displayOverheatingMotors();
   }
 }

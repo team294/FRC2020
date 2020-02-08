@@ -47,9 +47,11 @@ public class DriveTrain extends SubsystemBase {
 
   private Timer autoTimer;
   private FileLog log;
+  private TemperatureCheck tempCheck;
   
-  public DriveTrain(FileLog log) {
+  public DriveTrain(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
+    this.tempCheck = tempCheck;
 
     // configure navX
     AHRS gyro = null;
@@ -378,6 +380,7 @@ public class DriveTrain extends SubsystemBase {
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
     updateDriveLog(false);
+    updateOverheatingMotors();
 
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
@@ -385,9 +388,6 @@ public class DriveTrain extends SubsystemBase {
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
     //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
-
-    if (overheatingMotors().length() > 0) SmartDashboard.putBoolean("Overheating", true);
-    else SmartDashboard.putBoolean("Overheating", false);
   }
 
   public Pose2d getPose() {
@@ -441,14 +441,28 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return string of motors that are overheating
+   * Update TemperatureCheck utility with motors that are and are not overheating.
    */
-  public String overheatingMotors() {
-    String motorString = "";
-    if (leftMotor1.getTemperature() > Constants.DriveConstants.temperatureCheck) motorString += "LeftDrive1,";
-    if (leftMotor2.getTemperature() > Constants.DriveConstants.temperatureCheck) motorString += "LeftDrive2,";
-    if (rightMotor1.getTemperature() > Constants.DriveConstants.temperatureCheck) motorString += "RightDrive1,";
-    if (rightMotor2.getTemperature() > Constants.DriveConstants.temperatureCheck) motorString += "RightDrive2,";
-    return motorString;
+  public void updateOverheatingMotors() {
+    if (leftMotor1.getTemperature() >= Constants.DriveConstants.temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveLeft1");
+    if (leftMotor2.getTemperature() >= Constants.DriveConstants.temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveLeft2");
+    
+    if (rightMotor1.getTemperature() >= Constants.DriveConstants.temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveRight1");
+    if (rightMotor2.getTemperature() >= Constants.DriveConstants.temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveRight2");
+
+
+    if (leftMotor1.getTemperature() < Constants.DriveConstants.temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveLeft1");
+    if (leftMotor1.getTemperature() < Constants.DriveConstants.temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveLeft2");
+
+    if (rightMotor1.getTemperature() < Constants.DriveConstants.temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveRight1");
+    if (rightMotor2.getTemperature() < Constants.DriveConstants.temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveRight2");
   }
 }
