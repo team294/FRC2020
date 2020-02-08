@@ -138,6 +138,9 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder SetPoint", setPoint);
     SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
     SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
+
+    if (overheatingMotors().length() > 0) SmartDashboard.putBoolean("Overheating", true);
+    else SmartDashboard.putBoolean("Overheating", false);
   }
 
   /**
@@ -148,8 +151,17 @@ public class Feeder extends SubsystemBase {
     log.writeLog(logWhenDisabled, "Feeder", "updates", 
       "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
       "Feeder Amps", feederMotor.getSupplyCurrent(), 
-      "Feeder Temp",feederMotor.getTemperature(),
+      "Feeder Temp", feederMotor.getTemperature(),
       "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
     );
+  }
+
+  /**
+   * @return string of motors that are overheating
+   */
+  public String overheatingMotors() {
+    String motorString = "";
+    if (feederMotor.getTemperature() > Constants.FeederConstants.temperatureCheck) motorString += "Feeder,";
+    return motorString;
   }
 }

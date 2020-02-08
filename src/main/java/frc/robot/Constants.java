@@ -26,12 +26,14 @@ public final class Constants {
         public static final int shooterMotorRight = 31;
         public static final double shooterDefaultRPM = 3000;
         public static final double voltageCheck = 10;
+        public static final double temperatureCheck = 35; // in celsius
     }
 
     public static final class FeederConstants {
         public static final int feederMotor = 40;
         public static final int feederPiston = 0;
         public static final double feederDefaultRPM = 2000;
+        public static final double temperatureCheck = 35; // in celsius
     }
 
     public static final class IntakeConstants {
@@ -74,6 +76,8 @@ public final class Constants {
         // TODO verify these
         public static final double kMaxSpeedMetersPerSecond = 3.0;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3.0;
+
+        public static final double temperatureCheck = 35; // in celsius
     }
 
     public static final class OIConstants {

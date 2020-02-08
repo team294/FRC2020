@@ -149,6 +149,12 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
     SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
+
+    if (overheatingMotors().length() > 0) SmartDashboard.putBoolean("Overheating", true);
+    else SmartDashboard.putBoolean("Overheating", false);
+
+    SmartDashboard.putNumber("ShooterLeftTemp", shooterMotorLeft.getTemperature());
+    SmartDashboard.putNumber("ShooterRightTemp", shooterMotorRight.getTemperature());
   }
 
   /**
@@ -160,11 +166,21 @@ public class Shooter extends SubsystemBase {
       //"Motor RPM", shooterMotorLeft.getSelectedSensorVelocity(0) *  ticksPer100ms,  Same as measuredRPM
       "Motor Volt", shooterMotorLeft.getMotorOutputVoltage(), 
       "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
-      "Left Temp",shooterMotorRight.getTemperature(),
+      "Left Temp", shooterMotorRight.getTemperature(),
       "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
-      "Right Temp",shooterMotorRight.getTemperature(),
+      "Right Temp", shooterMotorRight.getTemperature(),
       "Measured RPM", measuredRPM,
       "PID Error", getShooterPIDError()
     );
+  }
+
+  /**
+   * @return string of motors that are overheating
+   */
+  public String overheatingMotors() {
+    String motorString = "";
+    if (shooterMotorLeft.getTemperature() > Constants.ShooterConstants.temperatureCheck) motorString += "ShooterLeft,";
+    if (shooterMotorRight.getTemperature() > Constants.ShooterConstants.temperatureCheck) motorString += "ShooterRight,";
+    return motorString;
   }
 }

@@ -90,6 +90,9 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
+
+    // motor temperatures
+    SmartDashboard.putString("Overheating Motors", driveTrain.overheatingMotors() + shooter.overheatingMotors() + feeder.overheatingMotors());
   }
 
   /**
