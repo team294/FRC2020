@@ -79,6 +79,9 @@ public final class Constants {
         public static final double kVAngular = 0.000943; // was 0.000838
         public static final double kAAngular = 0.0003;  // was 0.0010
         public static final double kSAngular = 0.0568;   // was 0.0568
+        public static final double kPAngular = 0.001;   // was 0.002
+        public static final double kDAngular = 0;
+        public static final double kIAngular = 0;
 
         // verify these
         public static final double kMaxSpeedMetersPerSecond = 5.0;

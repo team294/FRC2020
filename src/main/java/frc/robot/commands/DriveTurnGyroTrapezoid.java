@@ -8,8 +8,9 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -32,14 +33,12 @@ public class DriveTurnGyroTrapezoid extends CommandBase {
   private double targetAccel;
   private double startAngle; // starting angle in degrees
   private double endTime;
-  private double currAngle;
+  private double currAngle, currVelocity;
   private double timeSinceStart;
   private FileLog log;
+  private PIDController pidAngVel;
 
-  private double kP;
-  private double kI;
-  private double kD;
-  private double aFF;
+  private double aFF, pFB;  // variables for arbitrary feed forward and feedback power
 
   private int accuracyCounter = 0;
 
@@ -65,12 +64,10 @@ public class DriveTurnGyroTrapezoid extends CommandBase {
 
     addRequirements(driveTrain);
 
-    kP = 0.0;  //0.0008;
-    kI = 0;  //0.0;
-    kD = 0;  //0.02;
     aFF = 0.0;
 
     //driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
+    pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
   }
 
   // Called when the command is initially scheduled.
@@ -91,6 +88,8 @@ public class DriveTurnGyroTrapezoid extends CommandBase {
     currProfileTime = profileStartTime;
     startAngle = driveTrain.getGyroRotation();
 
+    pidAngVel.reset();
+
     log.writeLog(false, "DriveTurnGyro", "initialize");
   }
 
@@ -99,6 +98,7 @@ public class DriveTurnGyroTrapezoid extends CommandBase {
   public void execute() {
     currProfileTime = System.currentTimeMillis();
     currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
+    currVelocity = driveTrain.getAngularVelocity();
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart);
@@ -115,12 +115,14 @@ public class DriveTurnGyroTrapezoid extends CommandBase {
     // System.out.println("vel: " + targetVel);
     // System.out.println("V: " + aFF);
 
-    driveTrain.setLeftMotorOutput(aFF);
-    driveTrain.setRightMotorOutput(-aFF);
+    pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
+
+    driveTrain.setLeftMotorOutput(aFF + pFB);
+    driveTrain.setRightMotorOutput(-aFF - pFB);
     //driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
 
     log.writeLog(false, "DriveTurnGyro", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
-      "posA", currAngle, "velA", driveTrain.getAngularVelocity(), "aFF", aFF);
+      "posA", currAngle, "velA", currVelocity, "aFF", aFF);
   }
 
   // Called once the command ends or is interrupted.
