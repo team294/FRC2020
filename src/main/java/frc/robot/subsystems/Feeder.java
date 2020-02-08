@@ -148,6 +148,7 @@ public class Feeder extends SubsystemBase {
     log.writeLog(logWhenDisabled, "Feeder", "updates", 
       "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
       "Feeder Amps", feederMotor.getSupplyCurrent(), 
+      "Feeder Temp",feederMotor.getTemperature(),
       "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
     );
   }
