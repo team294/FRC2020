@@ -75,11 +75,11 @@ public final class Constants {
     
         // turnGyro constants
         public static final double kMaxAngularVelocity = 1125; // degrees per second TODO calculate on actual 2020 robot
-        public static final double kMaxAngularAcceleration = 200; // degrees per second per second TODO calculate on actual 2020 robot
-        public static final double kVAngular = 0.000943; // was 0.000838
-        public static final double kAAngular = 0.0003;  // was 0.0010
+        public static final double kMaxAngularAcceleration = 400; // degrees per second per second (was 200%)
+        public static final double kVAngular = 0.000850; // was 0.000838  then 0.000943
+        public static final double kAAngular = 0.0001;  // was 0.0003
         public static final double kSAngular = 0.0568;   // was 0.0568
-        public static final double kPAngular = 0.001;   // was 0.002
+        public static final double kPAngular = 0.0005;   // was 0.001
         public static final double kDAngular = 0;
         public static final double kIAngular = 0;
 
