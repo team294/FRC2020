@@ -29,7 +29,8 @@ import frc.robot.triggers.*;
  */
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
-  private final Shooter shooter = new Shooter(log);
+  private final TemperatureCheck tempCheck = new TemperatureCheck();
+  private final Shooter shooter = new Shooter(log, tempCheck);
   private final Feeder feeder = new Feeder(log);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
@@ -92,7 +93,7 @@ public class RobotContainer {
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
 
     // motor temperatures
-    SmartDashboard.putString("Overheating Motors", driveTrain.overheatingMotors() + shooter.overheatingMotors() + feeder.overheatingMotors());
+    // SmartDashboard.putString("Overheating Motors", driveTrain.overheatingMotors() + shooter.overheatingMotors() + feeder.overheatingMotors());
   }
 
   /**
@@ -276,4 +277,10 @@ public class RobotContainer {
     led.setStrip("Purple");
   }
   
+  /**
+   * Method called periodically during teleop.
+   */
+  public void teleopPeriodic() {
+    tempCheck.displayOverheatingMotors();
+  }
 }

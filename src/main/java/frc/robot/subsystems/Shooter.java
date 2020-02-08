@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.TemperatureCheck;
 import frc.robot.commands.*;
 import frc.robot.RobotContainer;
 
@@ -25,14 +26,16 @@ public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(Constants.ShooterConstants.shooterMotorRight);
   private FileLog log; // reference to the fileLog
   private RobotContainer robotContainer;
+  private TemperatureCheck tempCheck;
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   
-  public Shooter(FileLog log) {
+  public Shooter(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
+    this.tempCheck = tempCheck;
 
     shooterMotorLeft.configFactoryDefault();
     shooterMotorRight.configFactoryDefault();
@@ -150,8 +153,9 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
 
-    if (overheatingMotors().length() > 0) SmartDashboard.putBoolean("Overheating", true);
-    else SmartDashboard.putBoolean("Overheating", false);
+    // if (overheatingMotors().length() > 0) SmartDashboard.putBoolean("Overheating", true);
+    // else SmartDashboard.putBoolean("Overheating", false);
+    updateOverheatingMotors();
 
     SmartDashboard.putNumber("ShooterLeftTemp", shooterMotorLeft.getTemperature());
     SmartDashboard.putNumber("ShooterRightTemp", shooterMotorRight.getTemperature());
@@ -177,10 +181,15 @@ public class Shooter extends SubsystemBase {
   /**
    * @return string of motors that are overheating
    */
-  public String overheatingMotors() {
-    String motorString = "";
-    if (shooterMotorLeft.getTemperature() > Constants.ShooterConstants.temperatureCheck) motorString += "ShooterLeft,";
-    if (shooterMotorRight.getTemperature() > Constants.ShooterConstants.temperatureCheck) motorString += "ShooterRight,";
-    return motorString;
+  public void updateOverheatingMotors() {
+    if (shooterMotorLeft.getTemperature() > Constants.ShooterConstants.temperatureCheck)
+      tempCheck.recordOverheatingMotor("ShooterLeft");
+    if (shooterMotorRight.getTemperature() > Constants.ShooterConstants.temperatureCheck)
+      tempCheck.recordOverheatingMotor("ShooterRight");
+
+    if (shooterMotorLeft.getTemperature() > Constants.ShooterConstants.temperatureCheck)
+      tempCheck.notOverheatingMotor("ShooterLeft");
+    if (shooterMotorRight.getTemperature() > Constants.ShooterConstants.temperatureCheck)
+      tempCheck.notOverheatingMotor("ShooterRight");
   }
 }
