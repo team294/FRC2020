@@ -194,7 +194,7 @@ public class RobotContainer {
     SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
 
     // turn with camera
-    SmartDashboard.putData("Camera Center", new CameraCenter(driveTrain, limeLight));
+    SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
