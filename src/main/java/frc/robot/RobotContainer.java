@@ -48,6 +48,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
   private final DriveTrain driveTrain = new DriveTrain(log);
+  private final LimeLight limeLight = new LimeLight(log);
   private final Test test = new Test();
   private final LED led = new LED();
 
@@ -168,8 +169,8 @@ public class RobotContainer {
     SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
     SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, log, 160, 0.04, 1.0));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, log, 160, 0.08, 1.0));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0));
 
     // shooter subsystem
     SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));

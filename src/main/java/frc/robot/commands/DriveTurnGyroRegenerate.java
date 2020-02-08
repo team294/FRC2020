@@ -36,6 +36,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
   private double currAngle, currVelocity;
   private double timeSinceStart;
   private FileLog log;
+  private LimeLight limeLight;
   private PIDController pidAngVel;
 
   private double aFF, pFB;  // variables for arbitrary feed forward and feedback power
@@ -54,9 +55,10 @@ public class DriveTurnGyroRegenerate extends CommandBase {
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveTurnGyroRegenerate(DriveTrain driveTrain, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
+  public DriveTurnGyroRegenerate(DriveTrain driveTrain, LimeLight limeLight, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
     this.log = log;
     this.target = target;
     this.maxVelMultiplier = maxVelMultiplier;
@@ -125,7 +127,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
     profileStartTime = currProfileTime;
 
     log.writeLog(false, "DriveTurnGyro", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
-      "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB);
+      "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
   }
 
   // Called once the command ends or is interrupted.
