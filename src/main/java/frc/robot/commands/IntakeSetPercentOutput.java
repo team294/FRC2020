@@ -35,6 +35,7 @@ public class IntakeSetPercentOutput extends CommandBase {
   public IntakeSetPercentOutput(Intake intake) {
     this.intake = intake;
     this.percent = Constants.IntakeConstants.intakeDefaultPercentOutput;
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.

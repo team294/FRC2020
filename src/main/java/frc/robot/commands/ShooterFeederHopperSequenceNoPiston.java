@@ -27,7 +27,7 @@ public class ShooterFeederHopperSequenceNoPiston extends SequentialCommandGroup 
       new ShooterSetPID(2800, shooter),
       new FeederSetPID(feeder),
       new ParallelCommandGroup(new HopperSetPercentOutput(hopper), new IntakeSetPercentOutput(0.5, intake)),
-      new HopperReverse(hopper, shooter)
+      new HopperReverse(hopper)
     );
   }
 }
