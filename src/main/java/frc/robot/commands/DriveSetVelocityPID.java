@@ -7,58 +7,49 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.utilities.*;
+import frc.robot.utilities.FileLog;
 
-/**
- * Command to control the drive train with joysticks using arcade drive.
- */
-public class DriveWithJoystickArcade extends CommandBase {
-  private final DriveTrain driveTrain;
-  private final Joystick leftJoystick;
-  private final Joystick rightJoystick;
-  private final FileLog log;
-  
-  private double leftPercent, rightPercent;
-
+public class DriveSetVelocityPID extends CommandBase {
   /**
-   * @param driveTrain drive train subsystem to use
-   * @param leftJoystick left joystick
-   * @param rightJoystick right joystick
-   * @param log filelog to use
+   * Creates a new DriveSetVelocityPID.
    */
-  public DriveWithJoystickArcade(DriveTrain driveTrain, Joystick leftJoystick, Joystick rightJoystick, FileLog log) {
+  private DriveTrain driveTrain;
+  private FileLog log;
+  private double targetVel;
+  private double kP, kI, kD, kF;
+
+  public DriveSetVelocityPID(double targetVel, DriveTrain driveTrain, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.targetVel = targetVel;
     this.driveTrain = driveTrain;
     this.log = log;
-    this.leftJoystick = leftJoystick;
-    this.rightJoystick = rightJoystick;
     addRequirements(driveTrain);
+    kP = 0.1;
+    kI = 0.0;
+    kD = 0.0;
+    kF = 0.0;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driveTrain.setTalonPIDConstants(kP, kI, kD, kF);
+    driveTrain.setTalonPIDVelocity(targetVel, 0, false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    leftPercent = -leftJoystick.getY();
-    rightPercent = rightJoystick.getX();
 
-    log.writeLog(false, "DriveWithJoystickArcade", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
-
-    if(Math.abs(leftPercent) < 0.05) leftPercent = 0;
-    if(Math.abs(rightPercent) < 0.05) rightPercent = 0;
-
-    driveTrain.arcadeDrive(leftPercent, rightPercent * 0.7);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    driveTrain.setLeftMotorOutput(0);
+    driveTrain.setRightMotorOutput(0);
   }
 
   // Returns true when the command should end.
