@@ -44,6 +44,10 @@ public final class Constants {
         public static final double hopperDefaultPercentOutput = 0.8;
     }
 
+    public static final class LimeLightConstants {
+        public static final double angleMultiplier = 1.064;
+    }
+
     public static final class DriveConstants {
         public static int canLeftDriveMotor1 = 10;
         public static int canLeftDriveMotor2 = 11;

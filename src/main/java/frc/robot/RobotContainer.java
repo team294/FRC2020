@@ -124,8 +124,8 @@ public class RobotContainer {
     SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
     SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0, false));
   }
 
   /**
@@ -185,7 +185,7 @@ public class RobotContainer {
   }
 
   public void configureJoystickButtons() {
-    /*JoystickButton[] left = new JoystickButton[12];
+    JoystickButton[] left = new JoystickButton[12];
     JoystickButton[] right = new JoystickButton[12];
 
     for (int i = 1; i < left.length; i++) {
@@ -199,7 +199,7 @@ public class RobotContainer {
 
     // joystick down button
     left[2].whenPressed(new Wait(0));
-    right[2].whenPressed(new Wait(0));
+    right[2].whenHeld(new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
 
     // joystick up button
     left[3].whenPressed(new Wait(0));
@@ -211,7 +211,7 @@ public class RobotContainer {
 
     // joystick right button
     left[5].whenPressed(new Wait(0));
-    right[5].whenPressed(new Wait(0));*/
+    right[5].whenPressed(new Wait(0));
   }
 
 
