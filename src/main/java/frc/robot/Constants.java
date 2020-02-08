@@ -22,34 +22,34 @@ import edu.wpi.first.wpilibj.util.Units;
 public final class Constants {
 
     public static final class ShooterConstants {
-        public static final int shooterMotorLeft = 30;
-        public static final int shooterMotorRight = 31;
+        public static final int canShooterMotorLeft = 30;
+        public static final int canShooterMotorRight = 31;
         public static final double shooterDefaultRPM = 3000;
         public static final double voltageCheck = 10;
     }
 
     public static final class FeederConstants {
-        public static final int feederMotor = 40;
-        public static final int feederPiston = 0;
+        public static final int canFeederMotor = 40;
+        public static final int pcmFeederPiston = 0;
         public static final double feederDefaultRPM = 2000;
     }
 
     public static final class IntakeConstants {
-        public static final int intakeMotor = 50;
+        public static final int canIntakeMotor = 50;
         public static final double intakeDefaultPercentOutput = 0.8;
     }
 
     public static final class HopperConstants {
-        public static final int hopperMotor = 51;
+        public static final int canHopperMotor = 51;
         public static final double hopperDefaultPercentOutput = 0.8;
     }
 
     public static final class DriveConstants {
-        public static int leftDriveMotorOne = 10;
-        public static int leftDriveMotorTwo = 11;
+        public static int canLeftDriveMotor1 = 10;
+        public static int canLeftDriveMotor2 = 11;
     
-        public static int rightDriveMotorOne = 20;
-        public static int rightDriveMotorTwo = 21; 
+        public static int canRightDriveMotor1 = 20;
+        public static int canRightDriveMotor2 = 21; 
     
         public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
         public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;

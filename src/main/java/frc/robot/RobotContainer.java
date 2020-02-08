@@ -36,6 +36,8 @@ import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.triggers.*;
 
+import static frc.robot.Constants.OIConstants.*;
+
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -44,22 +46,22 @@ import frc.robot.triggers.*;
  */
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
+  private final RobotPreferences robotPrefs = new RobotPreferences();
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
-  private final DriveTrain driveTrain = new DriveTrain(log);
+  private final DriveTrain driveTrain = new DriveTrain(log, robotPrefs);
   private final LimeLight limeLight = new LimeLight(log);
-  private final Test test = new Test();
+  // private final Test test = new Test();
   private final LED led = new LED();
   private final UsbCamera intakeCamera;
  // private final LED led2 = new LED();
-  private final RobotPreferences robotPrefs = new RobotPreferences();
 
-  Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
-  Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
-  Joystick rightJoystick = new Joystick(Constants.OIConstants.rightJoystickPort);
-  // Joystick coPanel = new Joystick(Constants.OIConstants.coPanelPort);
+  Joystick xboxController = new Joystick(xboxControllerPort);
+  Joystick leftJoystick = new Joystick(leftJoystickPort);
+  Joystick rightJoystick = new Joystick(rightJoystickPort);
+  // Joystick coPanel = new Joystick(coPanelPort);
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.

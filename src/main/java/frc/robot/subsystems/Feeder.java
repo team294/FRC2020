@@ -16,12 +16,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
 
+import static frc.robot.Constants.FeederConstants.*;
+
 public class Feeder extends SubsystemBase {
-  private final WPI_TalonFX feederMotor = new WPI_TalonFX(Constants.FeederConstants.feederMotor); // 9:1 gear ratio
-  private final Solenoid feederPiston = new Solenoid(Constants.FeederConstants.feederPiston);
+  private final WPI_TalonFX feederMotor = new WPI_TalonFX(canFeederMotor); // 9:1 gear ratio
+  private final Solenoid feederPiston = new Solenoid(pcmFeederPiston);
 
   private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms

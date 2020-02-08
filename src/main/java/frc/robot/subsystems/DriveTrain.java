@@ -32,6 +32,8 @@ import static frc.robot.Constants.DriveConstants.*;
 
 
 public class DriveTrain extends SubsystemBase {
+  private final FileLog log;
+
   private final WPI_TalonFX leftMotor1;
   private final WPI_TalonFX leftMotor2;
   private final WPI_TalonFX rightMotor1;
@@ -39,7 +41,6 @@ public class DriveTrain extends SubsystemBase {
 
   private final DifferentialDrive driveTrain;
   private final DifferentialDriveOdometry odometry;
-  private final RobotPreferences robotPrefs;
 
   private double leftEncoderZero = 0;
   private double rightEncoderZero = 0;
@@ -49,19 +50,16 @@ public class DriveTrain extends SubsystemBase {
 
   private Timer autoTimer;
 
-   // variables to help calculate angular velocity for turnGyro
-   private double prevAng; // last recorded gyro angle
-   private double currAng; // current recorded gyro angle
-   private double prevTime; // last time gyro angle was recorded
-   private double currTime; // current time gyro angle is being recorded
-   private double angularVelocity;  // Robot angular velocity in degrees per second
-   private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
-
-  private FileLog log;
+  // variables to help calculate angular velocity for turnGyro
+  private double prevAng; // last recorded gyro angle
+  private double currAng; // current recorded gyro angle
+  private double prevTime; // last time gyro angle was recorded
+  private double currTime; // current time gyro angle is being recorded
+  private double angularVelocity;  // Robot angular velocity in degrees per second
+  private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
 
   
-  
-  public DriveTrain(FileLog log) {
+  public DriveTrain(FileLog log, RobotPreferences robotPrefs) {
     this.log = log; // save reference to the fileLog
 
     // configure navX
@@ -75,19 +73,18 @@ public class DriveTrain extends SubsystemBase {
     ahrs = gyro;
     
     // configure motors
-    leftMotor1 = new WPI_TalonFX(leftDriveMotorOne);
-    leftMotor2 = new WPI_TalonFX(leftDriveMotorTwo);
-    rightMotor1 = new WPI_TalonFX(rightDriveMotorOne);
-    rightMotor2 = new WPI_TalonFX(rightDriveMotorTwo);
-    robotPrefs = new RobotPreferences();
+    leftMotor1 = new WPI_TalonFX(canLeftDriveMotor1);
+    leftMotor2 = new WPI_TalonFX(canLeftDriveMotor2);
+    rightMotor1 = new WPI_TalonFX(canRightDriveMotor1);
+    rightMotor2 = new WPI_TalonFX(canRightDriveMotor2);
 
     leftMotor1.configFactoryDefault();
     leftMotor2.configFactoryDefault();
     rightMotor1.configFactoryDefault();
     rightMotor2.configFactoryDefault();
 
-    leftMotor2.set(ControlMode.Follower, leftDriveMotorOne);
-    rightMotor2.set(ControlMode.Follower, rightDriveMotorOne);
+    leftMotor2.set(ControlMode.Follower, canLeftDriveMotor1);
+    rightMotor2.set(ControlMode.Follower, canRightDriveMotor1);
 
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
