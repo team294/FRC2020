@@ -38,6 +38,7 @@ public class DriveTrain extends SubsystemBase {
 
   private final DifferentialDrive driveTrain;
   private final DifferentialDriveOdometry odometry;
+  private final RobotPreferences robotPrefs;
 
   private double leftEncoderZero = 0;
   private double rightEncoderZero = 0;
@@ -68,6 +69,7 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2 = new WPI_TalonFX(DriveConstants.leftDriveMotorTwo);
     rightMotor1 = new WPI_TalonFX(DriveConstants.rightDriveMotorOne);
     rightMotor2 = new WPI_TalonFX(DriveConstants.rightDriveMotorTwo);
+    robotPrefs = new RobotPreferences();
 
     leftMotor1.configFactoryDefault();
     leftMotor2.configFactoryDefault();
@@ -80,10 +82,18 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
 
-    leftMotor1.setInverted(true);
-    leftMotor2.setInverted(true);
-    rightMotor1.setInverted(true);
-    rightMotor2.setInverted(true);
+    if (robotPrefs.prototypeBot) {
+      leftMotor1.setInverted(true);
+      leftMotor2.setInverted(true);
+      rightMotor1.setInverted(true);
+      rightMotor2.setInverted(true);
+    }
+    else{ 
+      leftMotor1.setInverted(false);
+      leftMotor2.setInverted(false);
+      rightMotor1.setInverted(false);
+      rightMotor2.setInverted(false);
+    }
 
     setDriveModeCoast(false);
 
