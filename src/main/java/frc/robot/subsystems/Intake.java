@@ -12,10 +12,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+
+import static frc.robot.Constants.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
-  private final WPI_VictorSPX intakeMotor = new WPI_VictorSPX(Constants.IntakeConstants.intakeMotor);
+  private final WPI_VictorSPX intakeMotor = new WPI_VictorSPX(canIntakeMotor);
  
   public Intake() {
     intakeMotor.configFactoryDefault();

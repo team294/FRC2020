@@ -12,10 +12,11 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+
+import static frc.robot.Constants.HopperConstants.*;
 
 public class Hopper extends SubsystemBase {
-  private final WPI_VictorSPX hopperMotor = new WPI_VictorSPX(Constants.HopperConstants.hopperMotor);
+  private final WPI_VictorSPX hopperMotor = new WPI_VictorSPX(canHopperMotor);
   
   public Hopper() {
     hopperMotor.configFactoryDefault();

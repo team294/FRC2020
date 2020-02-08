@@ -10,7 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.subsystems.Feeder;
 
 /**
@@ -52,7 +52,7 @@ public class FeederSetPID extends CommandBase {
   public FeederSetPID(boolean fromShuffleboard, Feeder feeder) {
     this.feeder = feeder;
     this.getRPMFromShuffleboard = false;
-    this.rpm = Constants.FeederConstants.feederDefaultRPM;
+    this.rpm = FeederConstants.feederDefaultRPM;
   }
 
   // Called when the command is initially scheduled.

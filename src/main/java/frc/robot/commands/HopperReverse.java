@@ -9,7 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Shooter;
 
@@ -37,7 +37,7 @@ public class HopperReverse extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (shooterTimer.hasPeriodPassed(0.75) && shooter.getVoltage() < Constants.ShooterConstants.voltageCheck && hopperTimer.get() == 0) {
+    if (shooterTimer.hasPeriodPassed(0.75) && shooter.getVoltage() < ShooterConstants.voltageCheck && hopperTimer.get() == 0) {
       hopperTimer.start();
       hopper.hopperSetPercentOutput(-0.8);
     } else if (hopperTimer.hasPeriodPassed(1)) {

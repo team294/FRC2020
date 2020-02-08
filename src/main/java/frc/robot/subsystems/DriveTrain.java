@@ -26,10 +26,12 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.utilities.*;
-import frc.robot.Constants.DriveConstants;
+import static frc.robot.Constants.DriveConstants.*;
 
 
 public class DriveTrain extends SubsystemBase {
+  private final FileLog log;
+
   private final WPI_TalonFX leftMotor1;
   private final WPI_TalonFX leftMotor2;
   private final WPI_TalonFX rightMotor1;
@@ -37,7 +39,6 @@ public class DriveTrain extends SubsystemBase {
 
   private final DifferentialDrive driveTrain;
   private final DifferentialDriveOdometry odometry;
-  private final RobotPreferences robotPrefs;
 
   private double leftEncoderZero = 0;
   private double rightEncoderZero = 0;
@@ -46,9 +47,8 @@ public class DriveTrain extends SubsystemBase {
   private double yawZero = 0;
 
   private Timer autoTimer;
-  private FileLog log;
   
-  public DriveTrain(FileLog log) {
+  public DriveTrain(FileLog log, RobotPreferences robotPrefs) {
     this.log = log; // save reference to the fileLog
 
     // configure navX
@@ -62,19 +62,18 @@ public class DriveTrain extends SubsystemBase {
     ahrs = gyro;
     
     // configure motors
-    leftMotor1 = new WPI_TalonFX(DriveConstants.leftDriveMotorOne);
-    leftMotor2 = new WPI_TalonFX(DriveConstants.leftDriveMotorTwo);
-    rightMotor1 = new WPI_TalonFX(DriveConstants.rightDriveMotorOne);
-    rightMotor2 = new WPI_TalonFX(DriveConstants.rightDriveMotorTwo);
-    robotPrefs = new RobotPreferences();
+    leftMotor1 = new WPI_TalonFX(canLeftDriveMotor1);
+    leftMotor2 = new WPI_TalonFX(canLeftDriveMotor2);
+    rightMotor1 = new WPI_TalonFX(canRightDriveMotor1);
+    rightMotor2 = new WPI_TalonFX(canRightDriveMotor2);
 
     leftMotor1.configFactoryDefault();
     leftMotor2.configFactoryDefault();
     rightMotor1.configFactoryDefault();
     rightMotor2.configFactoryDefault();
 
-    leftMotor2.set(ControlMode.Follower, DriveConstants.leftDriveMotorOne);
-    rightMotor2.set(ControlMode.Follower, DriveConstants.rightDriveMotorOne);
+    leftMotor2.set(ControlMode.Follower, canLeftDriveMotor1);
+    rightMotor2.set(ControlMode.Follower, canRightDriveMotor1);
 
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
@@ -255,7 +254,7 @@ public class DriveTrain extends SubsystemBase {
    * @return parameter encoder ticks converted to equivalent inches
    */
   public static double encoderTicksToInches(double ticks) {
-    return ticks / DriveConstants.ticksPerInch;
+    return ticks / ticksPerInch;
   }
 
   /**
@@ -298,7 +297,7 @@ public class DriveTrain extends SubsystemBase {
    * @return parameter inches converted to equivalent encoder ticks
    */
   public double inchesToEncoderTicks(double inches) {
-    return inches * DriveConstants.ticksPerInch;
+    return inches * ticksPerInch;
   }
 
   /**
