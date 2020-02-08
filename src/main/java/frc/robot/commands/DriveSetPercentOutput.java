@@ -8,56 +8,50 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.HopperConstants;
-import frc.robot.subsystems.Hopper;
 
-/**
- * Command to set the hopper percent output.
- */
-public class HopperSetPercentOutput extends CommandBase {
-  private Hopper hopper;
-  private double percent;
+import frc.robot.subsystems.DriveTrain;
 
+public class DriveSetPercentOutput extends CommandBase {
   /**
-   * @param percent percent output (0 to 1)
-   * @param hopper hopper subsystem to use
+   * Sets drive motors to percent output
    */
-  public HopperSetPercentOutput(double percent, Hopper hopper) {
-    this.hopper = hopper;
-    this.percent = percent;
-    addRequirements(hopper);
-  }
 
-  /**
-   * Set the hopper percent output to default percent output from constants.
-   * @param hopper hopper subsystem to use
-   */
-  public HopperSetPercentOutput(Hopper hopper) {
-    this.hopper = hopper;
-    this.percent = HopperConstants.hopperDefaultPercentOutput;
-    addRequirements(hopper);
+   private DriveTrain driveTrain;
+   private double lPercent;
+   private double rPercent;
+  public DriveSetPercentOutput(DriveTrain driveTrain, double lPercent, double rPercent) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.driveTrain = driveTrain;
+    this.lPercent = lPercent;
+    this.rPercent = rPercent;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    hopper.hopperSetPercentOutput(percent);
+    driveTrain.setLeftMotorOutput(lPercent);
+    driveTrain.setRightMotorOutput(rPercent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("L output:" + lPercent);
+    System.out.println("R output:" + rPercent);
+    driveTrain.setLeftMotorOutput(lPercent);
+    driveTrain.setRightMotorOutput(rPercent);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(interrupted) hopper.hopperSetPercentOutput(0);
+    //driveTrain.setLeftMotorOutput(0);
+    //driveTrain.setRightMotorOutput(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

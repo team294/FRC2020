@@ -7,12 +7,14 @@
 
 package frc.robot;
 
-
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,6 +22,8 @@ import frc.robot.commands.*;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.triggers.*;
+
+import static frc.robot.Constants.OIConstants.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -34,20 +38,23 @@ public class RobotContainer {
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
-  private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
-  private final LED led = new LED();
- // private final LED led2 = new LED();
   private final RobotPreferences robotPrefs = new RobotPreferences();
+  private final DriveTrain driveTrain = new DriveTrain(log, robotPrefs, tempCheck);
+  private final LimeLight limeLight = new LimeLight(log);
+  private final LED led = new LED();
+  private final UsbCamera intakeCamera;
 
-  Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
-  Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
-  Joystick rightJoystick = new Joystick(Constants.OIConstants.rightJoystickPort);
-  // Joystick coPanel = new Joystick(Constants.OIConstants.coPanelPort);
+  Joystick xboxController = new Joystick(xboxControllerPort);
+  Joystick leftJoystick = new Joystick(leftJoystickPort);
+  Joystick rightJoystick = new Joystick(rightJoystickPort);
+  // Joystick coPanel = new Joystick(coPanelPort);
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    intakeCamera = CameraServer.getInstance().startAutomaticCapture();
+
     configureButtonBindings(); // configure button bindings
     configureShuffleboard(); // configure shuffleboard
 
@@ -92,6 +99,19 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
+
+    // testing turn with camera
+    SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
+
+    // buttons for testing turnGyro
+    SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
+    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
+    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
+    SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
+    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
+    SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0, false));
   }
 
   /**
@@ -151,7 +171,7 @@ public class RobotContainer {
   }
 
   public void configureJoystickButtons() {
-    /*JoystickButton[] left = new JoystickButton[12];
+    JoystickButton[] left = new JoystickButton[12];
     JoystickButton[] right = new JoystickButton[12];
 
     for (int i = 1; i < left.length; i++) {
@@ -165,7 +185,7 @@ public class RobotContainer {
 
     // joystick down button
     left[2].whenPressed(new Wait(0));
-    right[2].whenPressed(new Wait(0));
+    right[2].whenHeld(new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
 
     // joystick up button
     left[3].whenPressed(new Wait(0));
@@ -177,8 +197,9 @@ public class RobotContainer {
 
     // joystick right button
     left[5].whenPressed(new Wait(0));
-    right[5].whenPressed(new Wait(0));*/
+    right[5].whenPressed(new Wait(0));
   }
+
 
   /** CoPanel Layout
    *     

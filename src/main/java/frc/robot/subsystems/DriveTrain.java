@@ -8,12 +8,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.LinearFilter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
@@ -26,8 +28,7 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.utilities.*;
-import frc.robot.Constants;
-import frc.robot.Constants.DriveConstants;
+import static frc.robot.Constants.DriveConstants.*;
 
 
 public class DriveTrain extends SubsystemBase {
@@ -38,7 +39,6 @@ public class DriveTrain extends SubsystemBase {
 
   private final DifferentialDrive driveTrain;
   private final DifferentialDriveOdometry odometry;
-  private final RobotPreferences robotPrefs;
 
   private double leftEncoderZero = 0;
   private double rightEncoderZero = 0;
@@ -50,7 +50,16 @@ public class DriveTrain extends SubsystemBase {
   private FileLog log;
   private TemperatureCheck tempCheck;
   
-  public DriveTrain(FileLog log, TemperatureCheck tempCheck) {
+  // variables to help calculate angular velocity for turnGyro
+  private double prevAng; // last recorded gyro angle
+  private double currAng; // current recorded gyro angle
+  private double prevTime; // last time gyro angle was recorded
+  private double currTime; // current time gyro angle is being recorded
+  private double angularVelocity;  // Robot angular velocity in degrees per second
+  private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
+
+  
+  public DriveTrain(FileLog log, RobotPreferences robotPrefs, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
 
@@ -65,19 +74,18 @@ public class DriveTrain extends SubsystemBase {
     ahrs = gyro;
     
     // configure motors
-    leftMotor1 = new WPI_TalonFX(DriveConstants.leftDriveMotorOne);
-    leftMotor2 = new WPI_TalonFX(DriveConstants.leftDriveMotorTwo);
-    rightMotor1 = new WPI_TalonFX(DriveConstants.rightDriveMotorOne);
-    rightMotor2 = new WPI_TalonFX(DriveConstants.rightDriveMotorTwo);
-    robotPrefs = new RobotPreferences();
+    leftMotor1 = new WPI_TalonFX(canLeftDriveMotor1);
+    leftMotor2 = new WPI_TalonFX(canLeftDriveMotor2);
+    rightMotor1 = new WPI_TalonFX(canRightDriveMotor1);
+    rightMotor2 = new WPI_TalonFX(canRightDriveMotor2);
 
     leftMotor1.configFactoryDefault();
     leftMotor2.configFactoryDefault();
     rightMotor1.configFactoryDefault();
     rightMotor2.configFactoryDefault();
 
-    leftMotor2.set(ControlMode.Follower, DriveConstants.leftDriveMotorOne);
-    rightMotor2.set(ControlMode.Follower, DriveConstants.rightDriveMotorOne);
+    leftMotor2.set(ControlMode.Follower, canLeftDriveMotor1);
+    rightMotor2.set(ControlMode.Follower, canRightDriveMotor1);
 
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
@@ -87,8 +95,7 @@ public class DriveTrain extends SubsystemBase {
       leftMotor2.setInverted(true);
       rightMotor1.setInverted(true);
       rightMotor2.setInverted(true);
-    }
-    else{ 
+    } else { 
       leftMotor1.setInverted(false);
       leftMotor2.setInverted(false);
       rightMotor1.setInverted(false);
@@ -108,6 +115,8 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.configVoltageCompSaturation(12.0);
     rightMotor2.configVoltageCompSaturation(12.0);
 
+    setVoltageCompensation(true);
+
     // create the drive train AFTER configuring the motors
     driveTrain = new DifferentialDrive(leftMotor1, rightMotor1);
     driveTrain.setDeadband(0.05);
@@ -117,8 +126,14 @@ public class DriveTrain extends SubsystemBase {
     zeroGyroRotation();
 
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
-  }
 
+    // initialize angular velocity variables
+    prevAng = getGyroRaw();
+    currAng = getGyroRaw();
+    prevTime = System.currentTimeMillis();
+    currTime = System.currentTimeMillis();
+    lfRunningAvg.reset();
+  }
 
   /**
    * Tank drive method for differential drive platform. The calculated 
@@ -149,7 +164,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @param percent percent output
+   * @param percent percent output (+1 = forward, -1 = reverse)
    */
   public void setLeftMotorOutput(double percent) {
     leftMotor1.set(ControlMode.PercentOutput, percent);
@@ -157,10 +172,10 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @param percent percent output
+   * @param percent percent output (+1 = forward, -1 = reverse)
    */
   public void setRightMotorOutput(double percent) {
-    rightMotor1.set(ControlMode.PercentOutput, percent);
+    rightMotor1.set(ControlMode.PercentOutput, -percent);
     feedTheDog();
   }
 
@@ -240,7 +255,7 @@ public class DriveTrain extends SubsystemBase {
   /**
 	 * Get the position of the left encoder since last zeroLeftEncoder().
 	 * @return encoder position, in ticks
-	 */
+   */
   public double getLeftEncoderTicks() {
     return getLeftEncoderRaw() - leftEncoderZero;
   }
@@ -258,7 +273,7 @@ public class DriveTrain extends SubsystemBase {
    * @return parameter encoder ticks converted to equivalent inches
    */
   public static double encoderTicksToInches(double ticks) {
-    return ticks / DriveConstants.ticksPerInch;
+    return ticks / ticksPerInch;
   }
 
   /**
@@ -293,7 +308,7 @@ public class DriveTrain extends SubsystemBase {
    * @return average velocity, in inches per second
    */
   public double getAverageEncoderVelocity(){
-    return (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
+    return (-getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
   }
 
   /**
@@ -301,7 +316,7 @@ public class DriveTrain extends SubsystemBase {
    * @return parameter inches converted to equivalent encoder ticks
    */
   public double inchesToEncoderTicks(double inches) {
-    return inches * DriveConstants.ticksPerInch;
+    return inches * ticksPerInch;
   }
 
   /**
@@ -339,11 +354,15 @@ public class DriveTrain extends SubsystemBase {
 		return angle;
   }
 
+  public double getAngularVelocity () {
+    return angularVelocity;
+  }
+
   /**
 	 * Converts input angle to a number between -179.999 and +180.0.
 	 * @return normalized angle
 	 */
-	public static double normalizeAngle(double angle) {
+	public double normalizeAngle(double angle) {
 		angle = angle % 360;
 		angle = (angle <= -180) ? (angle + 360) : angle;
     angle = (angle > 180) ? (angle - 360) : angle;
@@ -365,8 +384,57 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Write information about drive train to fileLog.
-   * @param logWhenDisabled true = log when disabled, false = discard the string
+   * Set up PID parameters for the drive train Talons
+   * @param kP Proportional term
+   * @param kI Integral term 
+   * @param kD Differential term
+   * @param kF Feed forward term (multiplied by setpoint)
+   */
+  public void setTalonPIDConstants(double kP, double kI, double kD, double kF) {
+    leftMotor1.config_kP(0, kP);
+    leftMotor1.config_kI(0, kI);
+    leftMotor1.config_kD(0, kD);
+    leftMotor1.config_kF(0, kF);
+
+    rightMotor1.config_kP(0, kP);
+    rightMotor1.config_kI(0, kI);
+    rightMotor1.config_kD(0, kD);
+    rightMotor1.config_kF(0, kF);
+
+    leftMotor1.selectProfileSlot(0, 0);
+    rightMotor1.selectProfileSlot(0, 0);
+  }
+
+  /**
+   * Sets Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
+   * @param targetVel Target velocity, in inches per second
+   * @param aFF Feed foward term to add to the contorl loop (-1 to +1)
+   * @param reverseRight True = reverse velocity and FF term for right Talon
+   */
+  public void setTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
+    int direction = (reverseRight) ? -1 : 1;
+    leftMotor1.set(ControlMode.Velocity, 
+      targetVel / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF);
+    rightMotor1.set(ControlMode.Velocity, 
+      targetVel*direction  / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
+    feedTheDog();
+  }
+
+  public double getLeftOutputPercent() {
+    return leftMotor1.getMotorOutputPercent();
+  }
+
+  public double getTalonLeftClosedLoopError() {
+    return leftMotor1.getClosedLoopError();
+  }
+
+  public double getTalonLeftClosedLoopTarget() {
+    return leftMotor1.getClosedLoopTarget();
+  }
+
+  /**
+   * Writes information about the drive train to the filelog
+   * @param logWhenDisabled true will log when disabled, false will discard the string
    */
   public void updateDriveLog(boolean logWhenDisabled) {
     log.writeLog(logWhenDisabled, "Drive", "updates", 
@@ -378,7 +446,7 @@ public class DriveTrain extends SubsystemBase {
       "R1 Temp", rightMotor1.getTemperature(), "R2 Temp", rightMotor2.getTemperature(),
       "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
       "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
-      "Gyro Angle", getGyroRotation()
+      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
       );
   }
 
@@ -395,9 +463,25 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
     SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
+    SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
     //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
+
+    // TODO keep in code until values can be tuned for ACTUAL 2020 robot
+     // save new current value for calculating angVel
+     currAng = getGyroRaw();
+     currTime = System.currentTimeMillis();
+ 
+     // calculate angVel
+     angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
+ 
+     // convert angVel to degrees per sec & put on SmartDashboard
+     SmartDashboard.putNumber("AngVel", angularVelocity);
+ 
+     // save current angVel values as previous values for next calculation
+     prevAng = currAng;
+     prevTime = currTime; 
   }
 
   public Pose2d getPose() {
@@ -454,25 +538,25 @@ public class DriveTrain extends SubsystemBase {
    * Update TemperatureCheck utility with motors that are and are not overheating.
    */
   public void updateOverheatingMotors() {
-    if (leftMotor1.getTemperature() >= Constants.DriveConstants.temperatureCheck)
+    if (leftMotor1.getTemperature() >= temperatureCheck)
       tempCheck.recordOverheatingMotor("DriveLeft1");
-    if (leftMotor2.getTemperature() >= Constants.DriveConstants.temperatureCheck)
+    if (leftMotor2.getTemperature() >= temperatureCheck)
       tempCheck.recordOverheatingMotor("DriveLeft2");
     
-    if (rightMotor1.getTemperature() >= Constants.DriveConstants.temperatureCheck)
+    if (rightMotor1.getTemperature() >= temperatureCheck)
       tempCheck.recordOverheatingMotor("DriveRight1");
-    if (rightMotor2.getTemperature() >= Constants.DriveConstants.temperatureCheck)
+    if (rightMotor2.getTemperature() >= temperatureCheck)
       tempCheck.recordOverheatingMotor("DriveRight2");
 
 
-    if (leftMotor1.getTemperature() < Constants.DriveConstants.temperatureCheck)
+    if (leftMotor1.getTemperature() < temperatureCheck)
       tempCheck.notOverheatingMotor("DriveLeft1");
-    if (leftMotor1.getTemperature() < Constants.DriveConstants.temperatureCheck)
+    if (leftMotor1.getTemperature() < temperatureCheck)
       tempCheck.notOverheatingMotor("DriveLeft2");
 
-    if (rightMotor1.getTemperature() < Constants.DriveConstants.temperatureCheck)
+    if (rightMotor1.getTemperature() < temperatureCheck)
       tempCheck.notOverheatingMotor("DriveRight1");
-    if (rightMotor2.getTemperature() < Constants.DriveConstants.temperatureCheck)
+    if (rightMotor2.getTemperature() < temperatureCheck)
       tempCheck.notOverheatingMotor("DriveRight2");
   }
 }

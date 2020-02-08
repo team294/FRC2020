@@ -8,7 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.Intake;
 
 /**
@@ -34,8 +34,7 @@ public class IntakeSetPercentOutput extends CommandBase {
    */
   public IntakeSetPercentOutput(Intake intake) {
     this.intake = intake;
-    this.percent = Constants.IntakeConstants.intakeDefaultPercentOutput;
-    addRequirements(intake);
+    this.percent = IntakeConstants.intakeDefaultPercentOutput;
   }
 
   // Called when the command is initially scheduled.

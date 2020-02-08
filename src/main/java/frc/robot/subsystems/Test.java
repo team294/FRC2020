@@ -8,27 +8,22 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.HopperConstants.*;
+public class Test extends SubsystemBase {
+  /**
+   * Creates a new Test.
+   */
+  private WPI_TalonFX testMotor; 
 
-public class Hopper extends SubsystemBase {
-  private final WPI_VictorSPX hopperMotor = new WPI_VictorSPX(canHopperMotor);
-  
-  public Hopper() {
-    hopperMotor.configFactoryDefault();
-    hopperMotor.setInverted(false);
-    hopperMotor.setNeutralMode(NeutralMode.Brake);
+  public Test() {
+    testMotor = new WPI_TalonFX(30);
   }
 
-  /**
-   * @param percent percent output (0 to 1)
-   */
-  public void hopperSetPercentOutput(double percent) {
-    hopperMotor.set(ControlMode.PercentOutput, percent);
+  public void setMotor(double percent) {
+    testMotor.set(ControlMode.PercentOutput, percent);
   }
 
   @Override

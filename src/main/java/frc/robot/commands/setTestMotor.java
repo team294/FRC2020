@@ -8,40 +8,25 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.HopperConstants;
-import frc.robot.subsystems.Hopper;
+import frc.robot.subsystems.Test;
 
-/**
- * Command to set the hopper percent output.
- */
-public class HopperSetPercentOutput extends CommandBase {
-  private Hopper hopper;
+public class setTestMotor extends CommandBase {
+  /**
+   * Creates a new setTestMotor.
+   */
+  private Test test;
   private double percent;
 
-  /**
-   * @param percent percent output (0 to 1)
-   * @param hopper hopper subsystem to use
-   */
-  public HopperSetPercentOutput(double percent, Hopper hopper) {
-    this.hopper = hopper;
+  public setTestMotor(Test test, double percent) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.test = test;
     this.percent = percent;
-    addRequirements(hopper);
-  }
-
-  /**
-   * Set the hopper percent output to default percent output from constants.
-   * @param hopper hopper subsystem to use
-   */
-  public HopperSetPercentOutput(Hopper hopper) {
-    this.hopper = hopper;
-    this.percent = HopperConstants.hopperDefaultPercentOutput;
-    addRequirements(hopper);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    hopper.hopperSetPercentOutput(percent);
+    test.setMotor(percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -52,7 +37,6 @@ public class HopperSetPercentOutput extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(interrupted) hopper.hopperSetPercentOutput(0);
   }
 
   // Returns true when the command should end.

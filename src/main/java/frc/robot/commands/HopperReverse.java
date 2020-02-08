@@ -9,7 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.HopperConstants;
 import frc.robot.subsystems.Hopper;
 
 /**
@@ -44,7 +44,7 @@ public class HopperReverse extends CommandBase {
     if (timerForward.hasPeriodPassed(1)) {
       timerReverse.start();
       timerForward.stop();
-      hopper.hopperSetPercentOutput(-1 * Constants.HopperConstants.hopperDefaultPercentOutput);
+      hopper.hopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput);
       
       // if hopper has been running reverse for 1 second, run forward and reset both timers and start forward timer
     } else if (timerReverse.hasPeriodPassed(1)) {
@@ -52,7 +52,7 @@ public class HopperReverse extends CommandBase {
       timerReverse.reset();
       timerForward.reset();
       timerForward.start();
-      hopper.hopperSetPercentOutput(Constants.HopperConstants.hopperDefaultPercentOutput);
+      hopper.hopperSetPercentOutput(HopperConstants.hopperDefaultPercentOutput);
     }
   }
 
