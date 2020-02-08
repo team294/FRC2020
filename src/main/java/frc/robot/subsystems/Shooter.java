@@ -15,12 +15,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.utilities.FileLog;
 
+import static frc.robot.Constants.ShooterConstants.*;
+
 public class Shooter extends SubsystemBase {
-  private final WPI_TalonFX shooterMotor1 = new WPI_TalonFX(Constants.ShooterConstants.shooter1Port);
-  private final WPI_TalonFX shooterMotor2 = new WPI_TalonFX(Constants.ShooterConstants.shooter2Port);
+  private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
+  private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
   private FileLog log; // reference to the fileLog
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint;
@@ -31,22 +32,20 @@ public class Shooter extends SubsystemBase {
   public Shooter(FileLog log) {
     this.log = log; // save reference to the fileLog
 
-    shooterMotor1.configFactoryDefault();
-    shooterMotor2.configFactoryDefault();
-    shooterMotor1.setInverted(true);
-    shooterMotor2.setInverted(false);
+    shooterMotorLeft.configFactoryDefault();
+    shooterMotorRight.configFactoryDefault();
+    shooterMotorLeft.setInverted(true);
+    shooterMotorRight.setInverted(false);
 
     // set drives to coast mode and ramp rate
-    shooterMotor1.setNeutralMode(NeutralMode.Coast);
-    shooterMotor2.setNeutralMode(NeutralMode.Coast);
-    shooterMotor1.configClosedloopRamp(0.05); //seconds from neutral to full
-    shooterMotor2.configClosedloopRamp(0.05);
-    shooterMotor1.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
+    shooterMotorLeft.setNeutralMode(NeutralMode.Coast);
+    shooterMotorRight.setNeutralMode(NeutralMode.Coast);
+    shooterMotorLeft.configClosedloopRamp(0.05); //seconds from neutral to full
+    shooterMotorRight.configClosedloopRamp(0.05);
+    shooterMotorLeft.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
     // shooterMotor2.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs);
-    shooterMotor1.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
-    
-    // shooterMotor2.set(ControlMode.Follower, Constants.ShooterConstants.shooter1Port);     Redundant with line 67
-    
+    shooterMotorLeft.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
+        
     // PID coefficients initial
     kP = 0.25;
     kI = 0;
@@ -54,19 +53,19 @@ public class Shooter extends SubsystemBase {
     kFF = 0.052; // 0.052 empirically to set to 3000 RPM on prototype shooter (one motor)
     
     // set PID coefficients
-    shooterMotor1.config_kF(0, kFF, timeoutMs);
-    shooterMotor1.config_kP(0, kP, timeoutMs);
-    shooterMotor1.config_kI(0, kI, timeoutMs);
-    shooterMotor1.config_kD(0, kD, timeoutMs);
+    shooterMotorLeft.config_kF(0, kFF, timeoutMs);
+    shooterMotorLeft.config_kP(0, kP, timeoutMs);
+    shooterMotorLeft.config_kI(0, kI, timeoutMs);
+    shooterMotorLeft.config_kD(0, kD, timeoutMs);
 
     kMaxOutput = 1; 
     kMinOutput = 0; // no need to go negative, a negative number will brake (and possibly break) the motor
     
-    shooterMotor1.configPeakOutputForward(kMaxOutput);
-    shooterMotor1.configPeakOutputReverse(kMinOutput);
-    shooterMotor1.setSensorPhase(false);
+    shooterMotorLeft.configPeakOutputForward(kMaxOutput);
+    shooterMotorLeft.configPeakOutputReverse(kMinOutput);
+    shooterMotorLeft.setSensorPhase(false);
 
-    shooterMotor2.set(ControlMode.Follower,Constants.ShooterConstants.shooter1Port);
+    shooterMotorRight.set(ControlMode.Follower, canShooterMotorLeft);
 
     // display PID coefficients on SmartDashboard
     SmartDashboard.putNumber("Shooter P", kP);
@@ -82,7 +81,7 @@ public class Shooter extends SubsystemBase {
    * @param voltage voltage
    */
   public void setShooterVoltage(double voltage) {
-    shooterMotor1.setVoltage(voltage);
+    shooterMotorLeft.setVoltage(voltage);
   }
 
   /**
@@ -93,9 +92,8 @@ public class Shooter extends SubsystemBase {
   public void setShooterPID(double shooterRPM) {
     this.shooterRPM = shooterRPM;
     setPoint = shooterRPM / ticksPer100ms; // setPoint is in ticks per 100ms
-    shooterMotor1.set(ControlMode.Velocity, setPoint);
+    shooterMotorLeft.set(ControlMode.Velocity, setPoint);
     SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM );
-    
     System.out.println("Starting setShooterPID");
   }
 
@@ -103,13 +101,23 @@ public class Shooter extends SubsystemBase {
    * @return PID error, in RPM
    */
   public double getShooterPIDError() {
-    return shooterMotor1.getClosedLoopError() * ticksPer100ms;
+    return shooterMotorLeft.getClosedLoopError() * ticksPer100ms;
   }
 
+  /**
+   * @return measured rpm
+   */
   public double getMeasuredRPM() {
-    measuredVelocityRaw = shooterMotor1.getSelectedSensorVelocity(0);
+    measuredVelocityRaw = shooterMotorLeft.getSelectedSensorVelocity(0);
     measuredRPM = measuredVelocityRaw * ticksPer100ms; // converts ticks per 100ms to RPM
     return measuredRPM;
+  }
+
+  /**
+   * @return output voltage
+   */
+  public double getVoltage() {
+    return shooterMotorLeft.getMotorOutputVoltage();
   }
 
   @Override
@@ -124,19 +132,20 @@ public class Shooter extends SubsystemBase {
     double d = SmartDashboard.getNumber("Shooter D", 0);
 
     // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if(ff != kFF) shooterMotor1.config_kF(0, ff, timeoutMs); kFF = ff;
-    if(p != kP) shooterMotor1.config_kP(0, p, timeoutMs); kP = p;
-    if(i != kI) shooterMotor1.config_kI(0, i, timeoutMs); kI = i;
-    if(d != kD) shooterMotor1.config_kD(0, d, timeoutMs); kD = d;
+    if(ff != kFF) shooterMotorLeft.config_kF(0, ff, timeoutMs); kFF = ff;
+    if(p != kP) shooterMotorLeft.config_kP(0, p, timeoutMs); kP = p;
+    if(i != kI) shooterMotorLeft.config_kI(0, i, timeoutMs); kI = i;
+    if(d != kD) shooterMotorLeft.config_kD(0, d, timeoutMs); kD = d;
     
     measuredRPM = getMeasuredRPM();
     
     SmartDashboard.putNumber("Shooter SetPoint RPM", setPoint * ticksPer100ms);
     SmartDashboard.putNumber("Shooter RPM", measuredRPM);
-    SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotor1.getSupplyCurrent());
-    SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotor2.getSupplyCurrent());
+    SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
+    SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
-    SmartDashboard.putNumber("Shooter PercentOutput", shooterMotor1.getMotorOutputPercent());
+    SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
+    SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
   }
 
   /**
@@ -145,10 +154,12 @@ public class Shooter extends SubsystemBase {
    */
 	public void updateShooterLog(boolean logWhenDisabled) {
 		log.writeLog(logWhenDisabled, "Shooter", "Update Variables",  
-      "Motor RPM", shooterMotor1.getSelectedSensorVelocity(0) *  ticksPer100ms,
-      "Motor Volt", shooterMotor1.getMotorOutputVoltage(), 
-      "Motor1 Amps", shooterMotor1.getSupplyCurrent(),
-      "Motor2 Amps", shooterMotor2.getSupplyCurrent(),
+      //"Motor RPM", shooterMotorLeft.getSelectedSensorVelocity(0) *  ticksPer100ms,  Same as measuredRPM
+      "Motor Volt", shooterMotorLeft.getMotorOutputVoltage(), 
+      "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
+      "Left Temp",shooterMotorRight.getTemperature(),
+      "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
+      "Right Temp",shooterMotorRight.getTemperature(),
       "Measured RPM", measuredRPM,
       "PID Error", getShooterPIDError()
     );

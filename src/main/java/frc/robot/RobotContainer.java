@@ -21,6 +21,8 @@ import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.triggers.*;
 
+import static frc.robot.Constants.OIConstants.*;
+
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -29,17 +31,19 @@ import frc.robot.triggers.*;
  */
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
+  private final RobotPreferences robotPrefs = new RobotPreferences();
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
-  private final DriveTrain driveTrain = new DriveTrain(log);
+  private final DriveTrain driveTrain = new DriveTrain(log, robotPrefs);
   private final LED led = new LED();
+ // private final LED led2 = new LED();
 
-  Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
-  Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
-  Joystick rightJoystick = new Joystick(Constants.OIConstants.rightJoystickPort);
-  // Joystick coPanel = new Joystick(Constants.OIConstants.coPanelPort);
+  Joystick xboxController = new Joystick(xboxControllerPort);
+  Joystick leftJoystick = new Joystick(leftJoystickPort);
+  Joystick rightJoystick = new Joystick(rightJoystickPort);
+  // Joystick coPanel = new Joystick(coPanelPort);
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -52,7 +56,7 @@ public class RobotContainer {
 
     // calculate trajectory on robotInit so it's ready when the auto runs
     try {
-      AutoTrench.calcTrajectory();
+      AutoTrench.calcTrajectory(log);
     } catch (Exception e) {
       System.err.println(e);
     }
@@ -105,12 +109,12 @@ public class RobotContainer {
 
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
-    Trigger xbPOVRight = new POVTrigger(xboxController, 90);
+    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
-    Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
-    Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
+    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
+    // Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
     for (int i = 1; i < xb.length; i++) {
       xb[i] = new JoystickButton(xboxController, i);
@@ -121,7 +125,7 @@ public class RobotContainer {
     xb[1].whenHeld(new HopperSetPercentOutput(-0.8, hopper));
     xb[1].whenReleased(new HopperSetPercentOutput(hopper));
     xb[2].whenPressed(new ShooterFeederHopperSequenceNoPiston(shooter, feeder, hopper, intake));
-    xb[3].whenPressed(new ShooterFeederHopperStop(shooter, feeder, hopper));
+    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     //xb[4].whenPressed(new FeederSetPiston(true, feeder));
 
     // LB = 5, RB = 6
@@ -242,7 +246,13 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoTrench(driveTrain);
+    return new AutoTrench(driveTrain, log);
+  }
+
+  /**method called when robot is initialized */
+
+  public void robotInit() {
+    robotPrefs.doExist();   // Sets up Robot Preferences if they do not exist : ie you just replaced RoboRio
   }
 
   /**
@@ -250,6 +260,10 @@ public class RobotContainer {
    */
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
+    driveTrain.zeroGyroRotation();
+    driveTrain.zeroLeftEncoder();
+    driveTrain.zeroRightEncoder();
+    driveTrain.startAutoTimer();
   }
 
   /**
@@ -257,6 +271,7 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
+    led.setStrip("Green");
   }
 
   /**
@@ -264,7 +279,7 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
+    led.setStrip("Purple");
   }
-
   
 }

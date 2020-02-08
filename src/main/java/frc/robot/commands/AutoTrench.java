@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.utilities.FileLog;
 
 
 /**
@@ -36,28 +37,32 @@ public class AutoTrench extends SequentialCommandGroup {
    * AutoTrench constructor for command group
    * @param driveTrain  The driveTrain to use to get the pose, wheel speeds and set the tankDriveVolts
    */  
-  public AutoTrench(DriveTrain driveTrain) {
+  public AutoTrench(DriveTrain driveTrain, FileLog log) {
 
     // this should have been calculated in robotInit but check just in case
     if (trajectory == null) {
-      System.out.println("WARNING: AutoTrench trajectory not pre-calculated");
-      calcTrajectory();
+      log.writeLogEcho(true, "AutoTrench", "Trajectory", "WARNING", "AutoTrench trajectory not pre-calculated");
+      calcTrajectory(log);
     }
 
-    addCommands(
-      new RamseteCommand(
-        trajectory,
-        driveTrain::getPose,
-        new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
-        new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA),
-        driveKinematics,
-        driveTrain::getWheelSpeeds,
-        new PIDController(DriveConstants.kP, 0, 0),
-        new PIDController(DriveConstants.kP, 0, 0),
-        driveTrain::tankDriveVolts,
-        driveTrain
-      ).andThen(() -> driveTrain.tankDrive(0.0, 0.0, false))
-    );
+    if (trajectory != null) {
+      addCommands(
+        new RamseteCommand(
+          trajectory,
+          driveTrain::getPose,
+          new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+          new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA),
+          driveKinematics,
+          driveTrain::getWheelSpeeds,
+          new PIDController(DriveConstants.kP, 0, 0),
+          new PIDController(DriveConstants.kP, 0, 0),
+          driveTrain::tankDriveVolts,
+          driveTrain
+        ).andThen(() -> driveTrain.tankDrive(0.0, 0.0, false))
+      );
+    } else {
+      log.writeLogEcho(true, "AutoTrench", "Trajectory", "ERROR","null trajectory, no command has been scheduled");
+    }
 
   }
 
@@ -65,47 +70,84 @@ public class AutoTrench extends SequentialCommandGroup {
    * Calculate the trajectory that will be followed. 
    * This should be called ahead of time so as not to waste time in auto.
   */
-  public static void calcTrajectory() {
-    // use starting angle to control trajectory
-    // gyro must be zeroed prior to starting
-    double startAngle = 0.0;
+  public static void calcTrajectory(FileLog log) {
+    try {
+      // use starting angle to control trajectory
+      // gyro must be zeroed prior to starting
+      double startAngle = 0.0;
 
-    // Create a voltage constraint to ensure we don't accelerate too fast
-    DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
-        new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
-        driveKinematics,
-        DriveConstants.MAX_VOLTAGE);
+      log.writeLogEcho(true, "AutoTrench", "Trajectory", 
+        "trackWidth",DriveConstants.TRACK_WIDTH,
+        "maxVoltage", DriveConstants.MAX_VOLTAGE, 
+        "kS", DriveConstants.kS, 
+        "kV", DriveConstants.kV, 
+        "kA", DriveConstants.kA,
+        "kP", DriveConstants.kP,
+        "maxSpeed", DriveConstants.kMaxSpeedMetersPerSecond,
+        "maxAcceleration", DriveConstants.kMaxAccelerationMetersPerSecondSquared);
 
-    // Create config for trajectory
-    TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
-      DriveConstants.kMaxAccelerationMetersPerSecondSquared)
-        .setKinematics(driveKinematics)
-        .addConstraint(autoVoltageConstraint);
+      // Create a voltage constraint to ensure we don't accelerate too fast
+      DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
+          new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
+          driveKinematics,
+          DriveConstants.MAX_VOLTAGE);
 
-    // the trajectory to follow
-    // all units in meters
-    // start at the origin facing the +X direction
-    // Y is distance forward
-    trajectory = TrajectoryGenerator.generateTrajectory(
-      new Pose2d(0, 0, new Rotation2d(startAngle)),
-      List.of(
-        new Translation2d(1, 0)
-      ), 
-      new Pose2d(3, 0, new Rotation2d(startAngle)), config);
+      // Create config for trajectory
+      TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
+        DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+          .setKinematics(driveKinematics)
+          .addConstraint(autoVoltageConstraint);
 
-    // dump trajectory for debugging
-    for (State s : trajectory.getStates()) {
-      var pose = s.poseMeters;
-      var translation = pose.getTranslation();
-      var rotation = pose.getRotation();
+      // the trajectory to follow (all units in meters)
+      // start at the origin facing the +X direction
+      // Y is distance forward
 
-      System.out.printf("time:%f x:%f y:%f deg:%f vel:%f %n", 
-        s.timeSeconds, 
-        translation.getX(), 
-        translation.getY(), 
-        rotation.getDegrees(), 
-        s.velocityMetersPerSecond);
+      double firstBallY = 1.4; // actual is 1.7
+      double firstBallX = 3.1; // actual is 3.1
+      double distFirstToLastBall = 1.82; // distance between first and last ball
+      double firstBallXOffset = 0.5; // aim for before first ball by this much
+      double endX = firstBallX + distFirstToLastBall + firstBallXOffset;
+      double endY = firstBallY;
+      
+      // drive from line to trench (assumes starting facing trench and shooting backwards)
+      trajectory = TrajectoryGenerator.generateTrajectory(
+        new Pose2d(0, 0, new Rotation2d(startAngle)),
+        List.of(
+          new Translation2d(firstBallX-firstBallXOffset, firstBallY)
+        ), 
+        new Pose2d(endX, endY, new Rotation2d(startAngle)), config);
+
+
+      // trajectory = TrajectoryGenerator.generateTrajectory(
+      //   new Pose2d(0, 0, new Rotation2d(startAngle)),
+      //   List.of(
+      //     new Translation2d(-1.5,-.5)
+      //   ), 
+      //   new Pose2d(-2,-1, new Rotation2d(startAngle+180)), config);
+    
+
+      // dump trajectory for debugging
+      for (State s : trajectory.getStates()) {
+        var pose = s.poseMeters;
+        var translation = pose.getTranslation();
+        var rotation = pose.getRotation();
+
+        log.writeLogEcho(true, "AutoTrench", "Trajectory", 
+          "Time", s.timeSeconds, 
+          "x", translation.getX(), 
+          "y", translation.getY(), 
+          "degrees", rotation.getDegrees(), 
+          "velocityMetersPerSec", s.velocityMetersPerSecond);
+      
+      }
+    } catch (Exception e) {
+      log.writeLogEcho(true, "AutoTrench", "Trajectory", 
+        "ERROR in calcTrajectory", e.toString(),"exception",e);
     }
+
+    if (trajectory != null) {
+      log.writeLogEcho(true, "AutoTrench", "Trajectory", "SUCCESS", true);
+    };
 
   }
 

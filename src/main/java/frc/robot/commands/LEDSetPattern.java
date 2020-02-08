@@ -16,7 +16,8 @@ import frc.robot.subsystems.*;
 public class LEDSetPattern extends CommandBase {
   private LED led;
   private int rowNumber;
-  private double intensity; 
+  private double intensity;
+ 
   
   /**
    * @param led LED subsystem to use
@@ -26,10 +27,10 @@ public class LEDSetPattern extends CommandBase {
   public LEDSetPattern(LED led, int rowNumber, double intensity) {
     this.intensity = intensity;
     this.led = led;
+    //this.led = led2; 
     this.rowNumber = rowNumber;
     addRequirements(led);
   }    
-
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
