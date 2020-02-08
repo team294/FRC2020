@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -77,7 +78,7 @@ public class LimeLight extends SubsystemBase {
     // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
 
     // read values periodically
-    x = tx.getDouble(1000.0);
+    x = tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
 

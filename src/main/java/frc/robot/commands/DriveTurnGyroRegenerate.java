@@ -35,6 +35,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
   private double endTime;
   private double currAngle, currVelocity;
   private double timeSinceStart;
+  private boolean useVision;
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
@@ -55,7 +56,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveTurnGyroRegenerate(DriveTrain driveTrain, LimeLight limeLight, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
+  public DriveTurnGyroRegenerate(DriveTrain driveTrain, LimeLight limeLight, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
@@ -63,6 +64,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
     this.target = target;
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
+    this.useVision = useVision;
 
     addRequirements(driveTrain);
 
@@ -77,6 +79,12 @@ public class DriveTurnGyroRegenerate extends CommandBase {
   public void initialize() {
     driveTrain.setDriveModeCoast(true);
 
+    startAngle = driveTrain.getGyroRotation();
+
+    if (useVision) {
+      target = driveTrain.normalizeAngle(startAngle + limeLight.getXOffset());
+    }
+
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
@@ -88,7 +96,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
     endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
-    startAngle = driveTrain.getGyroRotation();
+    
 
     pidAngVel.reset();
 
@@ -101,6 +109,11 @@ public class DriveTurnGyroRegenerate extends CommandBase {
     currProfileTime = System.currentTimeMillis();
     currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
     currVelocity = driveTrain.getAngularVelocity();
+    
+    if (useVision) {
+      target = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
+      tStateFinal = new TrapezoidProfileBCR.State(target, 0.0);
+    }
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart + 0.010);
