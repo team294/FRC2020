@@ -7,7 +7,8 @@
 
 package frc.robot;
 
-
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -51,6 +52,7 @@ public class RobotContainer {
   private final LimeLight limeLight = new LimeLight(log);
   private final Test test = new Test();
   private final LED led = new LED();
+  private UsbCamera intakeCamera;
 
   Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
   Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
@@ -61,6 +63,8 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    intakeCamera = CameraServer.getInstance().startAutomaticCapture();
+
     configureButtonBindings(); // configure button bindings
     configureShuffleboard(); // configure shuffleboard
 
@@ -188,6 +192,9 @@ public class RobotContainer {
 
     // hopper subsystem
     SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
+
+    // turn with camera
+    SmartDashboard.putData("Camera Center", new CameraCenter(driveTrain, limeLight));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
