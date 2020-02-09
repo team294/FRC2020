@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
@@ -62,6 +63,9 @@ public class RobotContainer {
   Joystick leftJoystick = new Joystick(leftJoystickPort);
   Joystick rightJoystick = new Joystick(rightJoystickPort);
   // Joystick coPanel = new Joystick(coPanelPort);
+
+  private AutoSelection autoSelection;
+  private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -74,13 +78,7 @@ public class RobotContainer {
 
     driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick, log));
 
-    // calculate trajectory on robotInit so it's ready when the auto runs
-    try {
-      AutoTrench.calcTrajectory(log);
-    } catch (Exception e) {
-      System.err.println(e);
-    }
-
+    autoSelection = new AutoSelection(log); // initialize stuff for auto routines
   }
 
   /**
@@ -126,6 +124,11 @@ public class RobotContainer {
     SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
     SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
     SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0, false));
+
+    // auto selection widget
+    autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
+    autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
+    SmartDashboard.putData("Autonomous routine", autoChooser);
   }
 
   /**
@@ -280,7 +283,7 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoTrench(driveTrain, log);
+    return autoSelection.getAutoCommand(driveTrain, log, autoChooser.getSelected());
   }
 
   /**method called when robot is initialized */

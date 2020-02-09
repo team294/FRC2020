@@ -465,7 +465,11 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
-    //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
+
+    // track position from odometry (helpful for autos)
+    var translation = odometry.getPoseMeters().getTranslation();
+    SmartDashboard.putNumber("Odometry X",translation.getX());
+    SmartDashboard.putNumber("Odometry Y",translation.getY());
 
     // TODO keep in code until values can be tuned for ACTUAL 2020 robot
      // save new current value for calculating angVel
@@ -484,10 +488,6 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public Pose2d getPose() {
-    /*System.out.println("Position" + odometry.getPoseMeters());
-    System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
-      inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
-      inchesToMeters(getLeftEncoderInches()));*/
     return odometry.getPoseMeters();
   }
 
