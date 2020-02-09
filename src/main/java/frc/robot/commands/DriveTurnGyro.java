@@ -8,15 +8,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.controller.PIDController;
 
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-public class DriveStraightRegenerate extends CommandBase {
+public class DriveTurnGyro extends CommandBase {
   /**
    * Uses wpilib TrapezoidProfile generator to generate a motion profile for drive train turning
    * Does not regenerate the profile every time
@@ -30,20 +31,17 @@ public class DriveStraightRegenerate extends CommandBase {
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
-  private double startDistLeft;
-  private double startDistRight;
+  private double startAngle; // starting angle in degrees
   private double endTime;
-  private double currDist;
-  private double currDistLeft;
-  private double currDistRight;
+  private double currAngle, currVelocity;
   private double timeSinceStart;
+  private boolean useVision;
   private boolean regenerate;
   private FileLog log;
+  private LimeLight limeLight;
+  private PIDController pidAngVel;
 
-  private double kP;
-  private double kI;
-  private double kD;
-  private double aFF;
+  private double aFF, pFB;  // variables for arbitrary feed forward and feedback power
 
   private int accuracyCounter = 0;
 
@@ -55,27 +53,27 @@ public class DriveStraightRegenerate extends CommandBase {
 
   /**
    * @param driveTrain reference to the drive train subsystem
-   * @param target degrees to turn to the right
+   * @param target degrees to turn to the right from -180 to 180
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveStraightRegenerate(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean regenerate, DriveTrain driveTrain, FileLog log) {
+  public DriveTurnGyro(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
     this.log = log;
     this.target = target;
-    this.regenerate = regenerate;
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
+    this.useVision = useVision;
+    this.regenerate = regenerate;
 
     addRequirements(driveTrain);
 
-    kP = 0.1;  //0.0008;
-    kI = 0;  //0.0;
-    kD = 0;  //0.02;
     aFF = 0.0;
 
-    driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
+    //driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
+    pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
   }
 
   // Called when the command is initially scheduled.
@@ -83,10 +81,16 @@ public class DriveStraightRegenerate extends CommandBase {
   public void initialize() {
     driveTrain.setDriveModeCoast(true);
 
+    startAngle = driveTrain.getGyroRotation();
+
+    if (useVision) {
+      target = driveTrain.normalizeAngle(startAngle + limeLight.getXOffset());
+    }
+
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
-    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxSpeedMetersPerSecond * maxVelMultiplier, kMaxAccelerationMetersPerSecondSquared * maxAccelMultiplier); // initialize velocity
+    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxAngularVelocity * maxVelMultiplier, kMaxAngularAcceleration * maxAccelMultiplier); // initialize velocity
                                                                                                                           // and accel limits
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
     System.out.println(tProfile.totalTime());
@@ -94,26 +98,33 @@ public class DriveStraightRegenerate extends CommandBase {
     endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
-    startDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches());
-    startDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches());
+    
+
+    pidAngVel.reset();
+
+    log.writeLog(false, "DriveTurnGyro", "initialize");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     currProfileTime = System.currentTimeMillis();
-    currDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDistLeft;
-    currDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches()) - startDistRight;
-    currDist = (currDistLeft + currDistRight) * 0.5;
+    currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
+    currVelocity = driveTrain.getAngularVelocity();
+    
+    if (useVision) {
+      target = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
+      tStateFinal = new TrapezoidProfileBCR.State(target, 0.0);
+    }
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
-    tStateNext = tProfile.calculate(timeSinceStart);
+    tStateNext = tProfile.calculate(timeSinceStart + 0.010);
 
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
-    aFF = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
+    aFF = (kSAngular * Math.signum(targetVel)) + (targetVel * kVAngular) + (targetAccel * kAAngular);
 
-    SmartDashboard.putNumber("pos: ", tStateNext.position);
+    SmartDashboard.putNumber("angle: ", tStateNext.position);
     SmartDashboard.putNumber("vel: ", targetVel);
     SmartDashboard.putNumber("%: ", aFF);
 
@@ -121,22 +132,20 @@ public class DriveStraightRegenerate extends CommandBase {
     // System.out.println("vel: " + targetVel);
     // System.out.println("V: " + aFF);
 
-    //driveTrain.setLeftMotorOutput(aFF);
-    //driveTrain.setRightMotorOutput(aFF);
-    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
+    pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
 
-    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
-      "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
-      "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "aFF", aFF,
-      "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
-      "pctOutLA", driveTrain.getLeftOutputPercent(), "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());
-
-    double linearVel = Units.inchesToMeters(driveTrain.getAverageEncoderVelocity());
-    if(regenerate) {
-      tStateCurr = new TrapezoidProfileBCR.State(currDist, linearVel);
+    driveTrain.setLeftMotorOutput(aFF + pFB);
+    driveTrain.setRightMotorOutput(-aFF - pFB);
+    //driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
+    if (regenerate) {
+      tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
       tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
       profileStartTime = currProfileTime;
     }
+    
+
+    log.writeLog(false, "DriveTurnGyro", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+      "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
   }
 
   // Called once the command ends or is interrupted.
@@ -145,6 +154,8 @@ public class DriveStraightRegenerate extends CommandBase {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
     driveTrain.setDriveModeCoast(false);
+
+    log.writeLog(false, "DriveTurnGyro", "end");
   }
 
   // Returns true when the command should end.
@@ -156,10 +167,10 @@ public class DriveStraightRegenerate extends CommandBase {
     //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
     //   return true;
     // }
-    if(Math.abs(target - currDist) < 0.0125) {
+    if(Math.abs(target - currAngle) < 1) {
       accuracyCounter++;
       System.out.println("theoretical: " + target);
-      System.out.println("actual: " + currDist);
+      System.out.println("actual: " + currAngle);
       System.out.println(accuracyCounter);
     } else {
       accuracyCounter = 0;
