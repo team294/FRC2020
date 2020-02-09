@@ -8,37 +8,68 @@
 package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj.Preferences;
+import static frc.robot.Constants.*;
 
 /**
  * This class handles all stored robot preferences
  */
 public class RobotPreferences {
-    private final Preferences prefs;
-
-    public boolean prototypeBot;        // set to true if drive train is reversed from competition robot
+    private final static Preferences prefs = Preferences.getInstance();
 
     /**
-     * Creates a RobotPreferences object and reads the robot preferences.
+     * Reads preferences stored in the RoboRIO flash memory and updates their values in Constants.
+     * If a preference is not found on the RoboRIO, then this method creates that key on the RoboRio
+     * using the default values from Constants.
+     * Note:  Any variables in Constants that are read from Preferences must *not* be "final".
      */
-    public RobotPreferences() {
-        prefs = Preferences.getInstance();
-        refresh();
-    }   
+	public static void readPreferencesToConstants(){
+        // Add a row for each preference to read.  Example:
+        // DriveConstants.kA = readDouble("DriveKA", DriveConstants.kA);
+        RobotConstants.prototypeBot = readBoolean("prototypeBot", RobotConstants.prototypeBot);
+    }
 
     /**
-	 * Re-reads the robot preferences.
-	 */
-    public void refresh() {
-        prototypeBot = prefs.getBoolean("prototypeBot", false);         // This is needed because the competition robot drivetrain is reversed from prototypes
+     * Reads a boolean key from the RoboRIO preferences.  If the key does not exist on the 
+     * RoboRIO, then this method creates the key on the RoboRIO with the default value
+     * (and in that case also returns the default value).
+     * @param keyName Name of the RoboRIO preferences key
+     * @param defaultValue Default value if the key doesn't already exist
+     * @return Value from RoboRIO preferences, or default value if it didn't exist
+     */
+    private static boolean readBoolean(String keyName, boolean defaultValue) {
+		if (!prefs.containsKey(keyName)){
+			prefs.putBoolean(keyName, defaultValue);
+        } 
+        return prefs.getBoolean(keyName, defaultValue);   
     }
 
-    /* Sets up Preferences if they haven't been set as when changing RoboRios or first start-up.
-		The values are set to defaults, so if using the prototype robots set inBCRLab to true
-	*/	
-	public void doExist(){				 
-		if (!prefs.containsKey("prototypeBot")){
-			prefs.putBoolean("prototypeBot", false);
-        }
+    /**
+     * Reads a double key from the RoboRIO preferences.  If the key does not exist on the 
+     * RoboRIO, then this method creates the key on the RoboRIO with the default value
+     * (and in that case also returns the default value).
+     * @param keyName Name of the RoboRIO preferences key
+     * @param defaultValue Default value if the key doesn't already exist
+     * @return Value from RoboRIO preferences, or default value if it didn't exist
+     */
+    private static double readDouble(String keyName, double defaultValue) {
+		if (!prefs.containsKey(keyName)){
+            prefs.putDouble(keyName, defaultValue);
+        } 
+        return prefs.getDouble(keyName, defaultValue);   
     }
 
+    /**
+     * Reads a string key from the RoboRIO preferences.  If the key does not exist on the 
+     * RoboRIO, then this method creates the key on the RoboRIO with the default value
+     * (and in that case also returns the default value).
+     * @param keyName Name of the RoboRIO preferences key
+     * @param defaultValue Default value if the key doesn't already exist
+     * @return Value from RoboRIO preferences, or default value if it didn't exist
+     */
+    private static String readString(String keyName, String defaultValue) {
+		if (!prefs.containsKey(keyName)){
+            prefs.putString(keyName, defaultValue);
+        } 
+        return prefs.getString(keyName, defaultValue);   
+    }
 }
