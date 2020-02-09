@@ -22,8 +22,10 @@ import edu.wpi.first.wpilibj.util.Units;
 public final class Constants {
 
     public static final class ShooterConstants {
-        public static final int canShooterMotorLeft = 30;       // 31 on competition bot
-        public static final int canShooterMotorRight = 31;      // 30 on competition bot
+        public static final int canShooterMotorLeft = 30; // 31 on competition bot
+        public static final int canShooterMotorRight = 31; // 30 on competition bot
+        public static final int pcmShooterHoodPiston = 1;
+        public static final int pcmShooterLockPiston = 2;
         public static final double shooterDefaultRPM = 3000;
         public static final double voltageCheck = 10;
         public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??

@@ -99,6 +99,8 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
+    SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
+    SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
     // testing turn with camera
     SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));

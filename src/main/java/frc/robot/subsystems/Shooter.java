@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
@@ -23,6 +24,8 @@ import static frc.robot.Constants.ShooterConstants.*;
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
+  private final Solenoid shooterHoodPiston = new Solenoid(pcmShooterHoodPiston); // piston to open and close hood
+  private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
 
@@ -98,6 +101,20 @@ public class Shooter extends SubsystemBase {
     shooterMotorLeft.set(ControlMode.Velocity, setPoint);
     SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM );
     System.out.println("Starting setShooterPID");
+  }
+
+  /**
+   * @param retract true = retract (open), false = extend (close)
+   */
+  public void setHoodPiston(boolean retract) {
+    shooterHoodPiston.set(retract);
+  }
+
+  /**
+   * @param retract true = retract (unlock), false = extend (lock)
+   */
+  public void setLockPiston(boolean retract) {
+    shooterLockPiston.set(retract);
   }
 
   /**
