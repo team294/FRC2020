@@ -44,7 +44,7 @@ public final class Constants {
     }
 
     public static final class ColorWheelConstants {
-        public static final int colorWheelPort = 60;
+        public static final int canColorWheelMotor = 60;
         public static final double colorWheelRotationVoltage = 3.5;
         public static final double colorWheelPositionVoltage = 2.5;
         public static final double timerCheck = 0.11;

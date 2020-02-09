@@ -9,14 +9,15 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.utilities.ColorSensor;
 import frc.robot.utilities.FileLog;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import static frc.robot.Constants.ColorWheelConstants.*;
+
 public class ColorWheel extends SubsystemBase {
-  private final WPI_TalonSRX colorWheelMotor = new WPI_TalonSRX(Constants.ColorWheelConstants.colorWheelPort);
+  private final WPI_TalonSRX colorWheelMotor = new WPI_TalonSRX(canColorWheelMotor);
   private ColorSensor colorSensor;
   private FileLog log;
 

@@ -9,7 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ColorWheelConstants;
 import frc.robot.subsystems.ColorWheel;
 import frc.robot.utilities.ColorSensor;
 
@@ -44,7 +44,7 @@ public class ColorWheelRotate extends CommandBase {
   public void initialize() {
     timer.reset();
     initialColor = colorSensor.getColor();
-    colorWheel.colorWheelSetVoltage(Constants.ColorWheelConstants.colorWheelRotationVoltage);
+    colorWheel.colorWheelSetVoltage(ColorWheelConstants.colorWheelRotationVoltage);
     colorCount = 0;
     changedColor = false;
   }
@@ -61,7 +61,7 @@ public class ColorWheelRotate extends CommandBase {
     }
 
     if (!initialColor.equals(currentColor)) changedColor = true;
-    else if (changedColor && initialColor.equals(currentColor) && timer.hasPeriodPassed(Constants.ColorWheelConstants.timerCheck)) {
+    else if (changedColor && initialColor.equals(currentColor) && timer.hasPeriodPassed(ColorWheelConstants.timerCheck)) {
       colorCount++;
       changedColor = false; // must change back to false so colorCount does not increase multiple times in one slice.
     }

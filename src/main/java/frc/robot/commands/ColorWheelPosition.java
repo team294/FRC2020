@@ -10,7 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants;
+import frc.robot.Constants.ColorWheelConstants;
 import frc.robot.subsystems.ColorWheel;
 import frc.robot.utilities.ColorSensor;
 
@@ -56,7 +56,7 @@ public class ColorWheelPosition extends CommandBase {
   public void initialize() {
     timer.reset();
     //initialColor = colorSensor.getColor();
-    colorWheel.colorWheelSetVoltage(Constants.ColorWheelConstants.colorWheelPositionVoltage);
+    colorWheel.colorWheelSetVoltage(ColorWheelConstants.colorWheelPositionVoltage);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -90,7 +90,7 @@ public class ColorWheelPosition extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (timer.get() > Constants.ColorWheelConstants.timerCheck && colorSensor.getControlPanelSensorColor().equals(fmsColor) 
+    if (timer.get() > ColorWheelConstants.timerCheck && colorSensor.getControlPanelSensorColor().equals(fmsColor) 
       || fmsColor.length() == 0) return true;
     else return false;
 
