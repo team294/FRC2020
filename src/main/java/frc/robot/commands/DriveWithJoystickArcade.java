@@ -53,7 +53,7 @@ public class DriveWithJoystickArcade extends CommandBase {
     if(Math.abs(leftPercent) < 0.05) leftPercent = 0;
     if(Math.abs(rightPercent) < 0.05) rightPercent = 0;
 
-    driveTrain.arcadeDrive(leftPercent, rightPercent * 0.7);
+    driveTrain.arcadeDrive(leftPercent, rightPercent * 0.6);
   }
 
   // Called once the command ends or is interrupted.
