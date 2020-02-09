@@ -80,6 +80,26 @@ public class Climb extends SubsystemBase {
     climbMotorRight.setSensorPhase(false);
   }
 
+  public double getLeftEncoderRaw() {
+    return climbMotorLeft.getSelectedSensorPosition();
+  }
+
+  public double getRightEncoderRaw() {
+    return climbMotorRight.getSelectedSensorPosition();
+  }
+
+  public double getLeftEncoderInches() {
+    return encoderTicksToInch(getLeftEncoderRaw());
+  }
+
+  public double getRightEncoderInches() {
+    return encoderTicksToInch(getRightEncoderRaw());
+  }
+
+  public double getAverageEncoderInches() {
+    return (getLeftEncoderInches() + getRightEncoderInches()) / 2; 
+  }
+
   /**
    * @param extend true = extend, false = retract
    */
