@@ -36,6 +36,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
   private double currAngle, currVelocity;
   private double timeSinceStart;
   private boolean useVision;
+  private boolean regenerate;
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
@@ -56,7 +57,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveTurnGyroRegenerate(DriveTrain driveTrain, LimeLight limeLight, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision) {
+  public DriveTurnGyroRegenerate(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
@@ -65,6 +66,7 @@ public class DriveTurnGyroRegenerate extends CommandBase {
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
     this.useVision = useVision;
+    this.regenerate = regenerate;
 
     addRequirements(driveTrain);
 
@@ -135,9 +137,12 @@ public class DriveTurnGyroRegenerate extends CommandBase {
     driveTrain.setLeftMotorOutput(aFF + pFB);
     driveTrain.setRightMotorOutput(-aFF - pFB);
     //driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
-    tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
-    tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
-    profileStartTime = currProfileTime;
+    if (regenerate) {
+      tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
+      tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
+      profileStartTime = currProfileTime;
+    }
+    
 
     log.writeLog(false, "DriveTurnGyro", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());

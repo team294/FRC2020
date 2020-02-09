@@ -114,18 +114,14 @@ public class RobotContainer {
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
 
-    // testing turn with camera
-    SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
-
     // buttons for testing turnGyro
-    SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
-    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
-    SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
-    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
+    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
+    SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(3, 0.5, 0.8, true, driveTrain, log));
+    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
     SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0, false));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
   }
 
   /**
@@ -199,7 +195,7 @@ public class RobotContainer {
 
     // joystick down button
     left[2].whenPressed(new Wait(0));
-    right[2].whenHeld(new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
+    right[2].whenHeld(new DriveTurnGyroRegenerate(160, 0.04, 1.0, true, true,driveTrain, limeLight, log));
 
     // joystick up button
     left[3].whenPressed(new Wait(0));

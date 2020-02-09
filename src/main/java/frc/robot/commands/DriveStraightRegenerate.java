@@ -37,6 +37,7 @@ public class DriveStraightRegenerate extends CommandBase {
   private double currDistLeft;
   private double currDistRight;
   private double timeSinceStart;
+  private boolean regenerate;
   private FileLog log;
 
   private double kP;
@@ -58,11 +59,12 @@ public class DriveStraightRegenerate extends CommandBase {
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveStraightRegenerate(DriveTrain driveTrain, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
+  public DriveStraightRegenerate(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean regenerate, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.log = log;
     this.target = target;
+    this.regenerate = regenerate;
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
 
@@ -130,9 +132,11 @@ public class DriveStraightRegenerate extends CommandBase {
       "pctOutLA", driveTrain.getLeftOutputPercent(), "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());
 
     double linearVel = Units.inchesToMeters(driveTrain.getAverageEncoderVelocity());
-    tStateCurr = new TrapezoidProfileBCR.State(currDist, linearVel);
-    tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
-    profileStartTime = currProfileTime;
+    if(regenerate) {
+      tStateCurr = new TrapezoidProfileBCR.State(currDist, linearVel);
+      tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
+      profileStartTime = currProfileTime;
+    }
   }
 
   // Called once the command ends or is interrupted.
