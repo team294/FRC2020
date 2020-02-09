@@ -24,28 +24,33 @@ import static frc.robot.utilities.Color2.*;
 public class LED extends SubsystemBase {
   private AddressableLED led; // strip
   private AddressableLEDBuffer ledBuffer; // data passed to strip
-  private final int length = 32; // length of strip in pixels
+  private final int length = 48; // length of strip in pixels
+  private final int firstStripLength = 16;
+  private int startingInd = 0;
   //private String prevColor, currColor; // colors on the control panel
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
   public static final Color2[][] patternLibrary = {
     {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
     {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
-    {kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed},
-    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen}
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kRed, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kGreen, kGreen, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kRed, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue},
+    
+    
   };
   
   /**********************
@@ -114,17 +119,29 @@ public class LED extends SubsystemBase {
   /**
    * Sets entire strip to be one color at 0.5 brightness
    * @param color String name of color, case sensitive
+   * @param ledStrip (int) chooses which led strip you use 0 = first 1 = second
    */
-  public void setStrip(String color) {
-    setStrip(color, 0.5);
+  public void setStrip(String color, int ledStrip ) {
+    if(ledStrip == 0){
+      startingInd = 0;
+    } else {
+      startingInd = firstStripLength;
+    }
+    setStrip(color, 0.5, startingInd);
   }
 
   /**
    * Sets entire strip to be one color
    * @param color String name of color, case sensitive
-   * @param brightness is the multiplier for brightness (0.5 is half) 
+   * @param brightness is the multiplier for brightness (0.5 is half)
+   * @param ledStrip (int) chooses which led strip you use 0 = first 1 = second 
    */
-  public void setStrip(String color, double brightness) {
+  public void setStrip(String color, double brightness, int ledStrip) {
+    if(ledStrip == 0){
+      startingInd = 0;
+    } else {
+      startingInd = firstStripLength;
+    }
     for (int i = 0; i < length; i++) {
       setColor(i, brightness, color);
     }
@@ -136,8 +153,14 @@ public class LED extends SubsystemBase {
    * Light up the LED strip in a solid color.
    * @param color Color2 to set to the entire strip
    * @param intensity 0 to 1
+   * @param ledStrip (int) chooses which led strip you use 0 = first 1 = second
    */
-  public void setColor(Color2 color, double intensity) {
+  public void setColor(Color2 color, double intensity, int ledStrip) {
+    if(ledStrip == 0){
+      startingInd = 0;
+    } else {
+      startingInd = firstStripLength;
+    }
     // int r, g, b;
     for(int l = 0; l < length; l++){
       ledBuffer.setRGB(l, (int)(255*intensity*color.red), (int)(255*intensity*color.green), (int)(255*intensity*color.blue));
@@ -150,10 +173,16 @@ public class LED extends SubsystemBase {
    * Light up the LED strip in a pattern.
    * @param pattern 1D array of Color values for the pattern
    * @param intensity 0 to 1
+   * @param ledStrip (int) chooses which led strip you use 0 = first 1 = second
    */
-  public void setPattern(Color2[] pattern, double intensity) {
+  public void setPattern(Color2[] pattern, double intensity, int ledStrip) {
     // int r, g, b;
-    for(int l = 0; l < pattern.length; l++){
+    if(ledStrip == 0){
+      startingInd = 0;
+    } else {
+      startingInd = firstStripLength;
+    }
+    for(int l = startingInd; l < pattern.length; l++){
       ledBuffer.setRGB(l, (int)(255*intensity*pattern[l].red), (int)(255*intensity*pattern[l].green), (int)(255*intensity*pattern[l].blue));
     }
     led.setData(ledBuffer);
@@ -165,6 +194,7 @@ public class LED extends SubsystemBase {
    * @param on true = on, false = off
    */
   public void setStripState(boolean on) {
+    
     if (on) led.start();
     else led.stop();
   }

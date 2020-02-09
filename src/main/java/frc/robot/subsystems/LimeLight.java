@@ -75,7 +75,10 @@ public class LimeLight extends SubsystemBase {
   public double getYOffset() {
     return y;
   }
-
+  /**
+   * chooses which pattern to display based on the x offset value from limelight
+   * returns Color2[] array
+   *  */
   public Color2[] makePattern(){
     Color2[] myPattern = new Color2[16];
     int patternFormula = (int)((x + 31)/(62/15)) + 2;
@@ -85,7 +88,9 @@ public class LimeLight extends SubsystemBase {
       patternFormula = 16;
     }
     myPattern = LED.patternLibrary[patternFormula];
-    System.out.println("patternNumber is " + patternFormula + " " + x);
+    if(x == 0){
+      myPattern = LED.patternLibrary[17];
+    }
     return myPattern;
   }
   
@@ -101,7 +106,7 @@ public class LimeLight extends SubsystemBase {
 
     SmartDashboard.putNumber("LimeLight x", x);
     SmartDashboard.putNumber("LimeLight y", y);
-    led.setPattern(makePattern(), 0.5);
+    led.setPattern(makePattern(), 0.5, 0);
     // updateLimeLightLog(false);
   }
 

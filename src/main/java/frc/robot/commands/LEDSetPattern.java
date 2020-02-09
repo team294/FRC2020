@@ -34,7 +34,7 @@ public class LEDSetPattern extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    led.setPattern(LED.patternLibrary[rowNumber], intensity);
+    led.setPattern(LED.patternLibrary[rowNumber], intensity, 1);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -306,7 +306,7 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
-    led.setStrip("Green");
+    led.setStrip("Green", 1);
   }
 
   /**
@@ -314,7 +314,7 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
-    led.setStrip("Purple");
+    led.setStrip("Purple", 1);
   }
   
 }
