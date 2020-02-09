@@ -180,24 +180,24 @@ public class RobotContainer {
     }
 
     // joystick trigger
-    left[1].whenPressed(new Wait(0));
-    right[1].whenPressed(new Wait(0));
+    // left[1].whenPressed(new Wait(0));
+    // right[1].whenPressed(new Wait(0));
 
     // joystick down button
-    left[2].whenPressed(new Wait(0));
+    // left[2].whenPressed(new Wait(0));
     right[2].whenHeld(new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
 
     // joystick up button
-    left[3].whenPressed(new Wait(0));
-    right[3].whenPressed(new Wait(0));
+    // left[3].whenPressed(new Wait(0));
+    // right[3].whenPressed(new Wait(0));
 
     // joystick left button
-    left[4].whenPressed(new Wait(0));
-    right[4].whenPressed(new Wait(0));
+    // left[4].whenPressed(new Wait(0));
+    // right[4].whenPressed(new Wait(0));
 
     // joystick right button
-    left[5].whenPressed(new Wait(0));
-    right[5].whenPressed(new Wait(0));
+    // left[5].whenPressed(new Wait(0));
+    // right[5].whenPressed(new Wait(0));
   }
 
 
@@ -297,9 +297,9 @@ public class RobotContainer {
   /**
    * Method called periodically during teleop.
    */
-  public void teleopPeriodic() {
-    tempCheck.displayOverheatingMotors();
-  }
+  /*public void teleopPeriodic() {
+     tempCheck.displayOverheatingMotors();
+  }*/
 
   /**
    * Method called robot is disabled.
@@ -307,12 +307,5 @@ public class RobotContainer {
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
     led.setStrip("Purple");
-  }
-
-  /**
-   * Method called periodically during disabled.
-   */
-  public void disabledPeriodic() {
-    tempCheck.displayOverheatingMotors();
   }
 }

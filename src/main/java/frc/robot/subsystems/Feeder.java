@@ -119,7 +119,7 @@ public class Feeder extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateFeederLog(false);
-    updateOverheatingMotors();
+    // updateOverheatingMotors();
 
     // read PID coefficients from SmartDashboard
     ff = SmartDashboard.getNumber("Feeder FF", 0);
@@ -154,7 +154,7 @@ public class Feeder extends SubsystemBase {
     log.writeLog(logWhenDisabled, "Feeder", "updates", 
       "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
       "Feeder Amps", feederMotor.getSupplyCurrent(), 
-      "Feeder Temp", feederMotor.getTemperature(),
+      // "Feeder Temp", feederMotor.getTemperature(),
       "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
     );
   }

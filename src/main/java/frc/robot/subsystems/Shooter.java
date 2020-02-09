@@ -127,7 +127,7 @@ public class Shooter extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateShooterLog(false);
-    updateOverheatingMotors();
+    // updateOverheatingMotors();
 
     // read PID coefficients from SmartDashboard
     double ff = SmartDashboard.getNumber("Shooter FF", 0);
@@ -161,9 +161,9 @@ public class Shooter extends SubsystemBase {
       //"Motor RPM", shooterMotorLeft.getSelectedSensorVelocity(0) *  ticksPer100ms,  Same as measuredRPM
       "Motor Volt", shooterMotorLeft.getMotorOutputVoltage(), 
       "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
-      "Left Temp", shooterMotorRight.getTemperature(),
+      // "Left Temp", shooterMotorRight.getTemperature(),
       "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
-      "Right Temp", shooterMotorRight.getTemperature(),
+      // "Right Temp", shooterMotorRight.getTemperature(),
       "Measured RPM", measuredRPM,
       "PID Error", getShooterPIDError()
     );

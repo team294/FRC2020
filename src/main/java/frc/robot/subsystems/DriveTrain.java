@@ -440,10 +440,10 @@ public class DriveTrain extends SubsystemBase {
     log.writeLog(logWhenDisabled, "Drive", "updates", 
       "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
       "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
-      "L1 Temp", leftMotor1.getTemperature(), "L2 Temp", leftMotor2.getTemperature(),
+      // "L1 Temp", leftMotor1.getTemperature(), "L2 Temp", leftMotor2.getTemperature(),
       "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
       "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), 
-      "R1 Temp", rightMotor1.getTemperature(), "R2 Temp", rightMotor2.getTemperature(),
+      // "R1 Temp", rightMotor1.getTemperature(), "R2 Temp", rightMotor2.getTemperature(),
       "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
       "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
       "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
@@ -458,7 +458,7 @@ public class DriveTrain extends SubsystemBase {
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
     updateDriveLog(false);
-    updateOverheatingMotors();
+    // updateOverheatingMotors();
 
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
