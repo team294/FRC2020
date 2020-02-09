@@ -23,7 +23,6 @@ import static frc.robot.utilities.Color2.*;
 
 public class LED extends SubsystemBase {
   private AddressableLED led; // strip
-  private AddressableLED led2;
 
   private AddressableLEDBuffer ledBuffer; // data passed to strip
   private int length = 32; // length of strip in pixels
@@ -74,11 +73,14 @@ public class LED extends SubsystemBase {
   /**
    * Controls LED strips on the robot without parameter for ColorSensor.
    */
-  public LED () {
+  public LED (int port) {
     led = new AddressableLED(0); // must be a PWM port
                                  // currently port 0
-    led2 = new AddressableLED(1);
-   
+    if(port == 0){
+      led = new AddressableLED(port);
+    } else if (port == 1){
+      
+    }
     ledBuffer = new AddressableLEDBuffer(length);
     led.setLength(length);
 /** 
