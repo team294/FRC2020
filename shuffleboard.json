@@ -255,7 +255,7 @@
       }
     },
     {
-      "title": "Camera",
+      "title": "Cameras",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
       "widgetPane": {
@@ -264,15 +264,15 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "1,0": {
+          "5,0": {
             "size": [
-              11,
+              7,
               6
             ],
             "content": {
               "_type": "Camera Stream",
               "_source0": "camera_server://USB Camera 0",
-              "_title": "USB Camera 0",
+              "_title": "USB Camera",
               "Crosshair/Show crosshair": true,
               "Crosshair/Crosshair color": "#FFFFFFFF",
               "Controls/Show controls": true,
@@ -282,42 +282,24 @@
               "imageWidth": -1,
               "imageHeight": -1
             }
-          }
-        }
-      }
-    },
-    {
-      "title": "Temperatures",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "tiles": {
-          "2,0": {
-            "size": [
-              4,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Overheating Motors",
-              "_title": "Overheating Motors"
-            }
           },
           "1,0": {
             "size": [
-              1,
-              1
+              4,
+              4
             ],
             "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Overheating",
-              "_title": "Overheating",
-              "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#000000FF"
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight",
+              "_title": "Limelight",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
             }
           }
         }
