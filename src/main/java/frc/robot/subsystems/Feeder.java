@@ -27,7 +27,7 @@ public class Feeder extends SubsystemBase {
 
   private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
-  private int timeoutMs = 30;
+  private int timeoutMs = 0;  // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   private double ff, p, i, d; // for shuffleboard
 
@@ -118,9 +118,6 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updateFeederLog(false);
-    // updateOverheatingMotors();
-
     // read PID coefficients from SmartDashboard
     ff = SmartDashboard.getNumber("Feeder FF", 0);
     p = SmartDashboard.getNumber("Feeder P", 0);
@@ -143,7 +140,10 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder SetPoint", setPoint);
     SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
     SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
-
+    
+    if(log.getLogRotation() == log.FEEDER_CYCLE) {
+      updateFeederLog(false);
+    }
   }
 
   /**

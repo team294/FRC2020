@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -39,7 +40,7 @@ public class RobotContainer {
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
   private final RobotPreferences robotPrefs = new RobotPreferences();
-  private final DriveTrain driveTrain = new DriveTrain(log, robotPrefs, tempCheck);
+  private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final LimeLight limeLight = new LimeLight(log);
   private final LED led = new LED();
   private final UsbCamera intakeCamera;
@@ -48,6 +49,9 @@ public class RobotContainer {
   Joystick leftJoystick = new Joystick(leftJoystickPort);
   Joystick rightJoystick = new Joystick(rightJoystickPort);
   // Joystick coPanel = new Joystick(coPanelPort);
+
+  private AutoSelection autoSelection;
+  private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -60,13 +64,7 @@ public class RobotContainer {
 
     driveTrain.setDefaultCommand(new DriveWithJoystickArcade(driveTrain, leftJoystick, rightJoystick, log));
 
-    // calculate trajectory on robotInit so it's ready when the auto runs
-    try {
-      AutoTrench.calcTrajectory(log);
-    } catch (Exception e) {
-      System.err.println(e);
-    }
-
+    autoSelection = new AutoSelection(log); // initialize stuff for auto routines
   }
 
   /**
@@ -104,18 +102,18 @@ public class RobotContainer {
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
-    // testing turn with camera
-    SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
-
     // buttons for testing turnGyro
-    SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
-    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
-    SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
-    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
-    SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0, false));
+    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
+    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 0.8, true, driveTrain, log));
+    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
+
+    // auto selection widget
+    autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
+    autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
+    SmartDashboard.putData("Autonomous routine", autoChooser);
   }
 
   /**
@@ -189,7 +187,7 @@ public class RobotContainer {
 
     // joystick down button
     // left[2].whenPressed(new Wait(0));
-    right[2].whenHeld(new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
+    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true,driveTrain, limeLight, log));
 
     // joystick up button
     // left[3].whenPressed(new Wait(0));
@@ -270,15 +268,37 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoTrench(driveTrain, log);
+    return autoSelection.getAutoCommand(driveTrain, log, autoChooser.getSelected());
   }
 
-  /**method called when robot is initialized */
-
+  /**
+   * Method called when robot is initialized
+   */
   public void robotInit() {
-    robotPrefs.doExist();   // Sets up Robot Preferences if they do not exist : ie you just replaced RoboRio
   }
 
+  /**
+   * Method called once every scheduler cycle, regardless of
+   * whether robot is in auto/teleop/disabled mode
+   */
+  public void robotPeriodic() {
+    log.advanceLogRotation();
+  }
+
+  /**
+   * Method called robot is disabled.
+   */
+  public void disabledInit() {
+    log.writeLogEcho(true, "Disabled", "Mode Init");
+    led.setStrip("Purple");
+  }
+
+  /**
+   * Method called once every scheduler cycle when robot is disabled
+   */
+  public void disabledPeriodic() {
+  }
+  
   /**
    * Method called when auto mode is initialized/enabled.
    */
@@ -291,6 +311,12 @@ public class RobotContainer {
   }
 
   /**
+   * Method called once every scheduler cycle when auto mode is initialized/enabled
+   */
+  public void autonomousPeriodic() {
+  }
+
+  /**
    * Method called when teleop mode is initialized/enabled.
    */
   public void teleopInit() {
@@ -299,17 +325,8 @@ public class RobotContainer {
   }
 
   /**
-   * Method called periodically during teleop.
+   * Method called once every scheduler cycle when teleop mode is initialized/enabled
    */
-  /*public void teleopPeriodic() {
-     tempCheck.displayOverheatingMotors();
-  }*/
-
-  /**
-   * Method called robot is disabled.
-   */
-  public void disabledInit() {
-    log.writeLogEcho(true, "Disabled", "Mode Init");
-    led.setStrip("Purple");
+  public void teleopPeriodic() {
   }
 }

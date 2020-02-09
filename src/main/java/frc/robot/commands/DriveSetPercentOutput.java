@@ -19,7 +19,7 @@ public class DriveSetPercentOutput extends CommandBase {
    private DriveTrain driveTrain;
    private double lPercent;
    private double rPercent;
-  public DriveSetPercentOutput(DriveTrain driveTrain, double lPercent, double rPercent) {
+  public DriveSetPercentOutput(double lPercent, double rPercent, DriveTrain driveTrain) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.lPercent = lPercent;
