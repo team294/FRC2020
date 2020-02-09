@@ -9,23 +9,19 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
+import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.utilities.*;
-import frc.robot.subsystems.LED;
 
 public class LimeLight extends SubsystemBase {
 
   private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
   private static NetworkTable table = tableInstance.getTable("limelight");
+  private NetworkTableEntry tv, tx, ty, ta;
   public double x, y, area;
   private FileLog log;
-  private LED led2;
   /*
   Limelight settings:
   ~~input~~
@@ -58,11 +54,14 @@ public class LimeLight extends SubsystemBase {
   no changes 
   */
 
-  public LimeLight(FileLog log, LED led2) {
+  public LimeLight(FileLog log) {
     this.log = log;
-    this.led2 = led2;
     tableInstance.startClientTeam(294);
 
+    tv = table.getEntry("tv");
+    tx = table.getEntry("tx");
+    ty = table.getEntry("ty");
+    ta = table.getEntry("ta");
   }
 
   public double getXOffset() {
@@ -73,34 +72,19 @@ public class LimeLight extends SubsystemBase {
     return y;
   }
   
-  public Color2[] makePattern(){
-    Color2[] myPattern = new Color2[16];
-    int patternNumber = (int)(x/3.6) + 2;
-    
-    myPattern = LED.patternLibrary[patternNumber];
-    return myPattern;
-  }
   
-
   @Override
   public void periodic() {
     // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
 
-    NetworkTableEntry tv = table.getEntry("tv");
-    NetworkTableEntry tx = table.getEntry("tx");
-    NetworkTableEntry ty = table.getEntry("ty");
-    NetworkTableEntry ta = table.getEntry("ta");
-
     // read values periodically
-    x = tx.getDouble(1000.0);
+    x = tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
 
-    SmartDashboard.putNumber("LimeLight x: ", x);
-    SmartDashboard.putNumber("LimeLight y: ", y);
-    updateLimeLightLog(false);
-
-    led2.setStrip("Red");
+    SmartDashboard.putNumber("LimeLight x", x);
+    SmartDashboard.putNumber("LimeLight y", y);
+    // updateLimeLightLog(false);
   }
 
    /**
