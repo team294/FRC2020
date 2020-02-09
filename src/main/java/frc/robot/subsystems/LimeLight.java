@@ -106,7 +106,12 @@ public class LimeLight extends SubsystemBase {
 
     SmartDashboard.putNumber("LimeLight x", x);
     SmartDashboard.putNumber("LimeLight y", y);
-    led.setPattern(makePattern(), 0.5, 0);
+    if(makePattern() == LED.patternLibrary[17]) {
+      led.setPattern(makePattern(), 0.1, 0);
+    } else {
+      led.setPattern(makePattern(), 0.5, 0);
+    }
+    
     // updateLimeLightLog(false);
   }
 
