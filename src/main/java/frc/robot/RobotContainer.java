@@ -52,7 +52,7 @@ public class RobotContainer {
   private final Feeder feeder = new Feeder(log);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
-  private final DriveTrain driveTrain = new DriveTrain(log, robotPrefs);
+  private final DriveTrain driveTrain = new DriveTrain(log);
   private final LimeLight limeLight = new LimeLight(log);
   // private final Test test = new Test();
   private final LED led = new LED();
@@ -286,7 +286,6 @@ public class RobotContainer {
    * Method called when robot is initialized
    */
   public void robotInit() {
-    robotPrefs.doExist();   // Sets up Robot Preferences if they do not exist : ie you just replaced RoboRio
   }
 
   /**

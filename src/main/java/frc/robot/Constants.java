@@ -21,6 +21,13 @@ import edu.wpi.first.wpilibj.util.Units;
  */
 public final class Constants {
 
+    public static final class RobotConstants {
+        // Global constants go here
+
+        // Next row is a DEFAULT VALUE.  Change this value in RobotPrefrences for each robot, not in this code!
+        public static boolean prototypeBot = false;     // true = proto robot, false = competition robot
+    }
+
     public static final class ShooterConstants {
         public static final int canShooterMotorLeft = 30;
         public static final int canShooterMotorRight = 31;

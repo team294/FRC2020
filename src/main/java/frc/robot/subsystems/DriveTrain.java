@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.utilities.*;
+import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.DriveConstants.*;
 
 
@@ -59,7 +60,7 @@ public class DriveTrain extends SubsystemBase {
   private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
 
   
-  public DriveTrain(FileLog log, RobotPreferences robotPrefs) {
+  public DriveTrain(FileLog log) {
     this.log = log; // save reference to the fileLog
 
     // configure navX
@@ -89,7 +90,8 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
 
-    if (robotPrefs.prototypeBot) {
+    // Drive train is reversed on competition robot
+    if (prototypeBot) {
       leftMotor1.setInverted(true);
       leftMotor2.setInverted(true);
       rightMotor1.setInverted(true);
