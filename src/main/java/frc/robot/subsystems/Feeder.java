@@ -115,8 +115,6 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updateFeederLog(false);
-
     // read PID coefficients from SmartDashboard
     ff = SmartDashboard.getNumber("Feeder FF", 0);
     p = SmartDashboard.getNumber("Feeder P", 0);
@@ -139,6 +137,10 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder SetPoint", setPoint);
     SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
     SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
+    
+    if(log.getLogRotation() == log.FEEDER_CYCLE) {
+      updateFeederLog(false);
+    }
   }
 
   /**
