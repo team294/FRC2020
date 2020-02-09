@@ -441,17 +441,19 @@ public class DriveTrain extends SubsystemBase {
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
-    SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
-    SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
-    SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
-    SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
+    SmartDashboard.putNumber("Drive Right Enc", getRightEncoderInches());
+    SmartDashboard.putNumber("Drive Left Enc", getLeftEncoderInches());
+    SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
+    SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
+    SmartDashboard.putNumber("Drive Gyro Rotation", getGyroRotation());
+    SmartDashboard.putNumber("Drive Raw Gyro", getGyroRaw());
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
 
     // track position from odometry (helpful for autos)
     var translation = odometry.getPoseMeters().getTranslation();
-    SmartDashboard.putNumber("Odometry X",translation.getX());
-    SmartDashboard.putNumber("Odometry Y",translation.getY());
+    SmartDashboard.putNumber("Drive Odometry X",translation.getX());
+    SmartDashboard.putNumber("Drive Odometry Y",translation.getY());
 
     // TODO keep in code until values can be tuned for ACTUAL 2020 robot
      // save new current value for calculating angVel
@@ -462,7 +464,7 @@ public class DriveTrain extends SubsystemBase {
      angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
  
      // convert angVel to degrees per sec & put on SmartDashboard
-     SmartDashboard.putNumber("AngVel", angularVelocity);
+     SmartDashboard.putNumber("Drive AngVel", angularVelocity);
  
      // save current angVel values as previous values for next calculation
      prevAng = currAng;
