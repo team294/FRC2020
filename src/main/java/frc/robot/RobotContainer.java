@@ -7,10 +7,25 @@
 
 package frc.robot;
 
-
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +36,8 @@ import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.triggers.*;
 
+import static frc.robot.Constants.OIConstants.*;
+
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
  * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
@@ -29,22 +46,29 @@ import frc.robot.triggers.*;
  */
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
+  private final RobotPreferences robotPrefs = new RobotPreferences();
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
-  private final DriveTrain driveTrain = new DriveTrain(log);
+  private final DriveTrain driveTrain = new DriveTrain(log, robotPrefs);
+  private final LimeLight limeLight = new LimeLight(log);
+  // private final Test test = new Test();
   private final LED led = new LED();
+  private final UsbCamera intakeCamera;
+ // private final LED led2 = new LED();
 
-  Joystick xboxController = new Joystick(Constants.OIConstants.xboxControllerPort);
-  Joystick leftJoystick = new Joystick(Constants.OIConstants.leftJoystickPort);
-  Joystick rightJoystick = new Joystick(Constants.OIConstants.rightJoystickPort);
-  // Joystick coPanel = new Joystick(Constants.OIConstants.coPanelPort);
+  Joystick xboxController = new Joystick(xboxControllerPort);
+  Joystick leftJoystick = new Joystick(leftJoystickPort);
+  Joystick rightJoystick = new Joystick(rightJoystickPort);
+  // Joystick coPanel = new Joystick(coPanelPort);
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+    intakeCamera = CameraServer.getInstance().startAutomaticCapture();
+
     configureButtonBindings(); // configure button bindings
     configureShuffleboard(); // configure shuffleboard
 
@@ -52,7 +76,7 @@ public class RobotContainer {
 
     // calculate trajectory on robotInit so it's ready when the auto runs
     try {
-      AutoTrench.calcTrajectory();
+      AutoTrench.calcTrajectory(log);
     } catch (Exception e) {
       System.err.println(e);
     }
@@ -89,6 +113,19 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
+
+    // testing turn with camera
+    SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
+
+    // buttons for testing turnGyro
+    SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
+    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
+    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(driveTrain, 1, 1)); // to calculate max angular velocity
+    SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
+    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
+    SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0, false));
   }
 
   /**
@@ -105,12 +142,12 @@ public class RobotContainer {
 
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
-    Trigger xbPOVRight = new POVTrigger(xboxController, 90);
+    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
-    Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
-    Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
+    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
+    // Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
     for (int i = 1; i < xb.length; i++) {
       xb[i] = new JoystickButton(xboxController, i);
@@ -148,7 +185,7 @@ public class RobotContainer {
   }
 
   public void configureJoystickButtons() {
-    /*JoystickButton[] left = new JoystickButton[12];
+    JoystickButton[] left = new JoystickButton[12];
     JoystickButton[] right = new JoystickButton[12];
 
     for (int i = 1; i < left.length; i++) {
@@ -162,7 +199,7 @@ public class RobotContainer {
 
     // joystick down button
     left[2].whenPressed(new Wait(0));
-    right[2].whenPressed(new Wait(0));
+    right[2].whenHeld(new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
 
     // joystick up button
     left[3].whenPressed(new Wait(0));
@@ -174,8 +211,9 @@ public class RobotContainer {
 
     // joystick right button
     left[5].whenPressed(new Wait(0));
-    right[5].whenPressed(new Wait(0));*/
+    right[5].whenPressed(new Wait(0));
   }
+
 
   /** CoPanel Layout
    *     
@@ -242,7 +280,13 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return new AutoTrench(driveTrain);
+    return new AutoTrench(driveTrain, log);
+  }
+
+  /**method called when robot is initialized */
+
+  public void robotInit() {
+    robotPrefs.doExist();   // Sets up Robot Preferences if they do not exist : ie you just replaced RoboRio
   }
 
   /**
@@ -250,6 +294,10 @@ public class RobotContainer {
    */
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
+    driveTrain.zeroGyroRotation();
+    driveTrain.zeroLeftEncoder();
+    driveTrain.zeroRightEncoder();
+    driveTrain.startAutoTimer();
   }
 
   /**
@@ -257,6 +305,7 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
+    led.setStrip("Green");
   }
 
   /**
@@ -264,7 +313,7 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
+    led.setStrip("Purple");
   }
-
   
 }

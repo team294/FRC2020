@@ -12,7 +12,12 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.Color2;
-import frc.robot.utilities.ColorSensor;
+
+
+/******************************
+ *  import frc.robot.utilities.ColorSensor;
+ *All references to the color sensor are commented out since as of now we are not using one
+ *****************************/
 
 import static frc.robot.utilities.Color2.*;
 
@@ -20,18 +25,19 @@ public class LED extends SubsystemBase {
   private AddressableLED led; // strip
   private AddressableLEDBuffer ledBuffer; // data passed to strip
   private final int length = 32; // length of strip in pixels
-  private String prevColor, currColor; // colors on the control panel
-  private final ColorSensor colorSensor; // Reference to the color sensor
+  //private String prevColor, currColor; // colors on the control panel
+  //private final ColorSensor colorSensor; // Reference to the color sensor
 
   public static final Color2[][] patternLibrary = {
     {kGreen, kFirstBlue, kWhite, kFirstBlue, kWhite, kFirstBlue, kWhite, kFirstBlue},
     {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed}
   };
   
-  /**
+  /**********************
    * Controls LED strips on the robot.
-   */
-  public LED (ColorSensor colorSensor) {
+   
+ public LED (ColorSensor colorSensor) {  
+ 
     led = new AddressableLED(0); // must be a PWM port
                                  // currently port 0 for testing on miniBot
     ledBuffer = new AddressableLEDBuffer(length);
@@ -44,16 +50,18 @@ public class LED extends SubsystemBase {
     prevColor = colorSensor.getColor();
     currColor = colorSensor.getColor();
   }
+******************************/
+  
 
   /**
    * Controls LED strips on the robot without parameter for ColorSensor.
    */
   public LED () {
     led = new AddressableLED(0); // must be a PWM port
-                                 // currently port 0 for testing on miniBot
+                                 // currently port 0
     ledBuffer = new AddressableLEDBuffer(length);
     led.setLength(length);
-
+/** 
     // save reference to the color sensor
     this.colorSensor = new ColorSensor();
 
@@ -62,6 +70,7 @@ public class LED extends SubsystemBase {
     currColor = colorSensor.getColor();
 
     setColor(Color2.kBlack, 0);
+**/
   }
  
   /**
@@ -88,15 +97,11 @@ public class LED extends SubsystemBase {
   }
 
   /**
-   * Sets entire strip to be one color
+   * Sets entire strip to be one color at 0.5 brightness
    * @param color String name of color, case sensitive
    */
   public void setStrip(String color) {
-    for (int i = 0; i < length; i++) {
-      setColor(i, 0.5, color);
-    }
-    led.setData(ledBuffer);
-    led.start();
+    setStrip(color, 0.5);
   }
 
   /**
@@ -152,19 +157,23 @@ public class LED extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    
-    prevColor = currColor;
-    currColor = colorSensor.getColor();
-
-    // change color of LED Strip if ColorSensor reads a new color
-    if (!prevColor.equals(currColor)) setStrip(currColor);
-    
-    // ColorSensor updated values on dashboard
-    SmartDashboard.putBoolean("Yellow", currColor == ("Yellow"));
-    SmartDashboard.putBoolean("Red", (currColor=="Red"));
-    SmartDashboard.putBoolean("Green", (currColor == "Green"));
-    SmartDashboard.putBoolean("Blue", (currColor == "Blue"));
-    SmartDashboard.putString("Color", currColor);
+/*************************************************************** 
     SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+    if (colorSensor.getProximity() <1000) {
+    
+      prevColor = currColor;
+      currColor = colorSensor.getColor();
+
+      // change color of LED Strip if ColorSensor reads a new color
+      if (!prevColor.equals(currColor)) setStrip(currColor);
+      
+      // ColorSensor updated values on dashboard
+      SmartDashboard.putBoolean("Yellow", currColor == ("Yellow"));
+      SmartDashboard.putBoolean("Red", (currColor=="Red"));
+      SmartDashboard.putBoolean("Green", (currColor == "Green"));
+      SmartDashboard.putBoolean("Blue", (currColor == "Blue"));
+      SmartDashboard.putString("Color", currColor);
+    }
+*********************************************************/
   }
 }
