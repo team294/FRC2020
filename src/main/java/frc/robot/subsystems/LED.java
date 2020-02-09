@@ -40,7 +40,7 @@ public class LED extends SubsystemBase {
     {kBlack, kBlack, kBlack, kBlack, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kBlack, kBlack, kBlack, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
-    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kGreen, kGreen, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kGreen, kGreen, kGreen, kGreen, kGreen, kGreen, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kBlack, kBlack, kBlack, kBlack},
@@ -48,7 +48,7 @@ public class LED extends SubsystemBase {
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kBlack, kBlack},
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kRed, kBlack},
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
-    {kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue},
+    {kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow}
     
     
   };
