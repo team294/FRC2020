@@ -10,7 +10,9 @@ package frc.robot.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SensorCollection;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
+import com.ctre.phoenix.motorcontrol.TalonFXSensorCollection;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
@@ -24,6 +26,8 @@ public class Climb extends SubsystemBase {
   private final WPI_TalonFX climbMotorLeft = new WPI_TalonFX(ClimbConstants.climbMotorLeft);
   private final WPI_TalonFX climbMotorRight = new WPI_TalonFX(ClimbConstants.climbMotorRight);
   private final Solenoid climbPistons = new Solenoid(ClimbConstants.climbPistons);
+  private final TalonFXSensorCollection leftLimit;
+  private final TalonFXSensorCollection rightLimit;
 
   private FileLog log;
 
@@ -49,6 +53,10 @@ public class Climb extends SubsystemBase {
     climbMotorRight.configClosedloopRamp(0.05); // seconds from neutral to full
     climbMotorRight.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
     climbMotorRight.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
+
+    leftLimit = climbMotorLeft.getSensorCollection();
+    rightLimit = climbMotorRight.getSensorCollection();
+    
     
     // PID coefficients
     kP = 0;
@@ -80,12 +88,34 @@ public class Climb extends SubsystemBase {
     climbMotorRight.setSensorPhase(false);
   }
 
+  public boolean getLeftLimit() {
+    if(leftLimit.isRevLimitSwitchClosed() == 1) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean getRightLimit() {
+    if(rightLimit.isRevLimitSwitchClosed() == 1) {
+      return true;
+    }
+    return false;
+  }
+
   public double getLeftEncoderRaw() {
     return climbMotorLeft.getSelectedSensorPosition();
   }
 
   public double getRightEncoderRaw() {
     return climbMotorRight.getSelectedSensorPosition();
+  }
+
+  public void zeroLeftEncoder() {
+    climbMotorLeft.setSelectedSensorPosition(0);
+  }
+
+  public void zeroRightEncoder() {
+    climbMotorRight.setSelectedSensorPosition(0);
   }
 
   public double getLeftEncoderInches() {
@@ -178,6 +208,12 @@ public class Climb extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     updateClimbLog(false);
+    if(getLeftLimit()) {
+      zeroLeftEncoder();
+    }
+    if(getRightLimit()){
+      zeroRightEncoder();
+    }
   }
 
   /**
