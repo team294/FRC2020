@@ -29,8 +29,23 @@ public class LED extends SubsystemBase {
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
   public static final Color2[][] patternLibrary = {
-    {kGreen, kFirstBlue, kWhite, kFirstBlue, kWhite, kFirstBlue, kWhite, kFirstBlue},
-    {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed}
+    {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
+    {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
+    {kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen}
   };
   
   /**********************

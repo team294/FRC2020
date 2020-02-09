@@ -14,6 +14,8 @@ import frc.robot.utilities.FileLog;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.robot.utilities.*;
+import frc.robot.subsystems.LED;
 
 public class LimeLight extends SubsystemBase {
 
@@ -22,6 +24,7 @@ public class LimeLight extends SubsystemBase {
   private NetworkTableEntry tv, tx, ty, ta;
   public double x, y, area;
   private FileLog log;
+  private LED led;
   /*
   Limelight settings:
   ~~input~~
@@ -54,8 +57,9 @@ public class LimeLight extends SubsystemBase {
   no changes 
   */
 
-  public LimeLight(FileLog log) {
+  public LimeLight(FileLog log, LED led) {
     this.log = log;
+    this.led = led;
     tableInstance.startClientTeam(294);
 
     tv = table.getEntry("tv");
@@ -71,6 +75,19 @@ public class LimeLight extends SubsystemBase {
   public double getYOffset() {
     return y;
   }
+
+  public Color2[] makePattern(){
+    Color2[] myPattern = new Color2[16];
+    int patternFormula = (int)((x + 31)/(62/15)) + 2;
+    if(patternFormula < 2){
+      patternFormula = 2;
+    } else if (patternFormula > 16){
+      patternFormula = 16;
+    }
+    myPattern = LED.patternLibrary[patternFormula];
+    System.out.println("patternNumber is " + patternFormula + " " + x);
+    return myPattern;
+  }
   
   
   @Override
@@ -84,6 +101,7 @@ public class LimeLight extends SubsystemBase {
 
     SmartDashboard.putNumber("LimeLight x", x);
     SmartDashboard.putNumber("LimeLight y", y);
+    led.setPattern(makePattern(), 0.5);
     // updateLimeLightLog(false);
   }
 
