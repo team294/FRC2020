@@ -29,16 +29,20 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-        public static final int canShooterMotorLeft = 30;
-        public static final int canShooterMotorRight = 31;
+        public static final int canShooterMotorLeft = 30; // 31 on competition bot
+        public static final int canShooterMotorRight = 31; // 30 on competition bot
+        public static final int pcmShooterHoodPiston = 2;
+        public static final int pcmShooterLockPiston = 3;
         public static final double shooterDefaultRPM = 3000;
         public static final double voltageCheck = 10;
+        public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
     }
 
     public static final class FeederConstants {
         public static final int canFeederMotor = 40;
         public static final int pcmFeederPiston = 0;
         public static final double feederDefaultRPM = 2000;
+        public static final double temperatureCheck = 40; // in celsius
     }
 
     public static final class IntakeConstants {
@@ -60,7 +64,9 @@ public final class Constants {
         public static int canLeftDriveMotor2 = 11;
     
         public static int canRightDriveMotor1 = 20;
-        public static int canRightDriveMotor2 = 21; 
+        public static int canRightDriveMotor2 = 21;
+
+        public static final double temperatureCheck = 40; // in celsius
     
         public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
         public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;

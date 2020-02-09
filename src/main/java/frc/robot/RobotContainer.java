@@ -12,8 +12,9 @@ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -33,16 +34,16 @@ import static frc.robot.Constants.OIConstants.*;
  */
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
-  private final Shooter shooter = new Shooter(log);
-  private final Feeder feeder = new Feeder(log);
+  private final TemperatureCheck tempCheck = new TemperatureCheck();
+  private final Shooter shooter = new Shooter(log, tempCheck);
+  private final Feeder feeder = new Feeder(log, tempCheck);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
-  private final DriveTrain driveTrain = new DriveTrain(log);
+  private final RobotPreferences robotPrefs = new RobotPreferences();
+  private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final LimeLight limeLight = new LimeLight(log);
-  // private final Test test = new Test();
   private final LED led = new LED();
   private final UsbCamera intakeCamera;
- // private final LED led2 = new LED();
 
   Joystick xboxController = new Joystick(xboxControllerPort);
   Joystick leftJoystick = new Joystick(leftJoystickPort);
@@ -74,6 +75,8 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
+    SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
+    SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
 
     // feeder subsystem
     SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
@@ -96,6 +99,8 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
+    SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
+    SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
     // buttons for testing turnGyro
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
@@ -177,24 +182,24 @@ public class RobotContainer {
     }
 
     // joystick trigger
-    left[1].whenPressed(new Wait(0));
-    right[1].whenPressed(new Wait(0));
+    // left[1].whenPressed(new Wait(0));
+    // right[1].whenPressed(new Wait(0));
 
     // joystick down button
-    left[2].whenPressed(new Wait(0));
+    // left[2].whenPressed(new Wait(0));
     right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true,driveTrain, limeLight, log));
 
     // joystick up button
-    left[3].whenPressed(new Wait(0));
-    right[3].whenPressed(new Wait(0));
+    // left[3].whenPressed(new Wait(0));
+    // right[3].whenPressed(new Wait(0));
 
     // joystick left button
-    left[4].whenPressed(new Wait(0));
-    right[4].whenPressed(new Wait(0));
+    // left[4].whenPressed(new Wait(0));
+    // right[4].whenPressed(new Wait(0));
 
     // joystick right button
-    left[5].whenPressed(new Wait(0));
-    right[5].whenPressed(new Wait(0));
+    // left[5].whenPressed(new Wait(0));
+    // right[5].whenPressed(new Wait(0));
   }
 
 
