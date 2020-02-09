@@ -51,6 +51,7 @@ public class RobotContainer {
   private final Feeder feeder = new Feeder(log);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
+  private final Climb climb = new Climb(log);
   private final DriveTrain driveTrain = new DriveTrain(log, robotPrefs);
   private final LimeLight limeLight = new LimeLight(log);
   // private final Test test = new Test();
@@ -111,6 +112,9 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
 
+    // climber subsystem
+    SmartDashboard.putData("setPercent", new ClimbSetPercentOutput(0.5, climb)); // for testing the climb motor (0.5 is probably too fast)
+    
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
 
