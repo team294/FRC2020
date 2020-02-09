@@ -15,11 +15,11 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import static frc.robot.Constants.TurretConstants.*;
 import frc.robot.utilities.FileLog;
 
 public class Turret extends SubsystemBase {
-  private final WPI_TalonFX turretMotor = new WPI_TalonFX(Constants.TurretConstants.turretPort);
+  private final WPI_TalonFX turretMotor = new WPI_TalonFX(canTurretMotor);
   private FileLog log; // reference to the fileLog
   
   private final int timeoutMs = 30;
@@ -103,7 +103,7 @@ public class Turret extends SubsystemBase {
    * @return parameter encoder ticks converted to equivalent degrees
    */
   public double encoderTicksToDegrees(int encoderTicks) {
-    return encoderTicks / Constants.TurretConstants.ticksPerDegree;
+    return encoderTicks / ticksPerDegree;
   }
 
   /**
@@ -111,15 +111,15 @@ public class Turret extends SubsystemBase {
    * @return parameter degrees converted to equivalent encoder ticks
    */
   public double degreesToEncoderTicks(double degrees) {
-    return degrees * Constants.TurretConstants.ticksPerDegree;
+    return degrees * ticksPerDegree;
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    currentAngle = encoderTicksToDegrees(turretMotor.getSelectedSensorPosition());
-
     updateTurretLog(false);
+
+    currentAngle = encoderTicksToDegrees(turretMotor.getSelectedSensorPosition());
   }
 
   /**
