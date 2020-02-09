@@ -46,17 +46,17 @@ import static frc.robot.Constants.OIConstants.*;
  */
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
+  private final LED led = new LED();
   private final RobotPreferences robotPrefs = new RobotPreferences();
   private final Shooter shooter = new Shooter(log);
   private final Feeder feeder = new Feeder(log);
   private final Intake intake = new Intake();
   private final Hopper hopper = new Hopper();
   private final DriveTrain driveTrain = new DriveTrain(log, robotPrefs);
-  private final LimeLight limeLight = new LimeLight(log);
+ // private final LimeLight limeLight = new LimeLight(log, led);
   // private final Test test = new Test();
-  private final LED led = new LED();
   private final UsbCamera intakeCamera;
- // private final LED led2 = new LED();
+  
 
   Joystick xboxController = new Joystick(xboxControllerPort);
   Joystick leftJoystick = new Joystick(leftJoystickPort);
@@ -110,12 +110,13 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
     SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
+    SmartDashboard.putData("LEDSetPattern", new LEDSetPattern(led,2,0.5));
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
 
     // testing turn with camera
-    SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
+    //SmartDashboard.putData("Camera Center", new DriveTurnToLimeLight(driveTrain, limeLight));
 
     // buttons for testing turnGyro
     SmartDashboard.putData("Turn90", new DriveTurnGyro(driveTrain, log, 90, 0.01, 0.01));
@@ -124,8 +125,8 @@ public class RobotContainer {
     SmartDashboard.putData("DriveStraight", new DriveStraightRegenerate(driveTrain, log, 3, 0.5, 0.8));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(driveTrain, 0.4, 0.4));
     SmartDashboard.putData("SetVelocityPID", new DriveSetVelocityPID(Units.metersToInches(1), driveTrain, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0, false));
+   // SmartDashboard.putData("TurnGyro", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
+   // SmartDashboard.putData("TurnGyroFast", new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.08, 1.0, false));
   }
 
   /**
@@ -199,7 +200,7 @@ public class RobotContainer {
 
     // joystick down button
     left[2].whenPressed(new Wait(0));
-    right[2].whenHeld(new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
+    //right[2].whenHeld(new DriveTurnGyroRegenerate(driveTrain, limeLight, log, 160, 0.04, 1.0, true));
 
     // joystick up button
     left[3].whenPressed(new Wait(0));

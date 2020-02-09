@@ -23,14 +23,32 @@ import static frc.robot.utilities.Color2.*;
 
 public class LED extends SubsystemBase {
   private AddressableLED led; // strip
+  private AddressableLED led2;
+
   private AddressableLEDBuffer ledBuffer; // data passed to strip
-  private final int length = 32; // length of strip in pixels
+  private int length = 32; // length of strip in pixels
+
   //private String prevColor, currColor; // colors on the control panel
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
   public static final Color2[][] patternLibrary = {
     {kGreen, kFirstBlue, kWhite, kFirstBlue, kWhite, kFirstBlue, kWhite, kFirstBlue},
-    {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed}
+    {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
+    {kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen, kRed},
+    {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kRed, kGreen}
   };
   
   /**********************
@@ -59,6 +77,8 @@ public class LED extends SubsystemBase {
   public LED () {
     led = new AddressableLED(0); // must be a PWM port
                                  // currently port 0
+    led2 = new AddressableLED(1);
+   
     ledBuffer = new AddressableLEDBuffer(length);
     led.setLength(length);
 /** 
