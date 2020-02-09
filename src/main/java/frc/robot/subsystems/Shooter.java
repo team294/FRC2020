@@ -123,8 +123,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updateShooterLog(false);
-
     // read PID coefficients from SmartDashboard
     double ff = SmartDashboard.getNumber("Shooter FF", 0);
     double p = SmartDashboard.getNumber("Shooter P", 0);
@@ -146,6 +144,10 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
     SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
+    
+    if(log.getLogRotation() == log.SHOOTER_CYCLE) {
+      updateShooterLog(false);
+    }
   }
 
   /**

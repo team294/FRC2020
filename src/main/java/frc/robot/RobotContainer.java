@@ -286,12 +286,35 @@ public class RobotContainer {
     return autoSelection.getAutoCommand(driveTrain, log, autoChooser.getSelected());
   }
 
-  /**method called when robot is initialized */
-
+  /**
+   * Method called when robot is initialized
+   */
   public void robotInit() {
     robotPrefs.doExist();   // Sets up Robot Preferences if they do not exist : ie you just replaced RoboRio
   }
 
+  /**
+   * Method called once every scheduler cycle, regardless of
+   * whether robot is in auto/teleop/disabled mode
+   */
+  public void robotPeriodic() {
+    log.advanceLogRotation();
+  }
+
+  /**
+   * Method called robot is disabled.
+   */
+  public void disabledInit() {
+    log.writeLogEcho(true, "Disabled", "Mode Init");
+    led.setStrip("Purple");
+  }
+
+  /**
+   * Method called once every scheduler cycle when robot is disabled
+   */
+  public void disabledPeriodic() {
+  }
+  
   /**
    * Method called when auto mode is initialized/enabled.
    */
@@ -304,6 +327,12 @@ public class RobotContainer {
   }
 
   /**
+   * Method called once every scheduler cycle when auto mode is initialized/enabled
+   */
+  public void autonomousPeriodic() {
+  }
+
+  /**
    * Method called when teleop mode is initialized/enabled.
    */
   public void teleopInit() {
@@ -312,11 +341,8 @@ public class RobotContainer {
   }
 
   /**
-   * Method called robot is disabled.
+   * Method called once every scheduler cycle when teleop mode is initialized/enabled
    */
-  public void disabledInit() {
-    log.writeLogEcho(true, "Disabled", "Mode Init");
-    led.setStrip("Purple");
+  public void teleopPeriodic() {
   }
-  
 }

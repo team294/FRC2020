@@ -432,32 +432,12 @@ public class DriveTrain extends SubsystemBase {
     return leftMotor1.getClosedLoopTarget();
   }
 
-  /**
-   * Writes information about the drive train to the filelog
-   * @param logWhenDisabled true will log when disabled, false will discard the string
-   */
-  public void updateDriveLog(boolean logWhenDisabled) {
-    log.writeLog(logWhenDisabled, "Drive", "updates", 
-      "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
-      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
-      "L1 Temp",leftMotor1.getTemperature(), "L2 Temp",leftMotor2.getTemperature(),
-      "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
-      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), 
-      "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
-      "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
-      "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
-      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
-      );
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     double degrees = getGyroRotation();
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
-
-    updateDriveLog(false);
 
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
@@ -485,6 +465,10 @@ public class DriveTrain extends SubsystemBase {
      // save current angVel values as previous values for next calculation
      prevAng = currAng;
      prevTime = currTime; 
+     
+     if(log.getLogRotation() == log.DRIVE_CYCLE) {
+      updateDriveLog(false);
+    }
   }
 
   public Pose2d getPose() {
@@ -530,6 +514,23 @@ public class DriveTrain extends SubsystemBase {
       "L Volts", leftVolts, 
       "R Volts", rightVolts, 
       "Gyro", getGyroRotation());
+  }
 
+  /**
+   * Writes information about the drive train to the filelog
+   * @param logWhenDisabled true will log when disabled, false will discard the string
+   */
+  public void updateDriveLog(boolean logWhenDisabled) {
+    log.writeLog(logWhenDisabled, "Drive", "updates", 
+      "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
+      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
+      "L1 Temp",leftMotor1.getTemperature(), "L2 Temp",leftMotor2.getTemperature(),
+      "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
+      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), 
+      "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
+      "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
+      "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
+      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
+      );
   }
 }
