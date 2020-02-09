@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Shooter;
 
 /**
- * Command sequence to open or close the shooter hood (with pistons).
+ * Command group to open or close the shooter hood (with pistons).
  */
 public class ShooterHoodPistonSequence extends SequentialCommandGroup {
   /**

@@ -40,7 +40,6 @@ public final class Constants {
 
     public static final class FeederConstants {
         public static final int canFeederMotor = 40;
-        public static final int pcmFeederPiston = 0;
         public static final double feederDefaultRPM = 2000;
         public static final double temperatureCheck = 40; // in celsius
     }
