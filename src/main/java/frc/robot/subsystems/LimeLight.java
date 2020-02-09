@@ -86,7 +86,7 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("LimeLight y", y);
     
     if(log.getLogRotation() == log.LIMELIGHT_CYCLE) {
-      //updateLimeLightLog(false);
+      updateLimeLightLog(false);
     }
   }
 
