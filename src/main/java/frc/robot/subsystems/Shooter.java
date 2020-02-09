@@ -38,6 +38,8 @@ public class Shooter extends SubsystemBase {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
 
+    setLockPiston(false);
+
     shooterMotorLeft.configFactoryDefault();
     shooterMotorRight.configFactoryDefault();
     shooterMotorLeft.setInverted(true);
