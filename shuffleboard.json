@@ -13,7 +13,7 @@
           "5,0": {
             "size": [
               2,
-              4
+              5
             ],
             "content": {
               "_type": "Subsystem Layout",
@@ -69,17 +69,22 @@
                   "_title": "Angular Velocity"
                 },
                 {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ZeroGyro",
+                  "_title": "SmartDashboard/ZeroGyro"
+                },
+                {
                   "_type": "Number Slider",
-                  "_source0": "network_table:///SmartDashboard/Drive Right Velocity",
-                  "_title": "Right Velocity",
+                  "_source0": "network_table:///SmartDashboard/Drive Left Velocity",
+                  "_title": "Left Velocity",
                   "Slider Settings/Min": -1.0,
                   "Slider Settings/Max": 1.0,
                   "Slider Settings/Block increment": 0.0625
                 },
                 {
                   "_type": "Number Slider",
-                  "_source0": "network_table:///SmartDashboard/Drive Left Velocity",
-                  "_title": "Left Velocity",
+                  "_source0": "network_table:///SmartDashboard/Drive Right Velocity",
+                  "_title": "Right Velocity",
                   "Slider Settings/Min": -1.0,
                   "Slider Settings/Max": 1.0,
                   "Slider Settings/Block increment": 0.0625
@@ -135,7 +140,7 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Feeder Error",
-                  "_title": "SmartDashboard/Feeder Error"
+                  "_title": "Feeder Error"
                 },
                 {
                   "_type": "Command",
@@ -240,7 +245,7 @@
           "7,0": {
             "size": [
               2,
-              3
+              5
             ],
             "content": {
               "_type": "Subsystem Layout",
@@ -314,46 +319,119 @@
                       "_title": "Shooter UNLOCK"
                     }
                   }
-                }
-              ]
-            }
-          },
-          "7,3": {
-            "size": [
-              2,
-              3
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_title": "LEDs",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip RED",
-                  "_title": "LEDSetStrip RED"
                 },
                 {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip YELLOW",
-                  "_title": "LEDSetStrip YELLOW"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip BLUE",
-                  "_title": "LEDSetStrip BLUE"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip GREEN",
-                  "_title": "LEDSetStrip GREEN"
+                  "_type": "Grid Layout",
+                  "_title": "LEDSetStrip Colors",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 2,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/LEDSetStrip RED",
+                      "_title": "RED"
+                    },
+                    "1,0": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/LEDSetStrip YELLOW",
+                      "_title": "YELLOW"
+                    },
+                    "0,1": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/LEDSetStrip BLUE",
+                      "_title": "BLUE"
+                    },
+                    "1,1": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/LEDSetStrip GREEN",
+                      "_title": "GREEN"
+                    }
+                  }
                 },
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/LEDSetStrip OFF",
-                  "_title": "LEDSetStrip OFF"
+                  "_title": "LED Turn Off"
                 }
               ]
+            }
+          },
+          "2,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/DriveStraight",
+              "_title": "DriveStraight"
+            }
+          },
+          "2,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/FeederSetVoltage(5)",
+              "_title": "FeederSetVoltage(5)"
+            }
+          },
+          "7,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/HopperSetPercentOutput(0.8)",
+              "_title": "HopperSetPercentOutput(0.8)"
+            }
+          },
+          "5,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/IntakeSetPercentOutput(1)",
+              "_title": "IntakeSetPercentOutput(1)"
+            }
+          },
+          "2,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/TurnGyro",
+              "_title": "TurnGyro"
+            }
+          },
+          "2,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/TurnGyroFast",
+              "_title": "TurnGyroFast"
+            }
+          },
+          "2,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
+              "_title": "ShooterFeederHopperSequence"
             }
           }
         }
@@ -433,12 +511,58 @@
           }
         }
       }
+    },
+    {
+      "title": "Calibration",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {
+          "0,0": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Drive Calibration",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Forwards Full Speed",
+                  "_title": "Forwards Full Speed"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Backwards Full Speed",
+                  "_title": "Backwards Full Speed"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Turn Full Speed",
+                  "_title": "Turn Full Speed"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ZeroGyro",
+                  "_title": "ZeroGyro"
+                }
+              ]
+            }
+          }
+        }
+      }
     }
   ],
   "windowGeometry": {
-    "x": -7.0,
-    "y": 2.0,
-    "width": 1932.0,
-    "height": 1045.0
+    "x": -8.0,
+    "y": -8.0,
+    "width": 1936.0,
+    "height": 1056.0
   }
 }

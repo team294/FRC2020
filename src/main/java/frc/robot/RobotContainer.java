@@ -74,9 +74,9 @@ public class RobotContainer {
     // shooter subsystem
     SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
-    SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
+    SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
 
     // feeder subsystem
     SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
@@ -103,12 +103,15 @@ public class RobotContainer {
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
     // buttons for testing turnGyro
-    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
-    SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
     SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 0.8, true, driveTrain, log));
-    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
     SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
+
+    // calibration buttons
+    SmartDashboard.putData("Forwards Full Speed", new DriveSetPercentOutput(1.0, 1.0, driveTrain));
+    SmartDashboard.putData("Backwards Full Speed", new DriveSetPercentOutput(-1.0, -1.0, driveTrain));
+    SmartDashboard.putData("Turn Full Speed", new DriveSetPercentOutput(1.0, -1.0, driveTrain));
+    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
 
     // auto selection widget
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
