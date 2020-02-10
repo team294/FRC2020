@@ -8,6 +8,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
@@ -25,6 +26,7 @@ public class LimeLight extends SubsystemBase {
   public double x, y, area;
   private FileLog log;
   private LED led;
+  private LEDAnimation ledAnimation;
   /*
   Limelight settings:
   ~~input~~
@@ -57,9 +59,10 @@ public class LimeLight extends SubsystemBase {
   no changes 
   */
 
-  public LimeLight(FileLog log, LED led) {
+  public LimeLight(FileLog log, LED led, LEDAnimation ledAnimation) {
     this.log = log;
     this.led = led;
+    this.ledAnimation = ledAnimation;
     tableInstance.startClientTeam(294);
 
     tv = table.getEntry("tv");
@@ -79,9 +82,9 @@ public class LimeLight extends SubsystemBase {
    * chooses which pattern to display based on the x offset value from limelight
    * returns Color2[] array
    *  */
-  public Color2[] makePattern(){
-    Color2[] myPattern = new Color2[16];
-    int patternFormula = (int)((x + 31)/(62/15)) + 2;
+  public Color[] makePattern(){
+    Color[] myPattern = new Color[16];
+    int patternFormula = (int)((x+7)) + 2;
     if(patternFormula < 2){
       patternFormula = 2;
     } else if (patternFormula > 16){
@@ -112,6 +115,9 @@ public class LimeLight extends SubsystemBase {
       led.setPattern(makePattern(), 0.5, 0);
     }
     
+    led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
+    ledAnimation.setDelayCounter();
+
     // updateLimeLightLog(false);
   }
 

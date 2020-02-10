@@ -10,16 +10,16 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utilities.Color2;
-
+import frc.robot.utilities.LEDAnimation;
 
 /******************************
  *  import frc.robot.utilities.ColorSensor;
  *All references to the color sensor are commented out since as of now we are not using one
  *****************************/
 
-import static frc.robot.utilities.Color2.*;
+import static edu.wpi.first.wpilibj.util.Color.*;
 
 public class LED extends SubsystemBase {
   private AddressableLED led; // strip
@@ -27,10 +27,11 @@ public class LED extends SubsystemBase {
   private final int length = 48; // length of strip in pixels
   private final int firstStripLength = 16;
   private int startingInd = 0;
+  private boolean runAnimation = false;
   //private String prevColor, currColor; // colors on the control panel
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
-  public static final Color2[][] patternLibrary = {
+  public static final Color[][] patternLibrary = {
     {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
     {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
     {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
@@ -52,6 +53,44 @@ public class LED extends SubsystemBase {
     
     
   };
+  public static final Color[][] rainbowLibrary = {
+    {kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple},
+    {kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed},
+    {kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange},
+    {kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow},
+    {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
+    {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue},
+    {kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple},
+    {kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed},
+    {kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange},
+    {kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow},
+    {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
+    {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue},
+    {kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple},
+    {kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed},
+    {kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange},
+    {kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow},
+    {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
+    {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue},
+    {kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple},
+    {kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed},
+    {kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange},
+    {kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow},
+    {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
+    {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue},
+    {kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple},
+    {kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed},
+    {kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange},
+    {kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow},
+    {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
+    {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue},
+    {kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple},
+    {kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed},
+    {kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange},
+    {kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow},
+    {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
+    {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue}};
+  
   
   /**********************
    * Controls LED strips on the robot.
@@ -137,12 +176,14 @@ public class LED extends SubsystemBase {
    * @param ledStrip (int) chooses which led strip you use 0 = first 1 = second 
    */
   public void setStrip(String color, double brightness, int ledStrip) {
+    int myLength = length;
     if(ledStrip == 0){
       startingInd = 0;
+      myLength = firstStripLength;
     } else {
       startingInd = firstStripLength;
     }
-    for (int i = 0; i < length; i++) {
+    for (int i = startingInd; i < myLength; i++) {
       setColor(i, brightness, color);
     }
     led.setData(ledBuffer);
@@ -155,14 +196,16 @@ public class LED extends SubsystemBase {
    * @param intensity 0 to 1
    * @param ledStrip (int) chooses which led strip you use 0 = first 1 = second
    */
-  public void setColor(Color2 color, double intensity, int ledStrip) {
+  public void setColor(Color color, double intensity, int ledStrip) {
+    int myLength = length;
     if(ledStrip == 0){
       startingInd = 0;
+      myLength = firstStripLength;
     } else {
       startingInd = firstStripLength;
     }
     // int r, g, b;
-    for(int l = 0; l < length; l++){
+    for(int l = startingInd; l < myLength; l++){
       ledBuffer.setRGB(l, (int)(255*intensity*color.red), (int)(255*intensity*color.green), (int)(255*intensity*color.blue));
     }
     led.setData(ledBuffer);
@@ -175,10 +218,11 @@ public class LED extends SubsystemBase {
    * @param intensity 0 to 1
    * @param ledStrip (int) chooses which led strip you use 0 = first 1 = second
    */
-  public void setPattern(Color2[] pattern, double intensity, int ledStrip) {
+  public void setPattern(Color[] pattern, double intensity, int ledStrip) {
     // int r, g, b;
     if(ledStrip == 0){
       startingInd = 0;
+
     } else {
       startingInd = firstStripLength;
     }
@@ -197,8 +241,16 @@ public class LED extends SubsystemBase {
     
     if (on) led.start();
     else led.stop();
+    if(runAnimation) runAnimation = false;
   }
 
+  public void setAnimation(int delay, Color[][] pattern) {
+    ledAnimation = new LEDAnimation(delay, pattern);
+  }
+
+  public void startAnimation(boolean start) {
+    runAnimation = start;
+  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -220,5 +272,6 @@ public class LED extends SubsystemBase {
       SmartDashboard.putString("Color", currColor);
     }
 *********************************************************/
+  
   }
 }

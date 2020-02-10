@@ -28,12 +28,12 @@ public class LEDAnimation extends Utilities {
         delayCounter = 0;
         currentIndex = 0;
     }
-
+    
     /**
      * @return next 1D array of Colors to be displayed
      */
     public Color[] getNextPattern() {
-        if (delayCounter == delay){
+        if (delayCounter++ >= delay){
             incrementCounterIndex();
             delayCounter = 0;   
         }
