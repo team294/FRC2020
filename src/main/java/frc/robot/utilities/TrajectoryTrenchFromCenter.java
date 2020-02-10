@@ -60,10 +60,10 @@ public class TrajectoryTrenchFromCenter {
 			trajectory = TrajectoryGenerator.generateTrajectory(
 				new Pose2d(0, 0, new Rotation2d(0.0)),
 				List.of(
-					new Translation2d(-0.5, -0.5),
-					new Translation2d(-3.1, -1.2) // actual is -1.4 but move over to make sure we miss the wall
+					//new Translation2d(-0.5, -0.5),
+					new Translation2d(1, 0) // actual is -1.4 but move over to make sure we miss the wall
 				),
-				new Pose2d(-5.1, -1.4, new Rotation2d(180.0)), config);
+				new Pose2d(2, 0, new Rotation2d(0.0)), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);

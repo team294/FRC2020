@@ -504,7 +504,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     leftMotor1.setVoltage(leftVolts);
-    rightMotor1.setVoltage(rightVolts);
+    rightMotor1.setVoltage(-rightVolts);
     feedTheDog();
 
     log.writeLogEcho(true, "TankDriveVolts", "Update", 
