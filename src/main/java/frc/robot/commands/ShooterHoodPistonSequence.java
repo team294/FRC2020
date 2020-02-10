@@ -21,7 +21,7 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
   public ShooterHoodPistonSequence(boolean close, Shooter shooter) {
     addCommands(
       new ShooterSetLockPiston(true, shooter),
-      new Wait(1),
+      new ConditionalCommand(new Wait(0.5), new Wait(0), () -> close),
       new ShooterSetHoodPiston(close, shooter),
       new Wait(1),
       new ConditionalCommand(new Wait(0), new ShooterSetLockPiston(false, shooter), () -> close)
