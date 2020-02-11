@@ -26,7 +26,6 @@ public class LimeLight extends SubsystemBase {
   public double x, y, area;
   private FileLog log;
   private LED led;
-  private LEDAnimation ledAnimation;
   /*
   Limelight settings:
   ~~input~~
@@ -59,10 +58,9 @@ public class LimeLight extends SubsystemBase {
   no changes 
   */
 
-  public LimeLight(FileLog log, LED led, LEDAnimation ledAnimation) {
+  public LimeLight(FileLog log, LED led) {
     this.log = log;
     this.led = led;
-    this.ledAnimation = ledAnimation;
     tableInstance.startClientTeam(294);
 
     tv = table.getEntry("tv");
@@ -115,8 +113,8 @@ public class LimeLight extends SubsystemBase {
       led.setPattern(makePattern(), 0.5, 0);
     }
     
-    led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
-    ledAnimation.setDelayCounter();
+    // led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
+    // ledAnimation.setDelayCounter();
 
     // updateLimeLightLog(false);
   }

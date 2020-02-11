@@ -245,7 +245,7 @@ public class LED extends SubsystemBase {
   }
 
   public void setAnimation(int delay, Color[][] pattern) {
-    ledAnimation = new LEDAnimation(delay, pattern);
+    //ledAnimation = new LEDAnimation(delay, pattern);
   }
 
   public void startAnimation(boolean start) {
