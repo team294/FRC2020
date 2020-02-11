@@ -46,6 +46,8 @@ public final class Constants {
 
     public static final class IntakeConstants {
         public static final int canIntakeMotor = 50;
+        public static final int pcmIntakePistonOut = 0;
+        public static final int pcmIntakePistonIn = 1;
         public static final double intakeDefaultPercentOutput = 0.8;
     }
 

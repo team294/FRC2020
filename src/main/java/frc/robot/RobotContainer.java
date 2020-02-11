@@ -86,6 +86,8 @@ public class RobotContainer {
 
     // intake subsystem
     SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
+    SmartDashboard.putData("IntakePiston EXTEND", new IntakePistonSetPosition(true, intake));
+    SmartDashboard.putData("IntakePiston RETRACT", new IntakePistonSetPosition(false, intake));
 
     // hopper subsystem
     SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
@@ -131,7 +133,7 @@ public class RobotContainer {
 
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
     // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
@@ -161,8 +163,8 @@ public class RobotContainer {
     // xb[10].whenPressed(new Wait(0));
 
     // pov is the d-pad (up, down, left, right)
-    // xbPOVUp.whenActive(new Wait(0));
-    xbPOVDown.whileActiveOnce(new IntakeSetPercentOutput(intake));
+    xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake));
+    xbPOVDown.whileActiveOnce(new IntakeSequence(intake));
     // xbPOVLeft.whenActive(new Wait(0));
     // xbPOVRight.whenActive(new Wait(0));
 
