@@ -127,7 +127,7 @@ public class DriveTrain extends SubsystemBase {
     zeroRightEncoder();
     zeroGyroRotation();
 
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-getGyroRotation()));
 
     // initialize angular velocity variables
     prevAng = getGyroRaw();
@@ -507,15 +507,15 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.setVoltage(-rightVolts);
     feedTheDog();
 
-    log.writeLogEcho(true, "TankDriveVolts", "Update", 
+    log.writeLog(true, "TankDriveVolts", "Update", 
       "Time", autoTimer.get(), 
       "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
       "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
       "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
-      "R Velocity", Units.inchesToMeters(getRightEncoderVelocity()), 
+      "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
       "L Volts", leftVolts, 
       "R Volts", rightVolts, 
-      "Gyro", getGyroRotation());
+      "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees());
   }
 
   /**

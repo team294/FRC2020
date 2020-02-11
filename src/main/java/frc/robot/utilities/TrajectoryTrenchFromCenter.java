@@ -45,8 +45,8 @@ public class TrajectoryTrenchFromCenter {
 				DriveConstants.MAX_VOLTAGE);
 
 			// Create config for trajectory
-			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
-				DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond * 0.6,
+				DriveConstants.kMaxAccelerationMetersPerSecondSquared * 0.6)
 				.setKinematics(driveKinematics)
 				.addConstraint(autoVoltageConstraint);
 
@@ -61,9 +61,9 @@ public class TrajectoryTrenchFromCenter {
 				new Pose2d(0, 0, new Rotation2d(0.0)),
 				List.of(
 					//new Translation2d(-0.5, -0.5),
-					new Translation2d(1, 0) // actual is -1.4 but move over to make sure we miss the wall
+					new Translation2d(2, 0) // actual is -1.4 but move over to make sure we miss the wall
 				),
-				new Pose2d(2, 0, new Rotation2d(0.0)), config);
+				new Pose2d(4, 0, new Rotation2d(0.0)), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);

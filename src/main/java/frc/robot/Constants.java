@@ -104,7 +104,7 @@ public final class Constants {
         public static final double kV = kVLinear * 12; 
         public static final double kA = kALinear * 12; 
 
-        public static final double kP = kPLinear * 12;  
+        public static final double kP = kPLinear * 3;  
         public static final double kI = kILinear * 12;  
         public static final double kD = kDLinear * 12;  
 

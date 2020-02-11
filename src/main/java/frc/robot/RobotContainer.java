@@ -43,7 +43,7 @@ public class RobotContainer {
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final LimeLight limeLight = new LimeLight(log);
   private final LED led = new LED();
-  private final UsbCamera intakeCamera;
+  //private final UsbCamera intakeCamera;
 
   Joystick xboxController = new Joystick(xboxControllerPort);
   Joystick leftJoystick = new Joystick(leftJoystickPort);
@@ -57,7 +57,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    intakeCamera = CameraServer.getInstance().startAutomaticCapture();
+    //intakeCamera = CameraServer.getInstance().startAutomaticCapture();
 
     configureButtonBindings(); // configure button bindings
     configureShuffleboard(); // configure shuffleboard
