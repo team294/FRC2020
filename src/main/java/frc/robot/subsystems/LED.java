@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.utilities.LEDAnimation;
 
 /******************************
  *  import frc.robot.utilities.ColorSensor;
@@ -28,6 +27,7 @@ public class LED extends SubsystemBase {
   private final int firstStripLength = 16;
   private int startingInd = 0;
   private boolean runAnimation = false;
+  private int currPattern = -1;
   //private String prevColor, currColor; // colors on the control panel
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
@@ -226,8 +226,10 @@ public class LED extends SubsystemBase {
     } else {
       startingInd = firstStripLength;
     }
-    for(int l = startingInd; l < pattern.length; l++){
-      ledBuffer.setRGB(l, (int)(255*intensity*pattern[l].red), (int)(255*intensity*pattern[l].green), (int)(255*intensity*pattern[l].blue));
+    int pixel = 0;
+    for(int l = startingInd; l < pattern.length + startingInd; l++){
+      ledBuffer.setRGB(l, (int)(255*intensity*pattern[pixel].red), (int)(255*intensity*pattern[pixel].green), (int)(255*intensity*pattern[pixel].blue));
+      pixel++;
     }
     led.setData(ledBuffer);
     led.start();
@@ -241,16 +243,8 @@ public class LED extends SubsystemBase {
     
     if (on) led.start();
     else led.stop();
-    if(runAnimation) runAnimation = false;
   }
 
-  public void setAnimation(int delay, Color[][] pattern) {
-    //ledAnimation = new LEDAnimation(delay, pattern);
-  }
-
-  public void startAnimation(boolean start) {
-    runAnimation = start;
-  }
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
