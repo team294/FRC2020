@@ -30,7 +30,7 @@ public class Shooter extends SubsystemBase {
   private TemperatureCheck tempCheck;
   private Hopper hopper;
 
-  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageSetPoint = 1;
+  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
@@ -94,7 +94,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setShooterVoltage(double voltage) {
     shooterMotorLeft.setVoltage(voltage);
-    voltageSetPoint = voltage;
+    voltageTarget = voltage;
   }
 
   /**
@@ -184,8 +184,9 @@ public class Shooter extends SubsystemBase {
       updateShooterLog(false);
     }
 
-    if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && hopper.hopperGetPercentOutput() > hopperPercentCheck) powerCellsShot++;
-    if (voltageSetPoint == 0) powerCellsShot = 0;
+    if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
+      powerCellsShot++;
+    if (voltageTarget == 0) powerCellsShot = 0;
 
     prevVoltage = getVoltage();
   }
