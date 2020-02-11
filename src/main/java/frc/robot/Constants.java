@@ -29,8 +29,8 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-        public static final int canShooterMotorLeft = 30; // 31 on competition bot
-        public static final int canShooterMotorRight = 31; // 30 on competition bot
+        public static final int canShooterMotorRight = 30; // 31 on practice bot
+        public static final int canShooterMotorLeft = 31; // 30 on practice bot
         public static final int pcmShooterHoodPiston = 2;
         public static final int pcmShooterLockPiston = 3;
         public static final double shooterDefaultRPM = 3000;
