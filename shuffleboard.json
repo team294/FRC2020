@@ -10,10 +10,38 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "5,0": {
+          "9,4": {
             "size": [
               2,
-              5
+              2
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "DriveMotorChecks",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Forwards Full Speed",
+                  "_title": "Forwards Full Speed"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Backwards Full Speed",
+                  "_title": "Backwards Full Speed"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Turn Full Speed",
+                  "_title": "Turn Full Speed"
+                }
+              ]
+            }
+          },
+          "9,0": {
+            "size": [
+              2,
+              4
             ],
             "content": {
               "_type": "Subsystem Layout",
@@ -40,25 +68,6 @@
                   }
                 },
                 {
-                  "_type": "Grid Layout",
-                  "_title": "Odometry",
-                  "Layout/Number of columns": 2,
-                  "Layout/Number of rows": 1,
-                  "Layout/Label position": "TOP",
-                  "_children": {
-                    "0,0": {
-                      "_type": "Text View",
-                      "_source0": "network_table:///SmartDashboard/Drive Odometry X",
-                      "_title": "Odometry X"
-                    },
-                    "1,0": {
-                      "_type": "Text View",
-                      "_source0": "network_table:///SmartDashboard/Drive Odometry Y",
-                      "_title": "Odometry Y"
-                    }
-                  }
-                },
-                {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive Gyro Rotation",
                   "_title": "Gyro Angle"
@@ -71,7 +80,7 @@
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ZeroGyro",
-                  "_title": "SmartDashboard/ZeroGyro"
+                  "_title": "ZeroGyro"
                 },
                 {
                   "_type": "Number Slider",
@@ -95,157 +104,7 @@
           "11,0": {
             "size": [
               2,
-              6
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Feeder",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder P",
-                  "_title": "Feeder P"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder I",
-                  "_title": "Feeder I"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder D",
-                  "_title": "Feeder D"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder FF",
-                  "_title": "Feeder FF"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder SetPoint RPM",
-                  "_title": "Feeder SetPoint RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder RPM",
-                  "_title": "Feeder RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint RPM",
-                  "_title": "Feeder Manual SetPoint RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder Error",
-                  "_title": "Feeder Error"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint",
-                  "_title": "Feeder Manual SetPoint"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Feeder STOP",
-                  "_title": "Feeder STOP"
-                },
-                {
-                  "_type": "Grid Layout",
-                  "_title": "Feeder Motor Data",
-                  "Layout/Number of columns": 3,
-                  "Layout/Number of rows": 1,
-                  "Layout/Label position": "BOTTOM",
-                  "_children": {
-                    "0,0": {
-                      "_type": "Text View",
-                      "_source0": "network_table:///SmartDashboard/Feeder Voltage",
-                      "_title": "Voltage"
-                    },
-                    "2,0": {
-                      "_type": "Text View",
-                      "_source0": "network_table:///SmartDashboard/Feeder Encoder",
-                      "_title": "Enc Raw"
-                    },
-                    "1,0": {
-                      "_type": "Text View",
-                      "_source0": "network_table:///SmartDashboard/Feeder PercentOutput",
-                      "_title": "%"
-                    }
-                  }
-                }
-              ]
-            }
-          },
-          "9,0": {
-            "size": [
-              2,
-              6
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Shooter PID",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter P",
-                  "_title": "Shooter P"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter I",
-                  "_title": "Shooter I"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter D",
-                  "_title": "Shooter D"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter FF",
-                  "_title": "Shooter FF"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter SetPoint RPM",
-                  "_title": "Shooter SetPoint RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
-                  "_title": "Shooter RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint RPM",
-                  "_title": "Shooter Manual SetPoint RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter PID Error",
-                  "_title": "Shooter Error"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint",
-                  "_title": "Shooter Manual SetPoint"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
-                  "_title": "Shooter STOP"
-                }
-              ]
-            }
-          },
-          "7,0": {
-            "size": [
-              2,
-              5
+              3
             ],
             "content": {
               "_type": "Subsystem Layout",
@@ -319,40 +178,6 @@
                       "_title": "Shooter UNLOCK"
                     }
                   }
-                },
-                {
-                  "_type": "Grid Layout",
-                  "_title": "LEDSetStrip Colors",
-                  "Layout/Number of columns": 2,
-                  "Layout/Number of rows": 2,
-                  "Layout/Label position": "BOTTOM",
-                  "_children": {
-                    "0,0": {
-                      "_type": "Command",
-                      "_source0": "network_table:///SmartDashboard/LEDSetStrip RED",
-                      "_title": "RED"
-                    },
-                    "1,0": {
-                      "_type": "Command",
-                      "_source0": "network_table:///SmartDashboard/LEDSetStrip YELLOW",
-                      "_title": "YELLOW"
-                    },
-                    "0,1": {
-                      "_type": "Command",
-                      "_source0": "network_table:///SmartDashboard/LEDSetStrip BLUE",
-                      "_title": "BLUE"
-                    },
-                    "1,1": {
-                      "_type": "Command",
-                      "_source0": "network_table:///SmartDashboard/LEDSetStrip GREEN",
-                      "_title": "GREEN"
-                    }
-                  }
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip OFF",
-                  "_title": "LED Turn Off"
                 }
               ]
             }
@@ -379,7 +204,7 @@
               "_title": "FeederSetVoltage(5)"
             }
           },
-          "7,5": {
+          "5,3": {
             "size": [
               2,
               1
@@ -432,6 +257,53 @@
               "_type": "Command",
               "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
               "_title": "ShooterFeederHopperSequence"
+            }
+          },
+          "11,3": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "LEDs",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Grid Layout",
+                  "_title": "LEDSetStrip Colors",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 2,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/LEDSetStrip RED",
+                      "_title": "RED"
+                    },
+                    "1,0": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/LEDSetStrip YELLOW",
+                      "_title": "YELLOW"
+                    },
+                    "0,1": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/LEDSetStrip BLUE",
+                      "_title": "BLUE"
+                    },
+                    "1,1": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/LEDSetStrip GREEN",
+                      "_title": "GREEN"
+                    }
+                  }
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/LEDSetStrip OFF",
+                  "_title": "LED Turn Off"
+                }
+              ]
             }
           }
         }
@@ -553,6 +425,186 @@
                   "_title": "ZeroGyro"
                 }
               ]
+            }
+          },
+          "3,0": {
+            "size": [
+              2,
+              6
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Shooter PID",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter P",
+                  "_title": "Shooter P"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter I",
+                  "_title": "Shooter I"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter D",
+                  "_title": "Shooter D"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter FF",
+                  "_title": "Shooter FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter SetPoint RPM",
+                  "_title": "Shooter SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
+                  "_title": "Shooter RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint RPM",
+                  "_title": "Shooter Manual SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter PID Error",
+                  "_title": "Shooter Error"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint",
+                  "_title": "Shooter Manual SetPoint"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
+                  "_title": "Shooter STOP"
+                },
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Shooter PercentOutput",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 1 PercentOutput",
+                      "_title": "L %"
+                    },
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 2 PercentOutput",
+                      "_title": "R %"
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "5,0": {
+            "size": [
+              2,
+              6
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Feeder PID",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder P",
+                  "_title": "Feeder P"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder I",
+                  "_title": "Feeder I"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder D",
+                  "_title": "Feeder D"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder FF",
+                  "_title": "Feeder FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder SetPoint RPM",
+                  "_title": "Feeder SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder RPM",
+                  "_title": "Feeder RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint RPM",
+                  "_title": "Feeder Manual SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Error",
+                  "_title": "Feeder Error"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint",
+                  "_title": "Feeder Manual SetPoint"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder STOP",
+                  "_title": "Feeder STOP"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder PercentOutput",
+                  "_title": "Feeder PercentOutput"
+                }
+              ]
+            }
+          },
+          "10,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Grid Layout",
+              "_title": "Feeder Motor Data",
+              "Layout/Number of columns": 3,
+              "Layout/Number of rows": 1,
+              "Layout/Label position": "BOTTOM",
+              "_children": {
+                "0,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Voltage",
+                  "_title": "Voltage"
+                },
+                "2,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Encoder",
+                  "_title": "Enc Raw"
+                },
+                "1,0": {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder PercentOutput",
+                  "_title": "%"
+                }
+              }
             }
           }
         }
