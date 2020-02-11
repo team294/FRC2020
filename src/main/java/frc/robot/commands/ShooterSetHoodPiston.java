@@ -8,25 +8,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Test;
+import frc.robot.subsystems.Shooter;
 
-public class setTestMotor extends CommandBase {
+/**
+ * Command to set shooter hood piston position.
+ */
+public class ShooterSetHoodPiston extends CommandBase {
+  private Shooter shooter;
+  private boolean retract;
+
   /**
-   * Creates a new setTestMotor.
+   * @param retract true = retract (open), false = extend (close)
+   * @param shooter shooter subsystem to use
    */
-  private Test test;
-  private double percent;
-
-  public setTestMotor(Test test, double percent) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.test = test;
-    this.percent = percent;
+  public ShooterSetHoodPiston(boolean retract, Shooter shooter) {
+    this.retract = retract;
+    this.shooter = shooter;
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    test.setMotor(percent);
+    shooter.setHoodPiston(retract);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

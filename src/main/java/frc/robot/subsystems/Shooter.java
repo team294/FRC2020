@@ -13,24 +13,32 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.TemperatureCheck;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
+  private final Solenoid shooterHoodPiston = new Solenoid(pcmShooterHoodPiston); // piston to open and close hood
+  private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
+  private TemperatureCheck tempCheck;
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   
-  public Shooter(FileLog log) {
+  public Shooter(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
+    this.tempCheck = tempCheck;
+
+    setLockPiston(false);
 
     shooterMotorLeft.configFactoryDefault();
     shooterMotorRight.configFactoryDefault();
@@ -98,6 +106,20 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
+   * @param retract true = retract (open), false = extend (close)
+   */
+  public void setHoodPiston(boolean retract) {
+    shooterHoodPiston.set(retract);
+  }
+
+  /**
+   * @param retract true = retract (unlock), false = extend (lock)
+   */
+  public void setLockPiston(boolean retract) {
+    shooterLockPiston.set(retract);
+  }
+
+  /**
    * @return PID error, in RPM
    */
   public double getShooterPIDError() {
@@ -123,8 +145,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updateShooterLog(false);
-
     // read PID coefficients from SmartDashboard
     double ff = SmartDashboard.getNumber("Shooter FF", 0);
     double p = SmartDashboard.getNumber("Shooter P", 0);
@@ -146,6 +166,10 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
     SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
+    
+    if(log.getLogRotation() == log.SHOOTER_CYCLE) {
+      updateShooterLog(false);
+    }
   }
 
   /**
@@ -157,11 +181,26 @@ public class Shooter extends SubsystemBase {
       //"Motor RPM", shooterMotorLeft.getSelectedSensorVelocity(0) *  ticksPer100ms,  Same as measuredRPM
       "Motor Volt", shooterMotorLeft.getMotorOutputVoltage(), 
       "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
-      "Left Temp",shooterMotorRight.getTemperature(),
+      // "Left Temp", shooterMotorRight.getTemperature(),
       "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
-      "Right Temp",shooterMotorRight.getTemperature(),
+      // "Right Temp", shooterMotorRight.getTemperature(),
       "Measured RPM", measuredRPM,
       "PID Error", getShooterPIDError()
     );
+  }
+
+  /**
+   * Update TemperatureCheck utility with motors that are and are not overheating.
+   */
+  public void updateOverheatingMotors() {
+    if (shooterMotorLeft.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("ShooterLeft");
+    if (shooterMotorRight.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("ShooterRight");
+
+    if (shooterMotorLeft.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("ShooterLeft");
+    if (shooterMotorRight.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("ShooterRight");
   }
 }

@@ -16,7 +16,7 @@ import frc.robot.utilities.*;
 
 import static frc.robot.Constants.DriveConstants.*;
 
-public class DriveStraightTrapezoid extends CommandBase {
+public class DriveStraight extends CommandBase {
   /**
    * Uses wpilib TrapezoidProfile generator to generate a motion profile for drive train turning
    * Does not regenerate the profile every time
@@ -37,6 +37,7 @@ public class DriveStraightTrapezoid extends CommandBase {
   private double currDistLeft;
   private double currDistRight;
   private double timeSinceStart;
+  private boolean regenerate;
   private FileLog log;
 
   private double kP;
@@ -58,11 +59,12 @@ public class DriveStraightTrapezoid extends CommandBase {
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
    */
-  public DriveStraightTrapezoid(DriveTrain driveTrain, FileLog log, double target, double maxVelMultiplier, double maxAccelMultiplier) {
+  public DriveStraight(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean regenerate, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.log = log;
     this.target = target;
+    this.regenerate = regenerate;
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
 
@@ -128,6 +130,13 @@ public class DriveStraightTrapezoid extends CommandBase {
       "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "aFF", aFF,
       "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
       "pctOutLA", driveTrain.getLeftOutputPercent(), "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());
+
+    double linearVel = Units.inchesToMeters(driveTrain.getAverageEncoderVelocity());
+    if(regenerate) {
+      tStateCurr = new TrapezoidProfileBCR.State(currDist, linearVel);
+      tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
+      profileStartTime = currProfileTime;
+    }
   }
 
   // Called once the command ends or is interrupted.

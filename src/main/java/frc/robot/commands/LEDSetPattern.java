@@ -24,7 +24,7 @@ public class LEDSetPattern extends CommandBase {
    * @param rowNumber row in the patternLibrary
    * @param intensity LED intensity (0 to 1)
    */
-  public LEDSetPattern(LED led, int rowNumber, double intensity) {
+  public LEDSetPattern(int rowNumber, double intensity, LED led) {
     this.intensity = intensity;
     this.led = led;
     //this.led = led2; 

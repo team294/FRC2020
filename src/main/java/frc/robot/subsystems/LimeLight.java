@@ -117,6 +117,10 @@ public class LimeLight extends SubsystemBase {
     // ledAnimation.setDelayCounter();
 
     // updateLimeLightLog(false);
+    
+    if(log.getLogRotation() == log.LIMELIGHT_CYCLE) {
+      updateLimeLightLog(false);
+    }
   }
 
    /**
