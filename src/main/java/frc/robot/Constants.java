@@ -95,19 +95,22 @@ public final class Constants {
         // turnGyro constants
         public static final double kMaxAngularVelocity = 1125; // degrees per second TODO calculate on actual 2020 robot
         public static final double kMaxAngularAcceleration = 400; // degrees per second per second (was 200%)
-        public static final double kVAngular = 0.000850; // was 0.000838  then 0.000943
-        public static final double kAAngular = 0.0001;  // was 0.0003
-        public static final double kSAngular = 0.0568;   // was 0.0568
-        public static final double kPAngular = 0.0005;   // was 0.001
-        public static final double kDAngular = 0;
-        public static final double kIAngular = 0;
+        public static double kVAngular = 0.000850; // was 0.000838  then 0.000943
+        public static double kAAngular = 0.0001;  // was 0.0003
+        public static double kSAngular = 0.0568;   // was 0.0568
+        public static double kPAngular = 0.0005;   // was 0.001
+        public static double kIAngular = 0;
+        public static double kDAngular = 0;
 
         // verify these
         public static final double kMaxSpeedMetersPerSecond = 5.0;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3.8; // was 0.352
-        public static final double kVLinear = 0.148; // was 0.09
-        public static final double kALinear = 0.0293;  // was 0.07
-        public static final double kSLinear = 0.022; // 0.11 for working on a drive base was 0.055
+        public static double kVLinear = 0.148; // was 0.09
+        public static double kALinear = 0.0293;  // was 0.07
+        public static double kSLinear = 0.022; // 0.11 for working on a drive base was 0.055
+        public static double kPLinear = 0.1;
+        public static double kILinear = 0.0;
+        public static double kDLinear = 0.0;
     }
 
     public static final class OIConstants {

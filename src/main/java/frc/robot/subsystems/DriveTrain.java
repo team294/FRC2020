@@ -135,6 +135,21 @@ public class DriveTrain extends SubsystemBase {
     prevTime = System.currentTimeMillis();
     currTime = System.currentTimeMillis();
     lfRunningAvg.reset();
+
+    // display PID coefficients on SmartDashboard
+    SmartDashboard.putNumber("Drive kV Linear", kVLinear); // Linear coefficients
+    SmartDashboard.putNumber("Drive kA Linear", kALinear);
+    SmartDashboard.putNumber("Drive kS Linear", kSLinear);
+    SmartDashboard.putNumber("Drive kP Linear", kPLinear);
+    SmartDashboard.putNumber("Drive kI Linear", kILinear);
+    SmartDashboard.putNumber("Drive kD Linear", kDLinear);
+
+    SmartDashboard.putNumber("Drive kV Angular", kVAngular); // Angular coefficients
+    SmartDashboard.putNumber("Drive kA Angular", kAAngular);
+    SmartDashboard.putNumber("Drive kS Angular", kSAngular);
+    SmartDashboard.putNumber("Drive kP Angular", kPAngular);
+    SmartDashboard.putNumber("Drive kI Angular", kIAngular);
+    SmartDashboard.putNumber("Drive kD Angular", kDAngular);
   }
 
   /**
@@ -403,6 +418,10 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.config_kD(0, kD);
     rightMotor1.config_kF(0, kF);
 
+    SmartDashboard.putNumber("Drive kP Linear", kP);
+    SmartDashboard.putNumber("Drive kI Linear", kI);
+    SmartDashboard.putNumber("Drive kD Linear", kD);
+
     leftMotor1.selectProfileSlot(0, 0);
     rightMotor1.selectProfileSlot(0, 0);
   }
@@ -437,6 +456,38 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    // read PID coefficients from SmartDashboard
+    double vL = SmartDashboard.getNumber("Drive kV Linear", 0);
+    double aL = SmartDashboard.getNumber("Drive kA Linear", 0);
+    double sL = SmartDashboard.getNumber("Drive kS Linear", 0);
+    double pL = SmartDashboard.getNumber("Drive kP Linear", 0);
+    double iL = SmartDashboard.getNumber("Drive kI Linear", 0);
+    double dL = SmartDashboard.getNumber("Drive kD Linear", 0);
+
+    double vA = SmartDashboard.getNumber("Drive kV Angular", 0);
+    double aA = SmartDashboard.getNumber("Drive kA Angular", 0);
+    double sA = SmartDashboard.getNumber("Drive kS Angular", 0);
+    double pA = SmartDashboard.getNumber("Drive kP Angular", 0);
+    double iA = SmartDashboard.getNumber("Drive kI Angular", 0);
+    double dA = SmartDashboard.getNumber("Drive kD Angular", 0);
+
+    if(vL != kVLinear) kVLinear = vL;
+    if(aL != kALinear) kALinear = aL;
+    if(sL != kSLinear) kSLinear = sL;
+    if(pL != kPLinear) kPLinear = pL;
+    if(iL != kILinear) kILinear = iL;
+    if(dL != kDLinear) kDLinear = dL;
+
+    if(vA != kVAngular) kVAngular = vA;
+    if(aA != kAAngular) kAAngular = aA;
+    if(sA != kSAngular) kSAngular = sA;
+    if(pA != kPAngular) kPAngular = pA;
+    if(iA != kIAngular) kIAngular = iA;
+    if(dA != kDAngular) kDAngular = dA;
+
+    // if PID coefficients on SmartDashboard have changed, write new values to controller
+
+
     double degrees = getGyroRotation();
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());

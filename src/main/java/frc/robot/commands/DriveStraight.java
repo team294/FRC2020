@@ -40,9 +40,6 @@ public class DriveStraight extends CommandBase {
   private boolean regenerate;
   private FileLog log;
 
-  private double kP;
-  private double kI;
-  private double kD;
   private double aFF;
 
   private int accuracyCounter = 0;
@@ -70,17 +67,14 @@ public class DriveStraight extends CommandBase {
 
     addRequirements(driveTrain);
 
-    kP = 0.1;  //0.0008;
-    kI = 0;  //0.0;
-    kD = 0;  //0.02;
     aFF = 0.0;
-
-    driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
+
     driveTrain.setDriveModeCoast(true);
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)

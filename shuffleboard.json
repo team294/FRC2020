@@ -606,6 +606,135 @@
                 }
               }
             }
+          },
+          "9,0": {
+            "size": [
+              2,
+              5
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Drive Angular PID",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kV Angular",
+                  "_title": "Drive kV Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kA Angular",
+                  "_title": "Drive kA Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kS Angular",
+                  "_title": "Drive kS Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kP Angular",
+                  "_title": "Drive kP Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kI Angular",
+                  "_title": "Drive kI Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kD Angular",
+                  "_title": "Drive kD Angular"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/TurnGyro",
+                  "_title": "TurnGyro"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/TurnGyroFast",
+                  "_title": "TurnGyro FAST"
+                },
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Drive Turning Data",
+                  "Layout/Number of columns": 3,
+                  "Layout/Number of rows": 3,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Drive Gyro Rotation",
+                      "_title": "Gyro Angle"
+                    },
+                    "1,0": {
+                      "_type": "Number Slider",
+                      "_source0": "network_table:///SmartDashboard/Drive AngVel",
+                      "_title": "Angular Velocity",
+                      "Slider Settings/Min": -1.0,
+                      "Slider Settings/Max": 1.0,
+                      "Slider Settings/Block increment": 0.0625
+                    }
+                  }
+                }
+              ]
+            }
+          },
+          "11,0": {
+            "size": [
+              2,
+              5
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Subsystem Layout",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kV Linear",
+                  "_title": "Drive kV Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kA Linear",
+                  "_title": "Drive kA Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kS Linear",
+                  "_title": "Drive kS Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kP Linear",
+                  "_title": "Drive kP Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kI Linear",
+                  "_title": "Drive kI Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kD Linear",
+                  "_title": "Drive kD Linear"
+                }
+              ]
+            }
+          },
+          "8,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/DriveStraight",
+              "_title": "SmartDashboard/DriveStraight"
+            }
           }
         }
       }

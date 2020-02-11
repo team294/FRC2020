@@ -72,7 +72,28 @@ public class DriveTurnGyro extends CommandBase {
 
     aFF = 0.0;
 
-    //driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
+    pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
+  }
+
+  /**
+   * To be used when changing the target value directly from shuffleboard (not a pre-coded target)
+   * @param fromShuffleboard true means the value is being changed from shuffleboard
+   */
+  public DriveTurnGyro(boolean fromShuffleboard, boolean useVision, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
+    this.log = log;
+    this.target = target;
+    this.maxVelMultiplier = maxVelMultiplier;
+    this.maxAccelMultiplier = maxAccelMultiplier;
+    this.useVision = useVision;
+    this.regenerate = regenerate;
+
+    addRequirements(driveTrain);
+
+    aFF = 0.0;
+
     pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
   }
 
@@ -99,7 +120,7 @@ public class DriveTurnGyro extends CommandBase {
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
     
-
+    pidAngVel.setPID(kPAngular, kIAngular, kDAngular);
     pidAngVel.reset();
 
     log.writeLog(false, "DriveTurnGyro", "initialize");
