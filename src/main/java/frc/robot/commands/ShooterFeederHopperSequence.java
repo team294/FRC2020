@@ -15,7 +15,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 /**
- * Command group to get the shooter up to speed, and then run the feeder and hopper.
+ * Command group to run the shooter, feeder, intake, and hopper for shooting.
  */
 public class ShooterFeederHopperSequence extends SequentialCommandGroup {
   /**
@@ -28,8 +28,8 @@ public class ShooterFeederHopperSequence extends SequentialCommandGroup {
     addCommands( 
       new ShooterSetPID(2800, shooter),
       new FeederSetPID(feeder),
-      new FeederSetPiston(true, feeder),
-      new ParallelCommandGroup(new HopperSetPercentOutput(hopper), new IntakeSetPercentOutput(0.5, intake))
+      new ParallelCommandGroup(new IntakeSetPercentOutput(0.5, intake), new HopperSetPercentOutput(hopper)),
+      new HopperReverse(hopper)
     );
   }
 }
