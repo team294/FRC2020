@@ -182,17 +182,6 @@
               ]
             }
           },
-          "2,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/DriveStraight",
-              "_title": "DriveStraight"
-            }
-          },
           "2,1": {
             "size": [
               2,
@@ -224,28 +213,6 @@
               "_type": "Command",
               "_source0": "network_table:///SmartDashboard/IntakeSetPercentOutput(1)",
               "_title": "IntakeSetPercentOutput(1)"
-            }
-          },
-          "2,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnGyro",
-              "_title": "TurnGyro"
-            }
-          },
-          "2,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnGyroFast",
-              "_title": "TurnGyroFast"
             }
           },
           "2,4": {
@@ -577,7 +544,7 @@
               ]
             }
           },
-          "10,5": {
+          "7,5": {
             "size": [
               1,
               1
@@ -620,42 +587,42 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kV Angular",
-                  "_title": "Drive kV Angular"
+                  "_title": "/SmartDashboard/Drive kV Angular"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kA Angular",
-                  "_title": "Drive kA Angular"
+                  "_title": "/SmartDashboard/Drive kA Angular"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kS Angular",
-                  "_title": "Drive kS Angular"
+                  "_title": "/SmartDashboard/Drive kS Angular"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kP Angular",
-                  "_title": "Drive kP Angular"
+                  "_title": "/SmartDashboard/Drive kP Angular"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kI Angular",
-                  "_title": "Drive kI Angular"
+                  "_title": "/SmartDashboard/Drive kI Angular"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kD Angular",
-                  "_title": "Drive kD Angular"
+                  "_title": "/SmartDashboard/Drive kD Angular"
                 },
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/TurnGyro",
-                  "_title": "TurnGyro"
+                  "_title": "/SmartDashboard/TurnGyro"
                 },
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/TurnGyroFast",
-                  "_title": "TurnGyro FAST"
+                  "_title": "/SmartDashboard/TurnGyroFast"
                 },
                 {
                   "_type": "Grid Layout",
@@ -667,7 +634,7 @@
                     "0,0": {
                       "_type": "Text View",
                       "_source0": "network_table:///SmartDashboard/Drive Gyro Rotation",
-                      "_title": "Gyro Angle"
+                      "_title": "/SmartDashboard/Drive Gyro Rotation"
                     },
                     "1,0": {
                       "_type": "Number Slider",
@@ -689,51 +656,45 @@
             ],
             "content": {
               "_type": "Subsystem Layout",
-              "_title": "Subsystem Layout",
+              "_title": "Drive Linear PID",
               "Layout/Label position": "BOTTOM",
               "_children": [
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kV Linear",
-                  "_title": "Drive kV Linear"
+                  "_title": "/SmartDashboard/Drive kV Linear"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kA Linear",
-                  "_title": "Drive kA Linear"
+                  "_title": "/SmartDashboard/Drive kA Linear"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kS Linear",
-                  "_title": "Drive kS Linear"
+                  "_title": "/SmartDashboard/Drive kS Linear"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kP Linear",
-                  "_title": "Drive kP Linear"
+                  "_title": "/SmartDashboard/Drive kP Linear"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kI Linear",
-                  "_title": "Drive kI Linear"
+                  "_title": "/SmartDashboard/Drive kI Linear"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive kD Linear",
-                  "_title": "Drive kD Linear"
+                  "_title": "/SmartDashboard/Drive kD Linear"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/DriveStraight",
+                  "_title": "/SmartDashboard/DriveStraight"
                 }
               ]
-            }
-          },
-          "8,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/DriveStraight",
-              "_title": "SmartDashboard/DriveStraight"
             }
           }
         }
