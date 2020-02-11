@@ -31,6 +31,13 @@ public class Hopper extends SubsystemBase {
     hopperMotor.set(ControlMode.PercentOutput, percent);
   }
 
+  /**
+   * @return motor percent output (0 to 1)
+   */
+  public double hopperGetPercentOutput() {
+    return hopperMotor.getMotorOutputPercent();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
