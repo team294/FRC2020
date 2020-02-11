@@ -99,6 +99,7 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
+    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
@@ -142,12 +143,10 @@ public class RobotContainer {
     }
 
     // A = 1, B = 2, X = 3, Y = 4
-    ///xb[1].whenPressed(new FeederSetPiston(false, feeder));
-    xb[1].whenHeld(new HopperSetPercentOutput(-0.8, hopper));
-    xb[1].whenReleased(new HopperSetPercentOutput(hopper));
-    xb[2].whenPressed(new ShooterFeederHopperSequenceNoPiston(shooter, feeder, hopper, intake));
+    xb[1].whenPressed(new ShooterHoodPistonSequence(false, shooter));
+    xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
     xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
-    //xb[4].whenPressed(new FeederSetPiston(true, feeder));
+    xb[4].whenPressed(new ShooterHoodPistonSequence(true, shooter));
 
     // LB = 5, RB = 6
     // xb[5].whenPressed(new Wait(0));

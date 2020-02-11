@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Shooter;
 
 /**
- * Command sequence to open or close the shooter hood (with pistons).
+ * Command group to open or close the shooter hood (with pistons).
  */
 public class ShooterHoodPistonSequence extends SequentialCommandGroup {
   /**
@@ -21,7 +21,7 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
   public ShooterHoodPistonSequence(boolean close, Shooter shooter) {
     addCommands(
       new ShooterSetLockPiston(true, shooter),
-      new Wait(1),
+      new ConditionalCommand(new Wait(0.5), new Wait(0), () -> close),
       new ShooterSetHoodPiston(close, shooter),
       new Wait(1),
       new ConditionalCommand(new Wait(0), new ShooterSetLockPiston(false, shooter), () -> close)

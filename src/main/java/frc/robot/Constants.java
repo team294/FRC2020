@@ -29,8 +29,8 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-        public static final int canShooterMotorLeft = 30; // 31 on competition bot
-        public static final int canShooterMotorRight = 31; // 30 on competition bot
+        public static final int canShooterMotorRight = 30; // 31 on practice bot
+        public static final int canShooterMotorLeft = 31; // 30 on practice bot
         public static final int pcmShooterHoodPiston = 2;
         public static final int pcmShooterLockPiston = 3;
         public static final double shooterDefaultRPM = 3000;
@@ -40,7 +40,6 @@ public final class Constants {
 
     public static final class FeederConstants {
         public static final int canFeederMotor = 40;
-        public static final int pcmFeederPiston = 0;
         public static final double feederDefaultRPM = 2000;
         public static final double temperatureCheck = 40; // in celsius
     }
