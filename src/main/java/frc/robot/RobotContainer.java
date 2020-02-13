@@ -74,7 +74,7 @@ public class RobotContainer {
    */
   public void configureShuffleboard() {
     // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter, led));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));

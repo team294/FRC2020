@@ -70,15 +70,19 @@ public class ShooterSetPID extends CommandBase {
   @Override
   public void execute() {
     
+    SmartDashboard.putString("LED Color", myColor);
+
     if(timer2.hasPeriodPassed(10)){
       led.setStrip(myColor, 0.5, 1);
       timer2.reset();
       timer2.start();
       if(myColor.equals("Blue")){
         myColor = "Black";
+        
       } else {
         myColor = "Blue";
       }
+      
     }
   }
 
@@ -95,6 +99,7 @@ public class ShooterSetPID extends CommandBase {
   public boolean isFinished() {
     //if(timer.hasPeriodPassed(0.1) && Math.abs(shooter.getShooterPIDError()) < 200) return true;
     if (Math.abs(shooter.getMeasuredRPM() - rpm) < 200) {
+      SmartDashboard.putBoolean("Shooter is blue", true);
       led.setStrip("Blue", 0.5, 1);
       return true;
     }
