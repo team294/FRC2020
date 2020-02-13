@@ -85,9 +85,11 @@ public class RobotContainer {
 
     // intake subsystem
     SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
+    SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, intake));
 
     // hopper subsystem
     SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
+    SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, hopper));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
