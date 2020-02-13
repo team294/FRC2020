@@ -29,7 +29,6 @@ public class LED extends SubsystemBase {
   private int startingInd = 0;
   private boolean runAnimation = false;
   private int currPattern = -1;
- // private Timer timer2 = new Timer();
   //private String prevColor, currColor; // colors on the control panel
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
@@ -178,6 +177,13 @@ public class LED extends SubsystemBase {
       startingInd = firstStripLength;
     }
     setStrip(color, 0.5, startingInd);
+  }
+
+  public void setBallLights(int powerCellsShot){
+    if(powerCellsShot > 6){
+      powerCellsShot = 6;
+    }
+    setPattern(shooterLibrary[powerCellsShot], 0.5, 1);
   }
 
   /**

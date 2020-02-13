@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
+import frc.robot.subsystems.LED;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
@@ -29,6 +30,7 @@ public class Shooter extends SubsystemBase {
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
   private Hopper hopper;
+  private LED led;
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
@@ -37,10 +39,11 @@ public class Shooter extends SubsystemBase {
   private int powerCellsShot = 0;
   private double prevVoltage = 0;
   
-  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck) {
+  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
     this.hopper = hopper;
+    this.led = led;
 
     setLockPiston(false);
 
@@ -185,8 +188,11 @@ public class Shooter extends SubsystemBase {
       updateShooterLog(false);
     }
 
-    if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
+    if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck){
       powerCellsShot++;
+      led.setBallLights(powerCellsShot);
+    }
+      
     if (voltageTarget == 0) powerCellsShot = 0;
 
     prevVoltage = getVoltage();
