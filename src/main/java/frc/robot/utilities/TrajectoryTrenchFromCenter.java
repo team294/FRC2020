@@ -30,7 +30,7 @@ public class TrajectoryTrenchFromCenter {
 
 			log.writeLogEcho(true, "AutoTrench", "Trajectory", 
 				"trackWidth",DriveConstants.TRACK_WIDTH,
-				"maxVoltage", DriveConstants.MAX_VOLTAGE, 
+				"maxVoltage", DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY, 
 				"kS", DriveConstants.kS, 
 				"kV", DriveConstants.kV, 
 				"kA", DriveConstants.kA,
@@ -42,7 +42,7 @@ public class TrajectoryTrenchFromCenter {
 			DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
 				new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
 				driveKinematics,
-				DriveConstants.MAX_VOLTAGE);
+				DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY);
 
 			// Create config for trajectory
 			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond * 0.6,

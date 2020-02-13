@@ -66,6 +66,8 @@ public final class Constants {
         public static int canRightDriveMotor2 = 21;
 
         public static final double temperatureCheck = 40; // in celsius
+
+        public static final double compensationVoltage = 12.0; // voltage compensation on drive motors
     
         public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
         public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;
@@ -104,11 +106,11 @@ public final class Constants {
         public static final double kV = kVLinear * 12; 
         public static final double kA = kALinear * 12; 
 
-        public static final double kP = kPLinear * 3;  
+        public static final double kP = kPLinear * 12;  
         public static final double kI = kILinear * 12;  
         public static final double kD = kDLinear * 12;  
 
-        public static final double MAX_VOLTAGE = 10.0;
+        public static final double MAX_VOLTAGE_IN_TRAJECTORY = 10.0;
         public static final double TRACK_WIDTH = Units.inchesToMeters(25.35); 
 
         // suggested from tutorial

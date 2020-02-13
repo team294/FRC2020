@@ -112,10 +112,10 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.setSensorPhase(false);
     rightMotor1.setSensorPhase(false);
 
-    leftMotor1.configVoltageCompSaturation(12.0);
-    leftMotor2.configVoltageCompSaturation(12.0);
-    rightMotor1.configVoltageCompSaturation(12.0);
-    rightMotor2.configVoltageCompSaturation(12.0);
+    leftMotor1.configVoltageCompSaturation(compensationVoltage);
+    leftMotor2.configVoltageCompSaturation(compensationVoltage);
+    rightMotor1.configVoltageCompSaturation(compensationVoltage);
+    rightMotor2.configVoltageCompSaturation(compensationVoltage);
 
     setVoltageCompensation(true);
 
@@ -481,7 +481,7 @@ public class DriveTrain extends SubsystemBase {
    * @return wheel speeds, in meters per second
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), Units.inchesToMeters(getRightEncoderVelocity()));
+    return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), -Units.inchesToMeters(getRightEncoderVelocity()));
   }
 
   /**
@@ -503,8 +503,8 @@ public class DriveTrain extends SubsystemBase {
       this.startAutoTimer();
     }
 
-    leftMotor1.setVoltage(leftVolts);
-    rightMotor1.setVoltage(-rightVolts);
+    setLeftMotorOutput(leftVolts / compensationVoltage);
+    setRightMotorOutput(rightVolts / compensationVoltage);
     feedTheDog();
 
     log.writeLog(true, "TankDriveVolts", "Update", 

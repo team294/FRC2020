@@ -64,8 +64,8 @@ public class AutoTrenchFromCenter extends SequentialCommandGroup {
         new RamseteCommand(
           trajectory,
           driveTrain::getPose,
-          //new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
-          disabledRamsete,
+          new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta),
+          //disabledRamsete,
           new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA),
           driveKinematics,
           driveTrain::getWheelSpeeds,
