@@ -29,7 +29,7 @@ public class LED extends SubsystemBase {
   private int startingInd = 0;
   private boolean runAnimation = false;
   private int currPattern = -1;
-  Timer timer2 = new Timer();
+ // private Timer timer2 = new Timer();
   //private String prevColor, currColor; // colors on the control panel
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
@@ -52,7 +52,15 @@ public class LED extends SubsystemBase {
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kRed, kBlack},
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
     {kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow}
-    
+  };
+  public static final Color[][] shooterLibrary = {
+    {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
+    {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack},
     
   };
   public static final Color[][] rainbowLibrary = {
@@ -91,7 +99,8 @@ public class LED extends SubsystemBase {
     {kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange},
     {kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow},
     {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
-    {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue}};
+    {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue}
+  };
   
   
   /**********************
