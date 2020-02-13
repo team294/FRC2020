@@ -7,7 +7,7 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
@@ -29,7 +29,7 @@ public class ShooterFeederHopperSequence extends SequentialCommandGroup {
     addCommands( 
       new ShooterSetPID(2800, shooter, led),
       new FeederSetPID(feeder),
-      new ParallelCommandGroup(new IntakeSetPercentOutput(0.5, intake), new HopperSetPercentOutput(hopper)),
+      new ParallelDeadlineGroup(new HopperSetPercentOutput(hopper), new IntakeSetPercentOutput(0.5, intake)),
       new HopperReverse(hopper)
     );
   }

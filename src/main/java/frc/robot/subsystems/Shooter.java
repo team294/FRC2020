@@ -28,15 +28,19 @@ public class Shooter extends SubsystemBase {
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
+  private Hopper hopper;
 
-  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint;
+  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
+  private int powerCellsShot = 0;
+  private double prevVoltage = 0;
   
-  public Shooter(FileLog log, TemperatureCheck tempCheck) {
+  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
+    this.hopper = hopper;
 
     setLockPiston(false);
 
@@ -90,6 +94,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setShooterVoltage(double voltage) {
     shooterMotorLeft.setVoltage(voltage);
+    voltageTarget = voltage;
   }
 
   /**
@@ -101,6 +106,7 @@ public class Shooter extends SubsystemBase {
     this.shooterRPM = shooterRPM;
     setPoint = shooterRPM / ticksPer100ms; // setPoint is in ticks per 100ms
     shooterMotorLeft.set(ControlMode.Velocity, setPoint);
+    voltageTarget = 1;
     SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM );
     System.out.println("Starting setShooterPID");
   }
@@ -142,6 +148,13 @@ public class Shooter extends SubsystemBase {
     return shooterMotorLeft.getMotorOutputVoltage();
   }
 
+  /**
+   * @return power cells shot
+   */
+  public int getPowerCellsShot() {
+    return powerCellsShot;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -166,10 +179,17 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
     SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
+    SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
     
     if(log.getLogRotation() == log.SHOOTER_CYCLE) {
       updateShooterLog(false);
     }
+
+    if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
+      powerCellsShot++;
+    if (voltageTarget == 0) powerCellsShot = 0;
+
+    prevVoltage = getVoltage();
   }
 
   /**
