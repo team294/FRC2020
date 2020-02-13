@@ -27,11 +27,10 @@ public class ShooterFeederHopperSequence extends SequentialCommandGroup {
    */
   public ShooterFeederHopperSequence(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     addCommands( 
-      new ShooterSetPID(2800, shooter),
+      new ShooterSetPID(2800, shooter, led),
       new FeederSetPID(feeder),
       new ParallelCommandGroup(new IntakeSetPercentOutput(0.5, intake), new HopperSetPercentOutput(hopper)),
-      new HopperReverse(hopper),
-      new LEDSetStrip("Yellow", led)
+      new HopperReverse(hopper)
     );
   }
 }

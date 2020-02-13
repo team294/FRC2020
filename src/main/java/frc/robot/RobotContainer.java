@@ -292,7 +292,7 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
-    led.setStrip("Purple", 1);
+    led.setStrip("Red", 1);
   }
 
   /**

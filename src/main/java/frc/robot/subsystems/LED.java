@@ -9,6 +9,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,6 +29,7 @@ public class LED extends SubsystemBase {
   private int startingInd = 0;
   private boolean runAnimation = false;
   private int currPattern = -1;
+  Timer timer2 = new Timer();
   //private String prevColor, currColor; // colors on the control panel
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
@@ -189,6 +191,21 @@ public class LED extends SubsystemBase {
     led.setData(ledBuffer);
     led.start();
   }
+
+  // public void setBlink(String color, double brightness, int ledStrip){
+    
+  //   String myColor = color;
+  //   if(timer2.hasPeriodPassed(10)){
+  //     setStrip(myColor, brightness, ledStrip);
+  //     timer2.reset();
+  //     timer2.start();
+  //     if(myColor.equals(color)){
+  //       myColor = "Black";
+  //     } else {
+  //       myColor = color;
+  //     }
+  //   }
+  // }
 
   /**
    * Light up the LED strip in a solid color.
