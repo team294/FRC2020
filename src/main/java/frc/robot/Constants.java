@@ -29,13 +29,20 @@ public final class Constants {
     }
 
     public static final class ShooterConstants {
-        public static final int canShooterMotorRight = 30; // 31 on practice bot
-        public static final int canShooterMotorLeft = 31; // 30 on practice bot
+        public static final int canShooterMotorRight = 31; // 30 on competition bot
+        public static final int canShooterMotorLeft = 30; // 31 on competition bot
         public static final int pcmShooterHoodPiston = 2;
         public static final int pcmShooterLockPiston = 3;
-        public static final double shooterDefaultRPM = 3000;
-        public static final double voltageCheck = 10;
+        public static final double shooterDefaultRPM = 2800;
+        public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
+        public static final int dioPowerCell = 9;
+       // public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
+       // public static final double currentCheck = 60; // voltage the shooter will reach if power cell is shot (for counting power cells)
+        public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
         public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
+        
+        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2000},{15,2250},{20,2500},{25,2750},{30,3000}};
+        // TODO figure out max distance of robot from target so table includes all necessary values
     }
 
     public static final class FeederConstants {
