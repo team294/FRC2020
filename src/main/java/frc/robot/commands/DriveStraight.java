@@ -38,6 +38,7 @@ public class DriveStraight extends CommandBase {
   private double currDistRight;
   private double timeSinceStart;
   private boolean regenerate;
+  private boolean fromShuffleboard;
   private FileLog log;
 
   private double aFF;
@@ -60,12 +61,43 @@ public class DriveStraight extends CommandBase {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.log = log;
-    this.target = target;
     this.regenerate = regenerate;
+    this.fromShuffleboard = false;
+    this.target = target;
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
-
     addRequirements(driveTrain);
+
+    aFF = 0.0;
+  }
+
+    /**
+   * Use this constructor when reading values from Shuffleboard
+   * @param driveTrain reference to the drive train subsystem
+   * @param target degrees to turn to the right
+   * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
+   * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
+   */
+  public DriveStraight(boolean regenerate, DriveTrain driveTrain, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.driveTrain = driveTrain;
+    this.log = log;
+    this.regenerate = regenerate;
+    this.fromShuffleboard = true;
+    this.target = 0;
+    this.maxVelMultiplier = 0.5;
+    this.maxAccelMultiplier = 0.5;
+    addRequirements(driveTrain);
+
+    if(SmartDashboard.getNumber("DriveStraight Manual Target Dist", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveStraight Manual Target Dist", 2);
+    }
+    if(SmartDashboard.getNumber("DriveStraight Manual MaxVel Multiplier", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveStraight Manual MaxVel Multiplier", 0.5);
+    }
+    if(SmartDashboard.getNumber("DriveStraight Manual MaxAccel Multiplier", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveStraight Manual MaxAccel Multiplier", 0.5);
+    }
 
     aFF = 0.0;
   }
@@ -76,6 +108,12 @@ public class DriveStraight extends CommandBase {
     driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
 
     driveTrain.setDriveModeCoast(true);
+
+    if(fromShuffleboard) {
+      target = SmartDashboard.getNumber("DriveStraight Manual Target Dist", 2);
+      maxVelMultiplier = SmartDashboard.getNumber("DriveStraight Manual MaxVel Multiplier", 0.5);
+      maxAccelMultiplier = SmartDashboard.getNumber("DriveStraight Manual MaxAccel Multiplier", 0.5);
+    }
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)

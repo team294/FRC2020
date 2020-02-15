@@ -107,7 +107,17 @@ public class RobotContainer {
     SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
 
-    // calibration buttons
+    // drive profile calibration buttons
+    SmartDashboard.putData("TurnGyroManual", new DriveTurnGyro(false, true, driveTrain, limeLight, log));
+    SmartDashboard.putNumber("TurnGyro Manual Target Ang", 90);
+    SmartDashboard.putNumber("TurnGyro Manual MaxVel Multiplier", 0.5);
+    SmartDashboard.putNumber("TurnGyro Manual MaxAng Multiplier", 0.5);
+    SmartDashboard.putData("DriveStraightManual", new DriveStraight(true, driveTrain, log));
+    SmartDashboard.putNumber("DriveStraight Manual Target Dist", 2);
+    SmartDashboard.putNumber("DriveStraight Manual MaxVel Multiplier", 0.5);
+    SmartDashboard.putNumber("DriveStraight Manual MaxAccel Multiplier", 0.5);
+
+    // drive calibration buttons
     SmartDashboard.putData("Forwards Full Speed", new DriveSetPercentOutput(1.0, 1.0, driveTrain));
     SmartDashboard.putData("Backwards Full Speed", new DriveSetPercentOutput(-1.0, -1.0, driveTrain));
     SmartDashboard.putData("Turn Full Speed", new DriveSetPercentOutput(1.0, -1.0, driveTrain));

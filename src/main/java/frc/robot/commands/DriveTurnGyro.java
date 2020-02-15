@@ -37,6 +37,7 @@ public class DriveTurnGyro extends CommandBase {
   private double timeSinceStart;
   private boolean useVision;
   private boolean regenerate;
+  private boolean fromShuffleboard;
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
@@ -67,7 +68,7 @@ public class DriveTurnGyro extends CommandBase {
     this.maxAccelMultiplier = maxAccelMultiplier;
     this.useVision = useVision;
     this.regenerate = regenerate;
-
+    this.fromShuffleboard = false;
     addRequirements(driveTrain);
 
     aFF = 0.0;
@@ -79,19 +80,28 @@ public class DriveTurnGyro extends CommandBase {
    * To be used when changing the target value directly from shuffleboard (not a pre-coded target)
    * @param fromShuffleboard true means the value is being changed from shuffleboard
    */
-  public DriveTurnGyro(boolean fromShuffleboard, boolean useVision, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+  public DriveTurnGyro(boolean useVision, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
     this.log = log;
-    this.target = target;
-    this.maxVelMultiplier = maxVelMultiplier;
-    this.maxAccelMultiplier = maxAccelMultiplier;
+    this.target = 0;
+    this.maxVelMultiplier = 0;
+    this.maxAccelMultiplier = 0;
     this.useVision = useVision;
     this.regenerate = regenerate;
-
+    this.fromShuffleboard = true;
     addRequirements(driveTrain);
 
+    if(SmartDashboard.getNumber("TurnGyro Manual Target Ang", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual Target Ang", 90);
+    }
+    if(SmartDashboard.getNumber("TurnGyro Manual MaxVel Multiplier", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual MaxVel Multiplier", 0.5);
+    }
+    if(SmartDashboard.getNumber("TurnGyro Manual MaxAccel Multiplier", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual MaxAccel Multiplier", 0.5);
+    }
     aFF = 0.0;
 
     pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
@@ -101,6 +111,12 @@ public class DriveTurnGyro extends CommandBase {
   @Override
   public void initialize() {
     driveTrain.setDriveModeCoast(true);
+
+    if(fromShuffleboard) {
+      target = SmartDashboard.getNumber("TurnGyro Manual Target Ang", 90);
+      maxVelMultiplier = SmartDashboard.getNumber("TurnGyro Manual MaxVel Multiplier", 0.5);
+      maxAccelMultiplier = SmartDashboard.getNumber("TurnGyro Manual MaxAccel Multiplier", 0.5);
+    }
 
     startAngle = driveTrain.getGyroRotation();
 
