@@ -33,8 +33,10 @@ public final class Constants {
         public static final int canShooterMotorLeft = 30; // 31 on competition bot
         public static final int pcmShooterHoodPiston = 2;
         public static final int pcmShooterLockPiston = 3;
+        public static final int dioPowerCell =9;
         public static final double shooterDefaultRPM = 3000;
-        public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
+       // public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
+       // public static final double currentCheck = 60; // voltage the shooter will reach if power cell is shot (for counting power cells)
         public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
         public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
     }
