@@ -72,23 +72,26 @@ public class RobotContainer {
    */
   public void configureShuffleboard() {
     // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
+    SmartDashboard.putData("Shooter Foward Calibrate", new ShooterSetVoltage(5, shooter));
 
     // feeder subsystem
-    SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
     SmartDashboard.putData("Feeder STOP", new FeederSetVoltage(0, feeder));
-    SmartDashboard.putData("FeederSetVoltage(5)", new FeederSetVoltage(5, feeder));
+    SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
     SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 2000);
+    SmartDashboard.putData("Feeder Forward Calibrate", new FeederSetVoltage(5, feeder));
 
     // intake subsystem
-    SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
+    SmartDashboard.putData("Intake Forward Calibrate", new IntakeSetPercentOutput(0.5, intake));
+    SmartDashboard.putData("Intake Reverse Calibrate", new IntakeSetPercentOutput(-0.5, intake));
 
     // hopper subsystem
-    SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
+    SmartDashboard.putData("Hopper Forward Calibrate", new HopperSetPercentOutput(0.5, hopper));
+    SmartDashboard.putData("Hopper Reverse Calibrate", new HopperSetPercentOutput(-0.5, hopper));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
@@ -102,7 +105,7 @@ public class RobotContainer {
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
-    // buttons for testing turnGyro
+    // buttons for testing turnGyro, not updating numbers from SmartDashboard
     SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 0.8, true, driveTrain, log));
     SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
@@ -116,11 +119,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("DriveStraight Manual Target Dist", 2);
     SmartDashboard.putNumber("DriveStraight Manual MaxVel Multiplier", 0.5);
     SmartDashboard.putNumber("DriveStraight Manual MaxAccel Multiplier", 0.5);
-
-    // drive calibration buttons
-    SmartDashboard.putData("Forwards Full Speed", new DriveSetPercentOutput(1.0, 1.0, driveTrain));
-    SmartDashboard.putData("Backwards Full Speed", new DriveSetPercentOutput(-1.0, -1.0, driveTrain));
-    SmartDashboard.putData("Turn Full Speed", new DriveSetPercentOutput(1.0, -1.0, driveTrain));
+    
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
 
     // auto selection widget
