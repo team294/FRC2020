@@ -175,6 +175,34 @@ public class Shooter extends SubsystemBase {
     return powerCellsShot;
   }
 
+  /**
+   * Returns min RPM (1200) if robot is less than 5 meters from the target
+   * Returns max RPM (3000) if robot is more than 30 meters from the target
+   * Calculates slope between known RPMs for 2 distances (based on array in constants)
+   * Uses slope to calculate RPM at a certain distance between those 2 distances
+   * @param distance distance from the target (as per vision data) in feet
+   * @return RPM to set the shooter to in order to make it into the target
+   */
+  public double distanceFromTargetToRPM(double distance) {
+    int len = distanceFromTargetToRPMTable.length;
+    if(distance < distanceFromTargetToRPMTable[0][0]) return distanceFromTargetToRPMTable[0][1];
+    if(distance > distanceFromTargetToRPMTable[len-1][0]) return distanceFromTargetToRPMTable[len-1][1];
+    int leftBound = 0;
+    for(int i = len - 1; i >= 0; i--) {
+      if(distance > distanceFromTargetToRPMTable[i][0]) {
+        leftBound = i;
+        i = 0;
+      } else if (distance == distanceFromTargetToRPMTable[i][0]) {
+        return distanceFromTargetToRPMTable[i][1];
+      }
+    }
+    double lowerRPM = distanceFromTargetToRPMTable[leftBound][1];
+    double upperRPM = distanceFromTargetToRPMTable[leftBound + 1][1];
+    double dRPMperMeter = (upperRPM - lowerRPM) / 5;
+    double targetRPM = ((distance - distanceFromTargetToRPMTable[leftBound][0]) * (dRPMperMeter)) + lowerRPM;
+    return targetRPM;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
