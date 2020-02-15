@@ -19,39 +19,44 @@ public class ShooterSetPID extends CommandBase {
   private final Shooter shooter;
   private double rpm;
   private final boolean getRpmFromShuffleboard;
+  private final boolean rpmFromDistance;
   private Timer timer;
   
   /**
    * @param rpm setpoint in RPM
    * @param shooter shooter subsystem to use
    */
-  public ShooterSetPID(int rpm, Shooter shooter) {
+  public ShooterSetPID(double rpm, Shooter shooter) {
     this.shooter = shooter;
     this.rpm = rpm;
     this.getRpmFromShuffleboard = false;
+    this.rpmFromDistance = false;
     timer = new Timer();
     addRequirements(shooter);
   }
 
   /**
    * Turn on the shooter PID using RPM from Shuffleboard.
+   * @param rpmFromDistance true = rpm is set with distance from target, false = rpm is set with manual dashboard input
    * @param shooter Shooter subsystem to use
    */
-  public ShooterSetPID(Shooter shooter) {
+  public ShooterSetPID(boolean rpmFromDistance, Shooter shooter) {
     this.shooter = shooter;
     this.rpm = 0;
     getRpmFromShuffleboard = true;
+    this.rpmFromDistance = rpmFromDistance;
     timer = new Timer();
     addRequirements(shooter);
 
     if(SmartDashboard.getNumber("Shooter Manual SetPoint RPM", -9999) == -9999)
-      SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
+      SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(getRpmFromShuffleboard) rpm = SmartDashboard.getNumber("Shooter Manual SetPoint RPM", 3000);
+    if(getRpmFromShuffleboard && !rpmFromDistance) rpm = SmartDashboard.getNumber("Shooter Manual SetPoint RPM", 2800);
+    else if(getRpmFromShuffleboard && rpmFromDistance) rpm = shooter.distanceFromTargetToRPM(SmartDashboard.getNumber("Shooter Distance", 5));
     shooter.setShooterPID(rpm);
     timer.reset();
     timer.start();

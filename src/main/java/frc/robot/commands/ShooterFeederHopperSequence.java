@@ -15,21 +15,38 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 /**
- * Command group to get the shooter up to speed, and then run the feeder and hopper.
+ * Command group to run the shooter, feeder, intake, and hopper for shooting.
  */
 public class ShooterFeederHopperSequence extends SequentialCommandGroup {
   /**
+   * @param rpmFromDistance true = rpm is set with distance from target, false = rpm is set with manual dashboard input
    * @param shooter shooter subsystem to use
    * @param feeder feeder subsystem to use
    * @param hopper hopper subsystem to use
    * @param intake intake subsystem to use
    */
-  public ShooterFeederHopperSequence(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake) {
+  public ShooterFeederHopperSequence(boolean rpmFromDistance, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake) {
     addCommands( 
-      new ShooterSetPID(2800, shooter),
+      new ShooterSetPID(rpmFromDistance, shooter),
       new FeederSetPID(feeder),
-      new FeederSetPiston(true, feeder),
-      new ParallelCommandGroup(new HopperSetPercentOutput(hopper), new IntakeSetPercentOutput(0.5, intake))
+      new HopperSetPercentOutput(hopper),
+      new ParallelCommandGroup(new IntakeSetPercentOutput(intake), new HopperReverse(hopper))
+    );
+  }
+
+  /**
+   * @param rpm setpoint rpm for shooter
+   * @param shooter shooter subsystem to use
+   * @param feeder feeder subsystem to use
+   * @param hopper hopper subsystem to use
+   * @param intake intake subsystem to use
+   */
+  public ShooterFeederHopperSequence(double rpm, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake) {
+    addCommands( 
+      new ShooterSetPID(rpm, shooter),
+      new FeederSetPID(feeder),
+      new HopperSetPercentOutput(hopper),
+      new ParallelCommandGroup(new IntakeSetPercentOutput(intake), new HopperReverse(hopper))
     );
   }
 }

@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -28,15 +29,22 @@ public class Shooter extends SubsystemBase {
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
+  private Hopper hopper;
+  private final DigitalInput input = new DigitalInput(dioPowerCell);
 
-  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint;
+  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
+  private int powerCellsShot = 0;
+  //private double prevVoltage = 0;
+  //private double prevCurrent = 0;
+  private boolean prevCell = false;
   
-  public Shooter(FileLog log, TemperatureCheck tempCheck) {
+  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
+    this.hopper = hopper;
 
     setLockPiston(false);
 
@@ -90,6 +98,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setShooterVoltage(double voltage) {
     shooterMotorLeft.setVoltage(voltage);
+    voltageTarget = voltage;
   }
 
   /**
@@ -101,7 +110,8 @@ public class Shooter extends SubsystemBase {
     this.shooterRPM = shooterRPM;
     setPoint = shooterRPM / ticksPer100ms; // setPoint is in ticks per 100ms
     shooterMotorLeft.set(ControlMode.Velocity, setPoint);
-    SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM );
+    voltageTarget = 1;
+    SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM);
     System.out.println("Starting setShooterPID");
   }
 
@@ -138,8 +148,59 @@ public class Shooter extends SubsystemBase {
   /**
    * @return output voltage
    */
+  /****************** 
   public double getVoltage() {
     return shooterMotorLeft.getMotorOutputVoltage();
+  }
+
+  /**
+   * @return output current
+   *
+  public double getCurrent() {
+    return shooterMotorLeft.getSupplyCurrent();
+  }
+  *******************************/
+
+  /**
+   * @return Cell present
+   */
+  public boolean getCell(){
+    return !input.get();
+  }
+
+  /**
+   * @return power cells shot
+   */
+  public int getPowerCellsShot() {
+    return powerCellsShot;
+  }
+
+  /**
+   * Returns min RPM (1200) if robot is less than 5 meters from the target
+   * Returns max RPM (3000) if robot is more than 30 meters from the target
+   * Calculates slope between known RPMs for 2 distances (based on array in constants)
+   * Uses slope to calculate RPM at a certain distance between those 2 distances
+   * @param distance distance from the target (as per vision data) in feet
+   * @return RPM to set the shooter to in order to make it into the target
+   */
+  public double distanceFromTargetToRPM(double distance) {
+    int len = distanceFromTargetToRPMTable.length;
+    if(distance < distanceFromTargetToRPMTable[0][0]) return distanceFromTargetToRPMTable[0][1];
+    if(distance > distanceFromTargetToRPMTable[len-1][0]) return distanceFromTargetToRPMTable[len-1][1];
+    int leftBound = 0;
+    for(int i = len - 1; i >= 0; i--) {
+      if(distance > distanceFromTargetToRPMTable[i][0]) {
+        leftBound = i;
+        i = 0;
+      } else if (distance == distanceFromTargetToRPMTable[i][0]) {
+        return distanceFromTargetToRPMTable[i][1];
+      }
+    }
+    double lowerRPM = distanceFromTargetToRPMTable[leftBound][1];
+    double upperRPM = distanceFromTargetToRPMTable[leftBound + 1][1];
+    double dRPMperMeter = (upperRPM - lowerRPM) / 5;
+    double targetRPM = ((distance - distanceFromTargetToRPMTable[leftBound][0]) * (dRPMperMeter)) + lowerRPM;
+    return targetRPM;
   }
 
   @Override
@@ -169,9 +230,21 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 1 Voltage", shooterMotorLeft.getMotorOutputVoltage());
     SmartDashboard.putNumber("Shooter Motor 2 Voltage", shooterMotorRight.getMotorOutputVoltage());
 
+    SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
+    SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
+    SmartDashboard.putBoolean("Cell Present", prevCell);
+    
     if(log.getLogRotation() == log.SHOOTER_CYCLE) {
       updateShooterLog(false);
     }
+
+    //if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
+    if (getCell() && !prevCell  && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
+      powerCellsShot++;
+    if (voltageTarget == 0) powerCellsShot = 0;
+
+    //prevVoltage = getVoltage();
+    prevCell = getCell();
   }
 
   /**
@@ -180,14 +253,11 @@ public class Shooter extends SubsystemBase {
    */
 	public void updateShooterLog(boolean logWhenDisabled) {
 		log.writeLog(logWhenDisabled, "Shooter", "Update Variables",  
-      //"Motor RPM", shooterMotorLeft.getSelectedSensorVelocity(0) *  ticksPer100ms,  Same as measuredRPM
       "Motor Volt", shooterMotorLeft.getMotorOutputVoltage(), 
       "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
-      // "Left Temp", shooterMotorRight.getTemperature(),
       "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
-      // "Right Temp", shooterMotorRight.getTemperature(),
       "Measured RPM", measuredRPM,
-      "PID Error", getShooterPIDError()
+      "Power Cell", prevCell
     );
   }
 
