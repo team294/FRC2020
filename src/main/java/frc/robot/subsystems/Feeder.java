@@ -13,27 +13,28 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.TemperatureCheck;
 
 import static frc.robot.Constants.FeederConstants.*;
 
 public class Feeder extends SubsystemBase {
   private final WPI_TalonFX feederMotor = new WPI_TalonFX(canFeederMotor); // 9:1 gear ratio
-  private final Solenoid feederPiston = new Solenoid(pcmFeederPiston);
 
   private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
-  private int timeoutMs = 30;
+  private int timeoutMs = 0;  // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   private double ff, p, i, d; // for shuffleboard
 
   private FileLog log;
+  private TemperatureCheck tempCheck;
 
-  public Feeder(FileLog log) {
+  public Feeder(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
+    this.tempCheck = tempCheck;
 
     feederMotor.configFactoryDefault();
     feederMotor.setInverted(false);
@@ -105,18 +106,9 @@ public class Feeder extends SubsystemBase {
     return feederMotor.getClosedLoopError() * ticksPer100ms;
   }
 
-  /**
-   * @param retract true = retract, false = extend
-   */
-  public void setFeederPiston(boolean retract) {
-    feederPiston.set(retract);
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updateFeederLog(false);
-
     // read PID coefficients from SmartDashboard
     ff = SmartDashboard.getNumber("Feeder FF", 0);
     p = SmartDashboard.getNumber("Feeder P", 0);
@@ -139,6 +131,10 @@ public class Feeder extends SubsystemBase {
     SmartDashboard.putNumber("Feeder SetPoint", setPoint);
     SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
     SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
+    
+    if(log.getLogRotation() == log.FEEDER_CYCLE) {
+      updateFeederLog(false);
+    }
   }
 
   /**
@@ -149,8 +145,19 @@ public class Feeder extends SubsystemBase {
     log.writeLog(logWhenDisabled, "Feeder", "updates", 
       "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
       "Feeder Amps", feederMotor.getSupplyCurrent(), 
-      "Feeder Temp",feederMotor.getTemperature(),
+      // "Feeder Temp", feederMotor.getTemperature(),
       "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
     );
+  }
+
+  /**
+   * Update TemperatureCheck utility with motors that are and are not overheating.
+   */
+  public void updateOverheatingMotors() {
+    if (feederMotor.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("Feeder");
+    
+    if (feederMotor.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("Feeder");
   }
 }

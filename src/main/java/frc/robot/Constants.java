@@ -21,21 +21,40 @@ import edu.wpi.first.wpilibj.util.Units;
  */
 public final class Constants {
 
+    public static final class RobotConstants {
+        // Global constants go here
+
+        // Next row is a DEFAULT VALUE.  Change this value in RobotPrefrences for each robot, not in this code!
+        public static boolean prototypeBot = false;     // true = proto robot, false = competition robot
+    }
+
     public static final class ShooterConstants {
-        public static final int canShooterMotorLeft = 30;
-        public static final int canShooterMotorRight = 31;
-        public static final double shooterDefaultRPM = 3000;
-        public static final double voltageCheck = 10;
+        public static final int canShooterMotorRight = 31; // 30 on competition bot
+        public static final int canShooterMotorLeft = 30; // 31 on competition bot
+        public static final int pcmShooterHoodPiston = 2;
+        public static final int pcmShooterLockPiston = 3;
+        public static final double shooterDefaultRPM = 2800;
+        public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
+        public static final int dioPowerCell = 9;
+       // public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
+       // public static final double currentCheck = 60; // voltage the shooter will reach if power cell is shot (for counting power cells)
+        public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
+        public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
+        
+        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2000},{15,2250},{20,2500},{25,2750},{30,3000}};
+        // TODO figure out max distance of robot from target so table includes all necessary values
     }
 
     public static final class FeederConstants {
         public static final int canFeederMotor = 40;
-        public static final int pcmFeederPiston = 0;
         public static final double feederDefaultRPM = 2000;
+        public static final double temperatureCheck = 40; // in celsius
     }
 
     public static final class IntakeConstants {
         public static final int canIntakeMotor = 50;
+        public static final int pcmIntakePistonIn = 0;
+        public static final int pcmIntakePistonOut = 1;
         public static final double intakeDefaultPercentOutput = 0.8;
     }
 
@@ -59,7 +78,9 @@ public final class Constants {
         public static int canLeftDriveMotor2 = 11;
     
         public static int canRightDriveMotor1 = 20;
-        public static int canRightDriveMotor2 = 21; 
+        public static int canRightDriveMotor2 = 21;
+
+        public static final double temperatureCheck = 40; // in celsius
     
         public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
         public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;

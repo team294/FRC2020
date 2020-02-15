@@ -8,29 +8,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Shooter;
 
 /**
- * Command to set the feeder piston position.
+ * Command to set shooter hood piston position.
  */
-public class FeederSetPiston extends CommandBase {
-  Feeder feeder;
-  boolean retract;
-  
+public class ShooterSetHoodPiston extends CommandBase {
+  private Shooter shooter;
+  private boolean retract;
+
   /**
-   * @param retract true = retract, false = extend
-   * @param feeder feeder subsystem to use
+   * @param retract true = retract (open), false = extend (close)
+   * @param shooter shooter subsystem to use
    */
-  public FeederSetPiston(boolean retract, Feeder feeder) {
+  public ShooterSetHoodPiston(boolean retract, Shooter shooter) {
     this.retract = retract;
-    this.feeder = feeder;
-    addRequirements(feeder);
+    this.shooter = shooter;
+    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.setFeederPiston(retract);
+    shooter.setHoodPiston(retract);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

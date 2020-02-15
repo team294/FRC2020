@@ -8,25 +8,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Test;
+import frc.robot.subsystems.Intake;
 
-public class setTestMotor extends CommandBase {
+/**
+ * Command to set the intake piston position.
+ */
+public class IntakePistonSetPosition extends CommandBase {
+  private Intake intake;
+  private boolean extend;
+  
   /**
-   * Creates a new setTestMotor.
+   * @param extend true = extend, false = retract
+   * @param intake intake subsystem to use
    */
-  private Test test;
-  private double percent;
-
-  public setTestMotor(Test test, double percent) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.test = test;
-    this.percent = percent;
+  public IntakePistonSetPosition(boolean extend, Intake intake) {
+    this.extend = extend;
+    this.intake = intake;
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    test.setMotor(percent);
+    intake.intakeSetPiston(extend);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

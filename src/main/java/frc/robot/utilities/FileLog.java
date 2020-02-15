@@ -34,11 +34,10 @@ public class FileLog {
     // TODO remove/add cycles as we remove/add subsystems
 	public int rotation = 0;
     public final int DRIVE_CYCLE = 1;
-    public final int INTAKE_CYCLE = 2;
-    public final int CONVEYER_CYCLE = 3;
-    public final int SHOOTER_CYCLE = 4;
-    public final int CLIMB_CYCLE = 5;
-    public final int LED_CYCLE = 6;
+    public final int FEEDER_CYCLE = 3;
+    public final int SHOOTER_CYCLE = 5;
+    public final int CLIMB_CYCLE = 7;
+    public final int LIMELIGHT_CYCLE = 9;
     
 	/**
 	 * Creates a new log file called "/home/lvuser/logfile.ver.date.time.txt"
@@ -166,11 +165,12 @@ public class FileLog {
 	 */
 	public void advanceLogRotation() {
 		rotation++;
-		if (logLevel == 3) {
-			if (rotation >= 25) rotation = 0;
-		} else {
-			if (rotation >= 10) rotation = 0;
-		}
+		if (rotation >= 10) rotation = 0;
+		// if (logLevel == 3) {
+		// 	if (rotation >= 25) rotation = 0;
+		// } else {
+		// 	if (rotation >= 10) rotation = 0;
+		// } TODO add back in when we do log levels
 	}
 
 	/**

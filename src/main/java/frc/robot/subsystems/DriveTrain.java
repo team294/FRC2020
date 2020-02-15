@@ -28,12 +28,11 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.utilities.*;
+import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.DriveConstants.*;
 
 
 public class DriveTrain extends SubsystemBase {
-  private final FileLog log;
-
   private final WPI_TalonFX leftMotor1;
   private final WPI_TalonFX leftMotor2;
   private final WPI_TalonFX rightMotor1;
@@ -49,7 +48,9 @@ public class DriveTrain extends SubsystemBase {
   private double yawZero = 0;
 
   private Timer autoTimer;
-
+  private FileLog log;
+  private TemperatureCheck tempCheck;
+  
   // variables to help calculate angular velocity for turnGyro
   private double prevAng; // last recorded gyro angle
   private double currAng; // current recorded gyro angle
@@ -59,8 +60,9 @@ public class DriveTrain extends SubsystemBase {
   private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
 
   
-  public DriveTrain(FileLog log, RobotPreferences robotPrefs) {
+  public DriveTrain(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
+    this.tempCheck = tempCheck;
 
     // configure navX
     AHRS gyro = null;
@@ -89,13 +91,13 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
 
-    if (robotPrefs.prototypeBot) {
+    // Drive train is reversed on competition robot
+    if (prototypeBot) {
       leftMotor1.setInverted(true);
       leftMotor2.setInverted(true);
       rightMotor1.setInverted(true);
       rightMotor2.setInverted(true);
-    }
-    else{ 
+    } else { 
       leftMotor1.setInverted(false);
       leftMotor2.setInverted(false);
       rightMotor1.setInverted(false);
@@ -432,24 +434,6 @@ public class DriveTrain extends SubsystemBase {
     return leftMotor1.getClosedLoopTarget();
   }
 
-  /**
-   * Writes information about the drive train to the filelog
-   * @param logWhenDisabled true will log when disabled, false will discard the string
-   */
-  public void updateDriveLog(boolean logWhenDisabled) {
-    log.writeLog(logWhenDisabled, "Drive", "updates", 
-      "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
-      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
-      "L1 Temp",leftMotor1.getTemperature(), "L2 Temp",leftMotor2.getTemperature(),
-      "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
-      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), 
-      "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
-      "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
-      "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
-      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
-      );
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
@@ -457,15 +441,17 @@ public class DriveTrain extends SubsystemBase {
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
-    updateDriveLog(false);
-
     SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
     SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
     SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
-    //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
+
+    // track position from odometry (helpful for autos)
+    var translation = odometry.getPoseMeters().getTranslation();
+    SmartDashboard.putNumber("Odometry X",translation.getX());
+    SmartDashboard.putNumber("Odometry Y",translation.getY());
 
     // TODO keep in code until values can be tuned for ACTUAL 2020 robot
      // save new current value for calculating angVel
@@ -481,13 +467,13 @@ public class DriveTrain extends SubsystemBase {
      // save current angVel values as previous values for next calculation
      prevAng = currAng;
      prevTime = currTime; 
+     
+     if(log.getLogRotation() == log.DRIVE_CYCLE) {
+      updateDriveLog(false);
+    }
   }
 
   public Pose2d getPose() {
-    /*System.out.println("Position" + odometry.getPoseMeters());
-    System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
-      inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
-      inchesToMeters(getLeftEncoderInches()));*/
     return odometry.getPoseMeters();
   }
 
@@ -530,6 +516,49 @@ public class DriveTrain extends SubsystemBase {
       "L Volts", leftVolts, 
       "R Volts", rightVolts, 
       "Gyro", getGyroRotation());
+  }
 
+  /**
+   * Writes information about the drive train to the filelog
+   * @param logWhenDisabled true will log when disabled, false will discard the string
+   */
+  public void updateDriveLog(boolean logWhenDisabled) {
+    log.writeLog(logWhenDisabled, "Drive", "updates", 
+      "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
+      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
+      "L1 Temp",leftMotor1.getTemperature(), "L2 Temp",leftMotor2.getTemperature(),
+      "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
+      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), 
+      "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
+      "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
+      "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
+      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
+      );
+  }
+
+  /**
+   * Update TemperatureCheck utility with motors that are and are not overheating.
+   */
+  public void updateOverheatingMotors() {
+    if (leftMotor1.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveLeft1");
+    if (leftMotor2.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveLeft2");
+    
+    if (rightMotor1.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveRight1");
+    if (rightMotor2.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveRight2");
+
+
+    if (leftMotor1.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveLeft1");
+    if (leftMotor1.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveLeft2");
+
+    if (rightMotor1.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveRight1");
+    if (rightMotor2.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveRight2");
   }
 }

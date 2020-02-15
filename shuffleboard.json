@@ -68,12 +68,12 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Shooter PercentOutput",
-                  "_title": "/SmartDashboard/Shooter PercentOutput"
+                  "_title": "Shooter PercentOutput"
                 }
               ]
             }
           },
-          "4,4": {
+          "7,5": {
             "size": [
               2,
               1
@@ -84,7 +84,7 @@
               "_title": "IntakeSetPercentOutput(1)"
             }
           },
-          "4,3": {
+          "7,4": {
             "size": [
               2,
               1
@@ -153,7 +153,7 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Feeder PercentOutput",
-                  "_title": "/SmartDashboard/Feeder PercentOutput"
+                  "_title": "Feeder PercentOutput"
                 }
               ]
             }
@@ -250,12 +250,100 @@
                 }
               ]
             }
+          },
+          "9,3": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Shooter Hood Piston",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
+                  "_title": "ShooterHood OPEN"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE",
+                  "_title": "ShooterHood CLOSE"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter LOCK",
+                  "_title": "Shooter LOCK"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter UNLOCK",
+                  "_title": "Shooter UNLOCK"
+                }
+              ]
+            }
+          },
+          "7,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
+              "_title": "ShooterFeederHopperIntakeStop"
+            }
+          },
+          "4,3": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Shooter Distance",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Distance SetPoint",
+                  "_title": "Shooter Distance SetPoint"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter Distance",
+                  "_title": "Shooter Distance"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter DistToRPM",
+                  "_title": "Shooter DistToRPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM from Dist",
+                  "_title": "Shooter RPM from Dist"
+                }
+              ]
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Power Cells Shot",
+              "_title": "Power Cells Shot"
+            }
           }
         }
       }
     },
     {
-      "title": "Camera",
+      "title": "Cameras",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
       "widgetPane": {
@@ -264,15 +352,34 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "1,0": {
+          "5,0": {
             "size": [
-              11,
+              7,
               6
             ],
             "content": {
               "_type": "Camera Stream",
               "_source0": "camera_server://USB Camera 0",
-              "_title": "USB Camera 0",
+              "_title": "USB Camera",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": -1,
+              "imageHeight": -1
+            }
+          },
+          "1,0": {
+            "size": [
+              4,
+              4
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight",
+              "_title": "Limelight",
               "Crosshair/Show crosshair": true,
               "Crosshair/Crosshair color": "#FFFFFFFF",
               "Controls/Show controls": true,
