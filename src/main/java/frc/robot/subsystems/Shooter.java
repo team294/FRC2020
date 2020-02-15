@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -29,13 +30,16 @@ public class Shooter extends SubsystemBase {
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
   private Hopper hopper;
+  private final DigitalInput input = new DigitalInput(dioPowerCell);
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   private int powerCellsShot = 0;
-  private double prevVoltage = 0;
+  //private double prevVoltage = 0;
+  //private double prevCurrent = 0;
+  private boolean prevCell = false;
   
   public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
@@ -144,8 +148,24 @@ public class Shooter extends SubsystemBase {
   /**
    * @return output voltage
    */
+  /****************** 
   public double getVoltage() {
     return shooterMotorLeft.getMotorOutputVoltage();
+  }
+
+  /**
+   * @return output current
+   *
+  public double getCurrent() {
+    return shooterMotorLeft.getSupplyCurrent();
+  }
+  *******************************/
+
+  /**
+   * @return Cell present
+   */
+  public boolean getCell(){
+    return !input.get();
   }
 
   /**
@@ -177,19 +197,22 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
-    SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
+    //SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
     SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
+    SmartDashboard.putBoolean("Cell Present", prevCell);
     
     if(log.getLogRotation() == log.SHOOTER_CYCLE) {
       updateShooterLog(false);
     }
 
-    if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
+    //if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
+    if (getCell() && !prevCell  && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
       powerCellsShot++;
     if (voltageTarget == 0) powerCellsShot = 0;
 
-    prevVoltage = getVoltage();
+    //prevVoltage = getVoltage();
+    prevCell = getCell();
   }
 
   /**
