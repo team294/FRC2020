@@ -77,6 +77,11 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
 
+    // shooter distance to RPM test
+    SmartDashboard.putNumber("Shooter Distance", 5);
+    SmartDashboard.putData("Shooter DistToRPM", new ShooterDistToRPM(shooter));
+    SmartDashboard.putNumber("Shooter RPM from Dist", 0);
+
     // feeder subsystem
     SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
     SmartDashboard.putData("Feeder STOP", new FeederSetVoltage(0, feeder));
