@@ -2,6 +2,7 @@ package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import frc.robot.commands.AutoShootBackup;
 import frc.robot.commands.AutoTrenchFromCenter;
 import frc.robot.commands.AutoTrenchFromRight;
 import frc.robot.commands.Wait;
@@ -15,6 +16,7 @@ public class AutoSelection {
 
 	public static final int TRENCH_FROM_CENTER = 0;
 	public static final int TRENCH_FROM_RIGHT = 1;
+	public static final int SHOOT_BACKUP = 2;
 
 	private Trajectory[] trajectoryCache = new Trajectory[2];
 	
@@ -53,6 +55,11 @@ public class AutoSelection {
 			log.writeLogEcho(true, "AutoSelect", "run TrenchFromCenter");
 			trajectory = trajectoryCache[TRENCH_FROM_CENTER];
 			autonomousCommand = new AutoTrenchFromCenter(trajectory, TrajectoryUtil.getDriveKinematics(), driveTrain, shooter, feeder, hopper, intake, limeLight, log);
+		}
+
+		if (autoPlan == SHOOT_BACKUP) {
+			log.writeLogEcho(true, "AutoSelect", "run ShootBackup");
+			autonomousCommand = new AutoShootBackup(driveTrain, limeLight, log, shooter, feeder, hopper, intake);
 		}
 
 		if (autonomousCommand == null) {

@@ -121,6 +121,7 @@ public class RobotContainer {
     // auto selection widget
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
+    autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
   }
 
