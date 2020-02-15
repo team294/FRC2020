@@ -118,8 +118,8 @@ public class RobotContainer {
 
     // buttons for testing turnGyro, not updating numbers from SmartDashboard
     SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 0.8, true, driveTrain, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 45, 400, true, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.4, 3.8, false, true, driveTrain, limeLight, log));
 
     // drive profile calibration buttons
     SmartDashboard.putData("TurnGyroManual", new DriveTurnGyro(false, true, driveTrain, limeLight, log));
