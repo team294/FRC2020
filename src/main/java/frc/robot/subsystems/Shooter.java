@@ -249,14 +249,11 @@ public class Shooter extends SubsystemBase {
    */
 	public void updateShooterLog(boolean logWhenDisabled) {
 		log.writeLog(logWhenDisabled, "Shooter", "Update Variables",  
-      //"Motor RPM", shooterMotorLeft.getSelectedSensorVelocity(0) *  ticksPer100ms,  Same as measuredRPM
       "Motor Volt", shooterMotorLeft.getMotorOutputVoltage(), 
       "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
-      // "Left Temp", shooterMotorRight.getTemperature(),
       "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
-      // "Right Temp", shooterMotorRight.getTemperature(),
       "Measured RPM", measuredRPM,
-      "PID Error", getShooterPIDError()
+      "Power Cell", prevCell
     );
   }
 

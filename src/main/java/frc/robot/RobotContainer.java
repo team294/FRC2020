@@ -71,13 +71,14 @@ public class RobotContainer {
    */
   public void configureShuffleboard() {
     // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter));
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
 
     // shooter distance to RPM test
+    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter));
     SmartDashboard.putNumber("Shooter Distance", 5);
     SmartDashboard.putData("Shooter DistToRPM", new ShooterDistToRPM(shooter));
     SmartDashboard.putNumber("Shooter RPM from Dist", 0);
@@ -150,7 +151,7 @@ public class RobotContainer {
 
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterHoodPistonSequence(false, shooter));
-    xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
+    xb[2].whenPressed(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake));
     xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     xb[4].whenPressed(new ShooterHoodPistonSequence(true, shooter));
 
