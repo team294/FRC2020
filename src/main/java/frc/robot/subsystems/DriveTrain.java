@@ -494,6 +494,7 @@ public class DriveTrain extends SubsystemBase {
 
     SmartDashboard.putNumber("Drive Right Enc", getRightEncoderInches());
     SmartDashboard.putNumber("Drive Left Enc", getLeftEncoderInches());
+    SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));
     SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
     SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
     SmartDashboard.putNumber("Drive Gyro Rotation", getGyroRotation());

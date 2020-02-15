@@ -24,6 +24,7 @@ import frc.robot.utilities.*;
 import frc.robot.triggers.*;
 
 import static frc.robot.Constants.OIConstants.*;
+import static frc.robot.Constants.DriveConstants.*;
 
 /**
  * This class is where the bulk of the robot should be declared.  Since Command-based is a
@@ -121,12 +122,12 @@ public class RobotContainer {
     // drive profile calibration buttons
     SmartDashboard.putData("TurnGyroManual", new DriveTurnGyro(false, true, driveTrain, limeLight, log));
     SmartDashboard.putNumber("TurnGyro Manual Target Ang", 90);
-    SmartDashboard.putNumber("TurnGyro Manual MaxVel Multiplier", 0.5);
-    SmartDashboard.putNumber("TurnGyro Manual MaxAng Multiplier", 0.5);
+    SmartDashboard.putNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity);
+    SmartDashboard.putNumber("TurnGyro Manual MaxAng", kMaxAngularAcceleration);
     SmartDashboard.putData("DriveStraightManual", new DriveStraight(true, driveTrain, log));
     SmartDashboard.putNumber("DriveStraight Manual Target Dist", 2);
-    SmartDashboard.putNumber("DriveStraight Manual MaxVel Multiplier", 0.5);
-    SmartDashboard.putNumber("DriveStraight Manual MaxAccel Multiplier", 0.5);
+    SmartDashboard.putNumber("DriveStraight Manual MaxVel", kMaxSpeedMetersPerSecond);
+    SmartDashboard.putNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
     
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
 

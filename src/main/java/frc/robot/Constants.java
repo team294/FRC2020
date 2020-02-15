@@ -98,7 +98,7 @@ public final class Constants {
         public static final double MAX_VOLTAGE = 10.0;
         public static final double TRACK_WIDTH = Units.inchesToMeters(25.35); // was 7.286626058797765
     
-        // turnGyro constants
+        // turnGyro constants TODO TUNE THIS
         public static final double kMaxAngularVelocity = 1125; // degrees per second TODO calculate on actual 2020 robot
         public static final double kMaxAngularAcceleration = 400; // degrees per second per second (was 200%)
         public static double kVAngular = 0.000850; // was 0.000838  then 0.000943
@@ -108,7 +108,7 @@ public final class Constants {
         public static double kIAngular = 0;
         public static double kDAngular = 0;
 
-        // verify these
+        // driveStraight constants TODO TUNE THIS
         public static final double kMaxSpeedMetersPerSecond = 5.0;
         public static final double kMaxAccelerationMetersPerSecondSquared = 3.8; // was 0.352
         public static double kVLinear = 0.148; // was 0.09
