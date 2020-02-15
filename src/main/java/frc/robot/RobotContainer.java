@@ -7,8 +7,8 @@
 
 package frc.robot;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.first.cameraserver.CameraServer;
+ import edu.wpi.cscore.UsbCamera;
+ import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -45,6 +45,7 @@ public class RobotContainer {
   private final RobotPreferences robotPrefs = new RobotPreferences();
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final UsbCamera intakeCamera;
+  
 
   Joystick xboxController = new Joystick(xboxControllerPort);
   Joystick leftJoystick = new Joystick(leftJoystickPort);
@@ -73,11 +74,17 @@ public class RobotContainer {
    */
   public void configureShuffleboard() {
     // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(shooter, led));
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter, led));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
-    SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
+    SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
+
+    // shooter distance to RPM test
+    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter, led));
+    SmartDashboard.putNumber("Shooter Distance", 5);
+    SmartDashboard.putData("Shooter DistToRPM", new ShooterDistToRPM(shooter));
+    SmartDashboard.putNumber("Shooter RPM from Dist", 0);
 
     // feeder subsystem
     SmartDashboard.putData("Feeder Manual SetPoint", new FeederSetPID(feeder));
@@ -87,9 +94,11 @@ public class RobotContainer {
 
     // intake subsystem
     SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
+    SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, intake));
 
     // hopper subsystem
     SmartDashboard.putData("HopperSetPercentOutput(0.8)", new HopperSetPercentOutput(0.8, hopper));
+    SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, hopper));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
@@ -100,7 +109,7 @@ public class RobotContainer {
     SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
 
     // command sequences
-    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(shooter, feeder, hopper, intake, led));
+    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
@@ -146,7 +155,7 @@ public class RobotContainer {
 
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterHoodPistonSequence(false, shooter));
-    xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper, intake, led));
+    xb[2].whenPressed(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake, led));
     xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     xb[4].whenPressed(new ShooterHoodPistonSequence(true, shooter));
 
