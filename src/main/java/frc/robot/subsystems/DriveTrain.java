@@ -210,17 +210,17 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return left encoder velocity, in ticks per 100ms
+   * @return left encoder velocity, in ticks per 100ms (+ = forward)
    */
   public double getLeftEncoderVelocityRaw() {
     return leftMotor1.getSelectedSensorVelocity(0);
   }
 
   /**
-   * @return right encoder velocity, in ticks per 100ms
+   * @return right encoder velocity, in ticks per 100ms (+ = forward)
    */
   public double getRightEncoderVelocityRaw() {
-    return rightMotor1.getSelectedSensorVelocity(0);
+    return -rightMotor1.getSelectedSensorVelocity(0);
   }
 
   /**
@@ -293,14 +293,14 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return left encoder velocity, in inches per second
+   * @return left encoder velocity, in inches per second (+ = forward)
    */
   public double getLeftEncoderVelocity() {
     return encoderTicksToInches(getLeftEncoderVelocityRaw()) * 10;
   }
 
   /**
-   * @return right encoder velocity, in inches per second
+   * @return right encoder velocity, in inches per second (+ = forward)
    */
   public double getRightEncoderVelocity() {
     return encoderTicksToInches(getRightEncoderVelocityRaw()) * 10;
@@ -310,7 +310,7 @@ public class DriveTrain extends SubsystemBase {
    * @return average velocity, in inches per second
    */
   public double getAverageEncoderVelocity(){
-    return (-getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
+    return (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
   }
 
   /**
@@ -441,10 +441,12 @@ public class DriveTrain extends SubsystemBase {
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
-    SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
-    SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
+    SmartDashboard.putNumber("Drive Right Encoder", getRightEncoderInches());
+    SmartDashboard.putNumber("Drive Left Encoder", getLeftEncoderInches());
+    SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
+    SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
     SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
-    SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
+    SmartDashboard.putNumber("Gyro Raw", getGyroRaw());
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
 
