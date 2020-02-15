@@ -25,7 +25,7 @@ public class ShooterSetPID extends CommandBase {
    * @param rpm setpoint in RPM
    * @param shooter shooter subsystem to use
    */
-  public ShooterSetPID(int rpm, Shooter shooter) {
+  public ShooterSetPID(double rpm, Shooter shooter) {
     this.shooter = shooter;
     this.rpm = rpm;
     this.getRpmFromShuffleboard = false;
@@ -45,13 +45,13 @@ public class ShooterSetPID extends CommandBase {
     addRequirements(shooter);
 
     if(SmartDashboard.getNumber("Shooter Manual SetPoint RPM", -9999) == -9999)
-      SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 3000);
+      SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(getRpmFromShuffleboard) rpm = SmartDashboard.getNumber("Shooter Manual SetPoint RPM", 3000);
+    if(getRpmFromShuffleboard) rpm = SmartDashboard.getNumber("Shooter Manual SetPoint RPM", 2800);
     shooter.setShooterPID(rpm);
     timer.reset();
     timer.start();

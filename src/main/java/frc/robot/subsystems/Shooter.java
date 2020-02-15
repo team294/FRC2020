@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
     setPoint = shooterRPM / ticksPer100ms; // setPoint is in ticks per 100ms
     shooterMotorLeft.set(ControlMode.Velocity, setPoint);
     voltageTarget = 1;
-    SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM );
+    SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM);
     System.out.println("Starting setShooterPID");
   }
 
