@@ -9,7 +9,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
@@ -27,12 +26,8 @@ public class ShooterFeederHopperSequence extends SequentialCommandGroup {
    * @param intake intake subsystem to use
    */
   public ShooterFeederHopperSequence(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake) {
-    if(SmartDashboard.getNumber("Shooter Manual SetPoint RPM", -9999) == -9999)
-      SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
-    double rpm = SmartDashboard.getNumber("Shooter Manual SetPoint RPM", 2800);
-
     addCommands( 
-      new ShooterSetPID(rpm, shooter),
+      new ShooterSetPID(shooter),
       new FeederSetPID(feeder),
       new HopperSetPercentOutput(hopper),
       new ParallelCommandGroup(new IntakeSetPercentOutput(intake), new HopperReverse(hopper))

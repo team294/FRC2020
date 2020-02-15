@@ -145,7 +145,7 @@ public class RobotContainer {
 
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterHoodPistonSequence(false, shooter));
-    xb[2].whenPressed(new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake));
+    xb[2].whenPressed(new ShooterFeederHopperSequence(shooter, feeder, hopper, intake));
     xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     xb[4].whenPressed(new ShooterHoodPistonSequence(true, shooter));
 
