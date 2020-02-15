@@ -22,6 +22,7 @@ public class Hopper extends SubsystemBase {
     hopperMotor.configFactoryDefault();
     hopperMotor.setInverted(false);
     hopperMotor.setNeutralMode(NeutralMode.Brake);
+    hopperMotor.configOpenloopRamp(0.15); // seconds from neutral to full
   }
 
   /**
@@ -29,6 +30,13 @@ public class Hopper extends SubsystemBase {
    */
   public void hopperSetPercentOutput(double percent) {
     hopperMotor.set(ControlMode.PercentOutput, percent);
+  }
+
+  /**
+   * @return motor percent output (0 to 1)
+   */
+  public double hopperGetPercentOutput() {
+    return hopperMotor.getMotorOutputPercent();
   }
 
   @Override

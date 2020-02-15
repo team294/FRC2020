@@ -46,8 +46,8 @@ public class HopperReverse extends CommandBase {
       timerForward.stop();
       hopper.hopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput);
       
-      // if hopper has been running reverse for 1 second, run forward and reset both timers and start forward timer
-    } else if (timerReverse.hasPeriodPassed(1)) {
+      // if hopper has been running reverse for 0.5 seconds, run forward and reset both timers and start forward timer
+    } else if (timerReverse.hasPeriodPassed(0.5)) {
       timerReverse.stop();
       timerReverse.reset();
       timerForward.reset();

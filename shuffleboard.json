@@ -73,7 +73,7 @@
               ]
             }
           },
-          "4,4": {
+          "7,5": {
             "size": [
               2,
               1
@@ -84,7 +84,7 @@
               "_title": "IntakeSetPercentOutput(1)"
             }
           },
-          "4,3": {
+          "7,4": {
             "size": [
               2,
               1
@@ -293,6 +293,50 @@
               "_type": "Command",
               "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
               "_title": "ShooterFeederHopperIntakeStop"
+            }
+          },
+          "4,3": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Shooter Distance",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Distance SetPoint",
+                  "_title": "Shooter Distance SetPoint"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter Distance",
+                  "_title": "Shooter Distance"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter DistToRPM",
+                  "_title": "Shooter DistToRPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM from Dist",
+                  "_title": "Shooter RPM from Dist"
+                }
+              ]
+            }
+          },
+          "6,3": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Power Cells Shot",
+              "_title": "Power Cells Shot"
             }
           }
         }
