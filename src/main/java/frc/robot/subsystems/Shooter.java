@@ -145,23 +145,7 @@ public class Shooter extends SubsystemBase {
     return measuredRPM;
   }
 
-  /**
-   * @return output voltage
-   */
-  /****************** 
-  public double getVoltage() {
-    return shooterMotorLeft.getMotorOutputVoltage();
-  }
-
-  /**
-   * @return output current
-   *
-  public double getCurrent() {
-    return shooterMotorLeft.getSupplyCurrent();
-  }
-  *******************************/
-
-  /**
+   /**
    * @return Cell present
    */
   public boolean getCell(){
@@ -176,8 +160,8 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * Returns min RPM (1200) if robot is less than 5 meters from the target
-   * Returns max RPM (3000) if robot is more than 30 meters from the target
+   * Returns min RPM if robot is less than 5 feet from the target
+   * Returns max RPM if robot is more than 30 feet from the target
    * Calculates slope between known RPMs for 2 distances (based on array in constants)
    * Uses slope to calculate RPM at a certain distance between those 2 distances
    * @param distance distance from the target (as per vision data) in feet
@@ -225,7 +209,6 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
-    //SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
     SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
     SmartDashboard.putBoolean("Cell Present", prevCell);
@@ -234,12 +217,9 @@ public class Shooter extends SubsystemBase {
       updateShooterLog(false);
     }
 
-    //if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
-    if (getCell() && !prevCell  && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
-      powerCellsShot++;
+    if (getCell() && !prevCell)   powerCellsShot++;
     if (voltageTarget == 0) powerCellsShot = 0;
 
-    //prevVoltage = getVoltage();
     prevCell = getCell();
   }
 
