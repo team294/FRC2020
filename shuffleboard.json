@@ -73,7 +73,7 @@
               ]
             }
           },
-          "11,5": {
+          "9,4": {
             "size": [
               2,
               1
@@ -91,10 +91,10 @@
               ]
             }
           },
-          "7,4": {
+          "7,2": {
             "size": [
               2,
-              2
+              3
             ],
             "content": {
               "_type": "Subsystem Layout",
@@ -134,11 +134,21 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Intake STOP",
                   "_title": "Intake STOP"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
+                  "_title": "Intake EXTEND"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
+                  "_title": "Intake RETRACT"
                 }
               ]
             }
           },
-          "7,2": {
+          "7,0": {
             "size": [
               2,
               2
@@ -301,7 +311,30 @@
               ]
             }
           },
-          "7,0": {
+          "9,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Limelight Readings",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/LimeLight x",
+                  "_title": "Limelight X"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/LimeLight y",
+                  "_title": "Limelight Y"
+                }
+              ]
+            }
+          },
+          "5,0": {
             "size": [
               2,
               2
@@ -344,29 +377,6 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Feeder STOP",
                   "_title": "Feeder STOP"
-                }
-              ]
-            }
-          },
-          "9,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_title": "Limelight Readings",
-              "Layout/Label position": "LEFT",
-              "_children": [
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/LimeLight x",
-                  "_title": "Limelight X"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/LimeLight y",
-                  "_title": "Limelight Y"
                 }
               ]
             }
