@@ -50,11 +50,15 @@ public class DriveStraight extends CommandBase {
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
+//TODO fill in comments, change multipliers to absolute values
+
   /**
-   * @param driveTrain reference to the drive train subsystem
-   * @param target degrees to turn to the right
+   * @param target distance to travel, in meters
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
+   * @param regenerate
+   * @param driveTrain reference to the drive train subsystem
+   * @param log
    */
   public DriveStraight(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean regenerate, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -67,7 +71,6 @@ public class DriveStraight extends CommandBase {
 
     addRequirements(driveTrain);
 
-    
     aFF = 0.0;
 
     driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
@@ -116,15 +119,16 @@ public class DriveStraight extends CommandBase {
     // System.out.println("vel: " + targetVel);
     // System.out.println("V: " + aFF);
 
-    //driveTrain.setLeftMotorOutput(aFF);
-    //driveTrain.setRightMotorOutput(aFF);
-    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
+    driveTrain.setLeftMotorOutput(aFF);
+    driveTrain.setRightMotorOutput(aFF);
+    // driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
 
     log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
       "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "aFF", aFF,
+      "pctOutLA", driveTrain.getLeftOutputPercent(), "VoutNormA", driveTrain.getLeftOutputVoltage()/compensationVoltage, "VbusLA", driveTrain.getLeftBusVoltage(),
       "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
-      "pctOutLA", driveTrain.getLeftOutputPercent(), "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());
+      "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());
 
     double linearVel = Units.inchesToMeters(driveTrain.getAverageEncoderVelocity());
     if(regenerate) {

@@ -26,6 +26,19 @@ public class RobotPreferences {
         // Add a row for each preference to read.  Example:
         // DriveConstants.kA = readDouble("DriveKA", DriveConstants.kA);
         RobotConstants.prototypeBot = readBoolean("prototypeBot", RobotConstants.prototypeBot);
+
+        DriveConstants.ticksPerInch = readDouble("Drive.ticksPerInch", DriveConstants.ticksPerInch);
+        DriveConstants.kMaxSpeedMetersPerSecond = readDouble("Drive.kMaxSpeedMPS", DriveConstants.kMaxSpeedMetersPerSecond);
+        DriveConstants.kMaxAccelerationMetersPerSecondSquared = readDouble("Drive.kMaxAccelerationMPSS", DriveConstants.kMaxAccelerationMetersPerSecondSquared);
+        DriveConstants.kSLinear = readDouble("Drive.kSLinear", DriveConstants.kSLinear);
+        DriveConstants.kVLinear = readDouble("Drive.kVLinear", DriveConstants.kVLinear);
+        DriveConstants.kALinear = readDouble("Drive.kALinear", DriveConstants.kALinear);
+        DriveConstants.kPLinear = readDouble("Drive.kPLinear", DriveConstants.kPLinear);
+        DriveConstants.kILinear = readDouble("Drive.kILinear", DriveConstants.kILinear);
+        DriveConstants.kDLinear = readDouble("Drive.kDLinear", DriveConstants.kDLinear);
+        DriveConstants.TRACK_WIDTH = readDouble("Drive.TrackWidth", DriveConstants.TRACK_WIDTH);
+
+        DriveConstants.updateDerivedConstants();
     }
 
     /**

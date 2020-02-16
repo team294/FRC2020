@@ -76,16 +76,16 @@ public final class Constants {
 
         public static final double compensationVoltage = 12.0; // voltage compensation on drive motors
     
-        public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
-        public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;
-        public static double ticksPerInch = 830.8;   // Measured with PracticeBot gearbox between wheels and the Falcons
+
+        public static double ticksPerInch = 1103.9;   //TODO Practice bot = 830.8 
         
-        public static int encoderTicksPerRevolution = 2048; //TODO set ticks per rev with actual values
-        public static final double kEncoderDistanceInchesPerPulse =
+        // public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
+        // public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;       
+        // public static double encoderTicksPerRevolution = 2048 * 9.47; // Gear ratio = 9.47 on competition bot
+        // public static final double kEncoderDistanceInchesPerPulse =
             // Assumes the encoders are directly mounted on the wheel shafts
             // (wheelDiameterInches * Math.PI) / (double) encoderTicksPerRevolution;
-            1/ticksPerInch;
-
+            // 1/ticksPerInch;
 
         // turnGyro constants
         public static final double kMaxAngularVelocity = 1125; // degrees per second TODO calculate on actual 2020 robot
@@ -98,31 +98,41 @@ public final class Constants {
         public static final double kIAngular = 0;
 
         // verify these
-        public static final double kMaxSpeedMetersPerSecond = 5.0;
-        public static final double kMaxAccelerationMetersPerSecondSquared = 3.8; // was 0.352
-        public static final double kVLinear = 0.148; // was 0.09
-        public static final double kALinear = 0.0293;  // was 0.07
-        public static final double kSLinear = 0.022; // 0.11 for working on a drive base was 0.055
+        public static double kMaxSpeedMetersPerSecond = 5.22;  // 5.0 on practice bot
+        public static double kMaxAccelerationMetersPerSecondSquared = 20.0; // 3.8 on practice bot
+        public static double kVLinear = 0.187; // 0.148 on practice bot
+        public static double kALinear = 0.0184;  // 0.0293 on practice bot (0.0184)
+        public static double kSLinear = 0.024; // 0.022 on practice bot
 
-        public static final double kPLinear = 0.1;  //0.0008;
-        public static final double kILinear = 0;  //0.0;
-        public static final double kDLinear = 0;  //0.02;
+        public static double kPLinear = 0.1;  //0.1 on practice bot
+        public static double kILinear = 0;  //0.0 on practice bot
+        public static double kDLinear = 0;  //0.0 on practice bot
 
         // from robot characteristics
-        public static final double kS = kSLinear * 12; 
-        public static final double kV = kVLinear * 12; 
-        public static final double kA = kALinear * 12; 
+        public static double kS = kSLinear * 12; 
+        public static double kV = kVLinear * 12; 
+        public static double kA = kALinear * 12; 
 
-        public static final double kP = kPLinear * 12;  
-        public static final double kI = kILinear * 12;  
-        public static final double kD = kDLinear * 12;  
+        public static double kP = kPLinear * 12;  
+        public static double kI = kILinear * 12;  
+        public static double kD = kDLinear * 12;  
 
         public static final double MAX_VOLTAGE_IN_TRAJECTORY = 10.0;
-        public static final double TRACK_WIDTH = Units.inchesToMeters(25.35); 
+        public static double TRACK_WIDTH = Units.inchesToMeters(25.35); 
 
         // suggested from tutorial
         public static final double kRamseteB = 2.0;
         public static final double kRamseteZeta = 0.70;
+
+        public static void updateDerivedConstants() {
+            kS = kSLinear * 12; 
+            kV = kVLinear * 12; 
+            kA = kALinear * 12; 
+    
+            kP = kPLinear * 12;  
+            kI = kILinear * 12;  
+            kD = kDLinear * 12;  
+        }
     }
 
     public static final class OIConstants {

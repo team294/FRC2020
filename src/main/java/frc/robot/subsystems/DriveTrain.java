@@ -416,11 +416,18 @@ public class DriveTrain extends SubsystemBase {
   public void setTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
     int direction = (reverseRight) ? -1 : 1;
     leftMotor1.set(ControlMode.Velocity, 
-      targetVel / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF);
+      targetVel * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF);
     rightMotor1.set(ControlMode.Velocity, 
-      targetVel*direction  / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
+      targetVel*direction  * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
     feedTheDog();
   }
+
+  public double getLeftOutputVoltage() {
+    return leftMotor1.getMotorOutputVoltage();
+  }
+
+  public double getLeftBusVoltage() {
+    return leftMotor1.getBusVoltage();
 
   public double getLeftOutputPercent() {
     return leftMotor1.getMotorOutputPercent();
@@ -441,6 +448,8 @@ public class DriveTrain extends SubsystemBase {
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
+    SmartDashboard.putNumber("Drive Right Raw", getRightEncoderRaw());
+    SmartDashboard.putNumber("Drive Left Raw", getLeftEncoderRaw());
     SmartDashboard.putNumber("Drive Right Encoder", getRightEncoderInches());
     SmartDashboard.putNumber("Drive Left Encoder", getLeftEncoderInches());
     SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
@@ -483,7 +492,7 @@ public class DriveTrain extends SubsystemBase {
    * @return wheel speeds, in meters per second
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), -Units.inchesToMeters(getRightEncoderVelocity()));
+    return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), Units.inchesToMeters(getRightEncoderVelocity()));
   }
 
   /**
