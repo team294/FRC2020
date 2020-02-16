@@ -73,6 +73,8 @@ public final class Constants {
         public static int canRightDriveMotor2 = 21;
 
         public static final double temperatureCheck = 40; // in celsius
+
+        public static final double compensationVoltage = 12.0; // voltage compensation on drive motors
     
         public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
         public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;
@@ -84,20 +86,7 @@ public final class Constants {
             // (wheelDiameterInches * Math.PI) / (double) encoderTicksPerRevolution;
             1/ticksPerInch;
 
-        // suggested from tutorial
-        public static final double kRamseteB = 2.0;
-        public static final double kRamseteZeta = 0.70;
-    
-        // from robot characteristics
-        public static final double kS = 0.35; // static gain was
-        public static final double kV = 1.665; // velocity gain was 0.551
-        public static final double kA = 0.1; // acceleration gain was 0.000647
-    
-        public static final double kP = 0.069 * 1; // was 0.069
-        public static final double kD = 0.0303;
-        public static final double MAX_VOLTAGE = 10.0;
-        public static final double TRACK_WIDTH = Units.inchesToMeters(25.35); // was 7.286626058797765
-    
+
         // turnGyro constants
         public static final double kMaxAngularVelocity = 1125; // degrees per second TODO calculate on actual 2020 robot
         public static final double kMaxAngularAcceleration = 400; // degrees per second per second (was 200%)
@@ -114,6 +103,26 @@ public final class Constants {
         public static final double kVLinear = 0.148; // was 0.09
         public static final double kALinear = 0.0293;  // was 0.07
         public static final double kSLinear = 0.022; // 0.11 for working on a drive base was 0.055
+
+        public static final double kPLinear = 0.1;  //0.0008;
+        public static final double kILinear = 0;  //0.0;
+        public static final double kDLinear = 0;  //0.02;
+
+        // from robot characteristics
+        public static final double kS = kSLinear * 12; 
+        public static final double kV = kVLinear * 12; 
+        public static final double kA = kALinear * 12; 
+
+        public static final double kP = kPLinear * 12;  
+        public static final double kI = kILinear * 12;  
+        public static final double kD = kDLinear * 12;  
+
+        public static final double MAX_VOLTAGE_IN_TRAJECTORY = 10.0;
+        public static final double TRACK_WIDTH = Units.inchesToMeters(25.35); 
+
+        // suggested from tutorial
+        public static final double kRamseteB = 2.0;
+        public static final double kRamseteZeta = 0.70;
     }
 
     public static final class OIConstants {

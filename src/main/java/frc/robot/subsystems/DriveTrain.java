@@ -112,10 +112,10 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.setSensorPhase(false);
     rightMotor1.setSensorPhase(false);
 
-    leftMotor1.configVoltageCompSaturation(12.0);
-    leftMotor2.configVoltageCompSaturation(12.0);
-    rightMotor1.configVoltageCompSaturation(12.0);
-    rightMotor2.configVoltageCompSaturation(12.0);
+    leftMotor1.configVoltageCompSaturation(compensationVoltage);
+    leftMotor2.configVoltageCompSaturation(compensationVoltage);
+    rightMotor1.configVoltageCompSaturation(compensationVoltage);
+    rightMotor2.configVoltageCompSaturation(compensationVoltage);
 
     setVoltageCompensation(true);
 
@@ -127,7 +127,7 @@ public class DriveTrain extends SubsystemBase {
     zeroRightEncoder();
     zeroGyroRotation();
 
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-getGyroRotation()));
 
     // initialize angular velocity variables
     prevAng = getGyroRaw();
@@ -483,7 +483,7 @@ public class DriveTrain extends SubsystemBase {
    * @return wheel speeds, in meters per second
    */
   public DifferentialDriveWheelSpeeds getWheelSpeeds() {
-    return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), Units.inchesToMeters(getRightEncoderVelocity()));
+    return new DifferentialDriveWheelSpeeds(Units.inchesToMeters(getLeftEncoderVelocity()), -Units.inchesToMeters(getRightEncoderVelocity()));
   }
 
   /**
@@ -505,19 +505,19 @@ public class DriveTrain extends SubsystemBase {
       this.startAutoTimer();
     }
 
-    leftMotor1.setVoltage(leftVolts);
-    rightMotor1.setVoltage(rightVolts);
+    setLeftMotorOutput(leftVolts / compensationVoltage);
+    setRightMotorOutput(rightVolts / compensationVoltage);
     feedTheDog();
 
-    log.writeLogEcho(true, "TankDriveVolts", "Update", 
+    log.writeLog(true, "TankDriveVolts", "Update", 
       "Time", autoTimer.get(), 
       "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
       "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
       "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
-      "R Velocity", Units.inchesToMeters(getRightEncoderVelocity()), 
+      "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
       "L Volts", leftVolts, 
       "R Volts", rightVolts, 
-      "Gyro", getGyroRotation());
+      "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees());
   }
 
   /**

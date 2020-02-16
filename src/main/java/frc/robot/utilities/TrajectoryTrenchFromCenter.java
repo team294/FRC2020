@@ -30,7 +30,7 @@ public class TrajectoryTrenchFromCenter {
 
 			log.writeLogEcho(true, "AutoTrench", "Trajectory", 
 				"trackWidth",DriveConstants.TRACK_WIDTH,
-				"maxVoltage", DriveConstants.MAX_VOLTAGE, 
+				"maxVoltage", DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY, 
 				"kS", DriveConstants.kS, 
 				"kV", DriveConstants.kV, 
 				"kA", DriveConstants.kA,
@@ -42,11 +42,11 @@ public class TrajectoryTrenchFromCenter {
 			DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
 				new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
 				driveKinematics,
-				DriveConstants.MAX_VOLTAGE);
+				DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY);
 
 			// Create config for trajectory
-			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
-				DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond * 0.6,
+				DriveConstants.kMaxAccelerationMetersPerSecondSquared * 0.6)
 				.setKinematics(driveKinematics)
 				.addConstraint(autoVoltageConstraint);
 
@@ -60,9 +60,10 @@ public class TrajectoryTrenchFromCenter {
 			trajectory = TrajectoryGenerator.generateTrajectory(
 				new Pose2d(0, 0, new Rotation2d(0.0)),
 				List.of(
-				new Translation2d(-3.1, -1.2) // actual is -1.4 but move over to make sure we miss the wall
+					//new Translation2d(-0.5, -0.5),
+					new Translation2d(2, 0) // actual is -1.4 but move over to make sure we miss the wall
 				),
-				new Pose2d(-5.1, -1.4, new Rotation2d(180.0)), config);
+				new Pose2d(4, 0, new Rotation2d(0.0)), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);
