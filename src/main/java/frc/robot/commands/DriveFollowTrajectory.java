@@ -45,14 +45,11 @@ public class DriveFollowTrajectory extends CommandBase {
   private final Timer m_timer = new Timer();
   private final boolean m_usePID = true;
   private final Trajectory m_trajectory;
-  private final Supplier<Pose2d> m_pose;
   private final RamseteController m_follower;
   private final SimpleMotorFeedforward m_feedforward;
   private final DifferentialDriveKinematics m_kinematics;
-  private final Supplier<DifferentialDriveWheelSpeeds> m_speeds;
   private final PIDController m_leftController;
   private final PIDController m_rightController;
-  private final BiConsumer<Double, Double> m_output;
   private DifferentialDriveWheelSpeeds m_prevSpeeds;
   private double m_prevTime;
 
@@ -68,39 +65,27 @@ public class DriveFollowTrajectory extends CommandBase {
    * is left to the user, since it is not appropriate for paths with nonstationary endstates.
    *
    * @param trajectory      The trajectory to follow.
-   * @param pose            A function that supplies the robot pose - use one of
-   *                        the odometry classes to provide this.
    * @param controller      The RAMSETE controller used to follow the trajectory.
    * @param feedforward     The feedforward to use for the drive.
    * @param kinematics      The kinematics for the robot drivetrain.
-   * @param wheelSpeeds     A function that supplies the speeds of the left and
-   *                        right sides of the robot drive.
    * @param leftController  The PIDController for the left side of the robot drive.
    * @param rightController The PIDController for the right side of the robot drive.
-   * @param outputVolts     A function that consumes the computed left and right
-   *                        outputs (in volts) for the robot drive.
    * @param requirements    The subsystems to require.
    */
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public DriveFollowTrajectory(Trajectory trajectory,
-                        Supplier<Pose2d> pose,
                         RamseteController controller,
                         SimpleMotorFeedforward feedforward,
                         DifferentialDriveKinematics kinematics,
-                        Supplier<DifferentialDriveWheelSpeeds> wheelSpeeds,
                         PIDController leftController,
                         PIDController rightController,
-                        BiConsumer<Double, Double> outputVolts,
                         DriveTrain driveTrain) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
-    m_pose = requireNonNullParam(pose, "pose", "RamseteCommand");
     m_follower = requireNonNullParam(controller, "controller", "RamseteCommand");
     m_feedforward = feedforward;
     m_kinematics = requireNonNullParam(kinematics, "kinematics", "RamseteCommand");
-    m_speeds = requireNonNullParam(wheelSpeeds, "wheelSpeeds", "RamseteCommand");
     m_leftController = requireNonNullParam(leftController, "leftController", "RamseteCommand");
     m_rightController = requireNonNullParam(rightController, "rightController", "RamseteCommand");
-    m_output = requireNonNullParam(outputVolts, "outputVolts", "RamseteCommand");
     this.driveTrain = driveTrain;
 
     addRequirements(driveTrain);
@@ -131,7 +116,7 @@ public class DriveFollowTrajectory extends CommandBase {
     double dt = curTime - m_prevTime;
 
     var targetWheelSpeeds = m_kinematics.toWheelSpeeds(
-        m_follower.calculate(m_pose.get(), m_trajectory.sample(curTime)));
+        m_follower.calculate(driveTrain.getPose(), m_trajectory.sample(curTime)));
 
     var leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     var rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
@@ -149,18 +134,18 @@ public class DriveFollowTrajectory extends CommandBase {
               (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt);
 
       leftOutput = leftFeedforward
-          + m_leftController.calculate(m_speeds.get().leftMetersPerSecond,
+          + m_leftController.calculate(driveTrain.getWheelSpeeds().leftMetersPerSecond,
           leftSpeedSetpoint);
 
       rightOutput = rightFeedforward
-          + m_rightController.calculate(m_speeds.get().rightMetersPerSecond,
+          + m_rightController.calculate(driveTrain.getWheelSpeeds().rightMetersPerSecond,
           rightSpeedSetpoint);
     } else {
       leftOutput = leftSpeedSetpoint;
       rightOutput = rightSpeedSetpoint;
     }
 
-    m_output.accept(leftOutput, rightOutput);
+    driveTrain.tankDriveVolts(leftOutput, rightOutput);
 
     m_prevTime = curTime;
     m_prevSpeeds = targetWheelSpeeds;
