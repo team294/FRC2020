@@ -292,7 +292,7 @@ public class RobotContainer {
    */
   public Command getAutonomousCommand() {
     // get value of delay for beginning of auto from Shuffleboard
-    // TODO actually use autoDelay variable in auto
+    // TODO actually implement autoDelay variable in auto
     if(SmartDashboard.getNumber("Autonomous delay", -9999) == -9999) {
       SmartDashboard.putNumber("Autonomous delay", 0);
     }

@@ -78,7 +78,6 @@ public class Robot extends TimedRobot {
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
-    System.out.println("autoDelay:" + robotContainer.autoDelay);
     robotContainer.autonomousInit();
   }
 
