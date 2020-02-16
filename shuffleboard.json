@@ -455,6 +455,17 @@
               "_source0": "network_table:///SmartDashboard/Autonomous routine",
               "_title": "Autonomous Routine"
             }
+          },
+          "5,1": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Autonomous delay",
+              "_title": "Autonomous delay"
+            }
           }
         }
       }
@@ -760,9 +771,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1056.0
+    "x": -7.0,
+    "y": 0.0,
+    "width": 1168.0,
+    "height": 1047.0
   }
 }
