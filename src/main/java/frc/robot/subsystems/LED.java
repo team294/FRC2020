@@ -33,8 +33,6 @@ public class LED extends SubsystemBase {
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
   public static final Color[][] patternLibrary = {
-    {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
-    {kGreen, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed, kWhite, kIndianRed},
     {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kRed, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
@@ -59,7 +57,7 @@ public class LED extends SubsystemBase {
     {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
-    {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack},
+    {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack},
     
   };
   public static final Color[][] rainbowLibrary = {
