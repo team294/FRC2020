@@ -68,17 +68,31 @@ public final class Constants {
     }
 
     public static final class DriveConstants {
-        public static int canLeftDriveMotor1 = 10;
-        public static int canLeftDriveMotor2 = 11;
+
+        // *******************************
+        // The constants below apply to all robots and are not in RobotPreferences
+        // *******************************
+
+        public static final int canLeftDriveMotor1 = 10;
+        public static final int canLeftDriveMotor2 = 11;
     
-        public static int canRightDriveMotor1 = 20;
-        public static int canRightDriveMotor2 = 21;
+        public static final int canRightDriveMotor1 = 20;
+        public static final int canRightDriveMotor2 = 21;
 
         public static final double temperatureCheck = 40; // in celsius
 
         public static final double compensationVoltage = 12.0; // voltage compensation on drive motors
+        public static final double MAX_VOLTAGE_IN_TRAJECTORY = 10.0;
 
-        public static double ticksPerInch = 1103.9;   //TODO Practice bot = 830.8 
+        // suggested from tutorial
+        public static final double kRamseteB = 2.0;
+        public static final double kRamseteZeta = 0.70;
+
+        // *******************************
+        // The constants below are DEFAULT VALUES.  Change these value in RobotPrefrences for each robot, not in this code!
+        // *******************************
+
+        public static double ticksPerInch = 830.8;   //TODO Practice bot = 830.8, 1103.9 on competition bot
         
         // public static double wheelDiameterInches = 6.1; //TODO set wheel diameter with actual robot values
         // public static double wheelCircumferenceInches = wheelDiameterInches * Math.PI;       
@@ -89,23 +103,23 @@ public final class Constants {
             // 1/ticksPerInch;
 
         // turnGyro constants
-        public static final double kMaxAngularVelocity = 1125; // degrees per second TODO calculate on actual 2020 robot
-        public static final double kMaxAngularAcceleration = 400; // degrees per second per second (was 200%)
-        public static final double kVAngular = 0.000850; // was 0.000838  then 0.000943
-        public static final double kAAngular = 0.0001;  // was 0.0003
-        public static final double kSAngular = 0.0568;   // was 0.0568
-        public static final double kPAngular = 0.0005;   // was 0.001
-        public static final double kDAngular = 0;
-        public static final double kIAngular = 0;
+        public static double kMaxAngularVelocity = 1125; // degrees per second TODO calculate on actual 2020 robot
+        public static double kMaxAngularAcceleration = 400; // degrees per second per second (was 200%)
+        public static double kVAngular = 0.000850; // was 0.000838  then 0.000943
+        public static double kAAngular = 0.0001;  // was 0.0003
+        public static double kSAngular = 0.0568;   // was 0.0568
+        public static double kPAngular = 0.0005;   // was 0.001
+        public static double kDAngular = 0;
+        public static double kIAngular = 0;
 
         // verify these
-        public static double kMaxSpeedMetersPerSecond = 5.22;  // 5.0 on practice bot
-        public static double kMaxAccelerationMetersPerSecondSquared = 20.0; // 3.8 on practice bot
-        public static double kVLinear = 0.187; // 0.148 on practice bot
-        public static double kALinear = 0.0184;  // 0.0293 on practice bot (0.0184)
-        public static double kSLinear = 0.024; // 0.022 on practice bot
+        public static double kMaxSpeedMetersPerSecond = 5.0;  // 5.0 on practice bot, 5.22 on competition bot
+        public static double kMaxAccelerationMetersPerSecondSquared = 3.8; // 3.8 on practice bot, 20.0 on competition bot
+        public static double kVLinear = 0.148; // 0.148 on practice bot, 0.187 on competition bot
+        public static double kALinear = 0.050;  // 0.025 on practice bot, 0.0184 on competition bot
+        public static double kSLinear = 0.022; // 0.022 on practice bot, 0.024 on competition bot
 
-        public static double kPLinear = 0.1;  //0.1 on practice bot
+        public static double kPLinear = 0.060;  //0.100 on practice bot
         public static double kILinear = 0;  //0.0 on practice bot
         public static double kDLinear = 0;  //0.0 on practice bot
 
@@ -118,12 +132,7 @@ public final class Constants {
         public static double kI = kILinear * 12;  
         public static double kD = kDLinear * 12;  
 
-        public static final double MAX_VOLTAGE_IN_TRAJECTORY = 10.0;
         public static double TRACK_WIDTH = Units.inchesToMeters(25.35); 
-
-        // suggested from tutorial
-        public static final double kRamseteB = 2.0;
-        public static final double kRamseteZeta = 0.70;
 
         public static void updateDerivedConstants() {
             kS = kSLinear * 12; 

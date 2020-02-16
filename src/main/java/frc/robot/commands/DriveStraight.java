@@ -72,14 +72,13 @@ public class DriveStraight extends CommandBase {
     addRequirements(driveTrain);
 
     aFF = 0.0;
-
     driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.setDriveModeCoast(true);
+    driveTrain.setDriveModeCoast(false);
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
@@ -119,9 +118,9 @@ public class DriveStraight extends CommandBase {
     // System.out.println("vel: " + targetVel);
     // System.out.println("V: " + aFF);
 
-    driveTrain.setLeftMotorOutput(aFF);
-    driveTrain.setRightMotorOutput(aFF);
-    // driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
+    // driveTrain.setLeftMotorOutput(aFF);
+    // driveTrain.setRightMotorOutput(aFF);
+    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
 
     log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
