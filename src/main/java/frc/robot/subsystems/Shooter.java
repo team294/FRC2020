@@ -14,7 +14,9 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
@@ -26,11 +28,10 @@ import static frc.robot.Constants.ShooterConstants.*;
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
-  private final Solenoid shooterHoodPiston = new Solenoid(pcmShooterHoodPiston); // piston to open and close hood
+  private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonExtend, pcmShooterHoodPistonRetract); // piston to open and close hood
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
-  private Hopper hopper;
   private LED led;
   private final DigitalInput input = new DigitalInput(dioPowerCell);
 
@@ -46,7 +47,6 @@ public class Shooter extends SubsystemBase {
   public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
-    this.hopper = hopper;
     this.led = led;
 
     setLockPiston(false);
@@ -122,7 +122,8 @@ public class Shooter extends SubsystemBase {
    * @param retract true = retract (open), false = extend (close)
    */
   public void setHoodPiston(boolean retract) {
-    shooterHoodPiston.set(retract);
+    if (retract) shooterHoodPiston.set(Value.kReverse);
+    else shooterHoodPiston.set(Value.kReverse);
   }
 
   /**
@@ -220,6 +221,7 @@ public class Shooter extends SubsystemBase {
       updateShooterLog(false);
     }
 
+    //if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
     if (getCell() && !prevCell){
       powerCellsShot++;
       led.setBallLights(powerCellsShot);

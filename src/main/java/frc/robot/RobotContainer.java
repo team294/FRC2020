@@ -7,8 +7,8 @@
 
 package frc.robot;
 
- import edu.wpi.cscore.UsbCamera;
- import edu.wpi.first.cameraserver.CameraServer;
+//import edu.wpi.cscore.UsbCamera;
+//import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -44,7 +44,7 @@ public class RobotContainer {
   
   private final RobotPreferences robotPrefs = new RobotPreferences();
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
-  private final UsbCamera intakeCamera;
+  // private final UsbCamera intakeCamera;
   
 
   Joystick xboxController = new Joystick(xboxControllerPort);
@@ -59,7 +59,7 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
-    intakeCamera = CameraServer.getInstance().startAutomaticCapture();
+    // intakeCamera = CameraServer.getInstance().startAutomaticCapture();
 
     configureButtonBindings(); // configure button bindings
     configureShuffleboard(); // configure shuffleboard

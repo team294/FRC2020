@@ -31,8 +31,9 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int canShooterMotorRight = 31; // 30 on competition bot
         public static final int canShooterMotorLeft = 30; // 31 on competition bot
-        public static final int pcmShooterHoodPiston = 2;
-        public static final int pcmShooterLockPiston = 3;
+        public static final int pcmShooterHoodPistonRetract = 2;
+        public static final int pcmShooterHoodPistonExtend = 3;
+        public static final int pcmShooterLockPiston = 6;
         public static final double shooterDefaultRPM = 2800;
         public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
         public static final int dioPowerCell = 9;

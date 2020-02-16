@@ -15,7 +15,6 @@ import frc.robot.utilities.FileLog;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.utilities.*;
 import frc.robot.subsystems.LED;
 
 public class LimeLight extends SubsystemBase {
@@ -67,6 +66,7 @@ public class LimeLight extends SubsystemBase {
     tx = table.getEntry("tx");
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
+    
   }
 
   public double getXOffset() {
@@ -104,6 +104,7 @@ public class LimeLight extends SubsystemBase {
     x = tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
+    System.out.println("reading tx" + x);
 
     SmartDashboard.putNumber("LimeLight x", x);
     SmartDashboard.putNumber("LimeLight y", y);
