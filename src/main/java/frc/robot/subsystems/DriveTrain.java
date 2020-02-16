@@ -428,6 +428,7 @@ public class DriveTrain extends SubsystemBase {
 
   public double getLeftBusVoltage() {
     return leftMotor1.getBusVoltage();
+  }
 
   public double getLeftOutputPercent() {
     return leftMotor1.getMotorOutputPercent();

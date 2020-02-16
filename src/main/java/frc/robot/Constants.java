@@ -77,7 +77,6 @@ public final class Constants {
         public static final double temperatureCheck = 40; // in celsius
 
         public static final double compensationVoltage = 12.0; // voltage compensation on drive motors
-    
 
         public static double ticksPerInch = 1103.9;   //TODO Practice bot = 830.8 
         
