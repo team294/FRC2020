@@ -5,7 +5,8 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import frc.robot.commands.AutoTrenchFromCenter;
 import frc.robot.commands.AutoTrenchFromRight;
 import frc.robot.commands.Wait;
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.*;
+
 
 /**
  * Selects the auto routine based upon input from the shuffleboard
@@ -38,7 +39,7 @@ public class AutoSelection {
 	 * @param autoPlan The autoplan to run 
 	 * @return the command to run
 	 */  		
-	public Command getAutoCommand(DriveTrain driveTrain, FileLog log, Integer autoPlan) {
+	public Command getAutoCommand(Integer autoPlan, DriveTrain driveTrain, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, FileLog log) {
 		Command autonomousCommand = null;
 		Trajectory trajectory;
 
@@ -51,7 +52,7 @@ public class AutoSelection {
 		if (autoPlan == TRENCH_FROM_CENTER && trajectoryCache[TRENCH_FROM_CENTER] != null) {
 			log.writeLogEcho(true, "AutoSelect", "run TrenchFromCenter");
 			trajectory = trajectoryCache[TRENCH_FROM_CENTER];
-			autonomousCommand = new AutoTrenchFromCenter(driveTrain, log, trajectory, TrajectoryUtil.getDriveKinematics());
+			autonomousCommand = new AutoTrenchFromCenter(trajectory, TrajectoryUtil.getDriveKinematics(), driveTrain, shooter, feeder, hopper, intake, limeLight, log);
 		}
 
 		if (autonomousCommand == null) {
