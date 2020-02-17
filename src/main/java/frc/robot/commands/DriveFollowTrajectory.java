@@ -10,7 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveTrain;
-
+import frc.robot.utilities.FileLog;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
 
 import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 
@@ -53,6 +54,7 @@ public class DriveFollowTrajectory extends CommandBase {
   private final boolean m_usePID;
 
   private final DriveTrain driveTrain;
+  private final FileLog log;
 
   /**
    * Constructs a new command that, when executed, will follow the provided trajectory.
@@ -67,12 +69,14 @@ public class DriveFollowTrajectory extends CommandBase {
    * @param useRamsete      True = use Ramsete controller for feedback to track robot odometery to the trajectory;  False = no trajectory feedback
    * @param usePID          True = use PIDs for feedback to track actual wheel velocities to desired wheel velocities;  False = not velocity feedback
    * @param driveTrain      The driveTrain subsystem to be controlled.
+   * @param log             File for logging
    */
-  public DriveFollowTrajectory(Trajectory trajectory, boolean useRamsete, boolean usePID, DriveTrain driveTrain) {
+  public DriveFollowTrajectory(Trajectory trajectory, boolean useRamsete, boolean usePID, DriveTrain driveTrain, FileLog log) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
     m_useRamsete = useRamsete;
     m_usePID = usePID;
     this.driveTrain = driveTrain;
+    this.log = log;
 
     addRequirements(driveTrain);
   }  
@@ -88,9 +92,10 @@ public class DriveFollowTrajectory extends CommandBase {
   *
   * @param trajectory      The trajectory to follow.
   * @param driveTrain      The driveTrain subsystem to be controlled.
+  * @param log             File for logging
   */
- public DriveFollowTrajectory(Trajectory trajectory, DriveTrain driveTrain) {
-   this(trajectory, true, true, driveTrain);
+ public DriveFollowTrajectory(Trajectory trajectory, DriveTrain driveTrain, FileLog log) {
+   this(trajectory, true, true, driveTrain, log);
  }
 
   // Called when the command is initially scheduled.
@@ -117,8 +122,8 @@ public class DriveFollowTrajectory extends CommandBase {
     double curTime = m_timer.get();
     double dt = curTime - m_prevTime;
 
-    var robotPose = driveTrain.getPose();
-    var desiredState = m_trajectory.sample(curTime);
+    Pose2d robotPose = driveTrain.getPose();
+    State desiredState = m_trajectory.sample(curTime);
 
     DifferentialDriveWheelSpeeds targetWheelSpeeds;
     if (m_useRamsete) {
@@ -159,15 +164,22 @@ public class DriveFollowTrajectory extends CommandBase {
 
     driveTrain.tankDriveVolts(leftOutput, rightOutput);
 
-    // log.writeLog(true, "TankDriveVolts", "Update", 
-    //   "Time", autoTimer.get(), 
-    //   "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
-    //   "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
-    //   "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
-    //   "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
-    //   "L Volts", leftVolts, 
-    //   "R Volts", rightVolts, 
-    //   "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees());
+    log.writeLog(true, "TankDriveVolts", "Update", 
+      "Time", m_timer.get(), 
+      "Traj X", desiredState.poseMeters.getTranslation().getX(),
+      "Traj Y", desiredState.poseMeters.getTranslation().getY(),
+      "Traj ang", desiredState.poseMeters.getRotation().getDegrees(),
+      "Robot X", robotPose.getTranslation().getX(),
+      "Robot Y", robotPose.getTranslation().getY(),
+      "Robot ang", robotPose.getRotation().getDegrees()
+      // "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
+      // "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
+      // "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
+      // "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
+      // "L Volts", leftVolts, 
+      // "R Volts", rightVolts, 
+      // "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees()
+    );
 
     m_prevTime = curTime;
     m_prevSpeeds = targetWheelSpeeds;
