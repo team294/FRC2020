@@ -91,6 +91,8 @@ public class RobotContainer {
 
     // intake subsystem
     SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
+    SmartDashboard.putData("IntakePiston EXTEND", new IntakePistonSetPosition(true, intake));
+    SmartDashboard.putData("IntakePiston RETRACT", new IntakePistonSetPosition(false, intake));
     SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, intake));
 
     // hopper subsystem
@@ -113,7 +115,7 @@ public class RobotContainer {
     // buttons for testing turnGyro
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
-    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 0.8, true, driveTrain, log));
+    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 1.0, true, driveTrain, log));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
     SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
@@ -138,7 +140,7 @@ public class RobotContainer {
 
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
     // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
@@ -168,8 +170,8 @@ public class RobotContainer {
     // xb[10].whenPressed(new Wait(0));
 
     // pov is the d-pad (up, down, left, right)
-    // xbPOVUp.whenActive(new Wait(0));
-    xbPOVDown.whileActiveOnce(new IntakeSetPercentOutput(intake));
+    xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake));
+    xbPOVDown.whileActiveOnce(new IntakeSequence(intake));
     // xbPOVLeft.whenActive(new Wait(0));
     // xbPOVRight.whenActive(new Wait(0));
 
