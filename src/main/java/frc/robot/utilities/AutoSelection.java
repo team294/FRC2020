@@ -48,13 +48,13 @@ public class AutoSelection {
 		if (autoPlan == TRENCH_FROM_RIGHT && trajectoryCache[TRENCH_FROM_RIGHT] != null) {
 			log.writeLogEcho(true, "AutoSelect", "run TrenchFromRight");
 			trajectory = trajectoryCache[TRENCH_FROM_RIGHT];
-			autonomousCommand = new AutoTrenchFromRight(driveTrain, log, trajectory, TrajectoryUtil.getDriveKinematics());
+			autonomousCommand = new AutoTrenchFromRight(driveTrain, log, trajectory);
 		} 
 			
 		if (autoPlan == TRENCH_FROM_CENTER && trajectoryCache[TRENCH_FROM_CENTER] != null) {
 			log.writeLogEcho(true, "AutoSelect", "run TrenchFromCenter");
 			trajectory = trajectoryCache[TRENCH_FROM_CENTER];
-			autonomousCommand = new AutoTrenchFromCenter(trajectory, TrajectoryUtil.getDriveKinematics(), driveTrain, shooter, feeder, hopper, intake, limeLight, log);
+			autonomousCommand = new AutoTrenchFromCenter(trajectory, driveTrain, shooter, feeder, hopper, intake, limeLight, log);
 		}
 
 		if (autoPlan == SHOOT_BACKUP) {

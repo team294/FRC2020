@@ -8,33 +8,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Intake;
 
 /**
- * Command to send a pattern to the LED strip.
+ * Command to set the intake piston position.
  */
-public class LEDSetPattern extends CommandBase {
-  private LED led;
-  private int rowNumber;
-  private double intensity;
- 
+public class IntakePistonSetPosition extends CommandBase {
+  private Intake intake;
+  private boolean extend;
   
   /**
-   * @param led LED subsystem to use
-   * @param rowNumber row in the patternLibrary
-   * @param intensity LED intensity (0 to 1)
+   * @param extend true = extend, false = retract
+   * @param intake intake subsystem to use
    */
-  public LEDSetPattern(int rowNumber, double intensity, LED led) {
-    this.intensity = intensity;
-    this.led = led;
-    //this.led = led2; 
-    this.rowNumber = rowNumber;
-    addRequirements(led);
-  }    
+  public IntakePistonSetPosition(boolean extend, Intake intake) {
+    this.extend = extend;
+    this.intake = intake;
+    addRequirements(intake);
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    led.setPattern(LED.patternLibrary[rowNumber], intensity, 1);
+    intake.intakeSetPiston(extend);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

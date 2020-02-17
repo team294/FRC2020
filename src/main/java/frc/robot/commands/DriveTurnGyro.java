@@ -133,6 +133,7 @@ public class DriveTurnGyro extends CommandBase {
     // System.out.println("V: " + aFF);
 
     pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
+    //pFB = 0; 
 
     driveTrain.setLeftMotorOutput(aFF + pFB);
     driveTrain.setRightMotorOutput(-aFF - pFB);

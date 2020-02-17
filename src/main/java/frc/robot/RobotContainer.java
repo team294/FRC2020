@@ -7,8 +7,8 @@
 
 package frc.robot;
 
-// import edu.wpi.cscore.UsbCamera;
-// import edu.wpi.first.cameraserver.CameraServer;
+//import edu.wpi.cscore.UsbCamera;
+//import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -35,14 +35,17 @@ public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final Hopper hopper = new Hopper();
-  private final Shooter shooter = new Shooter(hopper, log, tempCheck);
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Intake intake = new Intake();
+  private final LED led = new LED();
+  private final LimeLight limeLight = new LimeLight(log, led);
+  private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
+  // private final Test test = new Test();
+  
   private final RobotPreferences robotPrefs = new RobotPreferences();
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
-  private final LimeLight limeLight = new LimeLight(log);
-  private final LED led = new LED();
   // private final UsbCamera intakeCamera;
+  
 
   Joystick xboxController = new Joystick(xboxControllerPort);
   Joystick leftJoystick = new Joystick(leftJoystickPort);
@@ -52,6 +55,8 @@ public class RobotContainer {
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   
+
+  private boolean isEnabled = false;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -71,14 +76,14 @@ public class RobotContainer {
    */
   public void configureShuffleboard() {
     // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter));
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter, led));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
 
     // shooter distance to RPM test
-    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter));
+    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter, led));
     SmartDashboard.putNumber("Shooter Distance", 5);
     SmartDashboard.putData("Shooter DistToRPM", new ShooterDistToRPM(shooter));
     SmartDashboard.putNumber("Shooter RPM from Dist", 0);
@@ -91,6 +96,8 @@ public class RobotContainer {
 
     // intake subsystem
     SmartDashboard.putData("IntakeSetPercentOutput(1)", new IntakeSetPercentOutput(1, intake));
+    SmartDashboard.putData("IntakePiston EXTEND", new IntakePistonSetPosition(true, intake));
+    SmartDashboard.putData("IntakePiston RETRACT", new IntakePistonSetPosition(false, intake));
     SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, intake));
 
     // hopper subsystem
@@ -103,9 +110,10 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
     SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
+    SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
 
     // command sequences
-    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake));
+    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
@@ -113,7 +121,7 @@ public class RobotContainer {
     // buttons for testing turnGyro
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
-    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 0.8, true, driveTrain, log));
+    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 1.0, true, driveTrain, log));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
     SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
@@ -139,7 +147,7 @@ public class RobotContainer {
 
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
     // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
@@ -152,7 +160,7 @@ public class RobotContainer {
 
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterHoodPistonSequence(false, shooter));
-    xb[2].whenPressed(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake));
+    xb[2].whenPressed(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake, led));
     xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
     xb[4].whenPressed(new ShooterHoodPistonSequence(true, shooter));
 
@@ -169,8 +177,8 @@ public class RobotContainer {
     // xb[10].whenPressed(new Wait(0));
 
     // pov is the d-pad (up, down, left, right)
-    // xbPOVUp.whenActive(new Wait(0));
-    xbPOVDown.whileActiveOnce(new IntakeSetPercentOutput(intake));
+    xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake));
+    xbPOVDown.whileActiveOnce(new IntakeSequence(intake));
     // xbPOVLeft.whenActive(new Wait(0));
     // xbPOVRight.whenActive(new Wait(0));
 
@@ -297,7 +305,10 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
-    led.setStrip("Purple");
+    isEnabled = false;
+    //shooter.setPowerCellsShot(0);
+    led.setStrip("Red", 1);
+    
   }
 
   /**
@@ -328,12 +339,18 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
-    led.setStrip("Green");
+    led.setStrip("Green", 1);
+    isEnabled = true;
+  }
+
+  public boolean getEnabled(){
+    return isEnabled;
   }
 
   /**
    * Method called once every scheduler cycle when teleop mode is initialized/enabled
    */
+
   public void teleopPeriodic() {
   }
 }

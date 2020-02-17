@@ -14,44 +14,49 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
+import frc.robot.subsystems.LED;
+import frc.robot.RobotContainer;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
-  private final Solenoid shooterHoodPiston = new Solenoid(pcmShooterHoodPiston); // piston to open and close hood
+  private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonIn, pcmShooterHoodPistonOut); // piston to open and close hood
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
-  private Hopper hopper;
   private final DigitalInput input = new DigitalInput(dioPowerCell);
+  private LED led;
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   private int powerCellsShot = 0;
+  private int prevPowerCellsShot = 0;
   //private double prevVoltage = 0;
   //private double prevCurrent = 0;
   private boolean prevCell = false;
   
-  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck) {
+  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
-    this.hopper = hopper;
+    this.led = led;
 
     setLockPiston(false);
 
     shooterMotorLeft.configFactoryDefault();
     shooterMotorRight.configFactoryDefault();
-    shooterMotorLeft.setInverted(true);
-    shooterMotorRight.setInverted(false);
+    shooterMotorLeft.setInverted(false);
+    shooterMotorRight.setInverted(true);
 
     // set drives to coast mode and ramp rate
     shooterMotorLeft.setNeutralMode(NeutralMode.Coast);
@@ -119,7 +124,8 @@ public class Shooter extends SubsystemBase {
    * @param retract true = retract (open), false = extend (close)
    */
   public void setHoodPiston(boolean retract) {
-    shooterHoodPiston.set(retract);
+    if (retract) shooterHoodPiston.set(Value.kReverse);
+    else shooterHoodPiston.set(Value.kForward);
   }
 
   /**
@@ -145,23 +151,7 @@ public class Shooter extends SubsystemBase {
     return measuredRPM;
   }
 
-  /**
-   * @return output voltage
-   */
-  /****************** 
-  public double getVoltage() {
-    return shooterMotorLeft.getMotorOutputVoltage();
-  }
-
-  /**
-   * @return output current
-   *
-  public double getCurrent() {
-    return shooterMotorLeft.getSupplyCurrent();
-  }
-  *******************************/
-
-  /**
+   /**
    * @return Cell present
    */
   public boolean getCell(){
@@ -175,9 +165,13 @@ public class Shooter extends SubsystemBase {
     return powerCellsShot;
   }
 
+  public void setPowerCellsShot(int pCells){
+    powerCellsShot = pCells;
+  }
+
   /**
-   * Returns min RPM (1200) if robot is less than 5 meters from the target
-   * Returns max RPM (3000) if robot is more than 30 meters from the target
+   * Returns min RPM if robot is less than 5 feet from the target
+   * Returns max RPM if robot is more than 30 feet from the target
    * Calculates slope between known RPMs for 2 distances (based on array in constants)
    * Uses slope to calculate RPM at a certain distance between those 2 distances
    * @param distance distance from the target (as per vision data) in feet
@@ -212,6 +206,8 @@ public class Shooter extends SubsystemBase {
     double i = SmartDashboard.getNumber("Shooter I", 0);
     double d = SmartDashboard.getNumber("Shooter D", 0);
 
+    
+
     // if PID coefficients on SmartDashboard have changed, write new values to controller
     if(ff != kFF) shooterMotorLeft.config_kF(0, ff, timeoutMs); kFF = ff;
     if(p != kP) shooterMotorLeft.config_kP(0, p, timeoutMs); kP = p;
@@ -225,7 +221,6 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
-    //SmartDashboard.putNumber("Shooter PercentOutput", shooterMotorLeft.getMotorOutputPercent());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
     SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
     SmartDashboard.putBoolean("Cell Present", prevCell);
@@ -235,12 +230,22 @@ public class Shooter extends SubsystemBase {
     }
 
     //if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
-    if (getCell() && !prevCell  && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
+    if (getCell() && !prevCell) {
       powerCellsShot++;
-    if (voltageTarget == 0) powerCellsShot = 0;
+      led.setBallLights(powerCellsShot);
+    }
 
-    //prevVoltage = getVoltage();
+    if (voltageTarget == 0) {
+      powerCellsShot = 0;
+      
+    }
+
+    if(voltageTarget == 0 && (powerCellsShot != prevPowerCellsShot)){
+      led.setBallLights(powerCellsShot);
+    }
+
     prevCell = getCell();
+    prevPowerCellsShot = powerCellsShot;
   }
 
   /**
