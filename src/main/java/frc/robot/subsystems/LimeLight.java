@@ -66,10 +66,10 @@ public class LimeLight extends SubsystemBase {
   }
   
   //theoretical distance
-  public double getDistance() {
-    double myDistance = (-9.8209 * area) + 25.6719;
-    return myDistance;
-  }
+  // public double getDistance() {
+  //   double myDistance = (-9.8209 * area) + 25.6719;
+  //   return myDistance;
+  // }
 
   public double getPipeline() {
     return table.getEntry("getpipe").getDouble(0);
@@ -110,7 +110,7 @@ public class LimeLight extends SubsystemBase {
 
     SmartDashboard.putNumber("LimeLight x", x);
     SmartDashboard.putNumber("LimeLight y", y);
-    SmartDashboard.putNumber("LimeLight distance",  getDistance());
+    //SmartDashboard.putNumber("LimeLight distance",  getDistance());
 
     pipe = SmartDashboard.getNumber("Pipeline", 2);
 
@@ -145,8 +145,8 @@ public class LimeLight extends SubsystemBase {
       "Center Offset X", x, 
       "Center Offset Y", y,
       "Target Area", area, 
-      "Theoretical width", theoreticalWidth,
-      "Theoretical distance", getDistance()
+      //"Theoretical width", theoreticalWidth,
+      //"Theoretical distance", getDistance()
       );
   }
 }
