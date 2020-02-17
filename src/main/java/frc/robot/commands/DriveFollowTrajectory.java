@@ -121,9 +121,10 @@ public class DriveFollowTrajectory extends CommandBase {
   public void execute() {
     double curTime = m_timer.get();
     double dt = curTime - m_prevTime;
+    State desiredState = m_trajectory.sample(curTime);
 
     Pose2d robotPose = driveTrain.getPose();
-    State desiredState = m_trajectory.sample(curTime);
+    DifferentialDriveWheelSpeeds robotSpeeds = driveTrain.getWheelSpeeds();
 
     DifferentialDriveWheelSpeeds targetWheelSpeeds;
     if (m_useRamsete) {
@@ -138,28 +139,21 @@ public class DriveFollowTrajectory extends CommandBase {
     var leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     var rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
 
-    double leftOutput;
-    double rightOutput;
+    double leftFeedforward = m_feedforward.calculate(leftSpeedSetpoint,
+        (leftSpeedSetpoint - m_prevSpeeds.leftMetersPerSecond) / dt);
+
+    double rightFeedforward = m_feedforward.calculate(rightSpeedSetpoint,
+        (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt);
+        
+    double leftOutput = leftFeedforward;
+    double rightOutput = rightFeedforward;
 
     if (m_usePID) {
-      double leftFeedforward =
-          m_feedforward.calculate(leftSpeedSetpoint,
-              (leftSpeedSetpoint - m_prevSpeeds.leftMetersPerSecond) / dt);
-
-      double rightFeedforward =
-          m_feedforward.calculate(rightSpeedSetpoint,
-              (rightSpeedSetpoint - m_prevSpeeds.rightMetersPerSecond) / dt);
-
-      leftOutput = leftFeedforward
-          + m_leftController.calculate(driveTrain.getWheelSpeeds().leftMetersPerSecond,
+      leftOutput += m_leftController.calculate(robotSpeeds.leftMetersPerSecond,
           leftSpeedSetpoint);
 
-      rightOutput = rightFeedforward
-          + m_rightController.calculate(driveTrain.getWheelSpeeds().rightMetersPerSecond,
+      rightOutput += m_rightController.calculate(robotSpeeds.rightMetersPerSecond,
           rightSpeedSetpoint);
-    } else {
-      leftOutput = leftSpeedSetpoint;
-      rightOutput = rightSpeedSetpoint;
     }
 
     driveTrain.tankDriveVolts(leftOutput, rightOutput);
@@ -171,14 +165,15 @@ public class DriveFollowTrajectory extends CommandBase {
       "Traj ang", desiredState.poseMeters.getRotation().getDegrees(),
       "Robot X", robotPose.getTranslation().getX(),
       "Robot Y", robotPose.getTranslation().getY(),
-      "Robot ang", robotPose.getRotation().getDegrees()
-      // "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
-      // "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
-      // "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
-      // "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
-      // "L Volts", leftVolts, 
-      // "R Volts", rightVolts, 
-      // "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees()
+      "Robot ang", robotPose.getRotation().getDegrees(),
+      "Traj VelL", leftSpeedSetpoint,
+      "Traj VelR", rightSpeedSetpoint,
+      "Robot VelL", robotSpeeds.leftMetersPerSecond,
+      "Robot VelR", robotSpeeds.rightMetersPerSecond,
+      "Left VFF", leftFeedforward,
+      "Left Vout", leftOutput,
+      "Right VFF", rightFeedforward,
+      "Right Vout", rightOutput
     );
 
     m_prevTime = curTime;
