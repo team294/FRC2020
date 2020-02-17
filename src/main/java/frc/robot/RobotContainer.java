@@ -35,6 +35,7 @@ public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final Hopper hopper = new Hopper();
+  private final Shooter shooter = new Shooter(log, tempCheck);
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Intake intake = new Intake();
   private final LED led = new LED();

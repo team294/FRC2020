@@ -29,12 +29,12 @@ import static frc.robot.Constants.ShooterConstants.*;
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
-  private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonExtend, pcmShooterHoodPistonRetract); // piston to open and close hood
+  private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonIn, pcmShooterHoodPistonOut); // piston to open and close hood
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
-  private LED led;
   private final DigitalInput input = new DigitalInput(dioPowerCell);
+  private LED led;
 
   private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
@@ -125,7 +125,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setHoodPiston(boolean retract) {
     if (retract) shooterHoodPiston.set(Value.kReverse);
-    else shooterHoodPiston.set(Value.kReverse);
+    else shooterHoodPiston.set(Value.kForward);
   }
 
   /**
