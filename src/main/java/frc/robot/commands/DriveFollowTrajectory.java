@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveTrain;
 
 import java.util.function.BiConsumer;
@@ -41,17 +42,19 @@ import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
  */
 @SuppressWarnings("PMD.TooManyFields")
 public class DriveFollowTrajectory extends CommandBase {
-
   private final Timer m_timer = new Timer();
   private final boolean m_usePID = true;
   private final Trajectory m_trajectory;
-  private final RamseteController m_follower;
-  private final SimpleMotorFeedforward m_feedforward;
-  private final DifferentialDriveKinematics m_kinematics;
+  private final RamseteController m_ramseteController;
+  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA);
+  private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(DriveConstants.TRACK_WIDTH);
   private final PIDController m_leftController;
   private final PIDController m_rightController;
   private DifferentialDriveWheelSpeeds m_prevSpeeds;
   private double m_prevTime;
+
+  private final boolean bUseFeedback = true;
+  private final boolean bUseRamsete = true;
 
   private final DriveTrain driveTrain;
 
@@ -65,30 +68,35 @@ public class DriveFollowTrajectory extends CommandBase {
    * is left to the user, since it is not appropriate for paths with nonstationary endstates.
    *
    * @param trajectory      The trajectory to follow.
-   * @param controller      The RAMSETE controller used to follow the trajectory.
-   * @param feedforward     The feedforward to use for the drive.
-   * @param kinematics      The kinematics for the robot drivetrain.
    * @param leftController  The PIDController for the left side of the robot drive.
    * @param rightController The PIDController for the right side of the robot drive.
    * @param requirements    The subsystems to require.
    */
   @SuppressWarnings("PMD.ExcessiveParameterList")
   public DriveFollowTrajectory(Trajectory trajectory,
-                        RamseteController controller,
-                        SimpleMotorFeedforward feedforward,
-                        DifferentialDriveKinematics kinematics,
                         PIDController leftController,
                         PIDController rightController,
                         DriveTrain driveTrain) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
-    m_follower = requireNonNullParam(controller, "controller", "RamseteCommand");
-    m_feedforward = feedforward;
-    m_kinematics = requireNonNullParam(kinematics, "kinematics", "RamseteCommand");
     m_leftController = requireNonNullParam(leftController, "leftController", "RamseteCommand");
     m_rightController = requireNonNullParam(rightController, "rightController", "RamseteCommand");
     this.driveTrain = driveTrain;
 
     addRequirements(driveTrain);
+
+
+    // Create the Ramsete controller
+    if (bUseRamsete) {
+      m_ramseteController = new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta);
+    } else {
+      // Redundant code, TODO remove the "else" branch
+      m_ramseteController = new RamseteController() {
+        @Override
+        public ChassisSpeeds calculate(Pose2d currentPose, Pose2d poseRef, double linearVelocityRefMeters, double angularVelocityRefRadiansPerSecond) {
+          return new ChassisSpeeds(linearVelocityRefMeters, 0.0, angularVelocityRefRadiansPerSecond);
+        }
+      };
+    }
   }
 
   // Called when the command is initially scheduled.
@@ -115,8 +123,18 @@ public class DriveFollowTrajectory extends CommandBase {
     double curTime = m_timer.get();
     double dt = curTime - m_prevTime;
 
-    var targetWheelSpeeds = m_kinematics.toWheelSpeeds(
-        m_follower.calculate(driveTrain.getPose(), m_trajectory.sample(curTime)));
+    var robotPose = driveTrain.getPose();
+    var desiredState = m_trajectory.sample(curTime);
+
+    DifferentialDriveWheelSpeeds targetWheelSpeeds;
+    if (bUseRamsete) {
+      targetWheelSpeeds = m_kinematics.toWheelSpeeds(
+        m_ramseteController.calculate(robotPose, desiredState));
+    } else {
+      targetWheelSpeeds =  m_kinematics.toWheelSpeeds( new ChassisSpeeds(
+        desiredState.velocityMetersPerSecond, 0.0, 
+        desiredState.velocityMetersPerSecond * desiredState.curvatureRadPerMeter) ) ;
+    }
 
     var leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
     var rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
