@@ -8,12 +8,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveTrain;
-
-import java.util.function.BiConsumer;
-import java.util.function.Supplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.PIDController;
@@ -43,23 +39,23 @@ import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 @SuppressWarnings("PMD.TooManyFields")
 public class DriveFollowTrajectory extends CommandBase {
   private final Timer m_timer = new Timer();
-  private final boolean m_usePID = true;
   private final Trajectory m_trajectory;
-  private final RamseteController m_ramseteController;
+  private final RamseteController m_ramseteController = new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta);
   private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA);
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(DriveConstants.TRACK_WIDTH);
-  private final PIDController m_leftController;
-  private final PIDController m_rightController;
+  private final PIDController m_leftController = new PIDController(DriveConstants.kP, 0, 0);
+  private final PIDController m_rightController = new PIDController(DriveConstants.kP, 0, 0);
+
   private DifferentialDriveWheelSpeeds m_prevSpeeds;
   private double m_prevTime;
 
-  private final boolean bUseFeedback = true;
-  private final boolean bUseRamsete = true;
+  private final boolean m_useRamsete;
+  private final boolean m_usePID;
 
   private final DriveTrain driveTrain;
 
   /**
-   * Constructs a new RamseteCommand that, when executed, will follow the provided trajectory.
+   * Constructs a new command that, when executed, will follow the provided trajectory.
    * PID control and feedforward are handled internally, and outputs are scaled -12 to 12
    * representing units of volts.
    *
@@ -68,36 +64,34 @@ public class DriveFollowTrajectory extends CommandBase {
    * is left to the user, since it is not appropriate for paths with nonstationary endstates.
    *
    * @param trajectory      The trajectory to follow.
-   * @param leftController  The PIDController for the left side of the robot drive.
-   * @param rightController The PIDController for the right side of the robot drive.
-   * @param requirements    The subsystems to require.
+   * @param useRamsete      True = use Ramsete controller for feedback to track robot odometery to the trajectory;  False = no trajectory feedback
+   * @param usePID          True = use PIDs for feedback to track actual wheel velocities to desired wheel velocities;  False = not velocity feedback
+   * @param driveTrain      The driveTrain subsystem to be controlled.
    */
-  @SuppressWarnings("PMD.ExcessiveParameterList")
-  public DriveFollowTrajectory(Trajectory trajectory,
-                        PIDController leftController,
-                        PIDController rightController,
-                        DriveTrain driveTrain) {
+  public DriveFollowTrajectory(Trajectory trajectory, boolean useRamsete, boolean usePID, DriveTrain driveTrain) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
-    m_leftController = requireNonNullParam(leftController, "leftController", "RamseteCommand");
-    m_rightController = requireNonNullParam(rightController, "rightController", "RamseteCommand");
+    m_useRamsete = useRamsete;
+    m_usePID = usePID;
     this.driveTrain = driveTrain;
 
     addRequirements(driveTrain);
-
-
-    // Create the Ramsete controller
-    if (bUseRamsete) {
-      m_ramseteController = new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta);
-    } else {
-      // Redundant code, TODO remove the "else" branch
-      m_ramseteController = new RamseteController() {
-        @Override
-        public ChassisSpeeds calculate(Pose2d currentPose, Pose2d poseRef, double linearVelocityRefMeters, double angularVelocityRefRadiansPerSecond) {
-          return new ChassisSpeeds(linearVelocityRefMeters, 0.0, angularVelocityRefRadiansPerSecond);
-        }
-      };
-    }
-  }
+  }  
+  
+  /**
+  * Constructs a new command that, when executed, will follow the provided trajectory.
+  * PID control and feedforward are handled internally, and outputs are scaled -12 to 12
+  * representing units of volts.
+  *
+  * <p>Note: The controller will *not* set the outputVolts to zero upon completion of the path -
+  * this
+  * is left to the user, since it is not appropriate for paths with nonstationary endstates.
+  *
+  * @param trajectory      The trajectory to follow.
+  * @param driveTrain      The driveTrain subsystem to be controlled.
+  */
+ public DriveFollowTrajectory(Trajectory trajectory, DriveTrain driveTrain) {
+   this(trajectory, true, true, driveTrain);
+ }
 
   // Called when the command is initially scheduled.
   @Override
@@ -127,7 +121,7 @@ public class DriveFollowTrajectory extends CommandBase {
     var desiredState = m_trajectory.sample(curTime);
 
     DifferentialDriveWheelSpeeds targetWheelSpeeds;
-    if (bUseRamsete) {
+    if (m_useRamsete) {
       targetWheelSpeeds = m_kinematics.toWheelSpeeds(
         m_ramseteController.calculate(robotPose, desiredState));
     } else {
@@ -164,6 +158,16 @@ public class DriveFollowTrajectory extends CommandBase {
     }
 
     driveTrain.tankDriveVolts(leftOutput, rightOutput);
+
+    // log.writeLog(true, "TankDriveVolts", "Update", 
+    //   "Time", autoTimer.get(), 
+    //   "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
+    //   "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
+    //   "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
+    //   "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
+    //   "L Volts", leftVolts, 
+    //   "R Volts", rightVolts, 
+    //   "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees());
 
     m_prevTime = curTime;
     m_prevSpeeds = targetWheelSpeeds;
