@@ -305,7 +305,7 @@ public class RobotContainer {
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
     isEnabled = false;
-    shooter.setPowerCellsShot(0);
+    //shooter.setPowerCellsShot(0);
     led.setStrip("Red", 1);
     
   }

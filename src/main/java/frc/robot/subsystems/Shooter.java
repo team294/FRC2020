@@ -240,7 +240,7 @@ public class Shooter extends SubsystemBase {
       
     }
 
-    if(voltageTarget == 0 && (getPowerCellsShot() != prevPowerCellsShot)){
+    if(voltageTarget == 0 && (powerCellsShot != prevPowerCellsShot)){
       led.setBallLights(powerCellsShot);
     }
 
