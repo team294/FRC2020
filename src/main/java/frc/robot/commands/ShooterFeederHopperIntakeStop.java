@@ -30,8 +30,8 @@ public class ShooterFeederHopperIntakeStop extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new ShooterSetVoltage(0, shooter),
         new FeederSetVoltage(0, feeder),
-        new HopperSetPercentOutput(0, hopper),
-        new IntakeSetPercentOutput(0, intake)
+        new IntakeSetPercentOutput(0, intake),
+        new HopperSetPercentOutput(0, hopper)
       )
     );
   }
