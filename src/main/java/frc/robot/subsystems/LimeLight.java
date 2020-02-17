@@ -64,6 +64,12 @@ public class LimeLight extends SubsystemBase {
   public double getArea() {
     return area;
   }
+  
+  //theoretical distance
+  public double getDistance() {
+    double myDistance = (-9.8206 * area) + 25.0049;
+    return myDistance;
+  }
 
   public double getPipeline() {
     return table.getEntry("getpipe").getDouble(0);
