@@ -9,15 +9,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LED;
+import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj.Timer;
 
 
 /**
  * Command to send a solid color to the LED strip.
  */
-public class LEDSetStrip extends CommandBase {
+public class LEDRainbow extends CommandBase {
   private LED led;
-  private String color;
-  private double intensity = -1;
+  private int ledStrip;
+  private double intensity = 0.5;
+  private Color[][] rainbowLibrary = LED.rainbowLibrary;
+  private Timer timer = new Timer();;
+  private double duration = 0.05;
  
 
   /**
@@ -25,9 +30,9 @@ public class LEDSetStrip extends CommandBase {
    * @param color color as a string (first letter capital)
    * @param led LED subsystem to use
    **/
-	public LEDSetStrip(String color, LED led) {
+	public LEDRainbow(LED led, int ledStrip) {
     this.led = led;
-    this.color = color;
+    this.ledStrip = ledStrip;
     addRequirements(led);
   
   }
@@ -37,9 +42,9 @@ public class LEDSetStrip extends CommandBase {
    * @param intensity LED intensity (0 to 1)
    * @param led LED subsystem to use
    **/
-	public LEDSetStrip(String color, double intensity, LED led) {
+	public LEDRainbow(int ledStrip, double intensity, LED led) {
     this.led = led;
-    this.color = color;
+    this.ledStrip = ledStrip;
     this.intensity = intensity;
 	  addRequirements(led);
   }
@@ -47,13 +52,28 @@ public class LEDSetStrip extends CommandBase {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-    if (intensity >= 0) led.setStrip(color, intensity, 1);
-    else led.setStrip(color, 1);
+    timer.reset();
+    timer.start();
   }
     
+  private int patternNum = 0;
   // Called every time the scheduler runs while the command is scheduled.
   @Override
 	public void execute() {  
+    if(patternNum > rainbowLibrary.length - 1){
+      patternNum = 0;
+    }
+    
+    led.setPattern(rainbowLibrary[patternNum], intensity, ledStrip);
+    
+    if(timer.hasPeriodPassed(duration)){
+      patternNum++;
+      timer.reset();
+      timer.start();
+    }
+    
+
+
 	}
 
   // Called once the command ends or is interrupted.
@@ -64,6 +84,6 @@ public class LEDSetStrip extends CommandBase {
   // Returns true when the command should end.
   @Override
 	public boolean isFinished() {
-		return true;
+      return false;
 	}
 }
