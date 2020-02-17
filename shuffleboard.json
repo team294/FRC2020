@@ -73,28 +73,6 @@
               ]
             }
           },
-          "7,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/IntakeSetPercentOutput(1)",
-              "_title": "IntakeSetPercentOutput(1)"
-            }
-          },
-          "7,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/HopperSetPercentOutput(0.8)",
-              "_title": "HopperSetPercentOutput(0.8)"
-            }
-          },
           "2,0": {
             "size": [
               2,
@@ -158,34 +136,7 @@
               ]
             }
           },
-          "7,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
-              "_title": "ShooterFeederHopperSequence"
-            }
-          },
-          "4,0": {
-            "size": [
-              3,
-              3
-            ],
-            "content": {
-              "_type": "Graph",
-              "_source0": "network_table:///SmartDashboard/Feeder RPM",
-              "_title": "Feeder RPM",
-              "Graph/Visible time": 30.0,
-              "Y-axis/Automatic bounds": true,
-              "Y-axis/Upper bound": 1.0,
-              "Y-axis/Lower bound": -1.0,
-              "Visible data/SmartDashboard/Feeder RPM": true
-            }
-          },
-          "9,0": {
+          "11,0": {
             "size": [
               2,
               3
@@ -223,7 +174,7 @@
               ]
             }
           },
-          "7,0": {
+          "8,2": {
             "size": [
               2,
               2
@@ -251,7 +202,7 @@
               ]
             }
           },
-          "9,3": {
+          "6,3": {
             "size": [
               2,
               3
@@ -282,17 +233,6 @@
                   "_title": "Shooter UNLOCK"
                 }
               ]
-            }
-          },
-          "7,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
-              "_title": "ShooterFeederHopperIntakeStop"
             }
           },
           "4,3": {
@@ -328,7 +268,7 @@
               ]
             }
           },
-          "6,3": {
+          "7,2": {
             "size": [
               1,
               1
@@ -337,6 +277,91 @@
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Power Cells Shot",
               "_title": "Power Cells Shot"
+            }
+          },
+          "9,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Intake",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakeSetPercentOutput(1)",
+                  "_title": "IntakeSetPercentOutput(1)"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
+                  "_title": "IntakePiston EXTEND"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
+                  "_title": "IntakePiston RETRACT"
+                }
+              ]
+            }
+          },
+          "8,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Hopper",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/HopperSetPercentOutput(0.8)",
+                  "_title": "HopperSetPercentOutput(0.8)"
+                }
+              ]
+            }
+          },
+          "7,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Sequences",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
+                  "_title": "ShooterFeederHopperIntakeStop"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
+                  "_title": "ShooterFeederHopperSequence"
+                }
+              ]
+            }
+          },
+          "4,0": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Graph",
+              "_source0": "network_table:///SmartDashboard/Shooter RPM",
+              "_title": "Shooter RPM",
+              "Graph/Visible time": 30.0,
+              "Y-axis/Automatic bounds": true,
+              "Y-axis/Upper bound": 1.0,
+              "Y-axis/Lower bound": -1.0,
+              "Visible data/SmartDashboard/Shooter RPM": true
             }
           }
         }
@@ -352,42 +377,23 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "5,0": {
+          "1,0": {
             "size": [
-              7,
+              11,
               6
             ],
             "content": {
               "_type": "Camera Stream",
-              "_source0": "camera_server://USB Camera 0",
-              "_title": "USB Camera",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
-            }
-          },
-          "1,0": {
-            "size": [
-              4,
-              4
-            ],
-            "content": {
-              "_type": "Camera Stream",
               "_source0": "camera_server://limelight",
-              "_title": "Limelight",
+              "_title": "limelight",
               "Crosshair/Show crosshair": true,
               "Crosshair/Crosshair color": "#FFFFFFFF",
               "Controls/Show controls": true,
               "Controls/Rotation": "NONE",
               "compression": -1.0,
               "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
+              "imageWidth": 0,
+              "imageHeight": 0
             }
           }
         }
