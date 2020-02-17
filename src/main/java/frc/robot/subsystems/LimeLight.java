@@ -144,7 +144,7 @@ public class LimeLight extends SubsystemBase {
     log.writeLog(logWhenDisabled, "LimeLight", "Update Variables", 
       "Center Offset X", x, 
       "Center Offset Y", y,
-      "Target Area", area, 
+      "Target Area", area
       //"Theoretical width", theoreticalWidth,
       //"Theoretical distance", getDistance()
       );
