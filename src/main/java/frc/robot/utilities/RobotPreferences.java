@@ -95,4 +95,9 @@ public class RobotPreferences {
         } 
         return prefs.getString(keyName, defaultValue);   
     }
+
+     public static void editStickyFaults(String problemSubsystem, boolean problemExists) {
+        prefs.putString("problemSubsystem", problemSubsystem);
+        prefs.putBoolean("problemExists", problemExists);
+     }
 }

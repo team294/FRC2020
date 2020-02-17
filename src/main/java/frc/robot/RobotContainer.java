@@ -34,6 +34,7 @@ import static frc.robot.Constants.OIConstants.*;
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
+  private final StickyFaults stickyFaults = new StickyFaults(log);
   private final Hopper hopper = new Hopper();
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Intake intake = new Intake();
@@ -130,6 +131,9 @@ public class RobotContainer {
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
     SmartDashboard.putData("Autonomous routine", autoChooser);
+
+    // display sticky faults
+    stickyFaults.showStickyFaults();
   }
 
   /**
