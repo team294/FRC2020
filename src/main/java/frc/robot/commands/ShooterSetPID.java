@@ -49,6 +49,7 @@ public class ShooterSetPID extends CommandBase {
   public ShooterSetPID(boolean rpmFromDistance, Shooter shooter, LED led) {
     this.shooter = shooter;
     this.rpm = 0;
+    this.led = led;
     getRpmFromShuffleboard = true;
     this.rpmFromDistance = rpmFromDistance;
     timer = new Timer();

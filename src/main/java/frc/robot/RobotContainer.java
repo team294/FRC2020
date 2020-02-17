@@ -55,6 +55,8 @@ public class RobotContainer {
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   
+
+  private boolean isEnabled = false;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -302,7 +304,10 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
+    isEnabled = false;
+    shooter.setPowerCellsShot(0);
     led.setStrip("Red", 1);
+    
   }
 
   /**
@@ -334,6 +339,11 @@ public class RobotContainer {
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
     led.setStrip("Green", 1);
+    isEnabled = true;
+  }
+
+  public boolean getEnabled(){
+    return isEnabled;
   }
 
   /**

@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 
 /******************************
  *  import frc.robot.utilities.ColorSensor;
@@ -168,7 +169,7 @@ public class LED extends SubsystemBase {
    * @param color String name of color, case sensitive
    * @param ledStrip (int) chooses which led strip you use 0 = first 1 = second
    */
-  public void setStrip(String color, int ledStrip ) {
+  public void setStrip(String color, int ledStrip) {
     if(ledStrip == 0){
       startingInd = 0;
     } else {
@@ -177,10 +178,8 @@ public class LED extends SubsystemBase {
     setStrip(color, 0.5, startingInd);
   }
 
-  public void setBallLights(int powerCellsShot){
-    if(powerCellsShot > 6){
-      powerCellsShot = 6;
-    }
+  public void setBallLights(int powerCellsShot) {
+    if(powerCellsShot > 6) powerCellsShot = 6;
     setPattern(shooterLibrary[powerCellsShot], 0.5, 1);
   }
 
