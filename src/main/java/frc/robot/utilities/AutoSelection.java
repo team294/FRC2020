@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import frc.robot.commands.AutoShootBackup;
 import frc.robot.commands.AutoTrenchFromCenter;
 import frc.robot.commands.AutoTrenchFromRight;
+import frc.robot.commands.AutoTrussPickup;
 import frc.robot.commands.Wait;
 import frc.robot.subsystems.*;
 
@@ -17,6 +18,7 @@ public class AutoSelection {
 	public static final int TRENCH_FROM_CENTER = 0;
 	public static final int TRENCH_FROM_RIGHT = 1;
 	public static final int SHOOT_BACKUP = 2;
+	public static final int TRUSS_PICKUP = 3;
 
 	private Trajectory[] trajectoryCache = new Trajectory[2];
 	
@@ -41,7 +43,7 @@ public class AutoSelection {
 	 * @param autoPlan The autoplan to run 
 	 * @return the command to run
 	 */  		
-	public Command getAutoCommand(Integer autoPlan, DriveTrain driveTrain, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, FileLog log) {
+	public Command getAutoCommand(Integer autoPlan, DriveTrain driveTrain, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, FileLog log, LED led) {
 		Command autonomousCommand = null;
 		Trajectory trajectory;
 
@@ -59,7 +61,12 @@ public class AutoSelection {
 
 		if (autoPlan == SHOOT_BACKUP) {
 			log.writeLogEcho(true, "AutoSelect", "run ShootBackup");
-			autonomousCommand = new AutoShootBackup(driveTrain, limeLight, log, shooter, feeder, hopper, intake);
+			autonomousCommand = new AutoShootBackup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+		}
+
+		if (autoPlan == TRUSS_PICKUP) {
+			log.writeLogEcho(true, "AutoSelect", "run TrussPickup");
+			autonomousCommand = new AutoTrussPickup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autonomousCommand == null) {

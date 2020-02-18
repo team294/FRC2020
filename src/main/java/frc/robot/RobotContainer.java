@@ -123,13 +123,14 @@ public class RobotContainer {
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
     SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 1.0, true, driveTrain, log));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, 0.5, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, 1, driveTrain, limeLight, log));
 
     // auto selection widget
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
     autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
+    autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
   }
 
@@ -150,7 +151,7 @@ public class RobotContainer {
     Trigger xbPOVUp = new POVTrigger(xboxController, 0);
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
     // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
     // Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
@@ -179,7 +180,7 @@ public class RobotContainer {
     // pov is the d-pad (up, down, left, right)
     xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake));
     xbPOVDown.whileActiveOnce(new IntakeSequence(intake));
-    // xbPOVLeft.whenActive(new Wait(0));
+    xbPOVLeft.whenActive(new IntakeSetPercentOutput(-0.8, intake));
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
@@ -202,7 +203,7 @@ public class RobotContainer {
 
     // joystick down button
     // left[2].whenPressed(new Wait(0));
-    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true,driveTrain, limeLight, log));
+    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true, 0.8, driveTrain, limeLight, log));
 
     // joystick up button
     // left[3].whenPressed(new Wait(0));
@@ -283,7 +284,7 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log);
+    return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 
   /**
@@ -308,7 +309,7 @@ public class RobotContainer {
     isEnabled = false;
     //shooter.setPowerCellsShot(0);
     led.setStrip("Red", 1);
-    
+    driveTrain.setDriveModeCoast(true);
   }
 
   /**
@@ -341,6 +342,7 @@ public class RobotContainer {
     log.writeLogEcho(true, "Teleop", "Mode Init");
     led.setStrip("Green", 1);
     isEnabled = true;
+    driveTrain.setDriveModeCoast(false);
   }
 
   public boolean getEnabled(){
