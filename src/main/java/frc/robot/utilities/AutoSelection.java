@@ -84,7 +84,7 @@ public class AutoSelection {
 
 		if (trajectoryCache[TRENCH_FROM_CENTER] == null) {
 			log.writeLogEcho(true, "AutoSelect", "calcTrajectoryTrenchFromCenter", "Start");
-			trajectoryCache[TRENCH_FROM_CENTER] = TrajectoryTrenchFromCenter.calcTrajectory(log);
+			trajectoryCache[TRENCH_FROM_CENTER] = TrajectoryOpponentTrenchToShoot.calcTrajectory(log);
 			log.writeLogEcho(true, "AutoSelect", "calcTrajectoryTrenchFromCenter", "End");
 		}
 

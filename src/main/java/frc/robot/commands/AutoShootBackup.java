@@ -23,13 +23,17 @@ public class AutoShootBackup extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     addCommands(
-      new DriveTurnGyro(120, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log),
       new ParallelDeadlineGroup(
-        new Wait(3), //TODO change to stop with count ball
+        new DriveTurnGyro(120, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log),
+        new ShooterSetPID(2800, shooter, led),
+        new IntakePistonSetPosition(true, intake)
+      ),
+      new ParallelDeadlineGroup(
+        new WaitForPowerCells(3, shooter),
         new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led)
       ),
       new ParallelDeadlineGroup(
-        new Wait(0.5),
+        new Wait(0.8),
         new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake)
       ),
       new DriveStraight(-1, 0.5, 1.0, true, driveTrain, log)

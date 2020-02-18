@@ -180,7 +180,7 @@ public class RobotContainer {
     // pov is the d-pad (up, down, left, right)
     xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake));
     xbPOVDown.whileActiveOnce(new IntakeSequence(intake));
-    xbPOVLeft.whenActive(new IntakeSetPercentOutput(-0.8, intake));
+    xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-0.8, intake));
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers

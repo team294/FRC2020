@@ -30,16 +30,16 @@ public class AutoTrussPickup extends SequentialCommandGroup {
         new IntakePistonSetPosition(true, intake),
         new IntakeSetPercentOutput(intake)
       ),
-      //new ParallelDeadlineGroup(new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log), new IntakeSequence(intake)),
-      new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log),
-      new DriveTurnGyro(-163, 0.6, 1.0, false, true, 3, driveTrain, limeLight, log),
+      new ParallelDeadlineGroup(new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log), new IntakeSequence(intake)),
+      //new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log),
+      new ParallelDeadlineGroup(new DriveTurnGyro(-163, 0.6, 1.0, false, true, 3, driveTrain, limeLight, log), new ShooterSetPID(3000, shooter, led)),
+
       new ParallelDeadlineGroup(
         new Wait(1),
-        new DriveTurnGyro(120, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log) // TODO add shooter starting ahead of time
+        new DriveTurnGyro(120, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log)
       ),
       new ParallelDeadlineGroup(
-        new Wait(5), //TODO change to stop with count ball
-        // new WaitForPowerCells(5, shooter),
+        new WaitForPowerCells(5, shooter),
         new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led)
       ),
       new ParallelDeadlineGroup(
