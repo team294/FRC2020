@@ -13,7 +13,7 @@ import frc.robot.Constants.HopperConstants;
 import frc.robot.subsystems.Hopper;
 
 /**
- * Command to reverse the hopper every 1 second.
+ * Command to reverse the hopper periodically.
  */
 public class HopperReverse extends CommandBase {
   private Hopper hopper;
