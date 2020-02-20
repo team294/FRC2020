@@ -50,7 +50,7 @@ public class RobotContainer {
   Joystick xboxController = new Joystick(xboxControllerPort);
   Joystick leftJoystick = new Joystick(leftJoystickPort);
   Joystick rightJoystick = new Joystick(rightJoystickPort);
-  // Joystick coPanel = new Joystick(coPanelPort);
+  Joystick coPanel = new Joystick(coPanelPort);
 
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
@@ -114,7 +114,7 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led));
-    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
+    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
@@ -160,7 +160,7 @@ public class RobotContainer {
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterHoodPistonSequence(false, shooter));
     xb[2].whenPressed(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake, led));
-    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
+    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led));
     xb[4].whenPressed(new ShooterHoodPistonSequence(true, shooter));
 
     // LB = 5, RB = 6
@@ -229,15 +229,15 @@ public class RobotContainer {
    *  16
    */
   public void configureCopanel() {
-    /*JoystickButton[] coP = new JoystickButton[20];
+    JoystickButton[] coP = new JoystickButton[20];
 
     for (int i = 1; i < coP.length; i++) {
       coP[i] = new JoystickButton(coPanel, i);
     }
 
     // top row UP, from left to right
-    coP[1].whenPressed(new Wait(0));
-    coP[3].whenPressed(new Wait(0));
+    coP[1].whenPressed(new ShooterSetVoltage(0, shooter));
+    /*coP[3].whenPressed(new Wait(0));
     coP[5].whenPressed(new Wait(0));
 
     // top row DOWN, from left to right
@@ -306,7 +306,7 @@ public class RobotContainer {
     log.writeLogEcho(true, "Disabled", "Mode Init");
     isEnabled = false;
     //shooter.setPowerCellsShot(0);
-    led.setStrip("Red", 1);
+    led.setStrip("Green", 1);
     
   }
 
@@ -321,10 +321,13 @@ public class RobotContainer {
    */
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
+    led.setStrip("Purple", 1);
     driveTrain.zeroGyroRotation();
     driveTrain.zeroLeftEncoder();
     driveTrain.zeroRightEncoder();
     driveTrain.startAutoTimer();
+
+    shooter.setShooterPID(1200);
   }
 
   /**
@@ -338,8 +341,10 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
-    led.setStrip("Green", 1);
+    led.setStrip("Red", 1);
     isEnabled = true;
+
+    shooter.setShooterPID(1200);
   }
 
   public boolean getEnabled(){
