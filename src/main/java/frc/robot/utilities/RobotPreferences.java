@@ -139,8 +139,8 @@ public class RobotPreferences {
 		SmartDashboard.putBoolean("problemExists", problemExists);
 	}
 
-     public static void editStickyFaultsInPrefs(String problemSubsystem, boolean problemExists) {
+    private static void editStickyFaultsInPrefs(String problemSubsystem, boolean problemExists) {
         prefs.putString("problemSubsystem", problemSubsystem);
         prefs.putBoolean("problemExists", problemExists);
-     }
+    }
 }

@@ -133,6 +133,8 @@ public class RobotContainer {
 
     // display sticky faults
     RobotPreferences.showStickyFaults();
+    SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+
   }
 
   /**
