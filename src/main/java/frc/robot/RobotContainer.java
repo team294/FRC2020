@@ -130,6 +130,9 @@ public class RobotContainer {
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
     SmartDashboard.putData("Autonomous routine", autoChooser);
+
+    // Vision Testing
+    SmartDashboard.putData("Vision Zero Drive", new DriveZeroEncoders(driveTrain)); // TODO to be deleted after testing vision distance
   }
 
   /**
@@ -307,7 +310,7 @@ public class RobotContainer {
     isEnabled = false;
     //shooter.setPowerCellsShot(0);
     led.setStrip("Red", 1);
-    
+    driveTrain.setDriveModeCoast(true);
   }
 
   /**
@@ -325,6 +328,7 @@ public class RobotContainer {
     driveTrain.zeroLeftEncoder();
     driveTrain.zeroRightEncoder();
     driveTrain.startAutoTimer();
+    driveTrain.setDriveModeCoast(false);
   }
 
   /**
@@ -340,6 +344,7 @@ public class RobotContainer {
     log.writeLogEcho(true, "Teleop", "Mode Init");
     led.setStrip("Green", 1);
     isEnabled = true;
+    driveTrain.setDriveModeCoast(false);
   }
 
   public boolean getEnabled(){
