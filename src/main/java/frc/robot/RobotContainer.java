@@ -38,12 +38,12 @@ public class RobotContainer {
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Intake intake = new Intake();
   private final LED led = new LED();
-  private final LimeLight limeLight = new LimeLight(log, led);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
   // private final Test test = new Test();
   
   private final RobotPreferences robotPrefs = new RobotPreferences();
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
+  private final LimeLight limeLight = new LimeLight(log, led, driveTrain);
   // private final UsbCamera intakeCamera;
   
 

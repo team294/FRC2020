@@ -27,6 +27,7 @@ public class LimeLight extends SubsystemBase {
   public double x, y, area;
   private FileLog log;
   private LED led;
+  private DriveTrain driveTrain; // for testing distance calculation, probs can be taken out dist calc finished
   private double pipe;
   private double theoreticalWidth;
 
@@ -41,9 +42,10 @@ public class LimeLight extends SubsystemBase {
    * crosshair x: 0 y: 0 ~~3d experimental~~ no changes
    */
 
-  public LimeLight(FileLog log, LED led) {
+  public LimeLight(FileLog log, LED led, DriveTrain driveTrain) {
     this.log = log;
     this.led = led;
+    this.driveTrain = driveTrain;
     tableInstance.startClientTeam(294);
 
     tv = table.getEntry("tv");
@@ -67,11 +69,13 @@ public class LimeLight extends SubsystemBase {
     return area;
   }
 
+  public double getDistanceNew(){
+    double myDistance = (targetHeight-cameraHeight)/((Math.tan(Math.toRadians(cameraAngle + y))*(Math.cos(Math.toRadians(x)))));
+    return myDistance;
+  }
+
   public double getDistance() {
-    double myDistance = (7 - 1.583) / Math.tan(Math.toRadians(26.5+y));
-    System.out.println(Math.tan(Math.toRadians(27+y)));
-    System.out.println(y + " Dist" + myDistance);
-   // double myDistance = (-9.8209 * area) + 25.6719;
+    double myDistance = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle+y));
     return myDistance;
   }
 
@@ -115,6 +119,9 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("LimeLight x", x);
     SmartDashboard.putNumber("LimeLight y", y);
     SmartDashboard.putNumber("Limelight dist", getDistance());
+    SmartDashboard.putNumber("Limelight new distance", getDistanceNew());
+    SmartDashboard.putNumber("Actual new dist", (driveTrain.getAverageDistance()/12));
+    log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (driveTrain.getAverageDistance()/12));
     // SmartDashboard.putNumber("LimeLight distance", getDistance());
 
     pipe = SmartDashboard.getNumber("Pipeline", 2);
