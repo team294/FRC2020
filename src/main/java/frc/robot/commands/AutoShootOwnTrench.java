@@ -16,14 +16,12 @@ import frc.robot.utilities.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShootBackup extends SequentialCommandGroup {
-  /**
-   * Creates a new AutoShootBackup.
-   */
-  public AutoShootBackup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+public class AutoShootOwnTrench extends SequentialCommandGroup {
 
-    // can start anywhere on auto line between left most pole from driver perspective and close to right edge of the field, needs to be semi lined up with target
 
+
+  public AutoShootOwnTrench(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+    
     addCommands(
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
@@ -38,7 +36,7 @@ public class AutoShootBackup extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
           new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
-          new Wait(10)
+          new Wait(4)
         ), 
         new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
       ),
@@ -46,8 +44,40 @@ public class AutoShootBackup extends SequentialCommandGroup {
         new Wait(0.1),
         new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
       ),
+
+      new DriveTurnGyro(-120, 0.8, 1, false, true, 1, driveTrain, limeLight, log), // turn towards trench
+
+      new ParallelDeadlineGroup( // drive down trench with intake
+        new DriveStraight(4.93, 0.5, 1.0, true, driveTrain, log),
+        new IntakeSequence(intake)
+      ),
       
-      new DriveStraight(-1, 0.5, 1.0, true, driveTrain, log) // back up 1 meter to get off auto line
+      new DriveStraight(-2, 0.5, 1.0, true, driveTrain, log),
+
+      new DriveTurnGyro(120, 0.8, 1.0, false, true, 2, driveTrain, limeLight, log),
+
+      new ParallelDeadlineGroup(
+        new ParallelRaceGroup(
+          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new Wait(1)
+        ),
+        
+        new ShooterSetPID(3000, shooter, led) // start shooter
+      ),
+
+      new ParallelDeadlineGroup(
+        new ParallelRaceGroup(
+          new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
+          new Wait(4)
+        ), 
+        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // start shooter
+      ),
+      new ParallelDeadlineGroup(
+        new Wait(0.1),
+        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
+      )
+
+
 
     );
   }

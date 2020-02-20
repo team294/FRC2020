@@ -3,6 +3,7 @@ package frc.robot.utilities;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import frc.robot.commands.AutoShootBackup;
+import frc.robot.commands.AutoShootOwnTrench;
 import frc.robot.commands.AutoTrenchFromCenter;
 import frc.robot.commands.AutoTrenchFromRight;
 import frc.robot.commands.AutoTrussPickup;
@@ -19,6 +20,7 @@ public class AutoSelection {
 	public static final int TRENCH_FROM_RIGHT = 1;
 	public static final int SHOOT_BACKUP = 2;
 	public static final int TRUSS_PICKUP = 3;
+	public static final int OWN_TRENCH_PICKUP = 4;
 
 	private Trajectory[] trajectoryCache = new Trajectory[2];
 	
@@ -67,6 +69,11 @@ public class AutoSelection {
 		if (autoPlan == TRUSS_PICKUP) {
 			log.writeLogEcho(true, "AutoSelect", "run TrussPickup");
 			autonomousCommand = new AutoTrussPickup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+		}
+
+		if (autoPlan == OWN_TRENCH_PICKUP) {
+			log.writeLogEcho(true, "AutoSelect", "run OwnTrenchPickup");
+			autonomousCommand = new AutoShootOwnTrench(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autonomousCommand == null) {

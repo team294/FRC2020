@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -20,31 +21,41 @@ public class AutoTrussPickup extends SequentialCommandGroup {
    * Creates a new AutoTrussPickup.
    */
   public AutoTrussPickup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
-    // Add your commands in the super() call, e.g.
-    // super(new FooCommand(), new BarCommand());
-
+    
+    // start with edge of bumpers to the right edge of the center line, intake facing towards truss, line up straight
     
     addCommands(
-      new ParallelDeadlineGroup(
-        new DriveStraight(2.08, 0.5, 1.0, true, driveTrain, log),
-        new IntakePistonSetPosition(true, intake),
-        new IntakeSetPercentOutput(intake)
-      ),
-      new ParallelDeadlineGroup(new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log), new IntakeSequence(intake)),
-      //new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log),
-      new ParallelDeadlineGroup(new DriveTurnGyro(-163, 0.6, 1.0, false, true, 3, driveTrain, limeLight, log), new ShooterSetPID(3000, shooter, led)),
 
       new ParallelDeadlineGroup(
-        new Wait(1),
-        new DriveTurnGyro(120, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log)
+        new DriveStraight(2.08, 0.5, 1.0, true, driveTrain, log), // drive to 2 of balls on truss
+        new IntakePistonSetPosition(true, intake), // deploy intake piston
+        new IntakeSetPercentOutput(intake) // spin intake
       ),
+
       new ParallelDeadlineGroup(
-        new WaitForPowerCells(5, shooter),
-        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led)
+        new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log), // back up a short ammount 
+        new IntakeSequence(intake) // keep intake spinning
       ),
+      //new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log),
+
       new ParallelDeadlineGroup(
-        new Wait(0.5),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake)
+        new DriveTurnGyro(-163, 0.6, 1.0, false, true, 3, driveTrain, limeLight, log), // turn towards general target
+        new ShooterSetPID(3000, shooter, led) // start shooter motors
+      ),
+
+      new ParallelRaceGroup(
+          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new Wait(2)
+        ),
+        
+      new ParallelDeadlineGroup(
+        new WaitForPowerCells(5, shooter), // wait for 5 balls to be shot
+        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot
+      ),
+      
+      new ParallelDeadlineGroup(
+        new Wait(0.1),
+        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
       )
       
     );
