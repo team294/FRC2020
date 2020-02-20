@@ -75,9 +75,9 @@ public final class Constants {
     public static final class LimeLightConstants {
         public static final double angleMultiplier = 1.064;
         public static final double offset = 1.33; // in feet
-        public static final double cameraHeight = 2.104; // in feet
-        public static final double targetHeight = 7 + (1/3); // in feet
-        public static final double cameraAngle = 14; // in degrees
+        public static final double cameraHeight = 1.625; // 2.104 on proto, in feet
+        public static final double targetHeight = 7.0; // in feet
+        public static final double cameraAngle = 28; // 26.5 measured but 28 works better?, 14 on proto, in degrees
     }
 
     public static final class DriveConstants {

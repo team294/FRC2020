@@ -70,7 +70,7 @@ public class LimeLight extends SubsystemBase {
   }
 
   public double getDistanceNew(){
-    double myDistance = (targetHeight-cameraHeight)/((Math.tan(Math.toRadians(cameraAngle + y))*(Math.cos(Math.toRadians(x)))));
+    double myDistance = (targetHeight-cameraHeight)/((Math.tan(Math.toRadians(cameraAngle + y)))*(Math.cos(Math.toRadians(x))));
     return myDistance;
   }
 
@@ -120,8 +120,8 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("LimeLight y", y);
     SmartDashboard.putNumber("Limelight dist", getDistance());
     SmartDashboard.putNumber("Limelight new distance", getDistanceNew());
-    SmartDashboard.putNumber("Actual new dist", (driveTrain.getAverageDistance()/12));
-    log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (driveTrain.getAverageDistance()/12));
+    SmartDashboard.putNumber("Actual new dist", (-driveTrain.getAverageDistance()/12));
+    log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12), "X", x, "Y", y);
     // SmartDashboard.putNumber("LimeLight distance", getDistance());
 
     pipe = SmartDashboard.getNumber("Pipeline", 2);
