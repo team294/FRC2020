@@ -153,10 +153,12 @@ public class LimeLight extends SubsystemBase {
    * @param logWhenDisabled true = log when disabled, false = discard the string
    */
   public void updateLimeLightLog(boolean logWhenDisabled) {
-    log.writeLog(logWhenDisabled, "LimeLight", "Update Variables", "Center Offset X", x, "Center Offset Y", y,
-        "Target Area", area
-    // "Theoretical width", theoreticalWidth,
-    // "Theoretical distance", getDistance()
-    );
+    log.writeLog(logWhenDisabled, "LimeLight", "Update Variables", 
+      "Center Offset X", x, 
+      "Center Offset Y", y,
+      "Target Area", area
+      //"Theoretical width", theoreticalWidth,
+      //"Theoretical distance", getDistance()
+      );
   }
 }
