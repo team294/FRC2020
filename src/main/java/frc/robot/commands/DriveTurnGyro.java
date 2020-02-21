@@ -40,6 +40,7 @@ public class DriveTurnGyro extends CommandBase {
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
+  private double angleTolerance;
 
   private double aFF, pFB;  // variables for arbitrary feed forward and feedback power
 
@@ -51,13 +52,18 @@ public class DriveTurnGyro extends CommandBase {
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
-  /**
-   * @param driveTrain reference to the drive train subsystem
-   * @param target degrees to turn to the right from -180 to 180
-   * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
-   * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
-   */
-  public DriveTurnGyro(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+ /**
+  * 
+  * @param target degrees to turn to the right from -180 to 180
+  * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
+  * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
+  * @param useVision true to use vison
+  * @param regenerate true to regenerate profile while running
+  * @param driveTrain drivetrain
+  * @param limeLight limelight
+  * @param log log
+  */
+  public DriveTurnGyro(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
@@ -67,6 +73,7 @@ public class DriveTurnGyro extends CommandBase {
     this.maxAccelMultiplier = maxAccelMultiplier;
     this.useVision = useVision;
     this.regenerate = regenerate;
+    this.angleTolerance = angleTolerance;
 
     addRequirements(driveTrain);
 
@@ -133,6 +140,7 @@ public class DriveTurnGyro extends CommandBase {
     // System.out.println("V: " + aFF);
 
     pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
+    //pFB = 0; 
 
     driveTrain.setLeftMotorOutput(aFF + pFB);
     driveTrain.setRightMotorOutput(-aFF - pFB);
@@ -167,7 +175,7 @@ public class DriveTurnGyro extends CommandBase {
     //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
     //   return true;
     // }
-    if(Math.abs(target - currAngle) < 1) {
+    if(Math.abs(target - currAngle) < angleTolerance) {
       accuracyCounter++;
       System.out.println("theoretical: " + target);
       System.out.println("actual: " + currAngle);

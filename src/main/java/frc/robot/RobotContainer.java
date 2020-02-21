@@ -7,8 +7,8 @@
 
 package frc.robot;
 
-// import edu.wpi.cscore.UsbCamera;
-// import edu.wpi.first.cameraserver.CameraServer;
+//import edu.wpi.cscore.UsbCamera;
+//import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
@@ -36,23 +36,28 @@ public class RobotContainer {
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final Hopper hopper = new Hopper();
   private final Climb climb = new Climb(log);
-  private final Shooter shooter = new Shooter(hopper, log, tempCheck);
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Intake intake = new Intake();
+  private final LED led = new LED();
+  private final LimeLight limeLight = new LimeLight(log, led);
+  private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
+  // private final Test test = new Test();
+  
   private final RobotPreferences robotPrefs = new RobotPreferences();
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
-  private final LimeLight limeLight = new LimeLight(log);
-  private final LED led = new LED();
   // private final UsbCamera intakeCamera;
+  
 
   Joystick xboxController = new Joystick(xboxControllerPort);
   Joystick leftJoystick = new Joystick(leftJoystickPort);
   Joystick rightJoystick = new Joystick(rightJoystickPort);
-  // Joystick coPanel = new Joystick(coPanelPort);
+  Joystick coPanel = new Joystick(coPanelPort);
 
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   
+
+  private boolean isEnabled = false;
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
@@ -72,14 +77,14 @@ public class RobotContainer {
    */
   public void configureShuffleboard() {
     // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter));
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter, led));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
 
     // shooter distance to RPM test
-    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter));
+    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter, led));
     SmartDashboard.putNumber("Shooter Distance", 5);
     SmartDashboard.putData("Shooter DistToRPM", new ShooterDistToRPM(shooter));
     SmartDashboard.putNumber("Shooter RPM from Dist", 0);
@@ -106,27 +111,31 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
     SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
+    SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
 
     // climber subsystem
     SmartDashboard.putData("setPercent", new ClimbSetPercentOutput(0.5, climb)); // for testing the climb motor (0.5 is probably too fast)
     
     // command sequences
-    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake));
-    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
+    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led));
+    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
     // buttons for testing turnGyro
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
-    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 0.8, true, driveTrain, log));
+    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 1.0, true, driveTrain, log));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, 0.5, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, 1, driveTrain, limeLight, log));
 
     // auto selection widget
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
+    autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
+    autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
+    autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
   }
 
@@ -147,7 +156,7 @@ public class RobotContainer {
     Trigger xbPOVUp = new POVTrigger(xboxController, 0);
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
     // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
     // Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
@@ -157,8 +166,8 @@ public class RobotContainer {
 
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterHoodPistonSequence(false, shooter));
-    xb[2].whenPressed(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake));
-    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
+    xb[2].whenPressed(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake, led));
+    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led));
     xb[4].whenPressed(new ShooterHoodPistonSequence(true, shooter));
 
     // LB = 5, RB = 6
@@ -176,7 +185,7 @@ public class RobotContainer {
     // pov is the d-pad (up, down, left, right)
     xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake));
     xbPOVDown.whileActiveOnce(new IntakeSequence(intake));
-    // xbPOVLeft.whenActive(new Wait(0));
+    xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-0.8, intake));
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
@@ -199,7 +208,7 @@ public class RobotContainer {
 
     // joystick down button
     // left[2].whenPressed(new Wait(0));
-    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true,driveTrain, limeLight, log));
+    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true, 0.8, driveTrain, limeLight, log));
 
     // joystick up button
     // left[3].whenPressed(new Wait(0));
@@ -227,15 +236,15 @@ public class RobotContainer {
    *  16
    */
   public void configureCopanel() {
-    /*JoystickButton[] coP = new JoystickButton[20];
+    JoystickButton[] coP = new JoystickButton[20];
 
     for (int i = 1; i < coP.length; i++) {
       coP[i] = new JoystickButton(coPanel, i);
     }
 
     // top row UP, from left to right
-    coP[1].whenPressed(new Wait(0));
-    coP[3].whenPressed(new Wait(0));
+    coP[1].whenPressed(new ShooterSetVoltage(0, shooter));
+    /*coP[3].whenPressed(new Wait(0));
     coP[5].whenPressed(new Wait(0));
 
     // top row DOWN, from left to right
@@ -280,7 +289,7 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(driveTrain, log, autoChooser.getSelected());
+    return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 
   /**
@@ -302,7 +311,14 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
-    led.setStrip("Purple");
+    isEnabled = false;
+    shooter.setPowerCellsShot(0);
+    driveTrain.setDriveModeCoast(true);
+    led.setStrip("Green", 1);
+    shooter.setShooterPID(0);
+    hopper.hopperSetPercentOutput(0);
+    feeder.setFeederPID(0);
+    intake.intakeSetPercentOutput(0);
   }
 
   /**
@@ -316,10 +332,14 @@ public class RobotContainer {
    */
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
+    led.setStrip("Purple", 1);
     driveTrain.zeroGyroRotation();
     driveTrain.zeroLeftEncoder();
     driveTrain.zeroRightEncoder();
     driveTrain.startAutoTimer();
+    driveTrain.setDriveModeCoast(false);
+
+    shooter.setShooterPID(1200);
   }
 
   /**
@@ -333,12 +353,21 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
-    led.setStrip("Green");
+    led.setStrip("Red", 1);
+    isEnabled = true;
+    driveTrain.setDriveModeCoast(false);
+
+    shooter.setShooterPID(1200);
+  }
+
+  public boolean getEnabled(){
+    return isEnabled;
   }
 
   /**
    * Method called once every scheduler cycle when teleop mode is initialized/enabled
    */
+
   public void teleopPeriodic() {
   }
 }

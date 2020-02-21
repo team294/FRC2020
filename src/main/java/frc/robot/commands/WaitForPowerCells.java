@@ -8,33 +8,27 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.Shooter;
 
 /**
- * Command to send a pattern to the LED strip.
+ * Command to wait until a specified number of power cells are shot.
  */
-public class LEDSetPattern extends CommandBase {
-  private LED led;
-  private int rowNumber;
-  private double intensity;
- 
-  
+public class WaitForPowerCells extends CommandBase {
+  private int cells;
+  private Shooter shooter;
+
   /**
-   * @param led LED subsystem to use
-   * @param rowNumber row in the patternLibrary
-   * @param intensity LED intensity (0 to 1)
+   * @param cells number of power cells to wait for to finish
+   * @param shooter shooter subsystem to use
    */
-  public LEDSetPattern(int rowNumber, double intensity, LED led) {
-    this.intensity = intensity;
-    this.led = led;
-    //this.led = led2; 
-    this.rowNumber = rowNumber;
-    addRequirements(led);
-  }    
+  public WaitForPowerCells(int cells, Shooter shooter) {
+    this.cells = cells;
+    this.shooter = shooter;
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    led.setPattern(LED.patternLibrary[rowNumber], intensity, 1);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -50,6 +44,7 @@ public class LEDSetPattern extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    if (cells <= shooter.getPowerCellsShot()) return true;
+    else return false;
   }
 }
