@@ -524,15 +524,15 @@ public class DriveTrain extends SubsystemBase {
     setRightMotorOutput(rightVolts / compensationVoltage);
     feedTheDog();
 
-    log.writeLog(true, "TankDriveVolts", "Update", 
-      "Time", autoTimer.get(), 
-      "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
-      "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
-      "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
-      "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
-      "L Volts", leftVolts, 
-      "R Volts", rightVolts, 
-      "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees());
+    // log.writeLog(true, "TankDriveVolts", "Update", 
+    //   "Time", autoTimer.get(), 
+    //   "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
+    //   "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
+    //   "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
+    //   "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
+    //   "L Volts", leftVolts, 
+    //   "R Volts", rightVolts, 
+    //   "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees());
   }
 
   /**
