@@ -42,10 +42,15 @@ import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 public class DriveFollowTrajectory extends CommandBase {
   private final Timer m_timer = new Timer();
   private final Trajectory m_trajectory;
+
+  // Note:  All constants are in ouput units of "percent power" (-1 to +1), not volts!
   private final RamseteController m_ramseteController = new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta);
+  //TODO switch to Linear constants
   private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA);
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(DriveConstants.TRACK_WIDTH);
+  //TODO switch to Linear constants
   private final PIDController m_leftController = new PIDController(DriveConstants.kP, 0, 0);
+  //TODO switch to Linear constants
   private final PIDController m_rightController = new PIDController(DriveConstants.kP, 0, 0);
 
   private DifferentialDriveWheelSpeeds m_prevSpeeds;
@@ -171,6 +176,7 @@ public class DriveFollowTrajectory extends CommandBase {
 
     switch (m_pidType) {
       case kNone:
+        //TODO Remove (6x) division by compensation voltage after updating constants
         driveTrain.setLeftMotorOutput(leftOutput / DriveConstants.compensationVoltage);
         driveTrain.setRightMotorOutput(rightOutput / DriveConstants.compensationVoltage);
         break;

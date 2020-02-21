@@ -125,24 +125,24 @@ public final class Constants {
         public static double kDLinear = 0;  //0.0 on practice bot
 
         // from robot characteristics
-        public static double kS = kSLinear * 12; 
-        public static double kV = kVLinear * 12; 
-        public static double kA = kALinear * 12; 
+        public static double kS = kSLinear * compensationVoltage; 
+        public static double kV = kVLinear * compensationVoltage; 
+        public static double kA = kALinear * compensationVoltage; 
 
-        public static double kP = kPLinear * 12;  
-        public static double kI = kILinear * 12;  
-        public static double kD = kDLinear * 12;  
+        public static double kP = kPLinear * compensationVoltage;  
+        // public static double kI = kILinear * compensationVoltage;  
+        // public static double kD = kDLinear * compensationVoltage;  
 
         public static double TRACK_WIDTH = Units.inchesToMeters(24.93);   // 25.35 on practice bot, 24.93 on competition bot
 
         public static void updateDerivedConstants() {
-            kS = kSLinear * 12; 
-            kV = kVLinear * 12; 
-            kA = kALinear * 12; 
+            kS = kSLinear * compensationVoltage; 
+            kV = kVLinear * compensationVoltage; 
+            kA = kALinear * compensationVoltage; 
     
-            kP = kPLinear * 12;  
-            kI = kILinear * 12;  
-            kD = kDLinear * 12;  
+            kP = kPLinear * compensationVoltage;  
+            // kI = kILinear * compensationVoltage;  
+            // kD = kDLinear * compensationVoltage;  
         }
     }
 

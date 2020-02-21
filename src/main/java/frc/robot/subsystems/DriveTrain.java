@@ -39,7 +39,7 @@ public class DriveTrain extends SubsystemBase {
   private final WPI_TalonFX rightMotor1;
   private final WPI_TalonFX rightMotor2;
 
-  private final DifferentialDrive driveTrain;
+  private final DifferentialDrive diffDrive;
   private final DifferentialDriveOdometry odometry;
 
   private double leftEncoderZero = 0;
@@ -124,9 +124,10 @@ public class DriveTrain extends SubsystemBase {
 
     setVoltageCompensation(true);
 
-    // create the drive train AFTER configuring the motors
-    driveTrain = new DifferentialDrive(leftMotor1, rightMotor1);
-    driveTrain.setDeadband(0.05);
+    // create the differential drive AFTER configuring the motors
+    diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
+    diffDrive.setRightSideInverted(false);
+    diffDrive.setDeadband(0.05);
     
     zeroLeftEncoder();
     zeroRightEncoder();
@@ -149,7 +150,7 @@ public class DriveTrain extends SubsystemBase {
    * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is positive.
    */
   public void tankDrive(double leftPercent, double rightPercent) {
-    driveTrain.tankDrive(leftPercent, rightPercent, true);
+    diffDrive.tankDrive(leftPercent, rightPercent, true);
   }
 
   /**
@@ -159,7 +160,7 @@ public class DriveTrain extends SubsystemBase {
    * @param squareInputs If set, decreases the input sensitivity at low speeds.
    */
   public void tankDrive(double leftPercent, double rightPercent, boolean squareInputs) {
-    driveTrain.tankDrive(leftPercent, rightPercent, squareInputs);
+    diffDrive.tankDrive(leftPercent, rightPercent, squareInputs);
   }
 
   /**
@@ -167,7 +168,7 @@ public class DriveTrain extends SubsystemBase {
    * ensure that motor will not cut out due to differential drive safety.
    */
   public void feedTheDog() {
-    driveTrain.feed();
+    diffDrive.feed();
   }
 
   /**
@@ -187,7 +188,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double speedPct, double rotation) {
-    driveTrain.arcadeDrive(speedPct, rotation * 0.7, false);    // minimize how fast turn operated from joystick
+    diffDrive.arcadeDrive(speedPct, rotation * 0.7, false);    // minimize how fast turn operated from joystick
   }
 
   /**
