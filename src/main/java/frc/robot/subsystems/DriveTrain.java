@@ -413,15 +413,32 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Sets Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
+   * Resets the Talon PIDs.  Use this when re-starting the PIDs.
+   */
+  public void resetTalonPIDs() {
+    leftMotor1.setIntegralAccumulator(0);
+    rightMotor1.setIntegralAccumulator(0);
+  }
+
+  /**
+   * Sets the left Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
+   * @param targetVel Target velocity, in inches per second
+   * @param aFF Feed foward term to add to the contorl loop (-1 to +1)
+   */
+  public void setLeftTalonPIDVelocity(double targetVel, double aFF) {
+    leftMotor1.set(ControlMode.Velocity, 
+      targetVel * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF);
+    feedTheDog();
+  }
+
+  /**
+   * Sets the right Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
    * @param targetVel Target velocity, in inches per second
    * @param aFF Feed foward term to add to the contorl loop (-1 to +1)
    * @param reverseRight True = reverse velocity and FF term for right Talon
    */
-  public void setTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
+  public void setRightTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
     int direction = (reverseRight) ? -1 : 1;
-    leftMotor1.set(ControlMode.Velocity, 
-      targetVel * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF);
     rightMotor1.set(ControlMode.Velocity, 
       targetVel*direction  * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
     feedTheDog();
@@ -508,31 +525,6 @@ public class DriveTrain extends SubsystemBase {
     if (this.autoTimer == null) this.autoTimer = new Timer();
     this.autoTimer.reset();
     this.autoTimer.start();
-  }
-
-  /**
-   * Set the voltage for the left and right motors (compensates for the current bus voltage)
-   * @param leftVolts volts to output to the left motor
-   * @param rightVolts volts to output to the right motor
-   */
-  public void tankDriveVolts(double leftVolts, double rightVolts) {
-    if (autoTimer == null) {
-      this.startAutoTimer();
-    }
-
-    setLeftMotorOutput(leftVolts / compensationVoltage);
-    setRightMotorOutput(rightVolts / compensationVoltage);
-    feedTheDog();
-
-    // log.writeLog(true, "TankDriveVolts", "Update", 
-    //   "Time", autoTimer.get(), 
-    //   "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
-    //   "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
-    //   "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
-    //   "R Velocity", Units.inchesToMeters(-getRightEncoderVelocity()), 
-    //   "L Volts", leftVolts, 
-    //   "R Volts", rightVolts, 
-    //   "Gyro", getGyroRotation(), "Pose Angle", getPose().getRotation().getDegrees());
   }
 
   /**
