@@ -42,7 +42,7 @@ public final class Constants {
         public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
         public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
         
-        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2000},{15,2250},{20,2500},{25,2750},{30,3000}};
+        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2400},{15,2900},{20,2900},{25,3100},{30,3200}};
         // TODO figure out max distance of robot from target so table includes all necessary values
     }
 
