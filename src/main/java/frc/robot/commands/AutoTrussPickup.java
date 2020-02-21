@@ -22,7 +22,7 @@ public class AutoTrussPickup extends SequentialCommandGroup {
    */
   public AutoTrussPickup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     
-    // start with edge of bumpers to the right edge of the center line, intake facing towards truss, line up straight
+    // start with edge of bumpers to the left edge of the center line, intake facing towards truss, line up straight
     
     addCommands(
 
@@ -49,7 +49,10 @@ public class AutoTrussPickup extends SequentialCommandGroup {
         ),
         
       new ParallelDeadlineGroup(
-        new WaitForPowerCells(5, shooter), // wait for 5 balls to be shot
+        new ParallelRaceGroup(
+          new WaitForPowerCells(5, shooter), 
+          new Wait(7)
+        ),  // wait for 5 balls to be shot or 7 seconds
         new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot
       ),
       

@@ -308,10 +308,13 @@ public class RobotContainer {
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
     isEnabled = false;
-    //shooter.setPowerCellsShot(0);
+    shooter.setPowerCellsShot(0);
     driveTrain.setDriveModeCoast(true);
     led.setStrip("Green", 1);
-    
+    shooter.setShooterPID(0);
+    hopper.hopperSetPercentOutput(0);
+    feeder.setFeederPID(0);
+    intake.intakeSetPercentOutput(0);
   }
 
   /**

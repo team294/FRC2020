@@ -28,7 +28,7 @@ public class TrajectoryOpponentTrenchToShoot {
 	
     	try {
 
-			log.writeLogEcho(true, "AutoTrench", "Trajectory", 
+			log.writeLogEcho(true, "TrajectoryGeneration", "OpponentTrench", 
 				"trackWidth",DriveConstants.TRACK_WIDTH,
 				"maxVoltage", DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY, 
 				"kS", DriveConstants.kS, 
@@ -69,12 +69,12 @@ public class TrajectoryOpponentTrenchToShoot {
 			TrajectoryUtil.dumpTrajectory(trajectory, log);
 
 		} catch (Exception e) {
-			log.writeLogEcho(true, "AutoTrench", "Trajectory", 
+			log.writeLogEcho(true, "TrajectoryGeneration", "OpponentTrench", 
 				"ERROR in calcTrajectory", e.toString(),"exception",e);
 		}
 
 		if (trajectory != null) {
-			log.writeLogEcho(true, "AutoTrench", "Trajectory", "SUCCESS", true);
+			log.writeLogEcho(true, "TrajectoryGeneration", "OpponentTrench", "SUCCESS", true);
 		};
 	
 		return trajectory;
