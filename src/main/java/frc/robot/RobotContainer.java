@@ -54,7 +54,7 @@ public class RobotContainer {
 
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
-  
+  public double autoDelay;
 
   private boolean isEnabled = false;
   /**
@@ -135,6 +135,7 @@ public class RobotContainer {
     autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
     autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
+    SmartDashboard.putNumber("Autonomous delay", 0);
 
     // Vision Testing
     SmartDashboard.putData("Vision Zero Drive", new DriveZeroEncoders(driveTrain)); // TODO to be deleted after testing vision distance
@@ -278,6 +279,13 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
+    if(SmartDashboard.getNumber("Autonomous delay", -9999) == -9999) {
+      SmartDashboard.putNumber("Autonomous delay", 0);
+    }
+    autoDelay = SmartDashboard.getNumber("Autonomous delay", 0);
+    autoDelay = (autoDelay < 0) ? 0 : autoDelay; // make sure autoDelay isn't negative
+    autoDelay = (autoDelay > 15) ? 15 : autoDelay; // make sure autoDelay is only active during auto
+    System.out.println(autoDelay);
     return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 
