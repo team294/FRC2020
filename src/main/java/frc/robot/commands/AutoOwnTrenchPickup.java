@@ -16,22 +16,28 @@ import frc.robot.utilities.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoShootOwnTrench extends SequentialCommandGroup {
+public class AutoOwnTrenchPickup extends SequentialCommandGroup {
 
 // start with front two wheels on auto line drive frame 14 in from the right wall driver perspective
 
-  public AutoShootOwnTrench(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public AutoOwnTrenchPickup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     
     addCommands(
+
+
+      
+    
       new ParallelDeadlineGroup(
-        new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(2)
-        ),
         
+        new DriveStraight(-1.5494, 0.5, 1.0, true, driveTrain, log), // drive to edge of trench
         new ShooterSetPID(2800, shooter, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
+      
+      new ParallelRaceGroup(
+          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new Wait(2)
+        ),
 
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
@@ -45,22 +51,22 @@ public class AutoShootOwnTrench extends SequentialCommandGroup {
         new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
       ),
       new ParallelRaceGroup(
-        new DriveTurnGyro(-160, 0.8, 1, false, true, 1, driveTrain, limeLight, log), // turn towards trench
+        new DriveTurnGyro(-163, 0.8, 1, false, true, 1, driveTrain, limeLight, log), // turn towards trench
         new Wait(1.5)
       ),
       new ParallelDeadlineGroup( // drive down trench with intake
-        new DriveStraight(4.93, 0.4, 1.0, true, driveTrain, log),
+        new DriveStraight(3.2, 0.4, 1.0, true, driveTrain, log),
         new IntakeSequence(intake)
       ),
       
       //new DriveStraight(-2, 0.5, 1.0, true, driveTrain, log),
 
-      new DriveTurnGyro(160, 0.8, 1.0, false, true, 2, driveTrain, limeLight, log),
+      new DriveTurnGyro(165, 0.8, 1.0, false, true, 4, driveTrain, limeLight, log),
 
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
           new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(1)
+          new Wait(2)
         ),
         
         new ShooterSetPID(3500, shooter, led) // start shooter
