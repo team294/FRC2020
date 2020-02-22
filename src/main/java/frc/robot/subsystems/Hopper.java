@@ -21,7 +21,7 @@ public class Hopper extends SubsystemBase {
   
   public Hopper() {
     hopperMotor.configFactoryDefault();
-    hopperMotor.setInverted(false);
+    hopperMotor.setInverted(true);
     hopperMotor.setNeutralMode(NeutralMode.Brake);
     hopperMotor.configOpenloopRamp(0.15); // seconds from neutral to full
   }
