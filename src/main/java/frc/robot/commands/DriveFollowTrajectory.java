@@ -83,7 +83,8 @@ public class DriveFollowTrajectory extends CommandBase {
    *
    * @param trajectory      The trajectory to follow.
    * @param useRamsete      True = use Ramsete controller for feedback to track robot odometery to the trajectory;  False = no trajectory feedback
-   * @param usePID          True = use PIDs for feedback to track actual wheel velocities to desired wheel velocities;  False = not velocity feedback
+   * @param pidType         Specify which PIDs to use for feedback to track actual wheel velocities to desired wheel velocities.
+   * kNone = no velocity feedback, kWPILib = PID in Rio WPILib software, kTalon (best) = velocity PID on Talon
    * @param driveTrain      The driveTrain subsystem to be controlled.
    * @param log             File for logging
    */
