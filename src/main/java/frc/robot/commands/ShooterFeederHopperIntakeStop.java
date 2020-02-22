@@ -12,12 +12,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Hopper;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.LED;
 import frc.robot.subsystems.Shooter;
 
 /**
  * Command group to stop the shooter, feeder, hopper, and intake.
- * NOTE: THIS SEQUENCE NOW SETS THE SHOOTER TO 1200 RPM
  */
 public class ShooterFeederHopperIntakeStop extends SequentialCommandGroup {
   /**
@@ -25,17 +23,15 @@ public class ShooterFeederHopperIntakeStop extends SequentialCommandGroup {
    * @param feeder feeder subsystem to use
    * @param hopper hopper subsystem to use
    * @param intake intake subsystem to use
-   * @param led led subsystem to use
    */
-  public ShooterFeederHopperIntakeStop(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public ShooterFeederHopperIntakeStop(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake) {
     addCommands(
       //new FeederSetPiston(false, feeder),
       new ParallelCommandGroup(
-        // new ShooterSetVoltage(0, shooter),
-        new ShooterSetPID(1200, shooter, led),
+        new ShooterSetVoltage(0, shooter),
         new FeederSetVoltage(0, feeder),
-        new IntakeSetPercentOutput(0, intake),
-        new HopperSetPercentOutput(0, hopper)
+        new HopperSetPercentOutput(0, hopper),
+        new IntakeSetPercentOutput(0, intake)
       )
     );
   }

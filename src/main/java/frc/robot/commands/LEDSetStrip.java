@@ -47,8 +47,8 @@ public class LEDSetStrip extends CommandBase {
 	// Called when the command is initially scheduled.
 	@Override
 	public void initialize() {
-    if (intensity >= 0) led.setStrip(color, intensity, 1);
-    else led.setStrip(color, 1);
+    if (intensity >= 0) led.setStrip(color, intensity);
+    else led.setStrip(color);
   }
     
   // Called every time the scheduler runs while the command is scheduled.

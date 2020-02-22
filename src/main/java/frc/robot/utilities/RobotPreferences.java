@@ -26,29 +26,6 @@ public class RobotPreferences {
         // Add a row for each preference to read.  Example:
         // DriveConstants.kA = readDouble("DriveKA", DriveConstants.kA);
         RobotConstants.prototypeBot = readBoolean("prototypeBot", RobotConstants.prototypeBot);
-
-        DriveConstants.ticksPerInch = readDouble("Drive.ticksPerInch", DriveConstants.ticksPerInch);
-        DriveConstants.TRACK_WIDTH = readDouble("Drive.TrackWidth", DriveConstants.TRACK_WIDTH);
-
-        DriveConstants.kMaxSpeedMetersPerSecond = readDouble("Drive.kMaxSpeedMPS", DriveConstants.kMaxSpeedMetersPerSecond);
-        DriveConstants.kMaxAccelerationMetersPerSecondSquared = readDouble("Drive.kMaxAccelerationMPSS", DriveConstants.kMaxAccelerationMetersPerSecondSquared);
-        DriveConstants.kSLinear = readDouble("Drive.kSLinear", DriveConstants.kSLinear);
-        DriveConstants.kVLinear = readDouble("Drive.kVLinear", DriveConstants.kVLinear);
-        DriveConstants.kALinear = readDouble("Drive.kALinear", DriveConstants.kALinear);
-        DriveConstants.kPLinear = readDouble("Drive.kPLinear", DriveConstants.kPLinear);
-        DriveConstants.kILinear = readDouble("Drive.kILinear", DriveConstants.kILinear);
-        DriveConstants.kDLinear = readDouble("Drive.kDLinear", DriveConstants.kDLinear);
-
-        DriveConstants.kMaxAngularVelocity = readDouble("Drive.kMaxAngularVelocityDegS", DriveConstants.kMaxAngularVelocity);
-        DriveConstants.kMaxAngularAcceleration = readDouble("Drive.kMaxAngularAccelerationDegSS", DriveConstants.kMaxAngularAcceleration);
-        DriveConstants.kSAngular = readDouble("Drive.kSAngular", DriveConstants.kSAngular);
-        DriveConstants.kVAngular = readDouble("Drive.kVAngular", DriveConstants.kVAngular);
-        DriveConstants.kAAngular = readDouble("Drive.kAAngular", DriveConstants.kAAngular);
-        DriveConstants.kPAngular = readDouble("Drive.kPAngular", DriveConstants.kPAngular);
-        DriveConstants.kIAngular = readDouble("Drive.kIAngular", DriveConstants.kIAngular);
-        DriveConstants.kDAngular = readDouble("Drive.kDAngular", DriveConstants.kDAngular);
-
-        DriveConstants.updateDerivedConstants();
     }
 
     /**

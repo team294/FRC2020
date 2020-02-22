@@ -15,7 +15,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.LinearFilter;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -39,7 +38,7 @@ public class DriveTrain extends SubsystemBase {
   private final WPI_TalonFX rightMotor1;
   private final WPI_TalonFX rightMotor2;
 
-  private final DifferentialDrive diffDrive;
+  private final DifferentialDrive driveTrain;
   private final DifferentialDriveOdometry odometry;
 
   private double leftEncoderZero = 0;
@@ -68,11 +67,7 @@ public class DriveTrain extends SubsystemBase {
     // configure navX
     AHRS gyro = null;
 		try {
-      if (prototypeBot) {
-        gyro = new AHRS(I2C.Port.kMXP);
-      } else {
-        gyro = new AHRS(SerialPort.Port.kUSB);
-      }
+      gyro = new AHRS(I2C.Port.kMXP);
       gyro.zeroYaw();
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
@@ -117,33 +112,22 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.setSensorPhase(false);
     rightMotor1.setSensorPhase(false);
 
-    leftMotor1.configNeutralDeadband(0.0);
-    leftMotor2.configNeutralDeadband(0.0);
-    rightMotor1.configNeutralDeadband(0.0);
-    rightMotor2.configNeutralDeadband(0.0);
-
-    leftMotor1.configVoltageCompSaturation(compensationVoltage);
-    leftMotor2.configVoltageCompSaturation(compensationVoltage);
-    rightMotor1.configVoltageCompSaturation(compensationVoltage);
-    rightMotor2.configVoltageCompSaturation(compensationVoltage);
+    leftMotor1.configVoltageCompSaturation(12.0);
+    leftMotor2.configVoltageCompSaturation(12.0);
+    rightMotor1.configVoltageCompSaturation(12.0);
+    rightMotor2.configVoltageCompSaturation(12.0);
 
     setVoltageCompensation(true);
 
-    leftMotor1.configOpenloopRamp(0.4);
-    leftMotor2.configOpenloopRamp(0.4);
-    rightMotor1.configOpenloopRamp(0.4);
-    rightMotor2.configOpenloopRamp(0.4);
-
-    // create the differential drive AFTER configuring the motors
-    diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
-    diffDrive.setRightSideInverted(true);
-    diffDrive.setDeadband(0.0);
+    // create the drive train AFTER configuring the motors
+    driveTrain = new DifferentialDrive(leftMotor1, rightMotor1);
+    driveTrain.setDeadband(0.05);
     
     zeroLeftEncoder();
     zeroRightEncoder();
     zeroGyroRotation();
 
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-getGyroRotation()));
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
 
     // initialize angular velocity variables
     prevAng = getGyroRaw();
@@ -175,7 +159,7 @@ public class DriveTrain extends SubsystemBase {
    * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is positive.
    */
   public void tankDrive(double leftPercent, double rightPercent) {
-    diffDrive.tankDrive(leftPercent, rightPercent, true);
+    driveTrain.tankDrive(leftPercent, rightPercent, true);
   }
 
   /**
@@ -185,7 +169,7 @@ public class DriveTrain extends SubsystemBase {
    * @param squareInputs If set, decreases the input sensitivity at low speeds.
    */
   public void tankDrive(double leftPercent, double rightPercent, boolean squareInputs) {
-    diffDrive.tankDrive(leftPercent, rightPercent, squareInputs);
+    driveTrain.tankDrive(leftPercent, rightPercent, squareInputs);
   }
 
   /**
@@ -193,7 +177,7 @@ public class DriveTrain extends SubsystemBase {
    * ensure that motor will not cut out due to differential drive safety.
    */
   public void feedTheDog() {
-    diffDrive.feed();
+    driveTrain.feed();
   }
 
   /**
@@ -213,7 +197,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double speedPct, double rotation) {
-    diffDrive.arcadeDrive(speedPct, rotation * 0.7, false);    // minimize how fast turn operated from joystick
+    driveTrain.arcadeDrive(speedPct, rotation * 0.7, false);    // minimize how fast turn operated from joystick
   }
 
   /**
@@ -241,17 +225,17 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return left encoder velocity, in ticks per 100ms (+ = forward)
+   * @return left encoder velocity, in ticks per 100ms
    */
   public double getLeftEncoderVelocityRaw() {
     return leftMotor1.getSelectedSensorVelocity(0);
   }
 
   /**
-   * @return right encoder velocity, in ticks per 100ms (+ = forward)
+   * @return right encoder velocity, in ticks per 100ms
    */
   public double getRightEncoderVelocityRaw() {
-    return -rightMotor1.getSelectedSensorVelocity(0);
+    return rightMotor1.getSelectedSensorVelocity(0);
   }
 
   /**
@@ -324,14 +308,14 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return left encoder velocity, in inches per second (+ = forward)
+   * @return left encoder velocity, in inches per second
    */
   public double getLeftEncoderVelocity() {
     return encoderTicksToInches(getLeftEncoderVelocityRaw()) * 10;
   }
 
   /**
-   * @return right encoder velocity, in inches per second (+ = forward)
+   * @return right encoder velocity, in inches per second
    */
   public double getRightEncoderVelocity() {
     return encoderTicksToInches(getRightEncoderVelocityRaw()) * 10;
@@ -341,7 +325,7 @@ public class DriveTrain extends SubsystemBase {
    * @return average velocity, in inches per second
    */
   public double getAverageEncoderVelocity(){
-    return (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
+    return (-getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
   }
 
   /**
@@ -443,43 +427,18 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Resets the Talon PIDs.  Use this when re-starting the PIDs.
-   */
-  public void resetTalonPIDs() {
-    leftMotor1.setIntegralAccumulator(0);
-    rightMotor1.setIntegralAccumulator(0);
-  }
-
-  /**
-   * Sets the left Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
-   * @param targetVel Target velocity, in inches per second
-   * @param aFF Feed foward term to add to the contorl loop (-1 to +1)
-   */
-  public void setLeftTalonPIDVelocity(double targetVel, double aFF) {
-    leftMotor1.set(ControlMode.Velocity, 
-      targetVel * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF);
-    feedTheDog();
-  }
-
-  /**
-   * Sets the right Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
+   * Sets Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
    * @param targetVel Target velocity, in inches per second
    * @param aFF Feed foward term to add to the contorl loop (-1 to +1)
    * @param reverseRight True = reverse velocity and FF term for right Talon
    */
-  public void setRightTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
+  public void setTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
     int direction = (reverseRight) ? -1 : 1;
+    leftMotor1.set(ControlMode.Velocity, 
+      targetVel / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF);
     rightMotor1.set(ControlMode.Velocity, 
-      targetVel*direction  * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
+      targetVel*direction  / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
     feedTheDog();
-  }
-
-  public double getLeftOutputVoltage() {
-    return leftMotor1.getMotorOutputVoltage();
-  }
-
-  public double getLeftBusVoltage() {
-    return leftMotor1.getBusVoltage();
   }
 
   public double getLeftOutputPercent() {
@@ -533,8 +492,6 @@ public class DriveTrain extends SubsystemBase {
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
-    SmartDashboard.putNumber("Drive Right Raw", getRightEncoderRaw());
-    SmartDashboard.putNumber("Drive Left Raw", getLeftEncoderRaw());
     SmartDashboard.putNumber("Drive Right Enc", getRightEncoderInches());
     SmartDashboard.putNumber("Drive Left Enc", getLeftEncoderInches());
     SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));
@@ -588,6 +545,31 @@ public class DriveTrain extends SubsystemBase {
     if (this.autoTimer == null) this.autoTimer = new Timer();
     this.autoTimer.reset();
     this.autoTimer.start();
+  }
+
+  /**
+   * Set the voltage for the left and right motors (compensates for the current bus voltage)
+   * @param leftVolts volts to output to the left motor
+   * @param rightVolts volts to output to the right motor
+   */
+  public void tankDriveVolts(double leftVolts, double rightVolts) {
+    if (autoTimer == null) {
+      this.startAutoTimer();
+    }
+
+    leftMotor1.setVoltage(leftVolts);
+    rightMotor1.setVoltage(rightVolts);
+    feedTheDog();
+
+    log.writeLogEcho(true, "TankDriveVolts", "Update", 
+      "Time", autoTimer.get(), 
+      "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
+      "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
+      "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
+      "R Velocity", Units.inchesToMeters(getRightEncoderVelocity()), 
+      "L Volts", leftVolts, 
+      "R Volts", rightVolts, 
+      "Gyro", getGyroRotation());
   }
 
   /**

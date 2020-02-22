@@ -28,12 +28,13 @@ public class TrajectoryTrenchFromRight {
 	
     	try {
 
-			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromRight", 
+			log.writeLogEcho(true, "AutoTrench", "Trajectory", 
 				"trackWidth",DriveConstants.TRACK_WIDTH,
-				"maxVoltage", DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY, 
+				"maxVoltage", DriveConstants.MAX_VOLTAGE, 
 				"kS", DriveConstants.kS, 
 				"kV", DriveConstants.kV, 
 				"kA", DriveConstants.kA,
+				"kP", DriveConstants.kP,
 				"maxSpeed", DriveConstants.kMaxSpeedMetersPerSecond,
 				"maxAcceleration", DriveConstants.kMaxAccelerationMetersPerSecondSquared);
 
@@ -41,7 +42,7 @@ public class TrajectoryTrenchFromRight {
 			DifferentialDriveVoltageConstraint autoVoltageConstraint = new DifferentialDriveVoltageConstraint(
 				new SimpleMotorFeedforward(DriveConstants.kS, DriveConstants.kV, DriveConstants.kA), 
 				driveKinematics,
-				DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY);
+				DriveConstants.MAX_VOLTAGE);
 
 			// Create config for trajectory
 			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
@@ -67,12 +68,12 @@ public class TrajectoryTrenchFromRight {
 			TrajectoryUtil.dumpTrajectory(trajectory, log);
 
 		} catch (Exception e) {
-			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromRight", 
+			log.writeLogEcho(true, "AutoTrench", "Trajectory", 
 				"ERROR in calcTrajectory", e.toString(),"exception",e);
 		}
 
 		if (trajectory != null) {
-			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromRight", "SUCCESS", true);
+			log.writeLogEcho(true, "AutoTrench", "Trajectory", "SUCCESS", true);
 		};
 	
 		return trajectory;

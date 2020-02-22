@@ -26,7 +26,7 @@ public class TrajectoryUtil {
 			var translation = pose.getTranslation();
 			var rotation = pose.getRotation();
 
-			log.writeLog(true, "TrajectoryGeneration", "Trajectory", 
+			log.writeLog(true, "AutoTrench", "Trajectory", 
 				"Time", s.timeSeconds, 
 				"x", translation.getX(), 
 				"y", translation.getY(), 
