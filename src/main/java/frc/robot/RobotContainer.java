@@ -329,12 +329,13 @@ public class RobotContainer {
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
     led.setStrip("Purple", 1);
-    driveTrain.zeroGyroRotation();
-    driveTrain.zeroLeftEncoder();
-    driveTrain.zeroRightEncoder();
     driveTrain.startAutoTimer();
     driveTrain.setDriveModeCoast(false);
 
+    // NOTE:  Do NOT reset the gyro or encoder here!!!!!
+    // The first command in auto mode initializes before this code is run, and
+    // it will read the gyro/encoder before the reset goes into effect.
+    
     shooter.setShooterPID(1200);
   }
 
