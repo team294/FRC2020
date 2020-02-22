@@ -14,13 +14,13 @@ import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConst
 import frc.robot.Constants.DriveConstants;
 
 /**
- * Trajectory methods for going to the trench from the right position
+ * Trajectory methods for going to the trench from the center position
  */
-public class TrajectoryTrenchFromRight {
+public class TrajectoryOpponentTrenchToShoot {
 
 	/**
-	* Calculate the trajectory used to get the balls from the trench starting from
-	* the position to the right of the target (from drivers perspective)
+	* Calculate the trajectory used to get the balls from the trench starting from the center
+	* (the center is directly in front of the target)
 	*/
 	public static Trajectory calcTrajectory(FileLog log) {
 		Trajectory trajectory = null;
@@ -28,7 +28,7 @@ public class TrajectoryTrenchFromRight {
 	
     	try {
 
-			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromRight", 
+			log.writeLogEcho(true, "TrajectoryGeneration", "OpponentTrench", 
 				"trackWidth",DriveConstants.TRACK_WIDTH,
 				"maxVoltage", DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY, 
 				"kS", DriveConstants.kS, 
@@ -44,8 +44,8 @@ public class TrajectoryTrenchFromRight {
 				DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY);
 
 			// Create config for trajectory
-			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond,
-				DriveConstants.kMaxAccelerationMetersPerSecondSquared)
+			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond * 0.6,
+				DriveConstants.kMaxAccelerationMetersPerSecondSquared * 0.6)
 				.setKinematics(driveKinematics)
 				.addConstraint(autoVoltageConstraint);
 
@@ -57,28 +57,27 @@ public class TrajectoryTrenchFromRight {
 			// firstBallX = -3.1
 			// distance between first and last ball = 1.82
 			trajectory = TrajectoryGenerator.generateTrajectory(
-				new Pose2d(0, 0, new Rotation2d(180)),
+				new Pose2d(0, 0, new Rotation2d(0.0)),
 				List.of(
-					new Translation2d(-3.1, 0) 
+					//new Translation2d(-0.5, -0.5),
+					//new Translation2d(2, 0) // actual is -1.4 but move over to make sure we miss the wall
 				),
-				new Pose2d(-5.1, 0, new Rotation2d(180)), config);
+				new Pose2d(-3, -3, new Rotation2d(90.0)), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);
 
 		} catch (Exception e) {
-			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromRight", 
+			log.writeLogEcho(true, "TrajectoryGeneration", "OpponentTrench", 
 				"ERROR in calcTrajectory", e.toString(),"exception",e);
 		}
 
 		if (trajectory != null) {
-			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromRight", "SUCCESS", true);
+			log.writeLogEcho(true, "TrajectoryGeneration", "OpponentTrench", "SUCCESS", true);
 		};
 	
 		return trajectory;
 	}
-
-	
 
 	
 

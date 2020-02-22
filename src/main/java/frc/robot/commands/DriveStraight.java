@@ -70,9 +70,6 @@ public class DriveStraight extends CommandBase {
     this.maxAccelMultiplier = maxAccelMultiplier;
 
     addRequirements(driveTrain);
-
-    aFF = 0.0;
-    driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
   }
 
   // Called when the command is initially scheduled.
@@ -83,16 +80,21 @@ public class DriveStraight extends CommandBase {
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
-    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxSpeedMetersPerSecond * maxVelMultiplier, kMaxAccelerationMetersPerSecondSquared * maxAccelMultiplier); // initialize velocity
-                                                                                                                          // and accel limits
+    // initialize velocity and accel limits
+    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxSpeedMetersPerSecond * maxVelMultiplier, 
+                          kMaxAccelerationMetersPerSecondSquared * maxAccelMultiplier); 
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
-    System.out.println(tProfile.totalTime());
+    log.writeLog(false, "DriveStraight", "init", "Profile total time", tProfile.totalTime());
     
     endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
     startDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches());
     startDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches());
+    
+    aFF = 0.0;
+    driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
+    driveTrain.resetTalonPIDs();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -120,7 +122,8 @@ public class DriveStraight extends CommandBase {
 
     // driveTrain.setLeftMotorOutput(aFF);
     // driveTrain.setRightMotorOutput(aFF);
-    driveTrain.setTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
+    driveTrain.setLeftTalonPIDVelocity(Units.metersToInches(targetVel), aFF);
+    driveTrain.setRightTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
 
     log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
@@ -156,16 +159,14 @@ public class DriveStraight extends CommandBase {
     // }
     if(Math.abs(target - currDist) < 0.0125) {
       accuracyCounter++;
-      System.out.println("theoretical: " + target);
-      System.out.println("actual: " + currDist);
-      System.out.println(accuracyCounter);
+      // System.out.println("theoretical: " + target);
+      // System.out.println("actual: " + currDist);
+      // System.out.println(accuracyCounter);
+      log.writeLog(false, "DriveStraight", "WithinTolerance", "Target Dist", target, "Actual Dist", currDist, "Counter", accuracyCounter);
     } else {
       accuracyCounter = 0;
     }
 
-    if(accuracyCounter >= 5) {
-      return true;
-    }
-    return false;
+    return (accuracyCounter >= 5);
   }
 }

@@ -53,7 +53,7 @@ public class LimeLight extends SubsystemBase {
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
     pipeline = table.getEntry("pipeline");
-    SmartDashboard.putNumber("Pipeline", 2);
+    SmartDashboard.putNumber("Pipeline", 0);
 
   }
 
@@ -124,7 +124,7 @@ public class LimeLight extends SubsystemBase {
     log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12), "X", x, "Y", y);
     // SmartDashboard.putNumber("LimeLight distance", getDistance());
 
-    pipe = SmartDashboard.getNumber("Pipeline", 2);
+    pipe = SmartDashboard.getNumber("Pipeline", 0);
 
     if (getPipeline() != pipe) {
       System.out.println("Pipeline changed: " + pipe);

@@ -50,7 +50,7 @@ public class RobotContainer {
   Joystick xboxController = new Joystick(xboxControllerPort);
   Joystick leftJoystick = new Joystick(leftJoystickPort);
   Joystick rightJoystick = new Joystick(rightJoystickPort);
-  // Joystick coPanel = new Joystick(coPanelPort);
+  Joystick coPanel = new Joystick(coPanelPort);
 
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
@@ -114,7 +114,7 @@ public class RobotContainer {
 
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led));
-    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
+    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
@@ -123,12 +123,15 @@ public class RobotContainer {
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
     SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 1.0, true, driveTrain, log));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, 0.5, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, 1, driveTrain, limeLight, log));
 
     // auto selection widget
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
+    autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
+    autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
+    autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
 
     // Vision Testing
@@ -152,7 +155,7 @@ public class RobotContainer {
     Trigger xbPOVUp = new POVTrigger(xboxController, 0);
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
     // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
     // Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
@@ -163,7 +166,7 @@ public class RobotContainer {
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].whenPressed(new ShooterHoodPistonSequence(false, shooter));
     xb[2].whenPressed(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake, led));
-    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake));
+    xb[3].whenPressed(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led));
     xb[4].whenPressed(new ShooterHoodPistonSequence(true, shooter));
 
     // LB = 5, RB = 6
@@ -181,7 +184,7 @@ public class RobotContainer {
     // pov is the d-pad (up, down, left, right)
     xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake));
     xbPOVDown.whileActiveOnce(new IntakeSequence(intake));
-    // xbPOVLeft.whenActive(new Wait(0));
+    xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-0.8, intake));
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
@@ -204,7 +207,7 @@ public class RobotContainer {
 
     // joystick down button
     // left[2].whenPressed(new Wait(0));
-    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true,driveTrain, limeLight, log));
+    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true, 0.8, driveTrain, limeLight, log));
 
     // joystick up button
     // left[3].whenPressed(new Wait(0));
@@ -232,15 +235,15 @@ public class RobotContainer {
    *  16
    */
   public void configureCopanel() {
-    /*JoystickButton[] coP = new JoystickButton[20];
+    JoystickButton[] coP = new JoystickButton[20];
 
     for (int i = 1; i < coP.length; i++) {
       coP[i] = new JoystickButton(coPanel, i);
     }
 
     // top row UP, from left to right
-    coP[1].whenPressed(new Wait(0));
-    coP[3].whenPressed(new Wait(0));
+    coP[1].whenPressed(new ShooterSetVoltage(0, shooter));
+    /*coP[3].whenPressed(new Wait(0));
     coP[5].whenPressed(new Wait(0));
 
     // top row DOWN, from left to right
@@ -285,7 +288,7 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log);
+    return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 
   /**
@@ -308,9 +311,13 @@ public class RobotContainer {
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
     isEnabled = false;
-    //shooter.setPowerCellsShot(0);
-    led.setStrip("Red", 1);
+    shooter.setPowerCellsShot(0);
     driveTrain.setDriveModeCoast(true);
+    led.setStrip("Green", 1);
+    shooter.setShooterPID(0);
+    hopper.hopperSetPercentOutput(0);
+    feeder.setFeederPID(0);
+    intake.intakeSetPercentOutput(0);
   }
 
   /**
@@ -324,11 +331,15 @@ public class RobotContainer {
    */
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
-    driveTrain.zeroGyroRotation();
-    driveTrain.zeroLeftEncoder();
-    driveTrain.zeroRightEncoder();
+    led.setStrip("Purple", 1);
     driveTrain.startAutoTimer();
     driveTrain.setDriveModeCoast(false);
+
+    // NOTE:  Do NOT reset the gyro or encoder here!!!!!
+    // The first command in auto mode initializes before this code is run, and
+    // it will read the gyro/encoder before the reset goes into effect.
+    
+    shooter.setShooterPID(1200);
   }
 
   /**
@@ -342,9 +353,10 @@ public class RobotContainer {
    */
   public void teleopInit() {
     log.writeLogEcho(true, "Teleop", "Mode Init");
-    led.setStrip("Green", 1);
+    led.setStrip("Red", 1);
     isEnabled = true;
     driveTrain.setDriveModeCoast(false);
+    shooter.setShooterPID(1200);
   }
 
   public boolean getEnabled(){

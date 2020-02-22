@@ -39,19 +39,13 @@ public final class Constants {
         public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for
                                                        // counting power cells)
         public static final int dioPowerCell = 9;
-        // public static final double voltageCheck = 7.5; // voltage the shooter will
-        // reach if power cell is shot (for counting power cells)
-        // public static final double currentCheck = 60; // voltage the shooter will
-        // reach if power cell is shot (for counting power cells)
-        public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for
-                                                             // counting power cells)
-        public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem
-                                                          // unless it will have different values??
-
-        public static final double[][] distanceFromTargetToRPMTable = { { 5, 1200 }, { 10, 2000 }, { 15, 2250 },
-                { 20, 2500 }, { 25, 2750 }, { 30, 3000 } };
-        // TODO figure out max distance of robot from target so table includes all
-        // necessary values
+        // public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
+        // public static final double currentCheck = 60; // voltage the shooter will reach if power cell is shot (for counting power cells)
+        public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
+        public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
+        
+        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2400},{15,2900},{20,2900},{25,3100},{30,3200}};
+        // TODO figure out max distance of robot from target so table includes all necessary values
     }
 
     public static final class FeederConstants {
@@ -143,25 +137,27 @@ public final class Constants {
         public static double kDLinear = 0; // 0.0 on practice bot
 
         // from robot characteristics
-        public static double kS = kSLinear * 12;
-        public static double kV = kVLinear * 12;
-        public static double kA = kALinear * 12;
 
-        public static double kP = kPLinear * 12;
-        public static double kI = kILinear * 12;
-        public static double kD = kDLinear * 12;
+        public static double kS = kSLinear * compensationVoltage; 
+        public static double kV = kVLinear * compensationVoltage; 
+        public static double kA = kALinear * compensationVoltage; 
+
+        public static double kP = kPLinear * compensationVoltage;  
+        // public static double kI = kILinear * compensationVoltage;  
+        // public static double kD = kDLinear * compensationVoltage;  
 
         public static double TRACK_WIDTH = Units.inchesToMeters(24.93); // 25.35 on practice bot, 24.93 on competition
                                                                         // bot
 
         public static void updateDerivedConstants() {
-            kS = kSLinear * 12;
-            kV = kVLinear * 12;
-            kA = kALinear * 12;
 
-            kP = kPLinear * 12;
-            kI = kILinear * 12;
-            kD = kDLinear * 12;
+            kS = kSLinear * compensationVoltage; 
+            kV = kVLinear * compensationVoltage; 
+            kA = kALinear * compensationVoltage; 
+    
+            kP = kPLinear * compensationVoltage;  
+            // kI = kILinear * compensationVoltage;  
+            // kD = kDLinear * compensationVoltage;  
         }
     }
 
