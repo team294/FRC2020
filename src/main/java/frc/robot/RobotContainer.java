@@ -114,7 +114,9 @@ public class RobotContainer {
     SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
 
     // climber subsystem
-    SmartDashboard.putData("setPercent", new ClimbSetPercentOutput(0.5, climb)); // for testing the climb motor (0.5 is probably too fast)
+    SmartDashboard.putData("ClimbSetPercentOutput(0.5)", new ClimbSetPercentOutput(0.5, climb));
+    SmartDashboard.putData("ClimbPistons EXTEND", new ClimbPistonsSetPosition(true, climb));
+    SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb));
     
     // command sequences
     SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led));

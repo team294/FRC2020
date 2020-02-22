@@ -65,11 +65,14 @@ public final class Constants {
     }
 
     public static final class ClimbConstants {
-        public static final int climbMotorLeft = 45;
-        public static final int climbMotorRight = 46;
-        public static final int climbPistons = 1;
+        public static final int canClimbMotorLeft = 45;
+        public static final int canClimbMotorRight = 46;
+        public static final int pcmClimbPistonsIn = 4;
+        public static final int pcmClimbPistonsOut = 5;
         public static final double ticksPerInch = 2048; // TODO determine climb ticks per inch
+        public static final double positionTolerance = 1; // in inches TODO determine tolerance
     }
+
     public static final class LimeLightConstants {
         public static final double angleMultiplier = 1.064;
     }

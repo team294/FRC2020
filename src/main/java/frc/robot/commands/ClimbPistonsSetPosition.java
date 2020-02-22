@@ -9,21 +9,21 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
-import frc.robot.utilities.*;
 
-public class ClimbMoveArms extends CommandBase {
-
-  private boolean extended;
+/**
+ * Command to set the piston position of both climb arms.
+ */
+public class ClimbPistonsSetPosition extends CommandBase {
+  private boolean extend;
   private Climb climb;
-  private FileLog log;
+  
   /**
-   * Creates a new ClimbRaiseUp.
+   * @param extend true = extend pistons, false = retract pistons
+   * @param climb climb subsystem to use
    */
-  public ClimbMoveArms(boolean extended, Climb climb, FileLog log) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.extended = extended;
+  public ClimbPistonsSetPosition(boolean extend, Climb climb) {
+    this.extend = extend;
     this.climb = climb;
-    this.log = log;
     addRequirements(climb);
 
   }
@@ -36,7 +36,7 @@ public class ClimbMoveArms extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climb.climbPistonsSetPosition(true);
+    climb.climbPistonsSetPosition(extend);
   }
 
   // Called once the command ends or is interrupted.

@@ -10,15 +10,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climb;
 
+/**
+ * Command to set the percent output of both climb motors.
+ */
 public class ClimbSetPercentOutput extends CommandBase {
-  /**
-   * Sets both climb motors to a percent output
-   * Percent is between -1 and 1;
-   */
-  private Climb climb;
   private double percent;
+  private Climb climb;
+
+  /**
+   * @param percent percent output (0 to 1)
+   * @param climb climb subsystem to use
+   */
   public ClimbSetPercentOutput(double percent, Climb climb) {
-    // Use addRequirements() here to declare subsystem dependencies.
     this.percent = percent;
     this.climb = climb;
     addRequirements(climb);
@@ -38,7 +41,7 @@ public class ClimbSetPercentOutput extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climb.climbMotorsSetPercentOutput(0.0);
+    if (interrupted) climb.climbMotorsSetPercentOutput(0.0);
   }
 
   // Returns true when the command should end.
