@@ -57,10 +57,18 @@ public class LimeLight extends SubsystemBase {
 
   }
 
+  /**
+   * @return horizontal (x-axis) angle, in degrees, between camera crosshair and target crosshair
+   * left is negative, right is positive
+   */
   public double getXOffset() {
     return x;
   }
 
+  /**
+   * @return vertical (y-axis) angle, in degrees, between camera crosshair and target crosshair
+   * down is negative, up is positive
+   */
   public double getYOffset() {
     return y;
   }
@@ -69,11 +77,21 @@ public class LimeLight extends SubsystemBase {
     return area;
   }
 
+  /**
+   * @return distance, on the floor, from camera to target
+   * takes into account not being in line with the target
+   */
   public double getDistanceNew(){
     double myDistance = (targetHeight-cameraHeight)/((Math.tan(Math.toRadians(cameraAngle + y)))*(Math.cos(Math.toRadians(x))));
     return myDistance;
   }
 
+  /**
+   * @return distance, on the floor, from camera to target
+   * assumes camera is perfectly in line with the target
+   * used for preliminary distanceCalc tests
+   * DO NOT USE FOR ACTUAL DISTANCE CALCULATIONS, USE NEW GETDIST
+   */
   public double getDistance() {
     double myDistance = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle+y));
     return myDistance;
@@ -83,6 +101,9 @@ public class LimeLight extends SubsystemBase {
     return table.getEntry("getpipe").getDouble(0);
   }
 
+  /**
+   * @param pipeNum 0 is vision, 2 is driver cam
+   */
   public void setPipe(double pipeNum) {
     pipeline.setDouble(pipeNum);
   }
@@ -118,13 +139,14 @@ public class LimeLight extends SubsystemBase {
 
     SmartDashboard.putNumber("LimeLight x", x);
     SmartDashboard.putNumber("LimeLight y", y);
-    SmartDashboard.putNumber("Limelight dist", getDistance());
-    SmartDashboard.putNumber("Limelight new distance", getDistanceNew());
-    SmartDashboard.putNumber("Actual new dist", (-driveTrain.getAverageDistance()/12));
+    //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
+    SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
+    SmartDashboard.putNumber("Actual new dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
+    
+    // logging to graph accuracy of distance calculation, can probably be commented out after testing is done
     log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12), "X", x, "Y", y);
-    // SmartDashboard.putNumber("LimeLight distance", getDistance());
 
-    pipe = SmartDashboard.getNumber("Pipeline", 0);
+    pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
 
     if (getPipeline() != pipe) {
       System.out.println("Pipeline changed: " + pipe);
@@ -156,7 +178,8 @@ public class LimeLight extends SubsystemBase {
     log.writeLog(logWhenDisabled, "LimeLight", "Update Variables", 
       "Center Offset X", x, 
       "Center Offset Y", y,
-      "Target Area", area
+      "Target Area", area,
+      "Theoretical distance", getDistanceNew() // based on angle to target, not area of target
       //"Theoretical width", theoreticalWidth,
       //"Theoretical distance", getDistance()
       );

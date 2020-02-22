@@ -12,7 +12,7 @@ import frc.robot.subsystems.DriveTrain;
 
 public class DriveZeroEncoders extends CommandBase {
   /**
-   * Creates a new DriveZeroEncoders.
+   * Command to zero both driveTrain encoders
    */
   private DriveTrain driveTrain;
 
