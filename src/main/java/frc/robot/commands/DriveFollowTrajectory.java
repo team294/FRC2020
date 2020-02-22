@@ -43,6 +43,8 @@ public class DriveFollowTrajectory extends CommandBase {
   private final Timer m_timer = new Timer();
   private final Trajectory m_trajectory;
 
+  private Pose2d initialPose;
+
   // Note:  All constants are in ouput units of "percent power" (-1 to +1), not volts!
   private final RamseteController m_ramseteController = new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta);
   //TODO switch to Linear constants
@@ -118,6 +120,9 @@ public class DriveFollowTrajectory extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "DriveFollowTrajectory", "Init");
+    initialPose = driveTrain.getPose();
+
     m_prevTime = 0;
     var initialState = m_trajectory.sample(0);
     m_prevSpeeds = m_kinematics.toWheelSpeeds(
@@ -149,7 +154,7 @@ public class DriveFollowTrajectory extends CommandBase {
     double dt = curTime - m_prevTime;
     State desiredState = m_trajectory.sample(curTime);
 
-    Pose2d robotPose = driveTrain.getPose();
+    Pose2d robotPose = driveTrain.getPose().relativeTo(initialPose);
     DifferentialDriveWheelSpeeds robotSpeeds = driveTrain.getWheelSpeeds();
 
     DifferentialDriveWheelSpeeds targetWheelSpeeds;
@@ -193,7 +198,7 @@ public class DriveFollowTrajectory extends CommandBase {
         break;
     }
 
-    log.writeLog(true, "TankDriveVolts", "Update", 
+    log.writeLog(true, "DriveFollowTrajectory", "Update", 
       "Time", m_timer.get(), 
       "Traj X", desiredState.poseMeters.getTranslation().getX(),
       "Traj Y", desiredState.poseMeters.getTranslation().getY(),
@@ -218,6 +223,7 @@ public class DriveFollowTrajectory extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    log.writeLog(false, "DriveFollowTrajectory", "End");
     m_timer.stop();
   }
 
