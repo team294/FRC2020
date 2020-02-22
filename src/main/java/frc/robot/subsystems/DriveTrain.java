@@ -117,6 +117,11 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.setSensorPhase(false);
     rightMotor1.setSensorPhase(false);
 
+    leftMotor1.configNeutralDeadband(0.0);
+    leftMotor2.configNeutralDeadband(0.0);
+    rightMotor1.configNeutralDeadband(0.0);
+    rightMotor2.configNeutralDeadband(0.0);
+
     leftMotor1.configVoltageCompSaturation(compensationVoltage);
     leftMotor2.configVoltageCompSaturation(compensationVoltage);
     rightMotor1.configVoltageCompSaturation(compensationVoltage);
@@ -124,10 +129,15 @@ public class DriveTrain extends SubsystemBase {
 
     setVoltageCompensation(true);
 
+    leftMotor1.configOpenloopRamp(0.4);
+    leftMotor2.configOpenloopRamp(0.4);
+    rightMotor1.configOpenloopRamp(0.4);
+    rightMotor2.configOpenloopRamp(0.4);
+
     // create the differential drive AFTER configuring the motors
     diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
-    diffDrive.setRightSideInverted(false);
-    diffDrive.setDeadband(0.05);
+    diffDrive.setRightSideInverted(true);
+    diffDrive.setDeadband(0.0);
     
     zeroLeftEncoder();
     zeroRightEncoder();
