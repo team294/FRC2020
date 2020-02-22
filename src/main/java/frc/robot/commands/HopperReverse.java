@@ -34,8 +34,7 @@ public class HopperReverse extends CommandBase {
   public void initialize() {
     timerReverse.reset();
     timerForward.reset();
-    hopper.hopperSetPercentOutput(HopperConstants.hopperDefaultPercentOutput);
-    timerForward.start(); // start forward timer
+    timerReverse.start(); // start reverse timer
   }
 
   // Called every time the scheduler runs while the command is scheduled.
