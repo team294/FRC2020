@@ -42,7 +42,7 @@ public final class Constants {
         public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
         public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
         
-        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2000},{15,2250},{20,2500},{25,2750},{30,3000}};
+        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2400},{15,2900},{20,2900},{25,3100},{30,3200}};
         // TODO figure out max distance of robot from target so table includes all necessary values
     }
 
@@ -108,7 +108,7 @@ public final class Constants {
         public static double kMaxAngularAcceleration = 200; // degrees per second per second 200 on competition bot
         public static double kVAngular = 0.001; // 0.000850 on practice bot, 0.001 on competition bot
         public static double kAAngular = 0.0001;  // 0.0001 on practice bot, 0.0001 on competition bot
-        public static double kSAngular = 0.0348;   // 0.0568 on practice bot, 0.0348 on competition bot
+        public static double kSAngular = 0.0348;   // 0.0568 on practice bot, 0.0348 (try 0.0500) on competition bot
         public static double kPAngular = 0.0005;   // was 0.001
         public static double kDAngular = 0;
         public static double kIAngular = 0;
@@ -125,24 +125,16 @@ public final class Constants {
         public static double kDLinear = 0;  //0.0 on practice bot
 
         // from robot characteristics
-        public static double kS = kSLinear * 12; 
-        public static double kV = kVLinear * 12; 
-        public static double kA = kALinear * 12; 
-
-        public static double kP = kPLinear * 12;  
-        public static double kI = kILinear * 12;  
-        public static double kD = kDLinear * 12;  
+        public static double kS = kSLinear * compensationVoltage; 
+        public static double kV = kVLinear * compensationVoltage; 
+        public static double kA = kALinear * compensationVoltage; 
 
         public static double TRACK_WIDTH = Units.inchesToMeters(24.93);   // 25.35 on practice bot, 24.93 on competition bot
 
         public static void updateDerivedConstants() {
-            kS = kSLinear * 12; 
-            kV = kVLinear * 12; 
-            kA = kALinear * 12; 
-    
-            kP = kPLinear * 12;  
-            kI = kILinear * 12;  
-            kD = kDLinear * 12;  
+            kS = kSLinear * compensationVoltage; 
+            kV = kVLinear * compensationVoltage; 
+            kA = kALinear * compensationVoltage; 
         }
     }
 

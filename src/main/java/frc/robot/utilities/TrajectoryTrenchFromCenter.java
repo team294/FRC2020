@@ -28,13 +28,12 @@ public class TrajectoryTrenchFromCenter {
 	
     	try {
 
-			log.writeLogEcho(true, "AutoTrench", "Trajectory", 
+			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromCenter", 
 				"trackWidth",DriveConstants.TRACK_WIDTH,
 				"maxVoltage", DriveConstants.MAX_VOLTAGE_IN_TRAJECTORY, 
 				"kS", DriveConstants.kS, 
 				"kV", DriveConstants.kV, 
 				"kA", DriveConstants.kA,
-				"kP", DriveConstants.kP,
 				"maxSpeed", DriveConstants.kMaxSpeedMetersPerSecond,
 				"maxAcceleration", DriveConstants.kMaxAccelerationMetersPerSecondSquared);
 
@@ -61,20 +60,20 @@ public class TrajectoryTrenchFromCenter {
 				new Pose2d(0, 0, new Rotation2d(0.0)),
 				List.of(
 					//new Translation2d(-0.5, -0.5),
-					new Translation2d(2, 0) // actual is -1.4 but move over to make sure we miss the wall
+					new Translation2d(-1, 0) // actual is -1.4 but move over to make sure we miss the wall
 				),
-				new Pose2d(4, 0, new Rotation2d(0.0)), config);
+				new Pose2d(-3, 0, new Rotation2d(0.0)), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);
 
 		} catch (Exception e) {
-			log.writeLogEcho(true, "AutoTrench", "Trajectory", 
+			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromCenter", 
 				"ERROR in calcTrajectory", e.toString(),"exception",e);
 		}
 
 		if (trajectory != null) {
-			log.writeLogEcho(true, "AutoTrench", "Trajectory", "SUCCESS", true);
+			log.writeLogEcho(true, "TrajectoryGeneration", "TrenchFromCenter", "SUCCESS", true);
 		};
 	
 		return trajectory;
