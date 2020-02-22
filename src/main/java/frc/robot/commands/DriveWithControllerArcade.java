@@ -28,13 +28,6 @@ public class DriveWithControllerArcade extends CommandBase {
     leftPercent = xBoxController.getX(Hand.kRight)*.5;
     rightPercent = -xBoxController.getY(Hand.kLeft)*.5;
 
-    if (Math.abs(leftPercent) < 0.05){
-      leftPercent = 0;
-    }
-    if (Math.abs(rightPercent) < 0.05){
-      rightPercent = 0;
-    }
-
     driveTrain.arcadeDrive(leftPercent, rightPercent);
   }
 
