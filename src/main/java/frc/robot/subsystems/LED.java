@@ -9,11 +9,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+// import edu.wpi.first.wpilibj.Timer;
+// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.RobotContainer;
+// import frc.robot.RobotContainer;
 
 /******************************
  *  import frc.robot.utilities.ColorSensor;
@@ -28,8 +28,8 @@ public class LED extends SubsystemBase {
   private final int length = 48; // length of strip in pixels
   private final int firstStripLength = 16;
   private int startingInd = 0;
-  private boolean runAnimation = false;
-  private int currPattern = -1;
+  // private boolean runAnimation = false;
+  // private int currPattern = -1;
   //private String prevColor, currColor; // colors on the control panel
   //private final ColorSensor colorSensor; // Reference to the color sensor
 
