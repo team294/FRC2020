@@ -60,10 +60,10 @@ public class TrajectoryTest {
 				new Pose2d(0, 0, new Rotation2d(0.0)),
 				List.of(
 					//new Translation2d(-0.5, -0.5),
-					//new Translation2d(2, 0) // actual is -1.4 but move over to make sure we miss the wall
+					// new Translation2d(1.06, 0.44) 
 				),
-				new Pose2d(3, 0, new Rotation2d(0.0)), config);
-				// new Pose2d(1.5, 1.5, new Rotation2d(90.0)), config);
+				// new Pose2d(3, 0, new Rotation2d(0.0)), config);
+				new Pose2d(1.5, 1.5, new Rotation2d(Math.toRadians(90.0))), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);
