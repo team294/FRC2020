@@ -142,22 +142,13 @@ public final class Constants {
         public static double kV = kVLinear * compensationVoltage; 
         public static double kA = kALinear * compensationVoltage; 
 
-        public static double kP = kPLinear * compensationVoltage;  
-        // public static double kI = kILinear * compensationVoltage;  
-        // public static double kD = kDLinear * compensationVoltage;  
-
-        public static double TRACK_WIDTH = Units.inchesToMeters(24.93); // 25.35 on practice bot, 24.93 on competition
-                                                                        // bot
+        public static double TRACK_WIDTH = Units.inchesToMeters(24.93);   // 25.35 on practice bot, 24.93 on competition bot
 
         public static void updateDerivedConstants() {
 
             kS = kSLinear * compensationVoltage; 
             kV = kVLinear * compensationVoltage; 
             kA = kALinear * compensationVoltage; 
-    
-            kP = kPLinear * compensationVoltage;  
-            // kI = kILinear * compensationVoltage;  
-            // kD = kDLinear * compensationVoltage;  
         }
     }
 
