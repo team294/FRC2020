@@ -43,15 +43,14 @@ public class DriveFollowTrajectory extends CommandBase {
   private final Timer m_timer = new Timer();
   private final Trajectory m_trajectory;
 
+  private Pose2d initialPose;
+
   // Note:  All constants are in ouput units of "percent power" (-1 to +1), not volts!
   private final RamseteController m_ramseteController = new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta);
-  //TODO switch to Linear constants
-  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA);
+  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.kSLinear, DriveConstants.kVLinear ,DriveConstants.kALinear);
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(DriveConstants.TRACK_WIDTH);
-  //TODO switch to Linear constants
-  private final PIDController m_leftController = new PIDController(DriveConstants.kP, 0, 0);
-  //TODO switch to Linear constants
-  private final PIDController m_rightController = new PIDController(DriveConstants.kP, 0, 0);
+  private final PIDController m_leftController = new PIDController(DriveConstants.kPLinear, 0, 0);
+  private final PIDController m_rightController = new PIDController(DriveConstants.kPLinear, 0, 0);
 
   private DifferentialDriveWheelSpeeds m_prevSpeeds;
   private double m_prevTime;
@@ -112,12 +111,15 @@ public class DriveFollowTrajectory extends CommandBase {
   * @param log             File for logging
   */
  public DriveFollowTrajectory(Trajectory trajectory, DriveTrain driveTrain, FileLog log) {
-   this(trajectory, true, PIDType.kWPILib, driveTrain, log);
+   this(trajectory, true, PIDType.kTalon, driveTrain, log);
  }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "DriveFollowTrajectory", "Init");
+    initialPose = driveTrain.getPose();
+
     m_prevTime = 0;
     var initialState = m_trajectory.sample(0);
     m_prevSpeeds = m_kinematics.toWheelSpeeds(
@@ -149,7 +151,7 @@ public class DriveFollowTrajectory extends CommandBase {
     double dt = curTime - m_prevTime;
     State desiredState = m_trajectory.sample(curTime);
 
-    Pose2d robotPose = driveTrain.getPose();
+    Pose2d robotPose = driveTrain.getPose().relativeTo(initialPose);
     DifferentialDriveWheelSpeeds robotSpeeds = driveTrain.getWheelSpeeds();
 
     DifferentialDriveWheelSpeeds targetWheelSpeeds;
@@ -176,24 +178,23 @@ public class DriveFollowTrajectory extends CommandBase {
 
     switch (m_pidType) {
       case kNone:
-        //TODO Remove (6x) division by compensation voltage after updating constants
-        driveTrain.setLeftMotorOutput(leftOutput / DriveConstants.compensationVoltage);
-        driveTrain.setRightMotorOutput(rightOutput / DriveConstants.compensationVoltage);
+        driveTrain.setLeftMotorOutput(leftOutput);
+        driveTrain.setRightMotorOutput(rightOutput);
         break;
       case kWPILib:
         leftOutput += m_leftController.calculate(robotSpeeds.leftMetersPerSecond, leftSpeedSetpoint);
         rightOutput += m_rightController.calculate(robotSpeeds.rightMetersPerSecond, rightSpeedSetpoint);
 
-        driveTrain.setLeftMotorOutput(leftOutput / DriveConstants.compensationVoltage);
-        driveTrain.setRightMotorOutput(rightOutput / DriveConstants.compensationVoltage);
+        driveTrain.setLeftMotorOutput(leftOutput);
+        driveTrain.setRightMotorOutput(rightOutput);
         break;
       case kTalon:
-        driveTrain.setLeftTalonPIDVelocity(Units.metersToInches(leftSpeedSetpoint), leftOutput / DriveConstants.compensationVoltage);
-        driveTrain.setRightTalonPIDVelocity(Units.metersToInches(rightSpeedSetpoint), rightOutput / DriveConstants.compensationVoltage, true);
+        driveTrain.setLeftTalonPIDVelocity(Units.metersToInches(leftSpeedSetpoint), leftOutput);
+        driveTrain.setRightTalonPIDVelocity(Units.metersToInches(rightSpeedSetpoint), rightOutput, true);
         break;
     }
 
-    log.writeLog(true, "TankDriveVolts", "Update", 
+    log.writeLog(true, "DriveFollowTrajectory", "Update", 
       "Time", m_timer.get(), 
       "Traj X", desiredState.poseMeters.getTranslation().getX(),
       "Traj Y", desiredState.poseMeters.getTranslation().getY(),
@@ -218,6 +219,7 @@ public class DriveFollowTrajectory extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    log.writeLog(false, "DriveFollowTrajectory", "End");
     m_timer.stop();
   }
 
