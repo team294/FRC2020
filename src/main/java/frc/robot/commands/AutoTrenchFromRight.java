@@ -18,7 +18,7 @@ public class AutoTrenchFromRight extends SequentialCommandGroup {
   public AutoTrenchFromRight(DriveTrain driveTrain, FileLog log, Trajectory trajectory) {
 
     addCommands(
-      new DriveFollowTrajectory(trajectory, true, true, driveTrain, log)
+      new DriveFollowTrajectory(trajectory, driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false))
     );
 

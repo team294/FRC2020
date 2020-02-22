@@ -32,7 +32,7 @@ public class AutoTrenchFromCenter extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
       */
 
-        new DriveFollowTrajectory(trajectory, true, true, driveTrain, log)
+        new DriveFollowTrajectory(trajectory, driveTrain, log)
           .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)
 
         /*  ),

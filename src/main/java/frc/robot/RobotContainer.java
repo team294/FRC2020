@@ -131,6 +131,8 @@ public class RobotContainer {
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
     SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, 0.5, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, 1, driveTrain, limeLight, log));
+    SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(TrajectoryTest.calcTrajectory(log), driveTrain, log)
+        .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
     // auto selection widget
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
@@ -335,11 +337,12 @@ public class RobotContainer {
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
     led.setStrip("Purple", 1);
-    driveTrain.zeroGyroRotation();
-    driveTrain.zeroLeftEncoder();
-    driveTrain.zeroRightEncoder();
     driveTrain.startAutoTimer();
     driveTrain.setDriveModeCoast(false);
+
+    // NOTE:  Do NOT reset the gyro or encoder here!!!!!
+    // The first command in auto mode initializes before this code is run, and
+    // it will read the gyro/encoder before the reset goes into effect.
 
     shooter.setShooterPID(1200);
   }

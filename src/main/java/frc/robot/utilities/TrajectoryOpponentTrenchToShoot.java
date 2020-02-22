@@ -34,7 +34,6 @@ public class TrajectoryOpponentTrenchToShoot {
 				"kS", DriveConstants.kS, 
 				"kV", DriveConstants.kV, 
 				"kA", DriveConstants.kA,
-				"kP", DriveConstants.kP,
 				"maxSpeed", DriveConstants.kMaxSpeedMetersPerSecond,
 				"maxAcceleration", DriveConstants.kMaxAccelerationMetersPerSecondSquared);
 

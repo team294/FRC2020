@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.Trajectory.State;
+import edu.wpi.first.wpilibj.util.Units;
 
 import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 
@@ -41,20 +42,35 @@ import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 public class DriveFollowTrajectory extends CommandBase {
   private final Timer m_timer = new Timer();
   private final Trajectory m_trajectory;
+
+  private Pose2d initialPose;
+
+  // Note:  All constants are in ouput units of "percent power" (-1 to +1), not volts!
   private final RamseteController m_ramseteController = new RamseteController(DriveConstants.kRamseteB, DriveConstants.kRamseteZeta);
-  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.kS,DriveConstants.kV,DriveConstants.kA);
+  private final SimpleMotorFeedforward m_feedforward = new SimpleMotorFeedforward(DriveConstants.kSLinear, DriveConstants.kVLinear ,DriveConstants.kALinear);
   private final DifferentialDriveKinematics m_kinematics = new DifferentialDriveKinematics(DriveConstants.TRACK_WIDTH);
-  private final PIDController m_leftController = new PIDController(DriveConstants.kP, 0, 0);
-  private final PIDController m_rightController = new PIDController(DriveConstants.kP, 0, 0);
+  private final PIDController m_leftController = new PIDController(DriveConstants.kPLinear, 0, 0);
+  private final PIDController m_rightController = new PIDController(DriveConstants.kPLinear, 0, 0);
 
   private DifferentialDriveWheelSpeeds m_prevSpeeds;
   private double m_prevTime;
 
   private final boolean m_useRamsete;
-  private final boolean m_usePID;
+  private final PIDType m_pidType;
 
   private final DriveTrain driveTrain;
   private final FileLog log;
+
+  public enum PIDType {
+    kNone(0),
+    kWPILib(1),
+    kTalon(2);
+
+    @SuppressWarnings({"MemberName", "PMD.SingularField"})
+    public final int value;
+
+    PIDType(int value) { this.value = value; }
+  }
 
   /**
    * Constructs a new command that, when executed, will follow the provided trajectory.
@@ -67,14 +83,15 @@ public class DriveFollowTrajectory extends CommandBase {
    *
    * @param trajectory      The trajectory to follow.
    * @param useRamsete      True = use Ramsete controller for feedback to track robot odometery to the trajectory;  False = no trajectory feedback
-   * @param usePID          True = use PIDs for feedback to track actual wheel velocities to desired wheel velocities;  False = not velocity feedback
+   * @param pidType         Specify which PIDs to use for feedback to track actual wheel velocities to desired wheel velocities.
+   * kNone = no velocity feedback, kWPILib = PID in Rio WPILib software, kTalon (best) = velocity PID on Talon
    * @param driveTrain      The driveTrain subsystem to be controlled.
    * @param log             File for logging
    */
-  public DriveFollowTrajectory(Trajectory trajectory, boolean useRamsete, boolean usePID, DriveTrain driveTrain, FileLog log) {
+  public DriveFollowTrajectory(Trajectory trajectory, boolean useRamsete, PIDType pidType, DriveTrain driveTrain, FileLog log) {
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
     m_useRamsete = useRamsete;
-    m_usePID = usePID;
+    m_pidType = pidType;
     this.driveTrain = driveTrain;
     this.log = log;
 
@@ -95,12 +112,15 @@ public class DriveFollowTrajectory extends CommandBase {
   * @param log             File for logging
   */
  public DriveFollowTrajectory(Trajectory trajectory, DriveTrain driveTrain, FileLog log) {
-   this(trajectory, true, true, driveTrain, log);
+   this(trajectory, true, PIDType.kTalon, driveTrain, log);
  }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "DriveFollowTrajectory", "Init");
+    initialPose = driveTrain.getPose();
+
     m_prevTime = 0;
     var initialState = m_trajectory.sample(0);
     m_prevSpeeds = m_kinematics.toWheelSpeeds(
@@ -110,9 +130,18 @@ public class DriveFollowTrajectory extends CommandBase {
                 * initialState.velocityMetersPerSecond));
     m_timer.reset();
     m_timer.start();
-    if (m_usePID) {
-      m_leftController.reset();
-      m_rightController.reset();
+
+    switch (m_pidType) {
+      case kWPILib:
+        m_leftController.reset();
+        m_rightController.reset();
+        break;
+      case kTalon:
+        driveTrain.setTalonPIDConstants(DriveConstants.kPLinear, DriveConstants.kILinear, DriveConstants.kDLinear, 0);
+        driveTrain.resetTalonPIDs();
+        break;
+      case kNone:
+        break;
     }
   }
 
@@ -123,7 +152,7 @@ public class DriveFollowTrajectory extends CommandBase {
     double dt = curTime - m_prevTime;
     State desiredState = m_trajectory.sample(curTime);
 
-    Pose2d robotPose = driveTrain.getPose();
+    Pose2d robotPose = driveTrain.getPose().relativeTo(initialPose);
     DifferentialDriveWheelSpeeds robotSpeeds = driveTrain.getWheelSpeeds();
 
     DifferentialDriveWheelSpeeds targetWheelSpeeds;
@@ -136,8 +165,8 @@ public class DriveFollowTrajectory extends CommandBase {
         desiredState.velocityMetersPerSecond * desiredState.curvatureRadPerMeter) ) ;
     }
 
-    var leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
-    var rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
+    double leftSpeedSetpoint = targetWheelSpeeds.leftMetersPerSecond;
+    double rightSpeedSetpoint = targetWheelSpeeds.rightMetersPerSecond;
 
     double leftFeedforward = m_feedforward.calculate(leftSpeedSetpoint,
         (leftSpeedSetpoint - m_prevSpeeds.leftMetersPerSecond) / dt);
@@ -148,17 +177,25 @@ public class DriveFollowTrajectory extends CommandBase {
     double leftOutput = leftFeedforward;
     double rightOutput = rightFeedforward;
 
-    if (m_usePID) {
-      leftOutput += m_leftController.calculate(robotSpeeds.leftMetersPerSecond,
-          leftSpeedSetpoint);
+    switch (m_pidType) {
+      case kNone:
+        driveTrain.setLeftMotorOutput(leftOutput);
+        driveTrain.setRightMotorOutput(rightOutput);
+        break;
+      case kWPILib:
+        leftOutput += m_leftController.calculate(robotSpeeds.leftMetersPerSecond, leftSpeedSetpoint);
+        rightOutput += m_rightController.calculate(robotSpeeds.rightMetersPerSecond, rightSpeedSetpoint);
 
-      rightOutput += m_rightController.calculate(robotSpeeds.rightMetersPerSecond,
-          rightSpeedSetpoint);
+        driveTrain.setLeftMotorOutput(leftOutput);
+        driveTrain.setRightMotorOutput(rightOutput);
+        break;
+      case kTalon:
+        driveTrain.setLeftTalonPIDVelocity(Units.metersToInches(leftSpeedSetpoint), leftOutput);
+        driveTrain.setRightTalonPIDVelocity(Units.metersToInches(rightSpeedSetpoint), rightOutput, true);
+        break;
     }
 
-    driveTrain.tankDriveVolts(leftOutput, rightOutput);
-
-    log.writeLog(true, "TankDriveVolts", "Update", 
+    log.writeLog(true, "DriveFollowTrajectory", "Update", 
       "Time", m_timer.get(), 
       "Traj X", desiredState.poseMeters.getTranslation().getX(),
       "Traj Y", desiredState.poseMeters.getTranslation().getY(),
@@ -183,6 +220,7 @@ public class DriveFollowTrajectory extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    log.writeLog(false, "DriveFollowTrajectory", "End");
     m_timer.stop();
   }
 
