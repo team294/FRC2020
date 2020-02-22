@@ -129,9 +129,7 @@ public class RobotContainer {
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
     // auto selection widget
-    autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
-    autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
-    autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
+    autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.SHOOT_BACKUP);
     autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
     autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
@@ -285,7 +283,6 @@ public class RobotContainer {
     autoDelay = SmartDashboard.getNumber("Autonomous delay", 0);
     autoDelay = (autoDelay < 0) ? 0 : autoDelay; // make sure autoDelay isn't negative
     autoDelay = (autoDelay > 15) ? 15 : autoDelay; // make sure autoDelay is only active during auto
-    System.out.println(autoDelay);
     return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 

@@ -25,27 +25,18 @@ public class AutoShootBackup extends SequentialCommandGroup {
     // can start anywhere on auto line between left most pole from driver perspective and close to right edge of the field, needs to be semi lined up with target
 
     addCommands(
-      new ParallelDeadlineGroup(
-        new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(2)
-        ),
-        
+      deadline(
+        new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
         new ShooterSetPID(2800, shooter, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
 
-      new ParallelDeadlineGroup(
-        new ParallelRaceGroup(
-          new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
-          new Wait(10)
-        ), 
+      deadline(
+        new WaitForPowerCells(3, shooter).withTimeout(10), // wait for 3 power cells to be shot
         new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
       ),
-      new ParallelDeadlineGroup(
-        new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
-      ),
+        
+      new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led).withTimeout(0.1), // stop all motors
       
       new DriveStraight(-1, 0.5, 1.0, true, driveTrain, log) // back up 1 meter to get off auto line
 

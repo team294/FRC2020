@@ -26,35 +26,29 @@ public class AutoOponentTrenchPickup extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     addCommands(
-
-      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
+      
+      deadline( // ends when we reach the two balls in the trench
         new DriveStraight(3.2512, 0.5, 1.0, true, driveTrain, log), // drive forward into trench
         new IntakePistonSetPosition(true, intake), // depoy intake piston
         new IntakeSetPercentOutput(intake) // start intake 
       ),
       
-      new DriveFollowTrajectory(trajectory, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
-          .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)),
+      new DriveFollowTrajectory(trajectory, driveTrain, log), // run a path to get out of the trench and do a curve to get to shooting position 
 
-      new ParallelDeadlineGroup(
+      deadline(
           new DriveTurnGyro(120, 0.5, 1.0, false, true, 2, driveTrain, limeLight, log), // turn towards the general target
           new ShooterSetPID(3000, shooter, led) // start shooter while shooting
-        ), 
+      ),
 
-      new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(2)
-        ),
+      new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
+          
         
-      new ParallelDeadlineGroup(
+     deadline(
         new WaitForPowerCells(5, shooter),
-        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
+        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led)// shoot until we shot 5 balls
       ),
       
-      new ParallelDeadlineGroup(
-        new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
-      )
+      new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led).withTimeout(0.1) // stop all motors
       
     );
   }

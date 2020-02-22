@@ -30,7 +30,7 @@ public class ShooterFeederHopperIntakeStop extends SequentialCommandGroup {
   public ShooterFeederHopperIntakeStop(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     addCommands(
       //new FeederSetPiston(false, feeder),
-      new ParallelCommandGroup(
+      parallel(
         // new ShooterSetVoltage(0, shooter),
         new ShooterSetPID(1200, shooter, led),
         new FeederSetVoltage(0, feeder),

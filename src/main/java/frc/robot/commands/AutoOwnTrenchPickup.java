@@ -23,38 +23,25 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
   public AutoOwnTrenchPickup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     
     addCommands(
-
-
-      
     
-      new ParallelDeadlineGroup(
-        
+      deadline(
         new DriveStraight(-1.5494, 0.5, 1.0, true, driveTrain, log), // drive to edge of trench
         new ShooterSetPID(2800, shooter, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
       
-      new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(2)
-        ),
-
-      new ParallelDeadlineGroup(
-        new ParallelRaceGroup(
-          new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
-          new Wait(4)
-        ), 
+      new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
+        
+     deadline(
+        new WaitForPowerCells(3, shooter).withTimeout(4), // wait for 3 power cells to be shot
         new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
       ),
-      new ParallelDeadlineGroup(
-        new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
-      ),
-      new ParallelRaceGroup(
-        new DriveTurnGyro(-163, 0.8, 1, false, true, 1, driveTrain, limeLight, log), // turn towards trench
-        new Wait(1.5)
-      ),
-      new ParallelDeadlineGroup( // drive down trench with intake
+
+      new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led).withTimeout(0.1), // stop all motors
+
+      new DriveTurnGyro(-163, 0.8, 1, false, true, 1, driveTrain, limeLight, log).withTimeout(1.5), // turn towards trench
+    
+      deadline( // drive down trench with intake
         new DriveStraight(3.2, 0.4, 1.0, true, driveTrain, log),
         new IntakeSequence(intake)
       ),
@@ -63,28 +50,17 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
 
       new DriveTurnGyro(165, 0.8, 1.0, false, true, 4, driveTrain, limeLight, log),
 
-      new ParallelDeadlineGroup(
-        new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(2)
-        ),
-        
+      deadline(
+        new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
         new ShooterSetPID(3500, shooter, led) // start shooter
       ),
 
-      new ParallelDeadlineGroup(
-        new ParallelRaceGroup(
-          new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
-          new Wait(4)
-        ), 
+      deadline(
+        new WaitForPowerCells(3, shooter).withTimeout(4), // wait for 3 power cells to be shot
         new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // start shooter
       ),
-      new ParallelDeadlineGroup(
-        new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
-      )
 
-
+      new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led).withTimeout(0.1) // stop all motors
 
     );
   }
