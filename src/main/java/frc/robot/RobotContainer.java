@@ -76,14 +76,14 @@ public class RobotContainer {
    */
   public void configureShuffleboard() {
     // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter, led));
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter, limeLight, led));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
 
     // shooter distance to RPM test
-    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter, led));
+    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter, limeLight, led));
     SmartDashboard.putNumber("Shooter Distance", 5);
     SmartDashboard.putData("Shooter DistToRPM", new ShooterDistToRPM(shooter));
     SmartDashboard.putNumber("Shooter RPM from Dist", 0);
@@ -171,8 +171,8 @@ public class RobotContainer {
 
     // LB = 5, RB = 6
     // xb[5].whenPressed(new Wait(0));
-    xb[6].whileHeld(new ShooterSetPID(false, shooter, led)); // set shooter rpm TODO change to use distance
-    xb[6].whenReleased(new ShooterFeederHopperSequence(false, shooter, feeder, hopper, intake, led)); // shooting sequence TODO change to use distance
+    xb[6].whileHeld(new ShooterSetPID(true, shooter, limeLight, led)); // set shooter rpm TODO change to use distance
+    xb[6].whenReleased(new ShooterFeederHopperSequence(true, shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence TODO change to use distance
 
     // back = 7, start = 8
     // xb[7].whenPressed(new Wait(0));
@@ -194,8 +194,8 @@ public class RobotContainer {
   }
 
   public void configureJoystickButtons() {
-    JoystickButton[] left = new JoystickButton[2];
-    JoystickButton[] right = new JoystickButton[2];
+    JoystickButton[] left = new JoystickButton[3];
+    JoystickButton[] right = new JoystickButton[3];
 
     for (int i = 1; i < left.length; i++) {
       left[i] = new JoystickButton(leftJoystick, i);
