@@ -33,7 +33,7 @@ public class AutoOponentTrenchPickup extends SequentialCommandGroup {
         new IntakeSetPercentOutput(intake) // start intake 
       ),
       
-      new DriveFollowTrajectory(trajectory, true, true, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
+      new DriveFollowTrajectory(trajectory, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
           .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)),
 
       new ParallelDeadlineGroup(
