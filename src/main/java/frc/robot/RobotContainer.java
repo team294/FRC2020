@@ -123,8 +123,8 @@ public class RobotContainer {
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
     SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 1.0, true, driveTrain, log));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(160, 0.04, 1.0, true, true, 0.5, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnGyroFast", new DriveTurnGyro(160, 0.08, 1.0, false, true, 1, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnVision", new DriveTurnGyro(0, 0.04, 1.0, true, true, 0.5, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(181, 0.08, 1.0, false, true, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(TrajectoryTest.calcTrajectory(log), driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
