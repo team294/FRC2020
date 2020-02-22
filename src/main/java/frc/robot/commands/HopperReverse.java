@@ -13,7 +13,7 @@ import frc.robot.Constants.HopperConstants;
 import frc.robot.subsystems.Hopper;
 
 /**
- * Command to reverse the hopper every 1 second.
+ * Command to reverse the hopper periodically.
  */
 public class HopperReverse extends CommandBase {
   private Hopper hopper;
@@ -34,6 +34,7 @@ public class HopperReverse extends CommandBase {
   public void initialize() {
     timerReverse.reset();
     timerForward.reset();
+    hopper.hopperSetPercentOutput(HopperConstants.hopperDefaultPercentOutput);
     timerForward.start(); // start forward timer
   }
 
@@ -44,13 +45,13 @@ public class HopperReverse extends CommandBase {
     if (timerForward.hasPeriodPassed(1)) {
       timerReverse.start();
       timerForward.stop();
+      timerForward.reset();
       hopper.hopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput);
-      
-      // if hopper has been running reverse for 0.5 seconds, run forward and reset both timers and start forward timer
-    } else if (timerReverse.hasPeriodPassed(0.5)) {
+    }
+    // if hopper has been running reverse for 0.5 seconds, run forward and reset both timers and start forward timer
+    else if (timerReverse.hasPeriodPassed(0.5)) {
       timerReverse.stop();
       timerReverse.reset();
-      timerForward.reset();
       timerForward.start();
       hopper.hopperSetPercentOutput(HopperConstants.hopperDefaultPercentOutput);
     }

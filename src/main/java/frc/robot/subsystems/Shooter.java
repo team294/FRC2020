@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
 import frc.robot.subsystems.LED;
-import frc.robot.RobotContainer;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
