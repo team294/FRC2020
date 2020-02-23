@@ -32,7 +32,7 @@ public class DriveTurnGyro extends CommandBase {
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
-  private double startAngle; // starting angle in degrees
+  private double startAngle, targetRel; // starting angle in degrees, target angle relative to start angle
   private double currAngle, currVelocity;
   private double timeSinceStart;
   private TargetType targetType;
@@ -122,18 +122,19 @@ public class DriveTurnGyro extends CommandBase {
 
     switch (targetType) {
       case kRelative:
+        targetRel = target;
         break;
       case kAbsolute:
-        target = driveTrain.normalizeAngle(target - startAngle);
+        targetRel = driveTrain.normalizeAngle(target - startAngle);
         break;
       case kVision:
-        target = driveTrain.normalizeAngle(limeLight.getXOffset());
+        targetRel = driveTrain.normalizeAngle(limeLight.getXOffset());
         break;
     }
 
-    direction = Math.signum(target);
+    direction = Math.signum(targetRel);
 
-    tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
+    tStateFinal = new TrapezoidProfileBCR.State(targetRel, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
     // initialize velocity and accel limits
@@ -146,7 +147,7 @@ public class DriveTurnGyro extends CommandBase {
 
     pidAngVel.reset();
 
-    log.writeLog(false, "DriveTurnGyro", "initialize", "Total Time", tProfile.totalTime());
+    log.writeLog(false, "DriveTurnGyro", "initialize", "Total Time", tProfile.totalTime(), "StartAngleAbs", startAngle, "TargetAngleRel", targetRel);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -159,8 +160,8 @@ public class DriveTurnGyro extends CommandBase {
     currVelocity = driveTrain.getAngularVelocity();
     
     if (targetType == TargetType.kVision) {
-      target = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
-      tStateFinal = new TrapezoidProfileBCR.State(target, 0.0);
+      targetRel = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
+      tStateFinal = new TrapezoidProfileBCR.State(targetRel, 0.0);
     }
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
@@ -175,8 +176,8 @@ public class DriveTurnGyro extends CommandBase {
     pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
     //pFB = 0; 
 
-    driveTrain.setLeftMotorOutput(aFF + pFB);
-    driveTrain.setRightMotorOutput(-aFF - pFB);
+    driveTrain.setLeftMotorOutput(-aFF - pFB);
+    driveTrain.setRightMotorOutput(aFF + pFB);
 
     if (regenerate) {
       tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
@@ -201,9 +202,9 @@ public class DriveTurnGyro extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(target - currAngle) < angleTolerance) {
+    if(Math.abs(targetRel - currAngle) < angleTolerance) {
       accuracyCounter++;
-      // System.out.println("theoretical: " + target);
+      // System.out.println("theoretical: " + targetRel);
       // System.out.println("actual: " + currAngle);
       // System.out.println(accuracyCounter);
     } else {

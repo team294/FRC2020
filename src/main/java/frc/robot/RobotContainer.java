@@ -126,8 +126,8 @@ public class RobotContainer {
     SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 1.0, true, driveTrain, log));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
     SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 0.04, 1.0, 0.5, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 180, 0.08, 1.0, 1, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kRelative, 180, 0.08, 1.0, 1, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 90, 0.08, 1.0, 1, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kAbsolute, 90, 0.08, 1.0, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(CoordType.kRelative, TrajectoryTest.calcTrajectory(log), driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
