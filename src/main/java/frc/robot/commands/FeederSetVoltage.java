@@ -10,20 +10,19 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Feeder;
 
-/**
- * Command to set the feeder voltage.
- */
 public class FeederSetVoltage extends CommandBase {
-  private Feeder feeder;
   private double voltage;
+  private Feeder feeder;
 
   /**
+   * Set feeder voltage using parameter voltage.
+   * NOTE: this command never ends.
    * @param voltage voltage
    * @param feeder feeder subsystem to use
    */
   public FeederSetVoltage(double voltage, Feeder feeder) {
-    this.feeder = feeder;
     this.voltage = voltage;
+    this.feeder = feeder;
     addRequirements(feeder);
   }
 

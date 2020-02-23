@@ -53,12 +53,12 @@ public class AutoTrussPickup extends SequentialCommandGroup {
           new WaitForPowerCells(5, shooter), 
           new Wait(7)
         ),  // wait for 5 balls to be shot or 7 seconds
-        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot
+        new ShootSequence(3000, shooter, feeder, hopper, intake, led) // shoot
       ),
       
       new ParallelDeadlineGroup(
         new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       )
       
     );

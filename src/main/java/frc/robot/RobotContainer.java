@@ -113,8 +113,8 @@ public class RobotContainer {
     SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
 
     // command sequences
-    SmartDashboard.putData("ShooterFeederHopperSequence", new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led));
-    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led));
+    SmartDashboard.putData("ShooterFeederHopperSequence", new ShootSequence(2800, shooter, feeder, hopper, intake, led));
+    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShootSequenceStop(shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
@@ -174,7 +174,7 @@ public class RobotContainer {
     // LB = 5, RB = 6
     // xb[5].whenPressed(new Wait(0));
     xb[6].whileHeld(new ShooterSetPID(true, shooter, limeLight, led)); // set shooter rpm TODO change to use distance
-    xb[6].whenReleased(new ShooterFeederHopperSequence(true, shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence TODO change to use distance
+    xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence TODO change to use distance
 
     // back = 7, start = 8
     // xb[7].whenPressed(new Wait(0));
@@ -192,7 +192,7 @@ public class RobotContainer {
 
     // left and right triggers
     // xbLT.whenActive(new Wait(0));
-    xbRT.whenActive(new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led)); // stop motors and set shooter to low rpm
+    xbRT.whenActive(new ShootSequenceStop(shooter, feeder, hopper, intake, led)); // stop motors and set shooter to low rpm
   }
 
   public void configureJoystickButtons() {

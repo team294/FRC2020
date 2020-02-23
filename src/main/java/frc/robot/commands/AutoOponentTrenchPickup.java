@@ -48,12 +48,12 @@ public class AutoOponentTrenchPickup extends SequentialCommandGroup {
         
       new ParallelDeadlineGroup(
         new WaitForPowerCells(5, shooter),
-        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
+        new ShootSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
       ),
       
       new ParallelDeadlineGroup(
         new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       )
       
     );

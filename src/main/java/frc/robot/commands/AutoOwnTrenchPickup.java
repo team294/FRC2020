@@ -44,11 +44,11 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
           new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
           new Wait(4)
         ), 
-        new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
+        new ShootSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
       ),
       new ParallelDeadlineGroup(
         new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       ),
       new ParallelRaceGroup(
         new DriveTurnGyro(-163, 0.8, 1, false, true, 1, driveTrain, limeLight, log), // turn towards trench
@@ -77,11 +77,11 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
           new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
           new Wait(4)
         ), 
-        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // start shooter
+        new ShootSequence(3000, shooter, feeder, hopper, intake, led) // start shooter
       ),
       new ParallelDeadlineGroup(
         new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       )
 
 

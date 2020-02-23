@@ -11,19 +11,20 @@ import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Shooter;
 
-/**
- * Command group to open or close the shooter hood (with pistons).
- */
 public class ShooterHoodPistonSequence extends SequentialCommandGroup {
   /**
-   * @param close true = close the hood, false = open the hood
+   * Open or close shooter hood sequence.
+   * @param close true = close hood, false = open hood
+   * @param shooter shooter subsystem
    */
   public ShooterHoodPistonSequence(boolean close, Shooter shooter) {
     addCommands(
       new ShooterSetLockPiston(true, shooter),
+      // If closing, wait 0.5 seconds before setting hood piston. If opening, do not wait before setting hood piston.
       new ConditionalCommand(new Wait(0.5), new Wait(0), () -> close),
       new ShooterSetHoodPiston(close, shooter),
       new Wait(1),
+      // If closing, do not lock hood. If opening, lock hood (extend lock piston).
       new ConditionalCommand(new Wait(0), new ShooterSetLockPiston(false, shooter), () -> close)
     );
   }

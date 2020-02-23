@@ -12,20 +12,19 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.subsystems.Hopper;
 
-/**
- * Command to reverse the hopper periodically.
- */
 public class HopperReverse extends CommandBase {
   private Hopper hopper;
   private Timer timerReverse, timerForward;
 
   /**
-   * @param hopper hopper subsystem to use
+   * Pulse hopper by reversing it periodically.
+   * NOTE: this command never ends.
+   * @param hopper hopper subsystem
    */
   public HopperReverse(Hopper hopper) {
     this.hopper = hopper;
-    timerReverse = new Timer();
-    timerForward = new Timer();
+    this.timerReverse = new Timer();
+    this.timerForward = new Timer();
     addRequirements(hopper);
   }
 
@@ -40,14 +39,14 @@ public class HopperReverse extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // if hopper has been running forward for 1 second, run reverse and start reverse timer
+    // if hopper has been running forward for 1 second, run reverse, reset forward timer, and start reverse timer
     if (timerForward.hasPeriodPassed(1)) {
       timerReverse.start();
       timerForward.stop();
       timerForward.reset();
       hopper.hopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput);
     }
-    // if hopper has been running reverse for 0.5 seconds, run forward and reset both timers and start forward timer
+    // if hopper has been running reverse for 0.5 seconds, run forward, reset reverse timer, and start forward timer
     else if (timerReverse.hasPeriodPassed(0.5)) {
       timerReverse.stop();
       timerReverse.reset();

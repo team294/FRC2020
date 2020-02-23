@@ -11,16 +11,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.subsystems.Hopper;
 
-/**
- * Command to set the hopper percent output.
- */
 public class HopperSetPercentOutput extends CommandBase {
   private Hopper hopper;
   private double percent;
 
   /**
+   * Set hopper percent output using parameter percent.
+   * NOTE: this command immediately ends.
    * @param percent percent output (0 to 1)
-   * @param hopper hopper subsystem to use
+   * @param hopper hopper subsystem
    */
   public HopperSetPercentOutput(double percent, Hopper hopper) {
     this.hopper = hopper;
@@ -29,8 +28,9 @@ public class HopperSetPercentOutput extends CommandBase {
   }
 
   /**
-   * Set the hopper percent output to default percent output from constants.
-   * @param hopper hopper subsystem to use
+   * Set hopper percent output using default percent from constants.
+   * This command immediately ends.
+   * @param hopper hopper subsystem
    */
   public HopperSetPercentOutput(Hopper hopper) {
     this.hopper = hopper;

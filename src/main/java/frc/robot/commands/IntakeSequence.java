@@ -10,11 +10,9 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Intake;
 
-/**
- * Command group to deploy the intake and run the rollers.
- */
 public class IntakeSequence extends SequentialCommandGroup {
   /**
+   * Deploy the intake and run intake rollers in.
    * @param intake intake subsystem to use
    */
   public IntakeSequence(Intake intake) {

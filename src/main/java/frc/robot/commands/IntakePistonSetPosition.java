@@ -10,27 +10,26 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
 
-/**
- * Command to set the intake piston position.
- */
 public class IntakePistonSetPosition extends CommandBase {
   private Intake intake;
-  private boolean extend;
+  private boolean deploy;
   
   /**
-   * @param extend true = extend, false = retract
+   * Set the intake piston position.
+   * NOTE: this command immediately ends.
+   * @param deploy true = deploy, false = retract
    * @param intake intake subsystem to use
    */
-  public IntakePistonSetPosition(boolean extend, Intake intake) {
-    this.extend = extend;
+  public IntakePistonSetPosition(boolean deploy, Intake intake) {
     this.intake = intake;
+    this.deploy = deploy;
     addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.intakeSetPiston(extend);
+    intake.intakeSetPiston(deploy);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
