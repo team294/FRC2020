@@ -143,7 +143,7 @@ public class DriveTrain extends SubsystemBase {
     zeroRightEncoder();
     zeroGyroRotation();
 
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-getGyroRotation()));
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
 
     // initialize angular velocity variables
     prevAng = getGyroRaw();
@@ -339,14 +339,15 @@ public class DriveTrain extends SubsystemBase {
 
   /**
    * Gets the raw gyro angle (can be greater than 360).
+   * Angle is negated from the gyro, so that + = left and - = right
    * @return raw gyro angle, in degrees.
    */
   public double getGyroRaw() {
-    return ahrs.getAngle();
+    return -ahrs.getAngle();
   }
 
   /**
-	 * Zero the gyro position in software.
+	 * Zero the gyro position in software to the current angle.
 	 */
 	public void zeroGyroRotation() {
     yawZero = getGyroRaw(); // set yawZero to gyro angle
@@ -354,24 +355,27 @@ public class DriveTrain extends SubsystemBase {
   
   /**
 	 * Zero the gyro position in software against a specified angle.
-	 * @param currentHeading current angle compared to the zero angle
+	 * @param currentHeading current robot angle compared to the zero angle
 	 */
 	public void zeroGyroRotation(double currentHeading) {
 		// set yawZero to gryo angle, offset to currentHeading
 		yawZero = getGyroRaw() - currentHeading;
-		// System.err.println("PLZ Never Zero the Gyro Rotation it is not good");
   }
 
   /**
-	 * @return gyro angle from 180 to -180, in degrees (postitive is left negative is right)
+	 * @return gyro angle from 180 to -180, in degrees (postitive is left, negative is right)
 	 */
 	public double getGyroRotation() {
 		double angle = getGyroRaw() - yawZero;
 		// Angle will be in terms of raw gyro units (-inf,inf), so you need to convert to (-180, 180]
 		angle = normalizeAngle(angle);
-		return -angle;
+		return angle;
   }
 
+  /**
+   * @return gyro angular velocity (with some averaging to reduce noise), in degrees per second.
+   * Positive is turning left, negative is turning right.
+   */
   public double getAngularVelocity () {
     return angularVelocity;
   }
@@ -488,26 +492,25 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Drive Left Encoder", getLeftEncoderInches());
     SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
     SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
-    SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
+    SmartDashboard.putNumber("Gyro Rotation", degrees);
     SmartDashboard.putNumber("Gyro Raw", getGyroRaw());
 
-    odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
+    odometry.update(Rotation2d.fromDegrees(degrees), leftMeters, rightMeters);
 
     // track position from odometry (helpful for autos)
     var translation = odometry.getPoseMeters().getTranslation();
     SmartDashboard.putNumber("Odometry X",translation.getX());
     SmartDashboard.putNumber("Odometry Y",translation.getY());
 
-    // TODO keep in code until values can be tuned for ACTUAL 2020 robot
      // save new current value for calculating angVel
      currAng = getGyroRaw();
      currTime = System.currentTimeMillis();
  
-     // calculate angVel
+     // calculate angVel in degrees per second
      angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
  
-     // convert angVel to degrees per sec & put on SmartDashboard
-     SmartDashboard.putNumber("AngVel", angularVelocity);
+     // put on SmartDashboard
+     SmartDashboard.putNumber("Gyro Velocity", angularVelocity);
  
      // save current angVel values as previous values for next calculation
      prevAng = currAng;
@@ -552,7 +555,8 @@ public class DriveTrain extends SubsystemBase {
       "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
       "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
       "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
-      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
+      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), 
+      "Gyro Velocity", angularVelocity, "Time", System.currentTimeMillis()
       );
   }
 

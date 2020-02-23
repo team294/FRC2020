@@ -35,7 +35,8 @@ public class DriveTurnGyro extends CommandBase {
   private double startAngle; // starting angle in degrees
   private double currAngle, currVelocity;
   private double timeSinceStart;
-  private boolean useVision,useAbsoloteAngle, regenerate;
+  private TargetType targetType;
+  private boolean regenerate;
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
@@ -51,20 +52,31 @@ public class DriveTurnGyro extends CommandBase {
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
+  public enum TargetType {
+    kRelative(0),
+    kAbsolute(1),
+    kVision(2);
+
+    @SuppressWarnings({"MemberName", "PMD.SingularField"})
+    public final int value;
+
+    TargetType(int value) { this.value = value; }
+  }
+
   /**
-   * 
-   ** @param target degrees to turn from -180 (left) to 180 (right) relative to current orientation
+   * Turns the robot to a target angle.
+   * @param type kRelative (target is an angle relative to current robot facing),
+   *   kAbsolute (target is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to turn towards the goal)
    * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
    * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
-   * @param useVision true to use vison (instead of target angle)
    * @param regenerate true to regenerate profile while running
-   * @param useAbsoloteAngle true to use field angles
    * @param angleTolerance the tolerance to use for turn gyro
    * @param driveTrain drivetrain
    * @param limeLight limelight
    * @param log log
    */
-  public DriveTurnGyro(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, boolean useAbsoloteAnle, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+  public DriveTurnGyro(TargetType type, double target, double maxVelMultiplier, double maxAccelMultiplier, boolean regenerate, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
@@ -72,17 +84,33 @@ public class DriveTurnGyro extends CommandBase {
     this.target = driveTrain.normalizeAngle(target);
     this.maxVelMultiplier = maxVelMultiplier;
     this.maxAccelMultiplier = maxAccelMultiplier;
-    this.useVision = useVision;
+    this.targetType = type;
     this.regenerate = regenerate;
-    this.useAbsoloteAngle = useAbsoloteAngle;
     this.angleTolerance = angleTolerance;
 
-    addRequirements(driveTrain);
+    addRequirements(driveTrain, limeLight);
 
     aFF = 0.0;
 
     //driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
     pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
+  }
+
+  /**
+   * Turns the robot to a target angle.
+   * @param type kRelative (target is an angle relative to current robot facing),
+   *   kAbsolute (target is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to turn towards the goal)
+   * @param target degrees to turn from +180 (left) to -180 (right) [ignored for kVision]
+   * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
+   * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
+   * @param angleTolerance the tolerance to use for turn gyro
+   * @param driveTrain drivetrain
+   * @param limeLight limelight
+   * @param log log
+   */
+  public DriveTurnGyro(TargetType type, double target, double maxVelMultiplier, double maxAccelMultiplier, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+    this(type, target, maxVelMultiplier, maxAccelMultiplier, true, angleTolerance, driveTrain, limeLight, log);
   }
 
   // Called when the command is initially scheduled.
@@ -92,11 +120,15 @@ public class DriveTurnGyro extends CommandBase {
 
     startAngle = driveTrain.getGyroRotation();
 
-    if (useVision) {
-      target = driveTrain.normalizeAngle(limeLight.getXOffset());
-    }
-    else if(useAbsoloteAngle){
-      this.target = driveTrain.normalizeAngle(target - startAngle);
+    switch (targetType) {
+      case kRelative:
+        break;
+      case kAbsolute:
+        target = driveTrain.normalizeAngle(target - startAngle);
+        break;
+      case kVision:
+        target = driveTrain.normalizeAngle(limeLight.getXOffset());
+        break;
     }
 
     direction = Math.signum(target);
@@ -122,11 +154,11 @@ public class DriveTurnGyro extends CommandBase {
   public void execute() {
     currProfileTime = System.currentTimeMillis();
     // currAngle is relative to the startAngle.  +90 to -270 if turning left, -90 to +270 if turning right.
-    currAngle = driveTrain.normalizeAngle((driveTrain.getGyroRotation() - startAngle));
+    currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
     currAngle += (direction*currAngle<-90) ? direction*360.0 : 0; 
     currVelocity = driveTrain.getAngularVelocity();
     
-    if (useVision) {
+    if (targetType == TargetType.kVision) {
       target = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
       tStateFinal = new TrapezoidProfileBCR.State(target, 0.0);
     }

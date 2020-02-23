@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.*;
+import frc.robot.commands.DriveTurnGyro.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.triggers.*;
@@ -123,8 +124,9 @@ public class RobotContainer {
     SmartDashboard.putData("FullSendTurn", new DriveSetPercentOutput(1, 1, driveTrain)); // to calculate max angular velocity
     SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 1.0, true, driveTrain, log));
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
-    SmartDashboard.putData("TurnVision", new DriveTurnGyro(0, 0.04, 1.0, true, true, 0.5, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(181, 0.08, 1.0, false, true, 1, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 0.04, 1.0, 0.5, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 180, 0.08, 1.0, 1, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kRelative, 180, 0.08, 1.0, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(TrajectoryTest.calcTrajectory(log), driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
@@ -210,7 +212,7 @@ public class RobotContainer {
 
     // joystick right button
     // left[2].whenPressed(new Wait(0));
-    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true, 1, driveTrain, limeLight, log)); // turn gyro with vision
+    right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 0.04, 1.0, 1, driveTrain, limeLight, log)); // turn gyro with vision
   }
 
   /** CoPanel Layout
