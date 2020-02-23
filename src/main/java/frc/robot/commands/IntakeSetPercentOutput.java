@@ -17,7 +17,7 @@ public class IntakeSetPercentOutput extends CommandBase {
 
   /**
    * Set intake percent output using parameter percent.
-   * NOTE: this command never ends.
+   * This command never ends.
    * @param percent percent output (0 to 1)
    * @param intake intake subsystem to use
    */
@@ -29,7 +29,7 @@ public class IntakeSetPercentOutput extends CommandBase {
 
   /**
    * Set intake percent output using default percent from constants.
-   * NOTE: this command never ends.
+   * This command never ends.
    * @param intake intake subsystem to use
    */
   public IntakeSetPercentOutput(Intake intake) {

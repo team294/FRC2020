@@ -17,7 +17,7 @@ public class HopperSetPercentOutput extends CommandBase {
 
   /**
    * Set hopper percent output using parameter percent.
-   * NOTE: this command immediately ends.
+   * This command immediately ends.
    * @param percent percent output (0 to 1)
    * @param hopper hopper subsystem
    */

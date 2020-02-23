@@ -21,7 +21,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
-import frc.robot.subsystems.LED;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
@@ -31,26 +30,23 @@ public class Shooter extends SubsystemBase {
   private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonIn, pcmShooterHoodPistonOut); // piston to open and close hood
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
-  private LimeLight limeLight;
   private TemperatureCheck tempCheck;
   private final DigitalInput input = new DigitalInput(dioPowerCell);
   private LED led;
 
-  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
+  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
-  private int powerCellsShot = 0;
-  private int prevPowerCellsShot = 0;
-  //private double prevVoltage = 0;
-  //private double prevCurrent = 0;
-  private boolean prevCell = false;
+  private double voltageTarget = 1; // target shooter voltage, used to check if shooter is being set to 0 volts
+  private int cellsShot = 0; // counter of total number of power cells shot (reset when shooter is set to 0 volts)
+  private int prevCellsShot = 0; // counter of the previous number of power cells shot ()
+  private boolean prevCellState = false; // used to indicate whether triggers of photo switch are new power cells
   
-  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led, LimeLight limeLight) {
+  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
     this.led = led;
-    this.limeLight = limeLight;
 
     setLockPiston(false);
 
@@ -144,7 +140,7 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * @return measured rpm
+   * @return measured RPM
    */
   public double getMeasuredRPM() {
     measuredVelocityRaw = shooterMotorLeft.getSelectedSensorVelocity(0);
@@ -153,21 +149,21 @@ public class Shooter extends SubsystemBase {
   }
 
    /**
-   * @return Cell present
+   * @return true = power cell in shooter, false = no power cell in shooter
    */
-  public boolean getCell(){
+  public boolean getCell() {
     return !input.get();
   }
 
   /**
-   * @return power cells shot
+   * @return number of power cells shot
    */
   public int getPowerCellsShot() {
-    return powerCellsShot;
+    return cellsShot;
   }
 
-  public void setPowerCellsShot(int pCells){
-    powerCellsShot = pCells;
+  public void setPowerCellsShot(int cells) {
+    cellsShot = cells;
   }
 
   /**
@@ -200,53 +196,48 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // read PID coefficients from SmartDashboard
+    // read PID coefficients from Shuffleboard
     double ff = SmartDashboard.getNumber("Shooter FF", 0);
     double p = SmartDashboard.getNumber("Shooter P", 0);
     double i = SmartDashboard.getNumber("Shooter I", 0);
     double d = SmartDashboard.getNumber("Shooter D", 0);
 
-    
-
-    // if PID coefficients on SmartDashboard have changed, write new values to controller
+    // if PID coefficients on Shuffleboard have changed, write new values to controller
     if(ff != kFF) shooterMotorLeft.config_kF(0, ff, timeoutMs); kFF = ff;
     if(p != kP) shooterMotorLeft.config_kP(0, p, timeoutMs); kP = p;
     if(i != kI) shooterMotorLeft.config_kI(0, i, timeoutMs); kI = i;
     if(d != kD) shooterMotorLeft.config_kD(0, d, timeoutMs); kD = d;
-    
+
     measuredRPM = getMeasuredRPM();
+
+    // if photo switch is triggered and it was not previously triggered, increase
+    // counter for power cells shot and set led strip
+    if (getCell() && !prevCellState) {
+      cellsShot++;
+      led.setBallLights(cellsShot);
+    }
+
+    // if voltage target is 0, reset power cell count
+    if (voltageTarget == 0) cellsShot = 0;
+
+    // if voltage target is 0 and current number of power cells shot is not equal to
+    // previous number of power cells shot (previous is not 0), set led strip to current n
+    if(voltageTarget == 0 && cellsShot != prevCellsShot) led.setBallLights(cellsShot); 
     
+    // update Shuffleboard values
     SmartDashboard.putNumber("Shooter SetPoint RPM", setPoint * ticksPer100ms);
     SmartDashboard.putNumber("Shooter RPM", measuredRPM);
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
-    SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
-    SmartDashboard.putBoolean("Cell Present", prevCell);
-    
-    if(log.getLogRotation() == log.SHOOTER_CYCLE) {
-      updateShooterLog(false);
-    }
+    SmartDashboard.putNumber("Power Cells Shot", cellsShot);
+    SmartDashboard.putBoolean("Cell Present", prevCellState);
 
-    //if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
-    if (getCell() && !prevCell) {
-      powerCellsShot++;
-      led.setBallLights(powerCellsShot);
-    }
+    prevCellState = getCell();
+    prevCellsShot = cellsShot;
 
-    if (voltageTarget == 0) {
-      powerCellsShot = 0;
-      
-    }
-
-    if(voltageTarget == 0 && (powerCellsShot != prevPowerCellsShot)){
-      led.setBallLights(powerCellsShot);
-    }
-
-    prevCell = getCell();
-    prevPowerCellsShot = powerCellsShot;
+    if(log.getLogRotation() == log.SHOOTER_CYCLE) updateShooterLog(false);
   }
 
   /**
@@ -259,7 +250,7 @@ public class Shooter extends SubsystemBase {
       "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
       "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
       "Measured RPM", measuredRPM,
-      "Power Cell", prevCell
+      "Power Cell", prevCellState
     );
   }
 

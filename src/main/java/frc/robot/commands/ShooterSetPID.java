@@ -26,8 +26,9 @@ public class ShooterSetPID extends CommandBase {
   /**
    * Set shooter PID using parameter RPM.
    * This command ends when shooter RPM is within tolerance.
-   * @param rpm setpoint in RPM
+   * @param rpm setpoint, in RPM
    * @param shooter shooter subsystem
+   * @param led led strip (subsystem)
    */
   public ShooterSetPID(double rpm, Shooter shooter, LED led) {
     this.shooter = shooter;
@@ -44,6 +45,8 @@ public class ShooterSetPID extends CommandBase {
    * This command ends when shooter RPM is within tolerance.
    * @param rpmFromDistance true = RPM using distance from target, false = RPM using shuffleboard
    * @param shooter shooter subsystem
+   * @param limeLight limelight camera (subsystem)
+   * @param led led strip (subsystem)
    */
   public ShooterSetPID(boolean rpmFromDistance, Shooter shooter, LimeLight limeLight, LED led) {
     this.shooter = shooter;

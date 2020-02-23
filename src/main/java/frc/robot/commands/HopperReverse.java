@@ -18,7 +18,7 @@ public class HopperReverse extends CommandBase {
 
   /**
    * Pulse hopper by reversing it periodically.
-   * NOTE: this command never ends.
+   * This command never ends.
    * @param hopper hopper subsystem
    */
   public HopperReverse(Hopper hopper) {
@@ -33,7 +33,7 @@ public class HopperReverse extends CommandBase {
   public void initialize() {
     timerReverse.reset();
     timerForward.reset();
-    timerReverse.start(); // start reverse timer
+    timerReverse.start(); // start reverse timer, assuming that hopper is currently running reverse
   }
 
   // Called every time the scheduler runs while the command is scheduled.

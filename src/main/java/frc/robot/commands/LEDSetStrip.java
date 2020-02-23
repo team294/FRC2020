@@ -16,10 +16,10 @@ public class LEDSetStrip extends CommandBase {
   private double intensity;
  
   /**
-   * Only use this to turn off LEDs, at 0.5 intensity.
+   * Send a solid color to the LED strip, at 0.5 intensity.
    * This command immediately finishes.
-   * @param color string of color name (first letter capital, ex: "Blue")
-   * @param led led strip
+   * @param color string of color name, case sensitive (ex: "Blue")
+   * @param led led strip (subsystem)
    **/
 	public LEDSetStrip(String color, LED led) {
     this.led = led;
@@ -32,8 +32,8 @@ public class LEDSetStrip extends CommandBase {
    * Send a solid color to the LED strip, at parameter intensity.
    * This command immediately finishes.
    * @param color string of color name (first letter capital, ex: "Blue")
-   * @param intensity intensity (0 to 1)
-   * @param led led strip
+   * @param intensity percent intensity (0 to 1)
+   * @param led led strip (subsystem)
    **/
 	public LEDSetStrip(String color, double intensity, LED led) {
     this.led = led;

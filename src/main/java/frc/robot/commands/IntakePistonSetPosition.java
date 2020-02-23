@@ -16,9 +16,9 @@ public class IntakePistonSetPosition extends CommandBase {
   
   /**
    * Set the intake piston position.
-   * NOTE: this command immediately ends.
+   * This command immediately ends.
    * @param deploy true = deploy, false = retract
-   * @param intake intake subsystem to use
+   * @param intake intake subsystem
    */
   public IntakePistonSetPosition(boolean deploy, Intake intake) {
     this.intake = intake;

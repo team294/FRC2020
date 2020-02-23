@@ -8,7 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants;
+import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.subsystems.*;
 
@@ -20,14 +20,14 @@ public class ShootSequence extends SequentialCommandGroup {
    * @param feeder feeder subsystem
    * @param hopper hopper subsystem
    * @param intake intake subsystem
-   * @param limeLight limelight camera
-   * @param led led strip
+   * @param limeLight limelight camera (subsystem)
+   * @param led led strip (subsystem)
    */
   public ShootSequence(boolean rpmFromDistance, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, LED led) {
     addCommands( 
       new ShooterSetPID(rpmFromDistance, shooter, limeLight, led),
-      new FeederSetPID(feeder),
-      new HopperSetPercentOutput(-1 * Constants.HopperConstants.hopperDefaultPercentOutput, hopper),
+      new FeederSetPID(FeederConstants.feederDefaultRPM, feeder),
+      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, hopper),
       parallel(
         new IntakeSetPercentOutput(intake), 
         new HopperReverse(hopper)

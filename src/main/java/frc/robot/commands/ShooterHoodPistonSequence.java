@@ -17,7 +17,7 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
    * @param close true = close hood, false = open hood
    * @param shooter shooter subsystem
    */
-  public ShooterHoodPistonSequence(boolean close, Shooter shooter) {
+  public ShooterHoodPistonSequence(boolean close, Shooter shooter) { // TODO fix to have the correct naming of boolean
     addCommands(
       new ShooterSetLockPiston(true, shooter),
       // If closing, wait 0.5 seconds before setting hood piston. If opening, do not wait before setting hood piston.

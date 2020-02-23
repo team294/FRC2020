@@ -13,7 +13,7 @@ import frc.robot.subsystems.Intake;
 public class IntakeSequence extends SequentialCommandGroup {
   /**
    * Deploy the intake and run intake rollers in.
-   * @param intake intake subsystem to use
+   * @param intake intake subsystem
    */
   public IntakeSequence(Intake intake) {
     addCommands(

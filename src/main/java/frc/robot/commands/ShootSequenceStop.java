@@ -17,7 +17,7 @@ public class ShootSequenceStop extends SequentialCommandGroup {
    * @param feeder feeder subsystem
    * @param hopper hopper subsystem
    * @param intake intake subsystem
-   * @param led led strip
+   * @param led led strip (subsystem)
    */
   public ShootSequenceStop(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     addCommands(

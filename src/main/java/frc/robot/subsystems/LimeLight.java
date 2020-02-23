@@ -10,26 +10,21 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.subsystems.LED;
 import static frc.robot.Constants.LimeLightConstants.*;
 
 public class LimeLight extends SubsystemBase {
-
   private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
   private static NetworkTable table = tableInstance.getTable("limelight");
   private NetworkTableEntry tv, tx, ty, ta, pipeline;
-  public double x, y, area;
+  private double x, y, area, pipe, theoreticalWidth;
   private FileLog log;
   private LED led;
-  private DriveTrain driveTrain; // for testing distance calculation, probs can be taken out dist calc finished
-  private double pipe;
-  private double theoreticalWidth;
+  private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
 
   /*
    * Limelight settings: ~~input~~ Exposure: 2 Black level offset: 0 red balance:
@@ -41,7 +36,6 @@ public class LimeLight extends SubsystemBase {
    * send raw corners? : nah send raw contours: no crosshair mode: Single
    * crosshair x: 0 y: 0 ~~3d experimental~~ no changes
    */
-
   public LimeLight(FileLog log, LED led, DriveTrain driveTrain) {
     this.log = log;
     this.led = led;
@@ -54,11 +48,10 @@ public class LimeLight extends SubsystemBase {
     ta = table.getEntry("ta");
     pipeline = table.getEntry("pipeline");
     SmartDashboard.putNumber("Pipeline", 0);
-
   }
 
   /**
-   * @return horizontal (x-axis) angle, in degrees, between camera crosshair and target crosshair
+   * @return horizontal (x-axis) angle between camera crosshair and target crosshair, in degrees
    * left is negative, right is positive
    */
   public double getXOffset() {
@@ -66,37 +59,43 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
-   * @return vertical (y-axis) angle, in degrees, between camera crosshair and target crosshair
+   * @return vertical (y-axis) angle between camera crosshair and target crosshair, in degrees
    * down is negative, up is positive
    */
   public double getYOffset() {
     return y;
   }
 
+  /**
+   * @return area of target
+   */
   public double getArea() {
     return area;
   }
 
   /**
-   * @return distance, on the floor, from camera to target
-   * takes into account not being in line with the target
+   * Takes into account not being in line with the target.
+   * @return distance from camera to target, on the floor
    */
-  public double getDistanceNew(){
-    double myDistance = (targetHeight-cameraHeight)/((Math.tan(Math.toRadians(cameraAngle + y)))*(Math.cos(Math.toRadians(x))));
+  public double getDistanceNew() {
+    double myDistance = (targetHeight - cameraHeight) / ((Math.tan(Math.toRadians(cameraAngle + y))) * (Math.cos(Math.toRadians(x))));
     return myDistance;
   }
 
   /**
-   * @return distance, on the floor, from camera to target
-   * assumes camera is perfectly in line with the target
-   * used for preliminary distanceCalc tests
-   * DO NOT USE FOR ACTUAL DISTANCE CALCULATIONS, USE NEW GETDIST
+   * Does not take into account not being in line with the target.
+   * Assumes camera is perfectly in line with the target, and was only used
+   * for preliminary distanceCalc tests (not for actual distance calculations).
+   * @return distance from camera to target, on the floor
    */
   public double getDistance() {
-    double myDistance = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle+y));
+    double myDistance = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle + y));
     return myDistance;
   }
 
+  /**
+   * @return current pipeline number
+   */
   public double getPipeline() {
     return table.getEntry("getpipe").getDouble(0);
   }
@@ -109,21 +108,18 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
-   * chooses which pattern to display based on the x offset value from limelight
-   * returns Color2[] array
+   * Choose which LED pattern to display, based on the x offset from camera.
+   * @return Color array of the pattern
    */
   public Color[] makePattern() {
     Color[] myPattern = new Color[16];
     int patternFormula = (int) ((x + 7));
-    if (patternFormula < 0) {
-      patternFormula = 0;
-    } else if (patternFormula > 14) {
-      patternFormula = 14;
-    }
-    myPattern = LED.patternLibrary[patternFormula];
-    if (x == 0) {
-      myPattern = LED.patternLibrary[15];
-    }
+    if (patternFormula < 0) patternFormula = 0;
+    else if (patternFormula > 14) patternFormula = 14;
+
+    myPattern = LED.visionTargetLibrary[patternFormula];
+    if (x == 0) myPattern = LED.visionTargetLibrary[15];
+
     return myPattern;
   }
 
@@ -131,7 +127,7 @@ public class LimeLight extends SubsystemBase {
   public void periodic() {
     // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
 
-    // read values periodically
+    // update camera values
     x = tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
@@ -141,9 +137,9 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("LimeLight y", y);
     //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
     SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
-    SmartDashboard.putNumber("Actual new dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
+    SmartDashboard.putNumber("Actual new dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders (used to test accuracy of getDistanceNew())
     
-    // logging to graph accuracy of distance calculation, can probably be commented out after testing is done
+    // logging to graph accuracy of distance calculation TODO comment out once testing is done
     log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12), "X", x, "Y", y);
 
     pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
@@ -153,16 +149,8 @@ public class LimeLight extends SubsystemBase {
       setPipe(pipe);
     }
 
-    if (makePattern() == LED.patternLibrary[15]) {
-      led.setPattern(makePattern(), 0.1, 0);
-    } else {
-      led.setPattern(makePattern(), 0.5, 0);
-    }
-
-    // led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
-    // ledAnimation.setDelayCounter();
-
-    // updateLimeLightLog(false);
+    if (makePattern() == LED.visionTargetLibrary[15]) led.setPattern(makePattern(), 0.1, 0);
+    else led.setPattern(makePattern(), 0.5, 0);
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
       updateLimeLightLog(false);
@@ -171,7 +159,6 @@ public class LimeLight extends SubsystemBase {
 
   /**
    * Write information about limelight to fileLog.
-   * 
    * @param logWhenDisabled true = log when disabled, false = discard the string
    */
   public void updateLimeLightLog(boolean logWhenDisabled) {
@@ -182,6 +169,6 @@ public class LimeLight extends SubsystemBase {
       "Theoretical distance", getDistanceNew() // based on angle to target, not area of target
       //"Theoretical width", theoreticalWidth,
       //"Theoretical distance", getDistance()
-      );
+    );
   }
 }

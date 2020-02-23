@@ -21,10 +21,11 @@ public class FeederSetPID extends CommandBase {
 
   /**
    * Set feeder PID using parameter RPM.
-   * @param rpm setpoint in RPM
+   * This command ends when feeder RPM is within tolerance.
+   * @param rpm setpoint, in RPM
    * @param feeder feeder subsystem
    */
-  public FeederSetPID(int rpm, Feeder feeder) {
+  public FeederSetPID(double rpm, Feeder feeder) {
     this.feeder = feeder;
     this.rpm = rpm;
     this.fromShuffleboard = false;
@@ -34,6 +35,7 @@ public class FeederSetPID extends CommandBase {
 
   /**
    * Set feeder PID using RPM from shuffleboard.
+   * This command ends when feeder RPM is within tolerance.
    * @param feeder feeder subsystem
    */
   public FeederSetPID(Feeder feeder) {
@@ -49,6 +51,7 @@ public class FeederSetPID extends CommandBase {
 
   /**
    * Set feeder PID using either RPM from shuffleboard or default RPM from constants.
+   * This command ends when feeder RPM is within tolerance.
    * @param feeder feeder subsystem
    */
   public FeederSetPID(boolean fromShuffleboard, Feeder feeder) {
@@ -86,7 +89,7 @@ public class FeederSetPID extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (timer.hasPeriodPassed(0.1) && Math.abs(feeder.getFeederPIDError()) < 200) return true;
+    if (timer.hasPeriodPassed(0.1) && Math.abs(feeder.getFeederPIDError()) < 200) return true; // TODO change to not use getFeederPIDError()
     else return false;
   }
 }
