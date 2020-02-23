@@ -232,6 +232,11 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
+    SmartDashboard.putNumber("Shooter Motor 1 PercentOutput", shooterMotorLeft.getMotorOutputPercent());
+    SmartDashboard.putNumber("Shooter Motor 2 PercentOutput", shooterMotorRight.getMotorOutputPercent());
+    // SmartDashboard.putNumber("Shooter Motor 1 Voltage", shooterMotorLeft.getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Shooter Motor 2 Voltage", shooterMotorRight.getMotorOutputVoltage());
+
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
     SmartDashboard.putNumber("Power Cells Shot", cellsShot);
     SmartDashboard.putBoolean("Cell Present", prevCellState);
