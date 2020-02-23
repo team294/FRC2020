@@ -25,9 +25,9 @@ public class DriveTurnGyro extends CommandBase {
 
   private DriveTrain driveTrain; // reference to driveTrain
   private double target; // how many more degrees to the right to turn
-  private double direction;     // -1 = turn to the left, +1 = turn to the right
-  private double maxVelMultiplier; // multiplier between 0.0 and 1.0 for limiting max velocity
-  private double maxAccelMultiplier; // multiplier between 0.0 and 1.0 for limiting max acceleration
+  private double direction; // -1 = turn to the left, +1 = turn to the right
+  private double maxVel; // max velocity, between 0 and kMaxAngularVelocity in Constants
+  private double maxAccel; // max acceleration, between 0 and kMaxAngularAcceleration in Constants
   private long profileStartTime; // initial time (time of starting point)
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
@@ -37,6 +37,7 @@ public class DriveTurnGyro extends CommandBase {
   private double timeSinceStart;
   private boolean useVision;
   private boolean regenerate;
+  private boolean fromShuffleboard;
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
@@ -55,31 +56,62 @@ public class DriveTurnGyro extends CommandBase {
  /**
   * 
   * @param target degrees to turn from -180 (left) to 180 (right) relative to current orientation
-  * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
-  * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
+  * @param maxVelMultiplier   max velocity, between 0 and kMaxAngularVelocity in Constants
+  * @param maxAccelMultiplier max acceleration, between 0 and kMaxAngularAcceleration in Constants
   * @param useVision true to use vison (instead of target angle)
   * @param regenerate true to regenerate profile while running
   * @param driveTrain drivetrain
   * @param limeLight limelight
   * @param log log
   */
-  public DriveTurnGyro(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+  public DriveTurnGyro(double target, double maxVel, double maxAccel, boolean useVision, boolean regenerate, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
     this.log = log;
     this.target = driveTrain.normalizeAngle(target);
-    this.maxVelMultiplier = maxVelMultiplier;
-    this.maxAccelMultiplier = maxAccelMultiplier;
+    this.maxVel = maxVel;
+    this.maxAccel = maxAccel;
     this.useVision = useVision;
     this.regenerate = regenerate;
+    this.fromShuffleboard = false;
     this.angleTolerance = angleTolerance;
 
     addRequirements(driveTrain);
 
     aFF = 0.0;
 
-    //driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
+    pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
+  }
+
+  /**
+   * To be used when changing the target value directly from shuffleboard (not a pre-coded target)
+   * @param fromShuffleboard true means the value is being changed from shuffleboard
+   */
+  public DriveTurnGyro(boolean useVision, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
+    this.log = log;
+    this.target = 0;
+    this.maxVel = 0;
+    this.maxAccel = 0;
+    this.useVision = useVision;
+    this.regenerate = regenerate;
+    this.fromShuffleboard = true;
+    addRequirements(driveTrain);
+
+    if(SmartDashboard.getNumber("TurnGyro Manual Target Ang", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual Target Ang", 90);
+    }
+    if(SmartDashboard.getNumber("TurnGyro Manual MaxVel", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity);
+    }
+    if(SmartDashboard.getNumber("TurnGyro Manual MaxAccel", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
+    }
+    aFF = 0.0;
+
     pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
   }
 
@@ -87,6 +119,12 @@ public class DriveTurnGyro extends CommandBase {
   @Override
   public void initialize() {
     driveTrain.setDriveModeCoast(true);
+
+    if(fromShuffleboard) {
+      target = SmartDashboard.getNumber("TurnGyro Manual Target Ang", 90);
+      maxVel = SmartDashboard.getNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity);
+      maxAccel = SmartDashboard.getNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
+    }
 
     startAngle = driveTrain.getGyroRotation();
 
@@ -99,7 +137,7 @@ public class DriveTurnGyro extends CommandBase {
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
     // initialize velocity and accel limits
-    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxAngularVelocity * maxVelMultiplier, kMaxAngularAcceleration * maxAccelMultiplier); 
+    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel);
     // generate profile
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
 
