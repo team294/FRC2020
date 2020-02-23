@@ -353,23 +353,23 @@ public class DriveTrain extends SubsystemBase {
   }
   
   /**
-	 * Resets the gyro position in software to a specified angle.
-	 * @param currentHeading gyro heading to reset to, in degrees
+	 * Zero the gyro position in software against a specified angle.
+	 * @param currentHeading current angle compared to the zero angle
 	 */
-	public void setGyroRotation(double currentHeading) {
+	public void zeroGyroRotation(double currentHeading) {
 		// set yawZero to gryo angle, offset to currentHeading
 		yawZero = getGyroRaw() - currentHeading;
 		// System.err.println("PLZ Never Zero the Gyro Rotation it is not good");
   }
 
   /**
-	 * @return gyro angle from -180 to 180, in degrees
+	 * @return gyro angle from 180 to -180, in degrees (postitive is left negative is right)
 	 */
 	public double getGyroRotation() {
 		double angle = getGyroRaw() - yawZero;
 		// Angle will be in terms of raw gyro units (-inf,inf), so you need to convert to (-180, 180]
 		angle = normalizeAngle(angle);
-		return angle;
+		return -angle;
   }
 
   public double getAngularVelocity () {

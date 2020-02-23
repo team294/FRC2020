@@ -35,8 +35,7 @@ public class DriveTurnGyro extends CommandBase {
   private double startAngle; // starting angle in degrees
   private double currAngle, currVelocity;
   private double timeSinceStart;
-  private boolean useVision;
-  private boolean regenerate;
+  private boolean useVision,useAbsoloteAngle, regenerate;
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
@@ -52,18 +51,20 @@ public class DriveTurnGyro extends CommandBase {
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
- /**
-  * 
-  * @param target degrees to turn from -180 (left) to 180 (right) relative to current orientation
-  * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
-  * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
-  * @param useVision true to use vison (instead of target angle)
-  * @param regenerate true to regenerate profile while running
-  * @param driveTrain drivetrain
-  * @param limeLight limelight
-  * @param log log
-  */
-  public DriveTurnGyro(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+  /**
+   * 
+   ** @param target degrees to turn from -180 (left) to 180 (right) relative to current orientation
+   * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
+   * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
+   * @param useVision true to use vison (instead of target angle)
+   * @param regenerate true to regenerate profile while running
+   * @param useAbsoloteAngle true to use field angles
+   * @param angleTolerance the tolerance to use for turn gyro
+   * @param driveTrain drivetrain
+   * @param limeLight limelight
+   * @param log log
+   */
+  public DriveTurnGyro(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, boolean useAbsoloteAnle, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
@@ -73,6 +74,7 @@ public class DriveTurnGyro extends CommandBase {
     this.maxAccelMultiplier = maxAccelMultiplier;
     this.useVision = useVision;
     this.regenerate = regenerate;
+    this.useAbsoloteAngle = useAbsoloteAngle;
     this.angleTolerance = angleTolerance;
 
     addRequirements(driveTrain);
@@ -93,6 +95,10 @@ public class DriveTurnGyro extends CommandBase {
     if (useVision) {
       target = driveTrain.normalizeAngle(limeLight.getXOffset());
     }
+    else if(useAbsoloteAngle){
+      this.target = driveTrain.normalizeAngle(target - startAngle);
+    }
+
     direction = Math.signum(target);
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)

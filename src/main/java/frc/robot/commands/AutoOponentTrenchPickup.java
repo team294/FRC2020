@@ -27,6 +27,8 @@ public class AutoOponentTrenchPickup extends SequentialCommandGroup {
     // super(new FooCommand(), new BarCommand());
     addCommands(
 
+      new DriveZeroGyro(180, driveTrain),
+
       new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
         new DriveStraight(3.2512, 0.5, 1.0, true, driveTrain, log), // drive forward into trench
         new IntakePistonSetPosition(true, intake), // depoy intake piston
@@ -37,12 +39,12 @@ public class AutoOponentTrenchPickup extends SequentialCommandGroup {
           .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)),
 
       new ParallelDeadlineGroup(
-          new DriveTurnGyro(120, 0.5, 1.0, false, true, 2, driveTrain, limeLight, log), // turn towards the general target
+          new DriveTurnGyro(0, 0.5, 1.0, false, true, true, 2, driveTrain, limeLight, log), // turn towards the general target
           new ShooterSetPID(3000, shooter, led) // start shooter while shooting
         ), 
 
       new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(0, 0.5, 1.0, true, true, false, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
         

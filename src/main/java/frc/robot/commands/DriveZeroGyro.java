@@ -13,20 +13,29 @@ import frc.robot.subsystems.DriveTrain;
 public class DriveZeroGyro extends CommandBase {
   /**
    * Zeros gyro on the drive train
-   * TO BE USED FOR TESING ONLY (probably)
    */
 
   private DriveTrain driveTrain;
+  private double zeroAngle;
+
   public DriveZeroGyro(DriveTrain driveTrain) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    zeroAngle = 0;
+    addRequirements(driveTrain);
+  }
+
+  public DriveZeroGyro(double zeroAngle, DriveTrain driveTrain) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.driveTrain = driveTrain;
+    this.zeroAngle = zeroAngle;
     addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.zeroGyroRotation();
+    driveTrain.zeroGyroRotation(zeroAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
