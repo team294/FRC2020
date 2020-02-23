@@ -25,7 +25,7 @@ public class ShootSequenceStop extends SequentialCommandGroup {
         new ShooterSetPID(1200, shooter, led),
         new FeederSetVoltage(0, feeder),
         new IntakeSetPercentOutput(0, intake),
-        new HopperSetPercentOutput(0, hopper)
+        new HopperSetPercentOutput(0, true, hopper)
       )
     );
   }

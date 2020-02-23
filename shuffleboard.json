@@ -63,7 +63,7 @@
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Vision Zero Drive",
+                  "_source0": "network_table:///SmartDashboard/ZeroEncoders",
                   "_title": "ZeroEncoders"
                 },
                 {
@@ -116,28 +116,28 @@
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Intake Forward Calibrate",
-                  "_title": "Intake Forwards"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Intake Reverse Calibrate",
-                  "_title": "Intake Backwards"
-                },
-                {
-                  "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Intake STOP",
                   "_title": "Intake STOP"
                 },
                 {
                   "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Intake Forward Calibrate",
+                  "_title": "Intake Roll IN"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Intake Reverse Calibrate",
+                  "_title": "Intake Roll OUT"
+                },
+                {
+                  "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
-                  "_title": "Intake EXTEND"
+                  "_title": "IntakePiston EXTEND"
                 },
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
-                  "_title": "Intake RETRACT"
+                  "_title": "IntakePiston RETRACT"
                 }
               ]
             }
@@ -174,12 +174,12 @@
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Hopper Forward Calibrate",
-                  "_title": "Hopper Forwards"
+                  "_title": "Hopper Roll IN"
                 },
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Hopper Reverse Calibrate",
-                  "_title": "Hopper Backwards"
+                  "_title": "Hopper Roll OUT"
                 },
                 {
                   "_type": "Command",
@@ -210,6 +210,11 @@
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Power Cells Shot",
                   "_title": "Power Cells Shot"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
+                  "_title": "Shooter RPM"
                 },
                 {
                   "_type": "Grid Layout",
@@ -250,62 +255,29 @@
                   }
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
-                  "_title": "Shooter RPM"
-                },
-                {
-                  "_type": "Grid Layout",
-                  "_title": "Hood",
-                  "Layout/Number of columns": 2,
-                  "Layout/Number of rows": 1,
-                  "Layout/Label position": "BOTTOM",
-                  "_children": {
-                    "0,0": {
-                      "_type": "Command",
-                      "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
-                      "_title": "Hood OPEN"
-                    },
-                    "1,0": {
-                      "_type": "Command",
-                      "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE",
-                      "_title": "Hood CLOSE"
-                    }
-                  }
-                },
-                {
-                  "_type": "Grid Layout",
-                  "_title": "Lock",
-                  "Layout/Number of columns": 2,
-                  "Layout/Number of rows": 1,
-                  "Layout/Label position": "BOTTOM",
-                  "_children": {
-                    "0,0": {
-                      "_type": "Command",
-                      "_source0": "network_table:///SmartDashboard/Shooter LOCK",
-                      "_title": "LOCK"
-                    },
-                    "1,0": {
-                      "_type": "Command",
-                      "_source0": "network_table:///SmartDashboard/Shooter UNLOCK",
-                      "_title": "UNLOCK"
-                    }
-                  }
-                },
-                {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter Distance SetPoint",
-                  "_title": "Shooter Distance SetPoint"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter Foward Calibrate",
-                  "_title": "Shooter Fowards"
+                  "_source0": "network_table:///SmartDashboard/Shooter Forward Calibrate",
+                  "_title": "Shooter FORWARD"
                 },
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Shooter STOP",
                   "_title": "Shooter STOP"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
+                  "_title": "Hood OPEN"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, LOCK",
+                  "_title": "Hood CLOSE, LOCK"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, UNLOCK",
+                  "_title": "Hood CLOSE, UNLOCK"
                 }
               ]
             }
@@ -397,7 +369,7 @@
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Feeder Forward Calibrate",
-                  "_title": "Feeder Forwards"
+                  "_title": "Feeder IN"
                 },
                 {
                   "_type": "Command",
@@ -442,20 +414,30 @@
               "_title": "Clear Faults"
             }
           },
-          "5,3": {
+          "5,2": {
             "size": [
               2,
               2
             ],
             "content": {
               "_type": "List Layout",
-              "_title": "Shooting Sequences",
+              "_title": "Shoot Sequences",
               "Layout/Label position": "LEFT",
               "_children": [
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
-                  "_title": "RPM Input"
+                  "_source0": "network_table:///SmartDashboard/ShootSequence DIST",
+                  "_title": "ShootSequence DIST"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence 2800",
+                  "_title": "ShootSequence 2800"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence STOP",
+                  "_title": "ShootSequence STOP"
                 }
               ]
             }
@@ -470,17 +452,6 @@
               "_title": "Climb",
               "Layout/Label position": "BOTTOM",
               "_children": []
-            }
-          },
-          "5,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
-              "_title": "ShooterFeederHopperIntakeStop"
             }
           }
         }

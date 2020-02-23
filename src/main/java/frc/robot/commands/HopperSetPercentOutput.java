@@ -14,27 +14,31 @@ import frc.robot.subsystems.Hopper;
 public class HopperSetPercentOutput extends CommandBase {
   private Hopper hopper;
   private double percent;
+  private boolean end;
 
   /**
    * Set hopper percent output using parameter percent.
-   * This command immediately ends.
    * @param percent percent output (0 to 1)
+   * @param end true = end command immediately, false = never end command
    * @param hopper hopper subsystem
    */
-  public HopperSetPercentOutput(double percent, Hopper hopper) {
+  public HopperSetPercentOutput(double percent, boolean end, Hopper hopper) {
     this.hopper = hopper;
     this.percent = percent;
+    this.end = end;
     addRequirements(hopper);
   }
 
   /**
    * Set hopper percent output using default percent from constants.
    * This command immediately ends.
+   * @param end true = end command immediately, false = never end command
    * @param hopper hopper subsystem
    */
-  public HopperSetPercentOutput(Hopper hopper) {
+  public HopperSetPercentOutput(boolean end, Hopper hopper) {
     this.hopper = hopper;
     this.percent = HopperConstants.hopperDefaultPercentOutput;
+    this.end = end;
     addRequirements(hopper);
   }
 
@@ -58,6 +62,7 @@ public class HopperSetPercentOutput extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    if (end) return true;
+    else return false;
   }
 }

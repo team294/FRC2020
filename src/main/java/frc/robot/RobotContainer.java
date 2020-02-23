@@ -71,8 +71,6 @@ public class RobotContainer {
     // shooter subsystem
     SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter, limeLight, led));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
-    SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
-    SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
     SmartDashboard.putData("Shooter Forward Calibrate", new ShooterSetVoltage(5, shooter));
 
@@ -96,9 +94,9 @@ public class RobotContainer {
     SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, intake));
 
     // hopper subsystem
-    SmartDashboard.putData("Hopper Forward Calibrate", new HopperSetPercentOutput(0.5, hopper));
-    SmartDashboard.putData("Hopper Reverse Calibrate", new HopperSetPercentOutput(-0.5, hopper));
-    SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, hopper));
+    SmartDashboard.putData("Hopper Forward Calibrate", new HopperSetPercentOutput(0.5, false, hopper));
+    SmartDashboard.putData("Hopper Reverse Calibrate", new HopperSetPercentOutput(-0.5, false, hopper));
+    SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, false, hopper));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
@@ -107,7 +105,6 @@ public class RobotContainer {
     // command sequences
     SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShootSequence DIST", new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led));
-    SmartDashboard.putData("ShootSequence MANUAL", new ShootSequence(false, shooter, feeder, hopper, intake, limeLight, led));
     SmartDashboard.putData("ShootSequence STOP", new ShootSequenceStop(shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, false, shooter));
     SmartDashboard.putData("ShooterHood CLOSE, LOCK", new ShooterHoodPistonSequence(false, true, shooter));
@@ -197,7 +194,7 @@ public class RobotContainer {
     // pov is the d-pad (up, down, left, right)
     xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake)); // retract intake
     xbPOVDown.whileActiveOnce(new IntakeSequence(intake)); // deploy intake and run rollers in
-    xbPOVLeft.whenActive(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
+    xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers

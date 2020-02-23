@@ -171,14 +171,14 @@ public class Shooter extends SubsystemBase {
   /**
    * Use distance from the target to calculate target RPM. A slope is created between the 
    * two closest values in the table to the parameter distance to calculate the target RPM.
-   * This method return the min RPM in the table if the robot is less than 5 feet from the target, 
+   * This method returns the default RPM if the robot is less than 5 feet from the target, 
    * and the max RPM in the table if the robot is more than 30 feet from the target.
    * @param distance distance from target (as per vision data), in feet
    * @return target RPM for shooter to make it into the target
    */
   public double distanceFromTargetToRPM(double distance) {
     int len = distanceFromTargetToRPMTable.length;
-    if(distance < distanceFromTargetToRPMTable[0][0]) return distanceFromTargetToRPMTable[0][1];
+    if(distance < distanceFromTargetToRPMTable[0][0]) return shooterDefaultRPM; /*return distanceFromTargetToRPMTable[0][1];*/
     if(distance > distanceFromTargetToRPMTable[len-1][0]) return distanceFromTargetToRPMTable[len-1][1];
     int leftBound = 0;
 

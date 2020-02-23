@@ -123,10 +123,9 @@ public class LimeLight extends SubsystemBase {
     }
 
     myPattern = LED.visionTargetLibrary[patternFormula];
-    if (seesTarget()) {
+    if (!seesTarget()) {
       myPattern = LED.visionTargetLibrary[15];
     }
-    
     return myPattern;
   }
 

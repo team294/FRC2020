@@ -27,7 +27,7 @@ public class ShootSequence extends SequentialCommandGroup {
     addCommands( 
       new ShooterSetPID(rpmFromDistance, shooter, limeLight, led),
       new FeederSetPID(FeederConstants.feederDefaultRPM, feeder),
-      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, hopper),
+      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper),
       parallel(
         new IntakeSetPercentOutput(intake), 
         new HopperReverse(hopper)
@@ -48,7 +48,7 @@ public class ShootSequence extends SequentialCommandGroup {
     addCommands( 
       new ShooterSetPID(rpm, shooter, led),
       new FeederSetPID(feeder),
-      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, hopper),
+      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper),
       parallel(
         new IntakeSetPercentOutput(intake), 
         new HopperReverse(hopper)
