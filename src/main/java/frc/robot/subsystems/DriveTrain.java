@@ -570,7 +570,7 @@ public class DriveTrain extends SubsystemBase {
      if(log.getLogRotation() == log.DRIVE_CYCLE) {
       updateDriveLog(false);
       if(!isGyroReading()) {
-        
+        RobotPreferences.recordStickyFaults("Gyro", log);
       }
     }
 
