@@ -74,7 +74,7 @@ public class RobotContainer {
     SmartDashboard.putData("Shooter UNLOCK", new ShooterSetLockPiston(true, shooter));
     SmartDashboard.putData("Shooter LOCK", new ShooterSetLockPiston(false, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
-    SmartDashboard.putData("Shooter Foward Calibrate", new ShooterSetVoltage(5, shooter));
+    SmartDashboard.putData("Shooter Forward Calibrate", new ShooterSetVoltage(5, shooter));
 
     // shooter distance to RPM test
     SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter, limeLight, led));
@@ -105,8 +105,10 @@ public class RobotContainer {
     SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
 
     // command sequences
-    SmartDashboard.putData("ShooterFeederHopperSequence", new ShootSequence(2800, shooter, feeder, hopper, intake, led));
-    SmartDashboard.putData("ShooterFeederHopperIntakeStop", new ShootSequenceStop(shooter, feeder, hopper, intake, led));
+    SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led));
+    SmartDashboard.putData("ShootSequence DIST", new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led));
+    SmartDashboard.putData("ShootSequence MANUAL", new ShootSequence(false, shooter, feeder, hopper, intake, limeLight, led));
+    SmartDashboard.putData("ShootSequence STOP", new ShootSequenceStop(shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
