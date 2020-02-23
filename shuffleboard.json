@@ -1,7 +1,7 @@
 {
   "tabPane": [
     {
-      "title": "Dashboard",
+      "title": "Pit",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
       "widgetPane": {
@@ -10,7 +10,609 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
+          "11,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "DriveTrain",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Drive isGyroReading",
+                  "_title": "Gyro Working",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Encoders",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "TOP",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Drive Left Enc",
+                      "_title": "Left Enc"
+                    },
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Drive Right Enc",
+                      "_title": "Right Enc"
+                    }
+                  }
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Gyro Rotation",
+                  "_title": "Gyro Angle"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive AngVel",
+                  "_title": "Angular Velocity"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ZeroGyro",
+                  "_title": "ZeroGyro"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Vision Zero Drive",
+                  "_title": "ZeroEncoders"
+                },
+                {
+                  "_type": "Number Slider",
+                  "_source0": "network_table:///SmartDashboard/Drive Left Velocity",
+                  "_title": "Left Velocity",
+                  "Slider Settings/Min": -200.0,
+                  "Slider Settings/Max": 200.0,
+                  "Slider Settings/Block increment": 1.0
+                },
+                {
+                  "_type": "Number Slider",
+                  "_source0": "network_table:///SmartDashboard/Drive Right Velocity",
+                  "_title": "Right Velocity",
+                  "Slider Settings/Min": -200.0,
+                  "Slider Settings/Max": 200.0,
+                  "Slider Settings/Block increment": 1.0
+                }
+              ]
+            }
+          },
+          "7,0": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Intake",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Intake Motors",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Intake Voltage",
+                      "_title": "Voltage"
+                    },
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Intake % Output",
+                      "_title": "% Output"
+                    }
+                  }
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Intake Forward Calibrate",
+                  "_title": "Intake Forwards"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Intake Reverse Calibrate",
+                  "_title": "Intake Backwards"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Intake STOP",
+                  "_title": "Intake STOP"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
+                  "_title": "Intake EXTEND"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
+                  "_title": "Intake RETRACT"
+                }
+              ]
+            }
+          },
+          "7,3": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Hopper",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Hopper Motors",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Hopper % Output",
+                      "_title": "% Output"
+                    },
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Hopper Voltage",
+                      "_title": "Voltage"
+                    }
+                  }
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Hopper Forward Calibrate",
+                  "_title": "Hopper Forwards"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Hopper Reverse Calibrate",
+                  "_title": "Hopper Backwards"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Hopper STOP",
+                  "_title": "Hopper STOP"
+                }
+              ]
+            }
+          },
+          "9,0": {
+            "size": [
+              2,
+              5
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Shooter",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Cell Present",
+                  "_title": "Cell Present",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Power Cells Shot",
+                  "_title": "Power Cells Shot"
+                },
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Shooter %",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 1 PercentOutput",
+                      "_title": "L %"
+                    },
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 2 PercentOutput",
+                      "_title": "R %"
+                    }
+                  }
+                },
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Shooter Amps",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 1 Current",
+                      "_title": "L Amps"
+                    },
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 2 Current",
+                      "_title": "R Amps"
+                    }
+                  }
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
+                  "_title": "Shooter RPM"
+                },
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Hood",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
+                      "_title": "Hood OPEN"
+                    },
+                    "1,0": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE",
+                      "_title": "Hood CLOSE"
+                    }
+                  }
+                },
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Lock",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/Shooter LOCK",
+                      "_title": "LOCK"
+                    },
+                    "1,0": {
+                      "_type": "Command",
+                      "_source0": "network_table:///SmartDashboard/Shooter UNLOCK",
+                      "_title": "UNLOCK"
+                    }
+                  }
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Distance SetPoint",
+                  "_title": "Shooter Distance SetPoint"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Foward Calibrate",
+                  "_title": "Shooter Fowards"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
+                  "_title": "Shooter STOP"
+                }
+              ]
+            }
+          },
+          "1,2": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Limelight Readings",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Number Slider",
+                  "_source0": "network_table:///SmartDashboard/LimeLight x",
+                  "_title": "Limelight X",
+                  "Slider Settings/Min": -27.0,
+                  "Slider Settings/Max": 27.0,
+                  "Slider Settings/Block increment": 0.1
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/LimeLight y",
+                  "_title": "Limelight Y"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Limelight new distance",
+                  "_title": "Limelight new distance"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Pipeline",
+                  "_title": "Limelight Pipeline"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Limelight Sees Target",
+                  "_title": "Limelight Sees Target",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Limelight Updating",
+                  "_title": "Limelight Working",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                }
+              ]
+            }
+          },
+          "5,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Feeder",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Feeder Motors",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Feeder PercentOutput",
+                      "_title": "% Output"
+                    },
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Feeder Voltage",
+                      "_title": "Voltage"
+                    }
+                  }
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder RPM",
+                  "_title": "Feeder RPM"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder Forward Calibrate",
+                  "_title": "Feeder Forwards"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder STOP",
+                  "_title": "Feeder STOP"
+                }
+              ]
+            }
+          },
+          "2,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/problemExists",
+              "_title": "Problem Exists",
+              "Colors/Color when true": "#8B0000FF",
+              "Colors/Color when false": "#7CFC00FF"
+            }
+          },
+          "1,0": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/problemSubsystem",
+              "_title": "Problem Subsystem"
+            }
+          },
+          "1,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Clear Sticky Faults",
+              "_title": "Clear Faults"
+            }
+          },
+          "5,3": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Shooting Sequences",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
+                  "_title": "RPM Input"
+                }
+              ]
+            }
+          },
+          "3,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Climb",
+              "Layout/Label position": "BOTTOM",
+              "_children": []
+            }
+          },
+          "5,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
+              "_title": "ShooterFeederHopperIntakeStop"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Driver",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {
+          "2,0": {
+            "size": [
+              11,
+              5
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight",
+              "_title": "Limelight",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "1,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Pipeline",
+              "_title": "Pipeline"
+            }
+          },
           "0,0": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/Limelight Sees Target",
+              "_title": "Limelight Sees Target",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "0,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/problemExists",
+              "_title": "Problem Exists",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "0,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/problemSubsystem",
+              "_title": "Problem Subsystem"
+            }
+          },
+          "0,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Autonomous routine",
+              "_title": "Autonomous routine"
+            }
+          },
+          "0,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Autonomous delay",
+              "_title": "Autonomous Delay"
+            }
+          },
+          "2,5": {
+            "size": [
+              11,
+              1
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/LimeLight x",
+              "_title": "Vision Target",
+              "Slider Settings/Min": -8.0,
+              "Slider Settings/Max": 8.0,
+              "Slider Settings/Block increment": 0.0625
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Calibration",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {
+          "4,0": {
             "size": [
               2,
               6
@@ -48,12 +650,17 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Shooter RPM",
-                  "_title": "Shooter RPM"
+                  "_title": "Shooter Actual RPM"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint RPM",
                   "_title": "Shooter Manual SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter PID Error",
+                  "_title": "Shooter Error"
                 },
                 {
                   "_type": "Command",
@@ -66,9 +673,23 @@
                   "_title": "Shooter STOP"
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter PercentOutput",
-                  "_title": "Shooter PercentOutput"
+                  "_type": "Grid Layout",
+                  "_title": "Shooter PercentOutput",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "0,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 1 PercentOutput",
+                      "_title": "L %"
+                    },
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 2 PercentOutput",
+                      "_title": "R %"
+                    }
+                  }
                 }
               ]
             }
@@ -111,12 +732,17 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Feeder RPM",
-                  "_title": "Feeder RPM"
+                  "_title": "Feeder Actual RPM"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint RPM",
                   "_title": "Feeder Manual SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Error",
+                  "_title": "Feeder Error"
                 },
                 {
                   "_type": "Command",
@@ -136,239 +762,147 @@
               ]
             }
           },
-          "11,0": {
+          "7,0": {
             "size": [
               2,
-              3
+              6
             ],
             "content": {
-              "_type": "List Layout",
-              "_title": "LEDs",
+              "_type": "Subsystem Layout",
+              "_title": "Drive Angular PID",
               "Layout/Label position": "BOTTOM",
               "_children": [
                 {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip RED",
-                  "_title": "LEDSetStrip RED"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip YELLOW",
-                  "_title": "LEDSetStrip YELLOW"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip BLUE",
-                  "_title": "LEDSetStrip BLUE"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip GREEN",
-                  "_title": "LEDSetStrip GREEN"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip OFF",
-                  "_title": "LEDSetStrip OFF"
-                }
-              ]
-            }
-          },
-          "8,2": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Feeder",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/FeederSetVoltage(5)",
-                  "_title": "FeederSetVoltage(5)"
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kV Angular",
+                  "_title": "Drive kV Angular"
                 },
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder Encoder",
-                  "_title": "Feeder Encoder"
+                  "_source0": "network_table:///SmartDashboard/Drive kA Angular",
+                  "_title": "Drive kA Angular"
                 },
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder Voltage",
-                  "_title": "Feeder Voltage"
-                }
-              ]
-            }
-          },
-          "6,3": {
-            "size": [
-              2,
-              3
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Shooter Hood Piston",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
-                  "_title": "ShooterHood OPEN"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE",
-                  "_title": "ShooterHood CLOSE"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter LOCK",
-                  "_title": "Shooter LOCK"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter UNLOCK",
-                  "_title": "Shooter UNLOCK"
-                }
-              ]
-            }
-          },
-          "4,3": {
-            "size": [
-              2,
-              3
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Shooter Distance",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter Distance SetPoint",
-                  "_title": "Shooter Distance SetPoint"
+                  "_source0": "network_table:///SmartDashboard/Drive kS Angular",
+                  "_title": "Drive kS Angular"
                 },
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter Distance",
-                  "_title": "Shooter Distance"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter DistToRPM",
-                  "_title": "Shooter DistToRPM"
+                  "_source0": "network_table:///SmartDashboard/Drive kP Angular",
+                  "_title": "Drive kP Angular"
                 },
                 {
                   "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter RPM from Dist",
-                  "_title": "Shooter RPM from Dist"
+                  "_source0": "network_table:///SmartDashboard/Drive kI Angular",
+                  "_title": "Drive kI Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kD Angular",
+                  "_title": "Drive kD Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/TurnGyro Manual MaxVel",
+                  "_title": "Drive Manual MaxVel Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/TurnGyro Manual MaxAccel",
+                  "_title": "Drive Manual MaxAccel Angular"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/TurnGyro Manual Target Ang",
+                  "_title": "Drive Manual Target Angle"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/TurnGyroManual",
+                  "_title": "TurnGyro Manual"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Gyro Rotation",
+                  "_title": "Drive Gyro Rotation"
                 }
               ]
-            }
-          },
-          "7,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Power Cells Shot",
-              "_title": "Power Cells Shot"
             }
           },
           "9,0": {
             "size": [
               2,
-              2
+              6
             ],
             "content": {
-              "_type": "List Layout",
-              "_title": "Intake",
+              "_type": "Subsystem Layout",
+              "_title": "Drive Linear PID",
               "Layout/Label position": "BOTTOM",
               "_children": [
                 {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/IntakeSetPercentOutput(1)",
-                  "_title": "IntakeSetPercentOutput(1)"
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kV Linear",
+                  "_title": "Drive kV Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kA Linear",
+                  "_title": "Drive kA Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kS Linear",
+                  "_title": "Drive kS Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kP Linear",
+                  "_title": "Drive kP Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kI Linear",
+                  "_title": "Drive kI Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kD Linear",
+                  "_title": "Drive kD Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/DriveStraight Manual MaxVel",
+                  "_title": "Drive Manual MaxVel Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/DriveStraight Manual MaxAccel",
+                  "_title": "Drive Manual MaxAccel Linear"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/DriveStraight Manual Target Dist",
+                  "_title": "Drive Manual Target Distance"
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
-                  "_title": "IntakePiston EXTEND"
+                  "_source0": "network_table:///SmartDashboard/DriveStraightManual",
+                  "_title": "DriveStraight Manual"
                 },
                 {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
-                  "_title": "IntakePiston RETRACT"
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Average Dist in Meters",
+                  "_title": "Drive Dist in Meters"
                 }
               ]
-            }
-          },
-          "8,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Hopper",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/HopperSetPercentOutput(0.8)",
-                  "_title": "HopperSetPercentOutput(0.8)"
-                }
-              ]
-            }
-          },
-          "7,0": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Sequences",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
-                  "_title": "ShooterFeederHopperIntakeStop"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
-                  "_title": "ShooterFeederHopperSequence"
-                }
-              ]
-            }
-          },
-          "4,0": {
-            "size": [
-              3,
-              3
-            ],
-            "content": {
-              "_type": "Graph",
-              "_source0": "network_table:///SmartDashboard/Shooter RPM",
-              "_title": "Shooter RPM",
-              "Graph/Visible time": 30.0,
-              "Y-axis/Automatic bounds": true,
-              "Y-axis/Upper bound": 1.0,
-              "Y-axis/Lower bound": -1.0,
-              "Visible data/SmartDashboard/Shooter RPM": true
             }
           }
         }
       }
     },
     {
-      "title": "Cameras",
+      "title": "Debug",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
       "widgetPane": {
@@ -377,23 +911,39 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "1,0": {
+          "3,0": {
             "size": [
-              11,
-              6
+              2,
+              2
             ],
             "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://limelight",
-              "_title": "limelight",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/problemExists",
+              "_title": "problemExists",
+              "Colors/Color when true": "#8B0000FF",
+              "Colors/Color when false": "#7CFC00FF"
+            }
+          },
+          "5,0": {
+            "size": [
+              5,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/problemSubsystem",
+              "_title": "problemSubsystem"
+            }
+          },
+          "5,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Clear Sticky Faults",
+              "_title": "Clear Faults"
             }
           }
         }
