@@ -10,7 +10,7 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "9,0": {
+          "11,0": {
             "size": [
               2,
               4
@@ -23,7 +23,7 @@
                 {
                   "_type": "Boolean Box",
                   "_source0": "network_table:///SmartDashboard/Drive isGyroReading",
-                  "_title": "SmartDashboard/Drive isGyroReading",
+                  "_title": "Gyro Working",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
                 },
@@ -85,25 +85,7 @@
               ]
             }
           },
-          "5,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_title": "LEDs",
-              "Layout/Label position": "LEFT",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/LEDSetStrip OFF",
-                  "_title": "LED Turn Off"
-                }
-              ]
-            }
-          },
-          "7,2": {
+          "7,0": {
             "size": [
               2,
               3
@@ -160,7 +142,7 @@
               ]
             }
           },
-          "7,0": {
+          "7,3": {
             "size": [
               2,
               2
@@ -207,7 +189,7 @@
               ]
             }
           },
-          "11,0": {
+          "9,0": {
             "size": [
               2,
               5
@@ -312,6 +294,11 @@
                 },
                 {
                   "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Distance SetPoint",
+                  "_title": "Shooter Distance SetPoint"
+                },
+                {
+                  "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Shooter Foward Calibrate",
                   "_title": "Shooter Fowards"
                 },
@@ -323,7 +310,7 @@
               ]
             }
           },
-          "9,4": {
+          "1,2": {
             "size": [
               2,
               2
@@ -420,7 +407,7 @@
               ]
             }
           },
-          "1,0": {
+          "2,1": {
             "size": [
               1,
               1
@@ -428,23 +415,23 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/problemExists",
-              "_title": "problemExists",
+              "_title": "Problem Exists",
               "Colors/Color when true": "#8B0000FF",
               "Colors/Color when false": "#7CFC00FF"
             }
           },
-          "2,0": {
+          "1,0": {
             "size": [
-              3,
+              2,
               1
             ],
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/problemSubsystem",
-              "_title": "problemSubsystem"
+              "_title": "Problem Subsystem"
             }
           },
-          "0,0": {
+          "1,1": {
             "size": [
               1,
               1
@@ -453,6 +440,47 @@
               "_type": "Command",
               "_source0": "network_table:///SmartDashboard/Clear Sticky Faults",
               "_title": "Clear Faults"
+            }
+          },
+          "5,3": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Shooting Sequences",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterFeederHopperSequence",
+                  "_title": "RPM Input"
+                }
+              ]
+            }
+          },
+          "3,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Climb",
+              "Layout/Label position": "BOTTOM",
+              "_children": []
+            }
+          },
+          "5,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
+              "_title": "ShooterFeederHopperIntakeStop"
             }
           }
         }
@@ -470,8 +498,8 @@
         "tiles": {
           "2,0": {
             "size": [
-              4,
-              4
+              11,
+              5
             ],
             "content": {
               "_type": "Camera Stream",
@@ -487,28 +515,9 @@
               "imageHeight": 0
             }
           },
-          "6,0": {
+          "1,2": {
             "size": [
-              5,
-              5
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://USB Camera 0",
-              "_title": "USB Camera (Intake)",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
-            }
-          },
-          "0,0": {
-            "size": [
-              2,
+              1,
               1
             ],
             "content": {
@@ -517,7 +526,7 @@
               "_title": "Pipeline"
             }
           },
-          "2,4": {
+          "0,0": {
             "size": [
               2,
               2
@@ -529,40 +538,65 @@
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
-          }
-        }
-      }
-    },
-    {
-      "title": "Auto",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "tiles": {
-          "5,0": {
+          },
+          "0,2": {
             "size": [
-              3,
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/problemExists",
+              "_title": "Problem Exists",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "0,3": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/problemSubsystem",
+              "_title": "Problem Subsystem"
+            }
+          },
+          "0,4": {
+            "size": [
+              2,
               1
             ],
             "content": {
               "_type": "ComboBox Chooser",
               "_source0": "network_table:///SmartDashboard/Autonomous routine",
-              "_title": "Autonomous Routine"
+              "_title": "Autonomous routine"
             }
           },
-          "5,1": {
+          "0,5": {
             "size": [
-              3,
+              1,
               1
             ],
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Autonomous delay",
-              "_title": "Autonomous delay"
+              "_title": "Autonomous Delay"
+            }
+          },
+          "2,5": {
+            "size": [
+              11,
+              1
+            ],
+            "content": {
+              "_type": "Number Slider",
+              "_source0": "network_table:///SmartDashboard/LimeLight x",
+              "_title": "Vision Target",
+              "Slider Settings/Min": -8.0,
+              "Slider Settings/Max": 8.0,
+              "Slider Settings/Block increment": 0.0625
             }
           }
         }
@@ -578,7 +612,7 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "5,0": {
+          "4,0": {
             "size": [
               2,
               6
@@ -660,7 +694,7 @@
               ]
             }
           },
-          "7,0": {
+          "2,0": {
             "size": [
               2,
               6
@@ -728,7 +762,7 @@
               ]
             }
           },
-          "9,0": {
+          "7,0": {
             "size": [
               2,
               6
@@ -796,7 +830,7 @@
               ]
             }
           },
-          "11,0": {
+          "9,0": {
             "size": [
               2,
               6
@@ -877,10 +911,10 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "1,0": {
+          "3,0": {
             "size": [
-              1,
-              1
+              2,
+              2
             ],
             "content": {
               "_type": "Boolean Box",
@@ -890,9 +924,9 @@
               "Colors/Color when false": "#7CFC00FF"
             }
           },
-          "2,0": {
+          "5,0": {
             "size": [
-              3,
+              5,
               1
             ],
             "content": {
@@ -901,9 +935,9 @@
               "_title": "problemSubsystem"
             }
           },
-          "0,0": {
+          "5,1": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {

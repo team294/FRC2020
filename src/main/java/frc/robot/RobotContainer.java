@@ -110,10 +110,6 @@ public class RobotContainer {
     SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, hopper));
 
     // led subsystem
-    SmartDashboard.putData("LEDSetStrip RED", new LEDSetStrip("Red", led));
-    SmartDashboard.putData("LEDSetStrip YELLOW", new LEDSetStrip("Yellow", led));
-    SmartDashboard.putData("LEDSetStrip BLUE", new LEDSetStrip("Blue", led));
-    SmartDashboard.putData("LEDSetStrip GREEN", new LEDSetStrip("Green", led));
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
     SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
 
@@ -139,6 +135,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
     
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
+    SmartDashboard.putData("ZeroEncoders", new DriveZeroEncoders(driveTrain));
     SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(TrajectoryTest.calcTrajectory(log), driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
@@ -154,9 +151,6 @@ public class RobotContainer {
     // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
-
-    // Vision Testing
-    SmartDashboard.putData("Vision Zero Drive", new DriveZeroEncoders(driveTrain)); // TODO to be deleted after testing vision distance
   }
 
   /**
