@@ -28,7 +28,7 @@ import static frc.robot.Constants.ShooterConstants.*;
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
-  private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonIn, pcmShooterHoodPistonOut); // piston to open and close hood
+  private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonOut, pcmShooterHoodPistonIn); // piston to open and close hood
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
   private TemperatureCheck tempCheck;
@@ -119,18 +119,18 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * @param retract true = retract (open), false = extend (close)
+   * @param open true = open (retract), false = close (extend)
    */
-  public void setHoodPiston(boolean retract) {
-    if (retract) shooterHoodPiston.set(Value.kReverse);
+  public void setHoodPiston(boolean open) {
+    if (open) shooterHoodPiston.set(Value.kReverse);
     else shooterHoodPiston.set(Value.kForward);
   }
 
   /**
-   * @param retract true = retract (unlock), false = extend (lock)
+   * @param lock true = unlock (retract), false = lock (extend)
    */
-  public void setLockPiston(boolean retract) {
-    shooterLockPiston.set(retract);
+  public void setLockPiston(boolean lock) {
+    shooterLockPiston.set(lock);
   }
 
   /**
@@ -169,18 +169,19 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * Returns min RPM if robot is less than 5 feet from the target
-   * Returns max RPM if robot is more than 30 feet from the target
-   * Calculates slope between known RPMs for 2 distances (based on array in constants)
-   * Uses slope to calculate RPM at a certain distance between those 2 distances
-   * @param distance distance from the target (as per vision data) in feet
-   * @return RPM to set the shooter to in order to make it into the target
+   * Use distance from the target to calculate target RPM. A slope is created between the 
+   * two closest values in the table to the parameter distance to calculate the target RPM.
+   * This method return the min RPM in the table if the robot is less than 5 feet from the target, 
+   * and the max RPM in the table if the robot is more than 30 feet from the target.
+   * @param distance distance from target (as per vision data), in feet
+   * @return target RPM for shooter to make it into the target
    */
   public double distanceFromTargetToRPM(double distance) {
     int len = distanceFromTargetToRPMTable.length;
     if(distance < distanceFromTargetToRPMTable[0][0]) return distanceFromTargetToRPMTable[0][1];
     if(distance > distanceFromTargetToRPMTable[len-1][0]) return distanceFromTargetToRPMTable[len-1][1];
     int leftBound = 0;
+
     for(int i = len - 1; i >= 0; i--) {
       if(distance > distanceFromTargetToRPMTable[i][0]) {
         leftBound = i;
@@ -189,6 +190,7 @@ public class Shooter extends SubsystemBase {
         return distanceFromTargetToRPMTable[i][1];
       }
     }
+
     double lowerRPM = distanceFromTargetToRPMTable[leftBound][1];
     double upperRPM = distanceFromTargetToRPMTable[leftBound + 1][1];
     double dRPMperMeter = (upperRPM - lowerRPM) / 5;
@@ -236,7 +238,6 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 2 PercentOutput", shooterMotorRight.getMotorOutputPercent());
     // SmartDashboard.putNumber("Shooter Motor 1 Voltage", shooterMotorLeft.getMotorOutputVoltage());
     // SmartDashboard.putNumber("Shooter Motor 2 Voltage", shooterMotorRight.getMotorOutputVoltage());
-
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
     SmartDashboard.putNumber("Power Cells Shot", cellsShot);
     SmartDashboard.putBoolean("Cell Present", prevCellState);

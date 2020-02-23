@@ -116,12 +116,17 @@ public class LimeLight extends SubsystemBase {
     Color[] myPattern = new Color[16];
     int patternFormula = (int)((x + 7));
 
-    if (patternFormula < 0) patternFormula = 0;
-    else if (patternFormula > 14) patternFormula = 14;
+    if (patternFormula < 0) {
+      patternFormula = 0;
+    } else if (patternFormula > 14) {
+      patternFormula = 14;
+    }
 
     myPattern = LED.visionTargetLibrary[patternFormula];
-    if (seesTarget()) myPattern = LED.visionTargetLibrary[15];
-
+    if (seesTarget()) {
+      myPattern = LED.visionTargetLibrary[15];
+    }
+    
     return myPattern;
   }
 

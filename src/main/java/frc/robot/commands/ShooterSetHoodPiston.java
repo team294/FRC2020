@@ -12,24 +12,24 @@ import frc.robot.subsystems.Shooter;
 
 public class ShooterSetHoodPiston extends CommandBase {
   private Shooter shooter;
-  private boolean open;
+  private boolean close;
 
   /**
    * Set shooter hood piston position.
    * This command immediately ends.
-   * @param open true = open, false = close
-   * @param shooter shooter subsystem to use
+   * @param close true = close, false = open
+   * @param shooter shooter subsystem
    */
-  public ShooterSetHoodPiston(boolean open, Shooter shooter) {
+  public ShooterSetHoodPiston(boolean close, Shooter shooter) {
     this.shooter = shooter;
-    this.open = open;
+    this.close = close;
     addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.setHoodPiston(open);
+    shooter.setHoodPiston(close);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
