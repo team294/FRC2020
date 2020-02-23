@@ -389,14 +389,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public boolean isGyroReading() {
-    if(prevAng == currAng) {
-      gyroFailCount++;
-    } else {
-      gyroFailCount = 0;
-    }
-
-    if(gyroFailCount >= 50) return false;
-    return true;
+    return ahrs.isConnected();
   }
 
   public double getAngularVelocity () {
