@@ -20,11 +20,13 @@ public class AutoTrussPickup extends SequentialCommandGroup {
   /**
    * Creates a new AutoTrussPickup.
    */
-  public AutoTrussPickup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public AutoTrussPickup(double waitTime, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     
     // start with edge of bumpers to the left edge of the center line, intake facing towards truss, line up straight
     
     addCommands(
+
+      new Wait(waitTime),
 
       deadline(
         new DriveStraight(2.08, 0.5, 1.0, true, driveTrain, log), // drive to 2 of balls on truss

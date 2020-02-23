@@ -44,29 +44,29 @@ public class AutoSelection {
 	 * @param autoPlan The autoplan to run 
 	 * @return the command to run
 	 */  		
-	public Command getAutoCommand(Integer autoPlan, DriveTrain driveTrain, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, FileLog log, LED led) {
+	public Command getAutoCommand(double waitTime, Integer autoPlan, DriveTrain driveTrain, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, FileLog log, LED led) {
 		Command autonomousCommand = null;
 		Trajectory trajectory;
 
 		if (autoPlan == OPPONENT_TRENCH_PICKUP && trajectoryCache[OPPONENT_TRENCH_PICKUP] != null) {
 			log.writeLogEcho(true, "AutoSelect", "run TrenchFromRight");
 			trajectory = trajectoryCache[OPPONENT_TRENCH_PICKUP];
-			autonomousCommand = new AutoOponentTrenchPickup(trajectory, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoOponentTrenchPickup(waitTime, trajectory, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autoPlan == SHOOT_BACKUP) {
 			log.writeLogEcho(true, "AutoSelect", "run ShootBackup");
-			autonomousCommand = new AutoShootBackup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoShootBackup(waitTime, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autoPlan == TRUSS_PICKUP) {
 			log.writeLogEcho(true, "AutoSelect", "run TrussPickup");
-			autonomousCommand = new AutoTrussPickup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoTrussPickup(waitTime, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autoPlan == OWN_TRENCH_PICKUP) {
 			log.writeLogEcho(true, "AutoSelect", "run OwnTrenchPickup");
-			autonomousCommand = new AutoOwnTrenchPickup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoOwnTrenchPickup(waitTime, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		} 
 
 		if (autonomousCommand == null) {

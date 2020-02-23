@@ -20,10 +20,12 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
 
 // start with front two wheels on auto line drive frame 14 in from the right wall driver perspective
 
-  public AutoOwnTrenchPickup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public AutoOwnTrenchPickup(double waitTime, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     
     addCommands(
     
+      new Wait(waitTime),
+
       deadline(
         new DriveStraight(-1.5494, 0.5, 1.0, true, driveTrain, log), // drive to edge of trench
         new ShooterSetPID(2800, shooter, led), // start shooter

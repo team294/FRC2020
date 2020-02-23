@@ -283,7 +283,7 @@ public class RobotContainer {
     autoDelay = SmartDashboard.getNumber("Autonomous delay", 0);
     autoDelay = (autoDelay < 0) ? 0 : autoDelay; // make sure autoDelay isn't negative
     autoDelay = (autoDelay > 15) ? 15 : autoDelay; // make sure autoDelay is only active during auto
-    return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
+    return autoSelection.getAutoCommand(autoDelay, autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 
   /**

@@ -20,11 +20,14 @@ public class AutoShootBackup extends SequentialCommandGroup {
   /**
    * Creates a new AutoShootBackup.
    */
-  public AutoShootBackup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public AutoShootBackup(double waitTime, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
 
     // can start anywhere on auto line between left most pole from driver perspective and close to right edge of the field, needs to be semi lined up with target
 
     addCommands(
+
+      new Wait(waitTime),
+
       deadline(
         new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
         new ShooterSetPID(2800, shooter, led), // start shooter
