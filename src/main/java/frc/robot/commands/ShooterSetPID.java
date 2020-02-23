@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.LED;
+import frc.robot.subsystems.LimeLight;
 
 /**
  * Command to set the shooter PID.
@@ -25,6 +26,7 @@ public class ShooterSetPID extends CommandBase {
   private LED led;
   private Timer timer2;
   private String myColor = "Blue";
+  private LimeLight limeLight;
   
   /**
    * @param rpm setpoint in RPM
@@ -46,10 +48,11 @@ public class ShooterSetPID extends CommandBase {
    * @param rpmFromDistance true = rpm is set with distance from target, false = rpm is set with manual dashboard input
    * @param shooter Shooter subsystem to use
    */
-  public ShooterSetPID(boolean rpmFromDistance, Shooter shooter, LED led) {
+  public ShooterSetPID(boolean rpmFromDistance, Shooter shooter, LimeLight limeLight, LED led) {
     this.shooter = shooter;
     this.rpm = 0;
     this.led = led;
+    this.limeLight = limeLight;
     getRpmFromShuffleboard = true;
     this.rpmFromDistance = rpmFromDistance;
     timer = new Timer();
@@ -64,7 +67,7 @@ public class ShooterSetPID extends CommandBase {
   @Override
   public void initialize() {
     if(getRpmFromShuffleboard && !rpmFromDistance) rpm = SmartDashboard.getNumber("Shooter Manual SetPoint RPM", 2800);
-    else if(getRpmFromShuffleboard && rpmFromDistance) rpm = shooter.distanceFromTargetToRPM(SmartDashboard.getNumber("Shooter Distance", 5));
+    else if(rpmFromDistance) rpm = shooter.distanceFromTargetToRPM(limeLight.getDistanceNew());
     shooter.setShooterPID(rpm);
     timer.reset();
     timer.start();
@@ -105,7 +108,7 @@ public class ShooterSetPID extends CommandBase {
   public boolean isFinished() {
     //if(timer.hasPeriodPassed(0.1) && Math.abs(shooter.getShooterPIDError()) < 200) return true;
     if (Math.abs(shooter.getMeasuredRPM() - rpm) < 200) {
-      SmartDashboard.putBoolean("Shooter is blue", true);
+      SmartDashboard.putBoolean("Shooter Up To Speed", true);
       led.setStrip("Blue", 0.5, 1);
       return true;
     }

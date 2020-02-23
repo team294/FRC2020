@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.HopperConstants.*;
@@ -20,7 +21,7 @@ public class Hopper extends SubsystemBase {
   
   public Hopper() {
     hopperMotor.configFactoryDefault();
-    hopperMotor.setInverted(false);
+    hopperMotor.setInverted(true);
     hopperMotor.setNeutralMode(NeutralMode.Brake);
     hopperMotor.configOpenloopRamp(0.15); // seconds from neutral to full
   }
@@ -41,6 +42,8 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
+    SmartDashboard.putNumber("Hopper % Output", hopperGetPercentOutput());
+    SmartDashboard.putNumber("Hopper Voltage", hopperMotor.getMotorOutputVoltage());
     // This method will be called once per scheduler run
   }
 }

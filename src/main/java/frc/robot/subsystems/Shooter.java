@@ -22,7 +22,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
 import frc.robot.subsystems.LED;
-import frc.robot.RobotContainer;
 
 import static frc.robot.Constants.ShooterConstants.*;
 
@@ -32,6 +31,7 @@ public class Shooter extends SubsystemBase {
   private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonIn, pcmShooterHoodPistonOut); // piston to open and close hood
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
+  private LimeLight limeLight;
   private TemperatureCheck tempCheck;
   private final DigitalInput input = new DigitalInput(dioPowerCell);
   private LED led;
@@ -46,10 +46,11 @@ public class Shooter extends SubsystemBase {
   //private double prevCurrent = 0;
   private boolean prevCell = false;
   
-  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led) {
+  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led, LimeLight limeLight) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
     this.led = led;
+    this.limeLight = limeLight;
 
     setLockPiston(false);
 
@@ -221,6 +222,11 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
     SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
+    SmartDashboard.putNumber("Shooter Motor 1 PercentOutput", shooterMotorLeft.getMotorOutputPercent());
+    SmartDashboard.putNumber("Shooter Motor 2 PercentOutput", shooterMotorRight.getMotorOutputPercent());
+    // SmartDashboard.putNumber("Shooter Motor 1 Voltage", shooterMotorLeft.getMotorOutputVoltage());
+    // SmartDashboard.putNumber("Shooter Motor 2 Voltage", shooterMotorRight.getMotorOutputVoltage());
+
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
     SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
     SmartDashboard.putBoolean("Cell Present", prevCell);

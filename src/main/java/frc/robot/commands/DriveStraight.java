@@ -24,8 +24,8 @@ public class DriveStraight extends CommandBase {
 
   private DriveTrain driveTrain; // reference to driveTrain
   private double target; // how many more degrees to the right to turn
-  private double maxVelMultiplier; // multiplier between 0.0 and 1.0 for limiting max velocity
-  private double maxAccelMultiplier; // multiplier between 0.0 and 1.0 for limiting max acceleration
+  private double maxVel; // max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants 
+  private double maxAccel; // max acceleration, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
   private long profileStartTime; // initial time (time of starting point)
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
@@ -38,6 +38,7 @@ public class DriveStraight extends CommandBase {
   private double currDistRight;
   private double timeSinceStart;
   private boolean regenerate;
+  private boolean fromShuffleboard;
   private FileLog log;
 
   private double aFF;
@@ -54,35 +55,75 @@ public class DriveStraight extends CommandBase {
 
   /**
    * @param target distance to travel, in meters
-   * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
-   * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
+   * @param maxVelMultiplier max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants
+   * @param maxAccelMultiplier max acceleration, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
    * @param regenerate
    * @param driveTrain reference to the drive train subsystem
    * @param log
    */
-  public DriveStraight(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean regenerate, DriveTrain driveTrain, FileLog log) {
+  public DriveStraight(double target, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.log = log;
-    this.target = target;
     this.regenerate = regenerate;
-    this.maxVelMultiplier = maxVelMultiplier;
-    this.maxAccelMultiplier = maxAccelMultiplier;
-
+    this.fromShuffleboard = false;
+    this.target = target;
+    this.maxVel = maxVel;
+    this.maxAccel = maxAccel;
     addRequirements(driveTrain);
+
+    aFF = 0.0;
+  }
+
+    /**
+   * Use this constructor when reading values from Shuffleboard
+   * @param driveTrain reference to the drive train subsystem
+   * @param target degrees to turn to the right
+   * @param maxVel between 0.0 and 1.0, multipier for limiting max velocity
+   * @param maxAccel between 0.0 and 1.0, multiplier for limiting max acceleration
+   */
+  public DriveStraight(boolean regenerate, DriveTrain driveTrain, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.driveTrain = driveTrain;
+    this.log = log;
+    this.regenerate = regenerate;
+    this.fromShuffleboard = true;
+    this.target = 0;
+    this.maxVel = 0.5;
+    this.maxAccel = 0.5;
+    addRequirements(driveTrain);
+
+    if(SmartDashboard.getNumber("DriveStraight Manual Target Dist", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveStraight Manual Target Dist", 2);
+    }
+    if(SmartDashboard.getNumber("DriveStraight Manual MaxVel", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveStraight Manual MaxVel", kMaxSpeedMetersPerSecond);
+    }
+    if(SmartDashboard.getNumber("DriveStraight Manual MaxAccel", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
+    }
+
+    aFF = 0.0;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
+
     driveTrain.setDriveModeCoast(false);
+
+    if(fromShuffleboard) {
+      target = SmartDashboard.getNumber("DriveStraight Manual Target Dist", 2);
+      maxVel = SmartDashboard.getNumber("DriveStraight Manual MaxVel", kMaxSpeedMetersPerSecond);
+      maxAccel = SmartDashboard.getNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
+    }
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
-    // initialize velocity and accel limits
-    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxSpeedMetersPerSecond * maxVelMultiplier, 
-                          kMaxAccelerationMetersPerSecondSquared * maxAccelMultiplier); 
+    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel); // initialize velocity
+                                                                                                                          // and accel limits
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
     log.writeLog(false, "DriveStraight", "init", "Profile total time", tProfile.totalTime());
     
