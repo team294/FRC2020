@@ -533,8 +533,8 @@ public class DriveTrain extends SubsystemBase {
    * Resets the robot pose on the field to the given location and rotation
    * <p>Note:  This method resets the encoders to 0 and sets the gyro
    * to the current robot rotation.
-   * <p>Robot X: 0 = middle of robot on middle of starting line
-   * <p>Robot Y: 0 = middle of robot on middle of field
+   * <p>Robot X: 0 = middle of robot, wherever the robot starts auto mode (+=away from our drivestation)
+   * <p>Robot Y: 0 = middle of robot, wherever the robot starts auto mode (+=left when looking from our drivestation)
    * <p>Robot angle: 0 = facing away from our drivestation
    * @param robotPoseInMeters Current robot pose, in meters
    */

@@ -22,8 +22,8 @@ public class DriveResetPose extends CommandBase {
 
   /**
 	 * Resets the pose, gyro, and encoders on the drive train
-   * @param curXinMeters Robot X location in the field, in meters (0 = middle of robot on middle of starting line)
-   * @param curYinMeters Robot Y location in the field, in meters (0 = middle of robot on middle of field)
+   * @param curXinMeters Robot X location in the field, in meters (0 = middle of robot wherever the robot starts auto mode, +=away from our drivestation)
+   * @param curYinMeters Robot Y location in the field, in meters (0 = middle of robot wherever the robot starts auto mode, +=left when looking from our drivestation)
    * @param curAngleinDegrees Robot angle on the field, in degrees (0 = facing away from our drivestation)
    * @param driveTrain DriveTrain subsytem
 	 */
