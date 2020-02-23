@@ -48,7 +48,6 @@ public class DriveTrain extends SubsystemBase {
   private final AHRS ahrs;
   private double yawZero = 0;
 
-  private Timer autoTimer;
   private FileLog log;
   private TemperatureCheck tempCheck;
   
@@ -143,6 +142,7 @@ public class DriveTrain extends SubsystemBase {
     zeroRightEncoder();
     zeroGyroRotation();
 
+    // Sets initial position to (0,0) facing 0 degrees
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
 
     // initialize angular velocity variables
@@ -222,7 +222,7 @@ public class DriveTrain extends SubsystemBase {
    * @return right encoder position, in ticks
    */
   public double getRightEncoderRaw() {
-    return rightMotor1.getSelectedSensorPosition(0);
+    return -rightMotor1.getSelectedSensorPosition(0);
   }
 
   /**
@@ -283,7 +283,7 @@ public class DriveTrain extends SubsystemBase {
 	 * @return encoder position, in ticks
 	 */
   public double getRightEncoderTicks() {
-    return -(getRightEncoderRaw() - rightEncoderZero);
+    return getRightEncoderRaw() - rightEncoderZero;
   }
 
   /**
@@ -521,8 +521,28 @@ public class DriveTrain extends SubsystemBase {
     }
   }
 
+  /**
+   * Get current robot location and facing on the field
+   * @return current robot pose
+   */
   public Pose2d getPose() {
     return odometry.getPoseMeters();
+  }
+
+  /**
+   * Resets the robot pose on the field to the given location and rotation
+   * <p>Note:  This method resets the encoders to 0 and sets the gyro
+   * to the current robot rotation.
+   * <p>Robot X: 0 = middle of robot on middle of starting line
+   * <p>Robot Y: 0 = middle of robot on middle of field
+   * <p>Robot angle: 0 = facing away from our drivestation
+   * @param robotPoseInMeters Current robot pose, in meters
+   */
+  public void resetPose(Pose2d robotPoseInMeters) {
+    zeroLeftEncoder();
+    zeroRightEncoder();
+    zeroGyroRotation(robotPoseInMeters.getRotation().getDegrees());
+    odometry.resetPosition(robotPoseInMeters, Rotation2d.fromDegrees(getGyroRotation()));
   }
 
   /**
@@ -533,19 +553,11 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Start the timer for the autonomous period. Useful for comparing to generated trajectories.
-   */
-  public void startAutoTimer() {
-    if (this.autoTimer == null) this.autoTimer = new Timer();
-    this.autoTimer.reset();
-    this.autoTimer.start();
-  }
-
-  /**
    * Writes information about the drive train to the filelog
    * @param logWhenDisabled true will log when disabled, false will discard the string
    */
   public void updateDriveLog(boolean logWhenDisabled) {
+    var translation = odometry.getPoseMeters().getTranslation();
     log.writeLog(logWhenDisabled, "Drive", "updates", 
       "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
       "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
@@ -556,7 +568,8 @@ public class DriveTrain extends SubsystemBase {
       "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
       "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
       "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), 
-      "Gyro Velocity", angularVelocity, "Time", System.currentTimeMillis()
+      "Gyro Velocity", angularVelocity, 
+      "Odometry X", translation.getX(), "Odometry Y", translation.getY()
       );
   }
 

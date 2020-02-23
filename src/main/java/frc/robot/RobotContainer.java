@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.CoordType;
 import frc.robot.commands.*;
 import frc.robot.commands.DriveTurnGyro.TargetType;
 import frc.robot.subsystems.*;
@@ -127,7 +128,7 @@ public class RobotContainer {
     SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 0.04, 1.0, 0.5, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 180, 0.08, 1.0, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kRelative, 180, 0.08, 1.0, 1, driveTrain, limeLight, log));
-    SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(TrajectoryTest.calcTrajectory(log), driveTrain, log)
+    SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(CoordType.kRelative, TrajectoryTest.calcTrajectory(log), driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
     // auto selection widget
@@ -324,7 +325,6 @@ public class RobotContainer {
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
     led.setStrip("Purple", 1);
-    driveTrain.startAutoTimer();
     driveTrain.setDriveModeCoast(false);
 
     // NOTE:  Do NOT reset the gyro or encoder here!!!!!

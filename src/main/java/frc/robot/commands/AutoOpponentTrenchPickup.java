@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.CoordType;
 import frc.robot.commands.DriveTurnGyro.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -36,7 +37,7 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
         new IntakeSetPercentOutput(intake) // start intake 
       ),
       
-      new DriveFollowTrajectory(trajectory, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
+      new DriveFollowTrajectory(CoordType.kRelative, trajectory, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
           .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)),
 
       new ParallelDeadlineGroup(
