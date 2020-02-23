@@ -18,21 +18,20 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LimeLight;
 
-/**
- * Command group to run the shooter, feeder, intake, and hopper for shooting.
- */
 public class ShooterFeederHopperSequence extends SequentialCommandGroup {
+
   /**
+   * Command group to run the shooter, feeder, intake, and hopper for shooting.
+   * This constructor either sets the target rpm from distance to target (limelight data) or manual dashboard input.
    * @param rpmFromDistance true = rpm is set with distance from target, false = rpm is set with manual dashboard input
    * @param shooter shooter subsystem to use
    * @param feeder feeder subsystem to use
    * @param hopper hopper subsystem to use
    * @param intake intake subsystem to use
    */
-
   public ShooterFeederHopperSequence(boolean rpmFromDistance, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, LED led) {
     addCommands( 
-      new ShooterSetPID(rpmFromDistance, shooter, limeLight, led),
+      new ShooterSetPID(rpmFromDistance, true, shooter, limeLight, led),
       new FeederSetPID(feeder),
       new HopperSetPercentOutput(-1 * Constants.HopperConstants.hopperDefaultPercentOutput, hopper),
       new ParallelCommandGroup(new IntakeSetPercentOutput(intake), new HopperReverse(hopper))
@@ -40,6 +39,8 @@ public class ShooterFeederHopperSequence extends SequentialCommandGroup {
   }
 
   /**
+   * Command group to run the shooter, feeder, intake, and hopper for shooting.
+   * This constructor sets the target rpm from a parameter rpm.
    * @param rpm setpoint rpm for shooter
    * @param shooter shooter subsystem to use
    * @param feeder feeder subsystem to use

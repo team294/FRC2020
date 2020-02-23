@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LimeLight;
 
@@ -27,10 +28,12 @@ public class ShooterSetPID extends CommandBase {
   private Timer timer2;
   private String myColor = "Blue";
   private LimeLight limeLight;
+  private boolean end;
   
   /**
    * @param rpm setpoint in RPM
    * @param shooter shooter subsystem to use
+   * @param led led to use
    */
   public ShooterSetPID(int rpm, Shooter shooter, LED led) {
     this.led = led;
@@ -38,6 +41,7 @@ public class ShooterSetPID extends CommandBase {
     this.rpm = rpm;
     this.getRpmFromShuffleboard = false;
     this.rpmFromDistance = false;
+    this.end = true;
     timer = new Timer();
     timer2 = new Timer();
     addRequirements(shooter);
@@ -46,15 +50,19 @@ public class ShooterSetPID extends CommandBase {
   /**
    * Turn on the shooter PID using RPM from Shuffleboard.
    * @param rpmFromDistance true = rpm is set with distance from target, false = rpm is set with manual dashboard input
-   * @param shooter Shooter subsystem to use
+   * @param end true = end command when shooter is at setpoint rpm, false = never end
+   * @param shooter shooter subsystem to use
+   * @param limeLight limeLight to use
+   * @param led led to use
    */
-  public ShooterSetPID(boolean rpmFromDistance, Shooter shooter, LimeLight limeLight, LED led) {
+  public ShooterSetPID(boolean rpmFromDistance, boolean end, Shooter shooter, LimeLight limeLight, LED led) {
     this.shooter = shooter;
     this.rpm = 0;
     this.led = led;
     this.limeLight = limeLight;
-    getRpmFromShuffleboard = true;
+    this.getRpmFromShuffleboard = true;
     this.rpmFromDistance = rpmFromDistance;
+    this.end = end;
     timer = new Timer();
     timer2 = new Timer();
     addRequirements(shooter);
@@ -78,6 +86,11 @@ public class ShooterSetPID extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    if (!end && rpmFromDistance) {
+      if (limeLight.getDistanceNew() == 0) rpm = ShooterConstants.shooterDefaultRPM;
+      else rpm = shooter.distanceFromTargetToRPM(limeLight.getDistanceNew());
+      shooter.setShooterPID(rpm);
+    }
     
     SmartDashboard.putString("LED Color", myColor);
 
@@ -106,7 +119,8 @@ public class ShooterSetPID extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //if(timer.hasPeriodPassed(0.1) && Math.abs(shooter.getShooterPIDError()) < 200) return true;
+    if (!end) return false;
+
     if (Math.abs(shooter.getMeasuredRPM() - rpm) < 200) {
       SmartDashboard.putBoolean("Shooter is blue", true);
       led.setStrip("Blue", 0.5, 1);
