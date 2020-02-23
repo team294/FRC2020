@@ -53,6 +53,7 @@ public class DriveTrain extends SubsystemBase {
   private TemperatureCheck tempCheck;
   
   // variables to help calculate angular velocity for turnGyro
+  private int gyroFailCount = 0; // number of times that gyro has returned exactly 0 (meaning it isn't reading correctly)
   private double prevAng; // last recorded gyro angle
   private double currAng; // current recorded gyro angle
   private double prevTime; // last time gyro angle was recorded
@@ -387,6 +388,17 @@ public class DriveTrain extends SubsystemBase {
 		return angle;
   }
 
+  public boolean isGyroReading() {
+    if(prevAng == currAng) {
+      gyroFailCount++;
+    } else {
+      gyroFailCount = 0;
+    }
+
+    if(gyroFailCount >= 50) return false;
+    return true;
+  }
+
   public double getAngularVelocity () {
     return angularVelocity;
   }
@@ -542,6 +554,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
     SmartDashboard.putNumber("Drive Gyro Rotation", getGyroRotation());
     SmartDashboard.putNumber("Drive Raw Gyro", getGyroRaw());
+    SmartDashboard.putBoolean("Drive isGyroReading", isGyroReading());
 
     odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
 
@@ -560,14 +573,17 @@ public class DriveTrain extends SubsystemBase {
  
      // convert angVel to degrees per sec & put on SmartDashboard
      SmartDashboard.putNumber("Drive AngVel", angularVelocity);
- 
-     // save current angVel values as previous values for next calculation
-     prevAng = currAng;
-     prevTime = currTime; 
      
      if(log.getLogRotation() == log.DRIVE_CYCLE) {
       updateDriveLog(false);
+      if(!isGyroReading()) {
+        
+      }
     }
+
+    // save current angVel values as previous values for next calculation
+    prevAng = currAng;
+    prevTime = currTime; 
   }
 
   public Pose2d getPose() {
