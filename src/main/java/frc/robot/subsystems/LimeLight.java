@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.RobotPreferences;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -183,6 +184,9 @@ public class LimeLight extends SubsystemBase {
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
       updateLimeLightLog(false);
+      if(!isGettingData()) {
+        RobotPreferences.recordStickyFaults("LimeLight", log);
+      }
     }
   }
 

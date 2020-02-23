@@ -13,13 +13,20 @@
           "9,0": {
             "size": [
               2,
-              3
+              4
             ],
             "content": {
               "_type": "Subsystem Layout",
               "_title": "DriveTrain",
               "Layout/Label position": "LEFT",
               "_children": [
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Drive isGyroReading",
+                  "_title": "SmartDashboard/Drive isGyroReading",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
                 {
                   "_type": "Grid Layout",
                   "_title": "Encoders",
@@ -57,7 +64,7 @@
                 {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Vision Zero Drive",
-                  "_title": "Vision Zero Drive"
+                  "_title": "ZeroEncoders"
                 },
                 {
                   "_type": "Number Slider",
@@ -316,10 +323,10 @@
               ]
             }
           },
-          "9,3": {
+          "9,4": {
             "size": [
               2,
-              3
+              2
             ],
             "content": {
               "_type": "Subsystem Layout",
@@ -359,7 +366,7 @@
                 {
                   "_type": "Boolean Box",
                   "_source0": "network_table:///SmartDashboard/Limelight Updating",
-                  "_title": "Limelight Updating",
+                  "_title": "Limelight Working",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
                 }
@@ -411,6 +418,41 @@
                   "_title": "Feeder STOP"
                 }
               ]
+            }
+          },
+          "1,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/problemExists",
+              "_title": "problemExists",
+              "Colors/Color when true": "#8B0000FF",
+              "Colors/Color when false": "#7CFC00FF"
+            }
+          },
+          "2,0": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/problemSubsystem",
+              "_title": "problemSubsystem"
+            }
+          },
+          "0,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Clear Sticky Faults",
+              "_title": "Clear Faults"
             }
           }
         }
@@ -820,6 +862,54 @@
                   "_title": "Drive Dist in Meters"
                 }
               ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Debug",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {
+          "1,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/problemExists",
+              "_title": "problemExists",
+              "Colors/Color when true": "#8B0000FF",
+              "Colors/Color when false": "#7CFC00FF"
+            }
+          },
+          "2,0": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/problemSubsystem",
+              "_title": "problemSubsystem"
+            }
+          },
+          "0,0": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Clear Sticky Faults",
+              "_title": "Clear Faults"
             }
           }
         }
