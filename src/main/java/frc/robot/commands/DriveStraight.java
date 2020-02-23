@@ -122,7 +122,7 @@ public class DriveStraight extends CommandBase {
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
-    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel); // initialize velocity
+    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel * kMaxSpeedMetersPerSecond, maxAccel * kMaxAccelerationMetersPerSecondSquared); // initialize velocity
                                                                                                                           // and accel limits
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
     log.writeLog(false, "DriveStraight", "init", "Profile total time", tProfile.totalTime());
