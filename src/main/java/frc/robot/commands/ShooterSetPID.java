@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LimeLight;
@@ -96,7 +97,7 @@ public class ShooterSetPID extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(shooter.getMeasuredRPM() - rpm) < 200) {
+    if (Math.abs(shooter.getMeasuredRPM() - rpm) < RobotConstants.pidErrorTolerance) { // TODO change to use shooter.getPIDError()
       led.setStrip("Blue", 0.5, 1);
       return true;
     } else return false;

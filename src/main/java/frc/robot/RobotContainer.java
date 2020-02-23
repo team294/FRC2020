@@ -42,10 +42,10 @@ public class RobotContainer {
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final LimeLight limeLight = new LimeLight(log, led, driveTrain);
 
-  Joystick xboxController = new Joystick(xboxControllerPort);
-  Joystick leftJoystick = new Joystick(leftJoystickPort);
-  Joystick rightJoystick = new Joystick(rightJoystickPort);
-  Joystick coPanel = new Joystick(coPanelPort);
+  Joystick xboxController = new Joystick(usbXboxController);
+  Joystick leftJoystick = new Joystick(usbLeftJoystick);
+  Joystick rightJoystick = new Joystick(usbRightJoystick);
+  Joystick coPanel = new Joystick(usbCoPanel);
 
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();

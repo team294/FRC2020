@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
 
+import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 
 public class Shooter extends SubsystemBase {
@@ -137,6 +138,7 @@ public class Shooter extends SubsystemBase {
    */
   public double getShooterPIDError() {
     return shooterMotorLeft.getClosedLoopError() * ticksPer100ms;
+    // return shooterRPM - measuredRPM; TODO change to this calculation
   }
 
   /**

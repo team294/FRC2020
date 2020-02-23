@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.FeederConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.Feeder;
 
 public class FeederSetPID extends CommandBase {
@@ -89,7 +90,7 @@ public class FeederSetPID extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (timer.hasPeriodPassed(0.1) && Math.abs(feeder.getFeederPIDError()) < 200) return true; // TODO change to not use getFeederPIDError()
+    if (timer.hasPeriodPassed(0.1) && Math.abs(feeder.getFeederPIDError()) < RobotConstants.pidErrorTolerance) return true;
     else return false;
   }
 }
