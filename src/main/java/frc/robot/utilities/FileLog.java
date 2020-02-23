@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import static frc.robot.utilities.StringUtil.*;
 
@@ -146,7 +145,6 @@ public class FileLog {
 	 */
 	public void setLogLevel(int level) {
 		logLevel = level;
-		SmartDashboard.putNumber("Log Level", level);
 		writeLogEcho(true, "FileLog", "setLogLevel", "Level", level);
 	}
 

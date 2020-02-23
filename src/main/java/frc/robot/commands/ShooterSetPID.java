@@ -122,7 +122,7 @@ public class ShooterSetPID extends CommandBase {
     if (!end) return false;
 
     if (Math.abs(shooter.getMeasuredRPM() - rpm) < 200) {
-      SmartDashboard.putBoolean("Shooter is blue", true);
+      SmartDashboard.putBoolean("Shooter Up To Speed", true);
       led.setStrip("Blue", 0.5, 1);
       return true;
     }
