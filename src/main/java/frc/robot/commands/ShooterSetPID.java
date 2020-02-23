@@ -108,7 +108,7 @@ public class ShooterSetPID extends CommandBase {
   public boolean isFinished() {
     //if(timer.hasPeriodPassed(0.1) && Math.abs(shooter.getShooterPIDError()) < 200) return true;
     if (Math.abs(shooter.getMeasuredRPM() - rpm) < 200) {
-      SmartDashboard.putBoolean("Shooter is blue", true);
+      SmartDashboard.putBoolean("Shooter Up To Speed", true);
       led.setStrip("Blue", 0.5, 1);
       return true;
     }

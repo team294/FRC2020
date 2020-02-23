@@ -52,6 +52,7 @@ public class DriveTrain extends SubsystemBase {
   private TemperatureCheck tempCheck;
   
   // variables to help calculate angular velocity for turnGyro
+  private int gyroFailCount = 0; // number of times that gyro has returned exactly 0 (meaning it isn't reading correctly)
   private double prevAng; // last recorded gyro angle
   private double currAng; // current recorded gyro angle
   private double prevTime; // last time gyro angle was recorded
@@ -151,6 +152,21 @@ public class DriveTrain extends SubsystemBase {
     prevTime = System.currentTimeMillis();
     currTime = System.currentTimeMillis();
     lfRunningAvg.reset();
+
+    // display PID coefficients on SmartDashboard
+    SmartDashboard.putNumber("Drive kV Linear", kVLinear); // Linear coefficients
+    SmartDashboard.putNumber("Drive kA Linear", kALinear);
+    SmartDashboard.putNumber("Drive kS Linear", kSLinear);
+    SmartDashboard.putNumber("Drive kP Linear", kPLinear);
+    SmartDashboard.putNumber("Drive kI Linear", kILinear);
+    SmartDashboard.putNumber("Drive kD Linear", kDLinear);
+
+    SmartDashboard.putNumber("Drive kV Angular", kVAngular); // Angular coefficients
+    SmartDashboard.putNumber("Drive kA Angular", kAAngular);
+    SmartDashboard.putNumber("Drive kS Angular", kSAngular);
+    SmartDashboard.putNumber("Drive kP Angular", kPAngular);
+    SmartDashboard.putNumber("Drive kI Angular", kIAngular);
+    SmartDashboard.putNumber("Drive kD Angular", kDAngular);
   }
 
   /**
@@ -372,6 +388,11 @@ public class DriveTrain extends SubsystemBase {
 		return angle;
   }
 
+  
+  public boolean isGyroReading() {
+    return ahrs.isConnected();
+  }
+  
   /**
    * @return gyro angular velocity (with some averaging to reduce noise), in degrees per second.
    * Positive is turning left, negative is turning right.
@@ -422,6 +443,10 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.config_kI(0, kI);
     rightMotor1.config_kD(0, kD);
     rightMotor1.config_kF(0, kF);
+
+    SmartDashboard.putNumber("Drive kP Linear", kP);
+    SmartDashboard.putNumber("Drive kI Linear", kI);
+    SmartDashboard.putNumber("Drive kD Linear", kD);
 
     leftMotor1.selectProfileSlot(0, 0);
     rightMotor1.selectProfileSlot(0, 0);
@@ -482,25 +507,59 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    // read PID coefficients from SmartDashboard
+    double vL = SmartDashboard.getNumber("Drive kV Linear", 0);
+    double aL = SmartDashboard.getNumber("Drive kA Linear", 0);
+    double sL = SmartDashboard.getNumber("Drive kS Linear", 0);
+    double pL = SmartDashboard.getNumber("Drive kP Linear", 0);
+    double iL = SmartDashboard.getNumber("Drive kI Linear", 0);
+    double dL = SmartDashboard.getNumber("Drive kD Linear", 0);
+
+    double vA = SmartDashboard.getNumber("Drive kV Angular", 0);
+    double aA = SmartDashboard.getNumber("Drive kA Angular", 0);
+    double sA = SmartDashboard.getNumber("Drive kS Angular", 0);
+    double pA = SmartDashboard.getNumber("Drive kP Angular", 0);
+    double iA = SmartDashboard.getNumber("Drive kI Angular", 0);
+    double dA = SmartDashboard.getNumber("Drive kD Angular", 0);
+
+    if(vL != kVLinear) kVLinear = vL;
+    if(aL != kALinear) kALinear = aL;
+    if(sL != kSLinear) kSLinear = sL;
+    if(pL != kPLinear) kPLinear = pL;
+    if(iL != kILinear) kILinear = iL;
+    if(dL != kDLinear) kDLinear = dL;
+
+    if(vA != kVAngular) kVAngular = vA;
+    if(aA != kAAngular) kAAngular = aA;
+    if(sA != kSAngular) kSAngular = sA;
+    if(pA != kPAngular) kPAngular = pA;
+    if(iA != kIAngular) kIAngular = iA;
+    if(dA != kDAngular) kDAngular = dA;
+
+    // if PID coefficients on SmartDashboard have changed, write new values to controller
+
+
     double degrees = getGyroRotation();
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
 
     SmartDashboard.putNumber("Drive Right Raw", getRightEncoderRaw());
     SmartDashboard.putNumber("Drive Left Raw", getLeftEncoderRaw());
-    SmartDashboard.putNumber("Drive Right Encoder", getRightEncoderInches());
-    SmartDashboard.putNumber("Drive Left Encoder", getLeftEncoderInches());
-    SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
+    SmartDashboard.putNumber("Drive Right Enc", getRightEncoderInches());
+    SmartDashboard.putNumber("Drive Left Enc", getLeftEncoderInches());
+    SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));
     SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
-    SmartDashboard.putNumber("Gyro Rotation", degrees);
-    SmartDashboard.putNumber("Gyro Raw", getGyroRaw());
+    SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
+    SmartDashboard.putNumber("Drive Gyro Rotation", getGyroRotation());
+    SmartDashboard.putNumber("Drive Raw Gyro", getGyroRaw());
+    SmartDashboard.putBoolean("Drive isGyroReading", isGyroReading());
 
     odometry.update(Rotation2d.fromDegrees(degrees), leftMeters, rightMeters);
 
     // track position from odometry (helpful for autos)
     var translation = odometry.getPoseMeters().getTranslation();
-    SmartDashboard.putNumber("Odometry X",translation.getX());
-    SmartDashboard.putNumber("Odometry Y",translation.getY());
+    SmartDashboard.putNumber("Drive Odometry X",translation.getX());
+    SmartDashboard.putNumber("Drive Odometry Y",translation.getY());
 
      // save new current value for calculating angVel
      currAng = getGyroRaw();
@@ -510,7 +569,7 @@ public class DriveTrain extends SubsystemBase {
      angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
  
      // put on SmartDashboard
-     SmartDashboard.putNumber("Gyro Velocity", angularVelocity);
+     SmartDashboard.putNumber("Dive AngVel", angularVelocity);
  
      // save current angVel values as previous values for next calculation
      prevAng = currAng;
@@ -518,7 +577,14 @@ public class DriveTrain extends SubsystemBase {
      
      if(log.getLogRotation() == log.DRIVE_CYCLE) {
       updateDriveLog(false);
+      if(!isGyroReading()) {
+        RobotPreferences.recordStickyFaults("Gyro", log);
+      }
     }
+
+    // save current angVel values as previous values for next calculation
+    prevAng = currAng;
+    prevTime = currTime; 
   }
 
   /**

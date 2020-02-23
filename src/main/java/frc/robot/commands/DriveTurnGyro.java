@@ -25,9 +25,9 @@ public class DriveTurnGyro extends CommandBase {
 
   private DriveTrain driveTrain; // reference to driveTrain
   private double target; // how many more degrees to the right to turn
-  private double direction;     // -1 = turn to the left, +1 = turn to the right
-  private double maxVelMultiplier; // multiplier between 0.0 and 1.0 for limiting max velocity
-  private double maxAccelMultiplier; // multiplier between 0.0 and 1.0 for limiting max acceleration
+  private double direction; // -1 = turn to the left, +1 = turn to the right
+  private double maxVel; // max velocity, between 0 and kMaxAngularVelocity in Constants
+  private double maxAccel; // max acceleration, between 0 and kMaxAngularAcceleration in Constants
   private long profileStartTime; // initial time (time of starting point)
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
@@ -37,6 +37,7 @@ public class DriveTurnGyro extends CommandBase {
   private double timeSinceStart;
   private TargetType targetType;
   private boolean regenerate;
+  private boolean fromShuffleboard;
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
@@ -82,20 +83,25 @@ public class DriveTurnGyro extends CommandBase {
     this.limeLight = limeLight;
     this.log = log;
     this.target = driveTrain.normalizeAngle(target);
-    this.maxVelMultiplier = maxVelMultiplier;
-    this.maxAccelMultiplier = maxAccelMultiplier;
+    this.maxVel = maxVelMultiplier;
+    this.maxAccel = maxAccelMultiplier;
     this.targetType = type;
     this.regenerate = regenerate;
+    this.fromShuffleboard = false;
     this.angleTolerance = angleTolerance;
 
     addRequirements(driveTrain, limeLight);
 
     aFF = 0.0;
 
-    //driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
     pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
   }
 
+  /**
+   * To be used when changing the target value directly from shuffleboard (not a pre-coded target)
+   * @param fromShuffleboard true means the value is being changed from shuffleboard
+   */
+  
   /**
    * Turns the robot to a target angle.
    * @param type kRelative (target is an angle relative to current robot facing),
@@ -118,6 +124,12 @@ public class DriveTurnGyro extends CommandBase {
   public void initialize() {
     driveTrain.setDriveModeCoast(true);
 
+    if(fromShuffleboard) {
+      target = SmartDashboard.getNumber("TurnGyro Manual Target Ang", 90);
+      maxVel = SmartDashboard.getNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity);
+      maxAccel = SmartDashboard.getNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
+    }
+
     startAngle = driveTrain.getGyroRotation();
 
     switch (targetType) {
@@ -138,7 +150,7 @@ public class DriveTurnGyro extends CommandBase {
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
     // initialize velocity and accel limits
-    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxAngularVelocity * maxVelMultiplier, kMaxAngularAcceleration * maxAccelMultiplier); 
+    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel);
     // generate profile
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
 

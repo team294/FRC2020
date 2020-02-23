@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.RobotPreferences;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -121,10 +122,25 @@ public class LimeLight extends SubsystemBase {
       patternFormula = 14;
     }
     myPattern = LED.patternLibrary[patternFormula];
-    if (x == 0) {
+    if (seesTarget()) {
       myPattern = LED.patternLibrary[15];
     }
     return myPattern;
+  }
+
+  /**
+   * @return true when limelight sees a target, false when not seeing a target
+   */
+  public boolean seesTarget() {
+    return (x != 0 && x != 1064);
+  }
+
+  /**
+   * @return true when limelight is connected & reading data
+   * false when limelight is disconnected or not reading any data
+   */
+  public boolean isGettingData() {
+    return (x != 1064 && y != 1000);
   }
 
   @Override
@@ -141,7 +157,9 @@ public class LimeLight extends SubsystemBase {
     SmartDashboard.putNumber("LimeLight y", y);
     //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
     SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
-    SmartDashboard.putNumber("Actual new dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
+    SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
+    SmartDashboard.putBoolean("Limelight Updating", isGettingData());
+    SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
     
     // logging to graph accuracy of distance calculation, can probably be commented out after testing is done
     log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12), "X", x, "Y", y);
@@ -166,6 +184,9 @@ public class LimeLight extends SubsystemBase {
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
       updateLimeLightLog(false);
+      if(!isGettingData()) {
+        RobotPreferences.recordStickyFaults("LimeLight", log);
+      }
     }
   }
 
