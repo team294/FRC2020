@@ -115,7 +115,9 @@ public class RobotContainer {
     SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
 
     // climber subsystem
-    SmartDashboard.putData("ClimbSetPercentOutput(0.5)", new ClimbSetPercentOutput(0.5, climb));
+    SmartDashboard.putData("ClimbLeft 0.3%", new ClimbSetPercentOutput(0.3, climb));
+    SmartDashboard.putData("ClimbLeft -0.3%", new ClimbSetPercentOutput(-0.6, climb));
+    SmartDashboard.putData("ClimbLeft 2 ips", new ClimbLeftSetVelocity(2, -6, climb));
     SmartDashboard.putData("ClimbPistons EXTEND", new ClimbPistonsSetPosition(true, climb));
     SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb));
     

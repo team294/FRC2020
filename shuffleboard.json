@@ -469,7 +469,30 @@
               "_type": "List Layout",
               "_title": "Climb",
               "Layout/Label position": "BOTTOM",
-              "_children": []
+              "_children": [
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
+                  "_title": "SmartDashboard/ClimbLeft Limit",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft 2 ips",
+                  "_title": "SmartDashboard/ClimbLeft 2 ips"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft 0.3%",
+                  "_title": "SmartDashboard/ClimbLeft 0.3%"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft -0.3%",
+                  "_title": "SmartDashboard/ClimbLeft -0.6%"
+                }
+              ]
             }
           },
           "5,2": {
@@ -951,9 +974,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1056.0
+    "x": -6.0,
+    "y": 1.0,
+    "width": 1932.0,
+    "height": 1045.0
   }
 }

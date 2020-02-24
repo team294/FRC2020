@@ -10,20 +10,19 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
-/**
- * Command to set the piston position of both climb arms.
- */
 public class ClimbPistonsSetPosition extends CommandBase {
-  private boolean extend;
   private Climb climb;
+  private boolean extend;
   
   /**
+   * Set piston position of both climb arms.
+   * This command immediately ends.
    * @param extend true = extend pistons, false = retract pistons
-   * @param climb climb subsystem to use
+   * @param climb climb subsystem
    */
   public ClimbPistonsSetPosition(boolean extend, Climb climb) {
-    this.extend = extend;
     this.climb = climb;
+    this.extend = extend;
     addRequirements(climb);
 
   }

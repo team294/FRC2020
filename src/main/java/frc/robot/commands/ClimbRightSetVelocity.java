@@ -8,28 +8,31 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.Climb;
 
-public class ClimbSetPercentOutput extends CommandBase {
+public class ClimbRightSetVelocity extends CommandBase {
   private Climb climb;
-  private double percent;
+  private double velocity, position;
 
   /**
-   * Set percent output of both climb motors.
-   * This command never ends.
-   * @param percent percent output (0 to 1)
+   * Set right climb arm velocity.
+   * This command ends when the right climb arm gets within the tolerance of the target position.
+   * @param velocity velocity (inches/second)
+   * @param position target position (inches)
    * @param climb climb subsystem
    */
-  public ClimbSetPercentOutput(double percent, Climb climb) {
+  public ClimbRightSetVelocity(double velocity, double position, Climb climb) {
     this.climb = climb;
-    this.percent = percent;
+    this.velocity = velocity;
+    this.position = position;
     addRequirements(climb);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climb.climbMotorsSetPercentOutput(percent);
+    climb.climbMotorRightSetVelocity(velocity);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -40,12 +43,13 @@ public class ClimbSetPercentOutput extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (interrupted) climb.climbMotorsSetPercentOutput(0.0);
+    climb.climbMotorsSetPercentOutput(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance) return true;
+    else return false;
   }
 }
