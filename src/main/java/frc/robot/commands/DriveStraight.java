@@ -168,6 +168,9 @@ public class DriveStraight extends CommandBase {
     double targetAccel = tStateNext.acceleration;
 
     // Calculate correction to maintain angle
+    if (angleType == TargetType.kVision) {
+        angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + limeLight.getXOffset());
+    }
     double pAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - angleTarget) * kAngLinear;
     double targetVelL = targetVel * (1 + pAngle);
     double targetVelR = targetVel * (1 - pAngle);
