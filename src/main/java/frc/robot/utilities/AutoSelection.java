@@ -2,7 +2,7 @@ package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import frc.robot.commands.AutoOponentTrenchPickup;
+import frc.robot.commands.AutoOpponentTrenchPickup;
 import frc.robot.commands.AutoShootBackup;
 import frc.robot.commands.AutoOwnTrenchPickup;
 import frc.robot.commands.AutoTrenchFromCenter;
@@ -67,7 +67,7 @@ public class AutoSelection {
 		if (autoPlan == OPPONENT_TRENCH_PICKUP && trajectoryCache[OPPONENT_TRENCH_PICKUP] != null) {
 			log.writeLogEcho(true, "AutoSelect", "run TrenchFromRight");
 			trajectory = trajectoryCache[OPPONENT_TRENCH_PICKUP];
-			autonomousCommand = new AutoOponentTrenchPickup(trajectory, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoOpponentTrenchPickup(trajectory, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autoPlan == SHOOT_BACKUP) {

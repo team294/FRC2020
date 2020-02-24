@@ -591,12 +591,14 @@
               1
             ],
             "content": {
-              "_type": "Number Slider",
+              "_type": "Number Bar",
               "_source0": "network_table:///SmartDashboard/LimeLight x",
               "_title": "Vision Target",
-              "Slider Settings/Min": -8.0,
-              "Slider Settings/Max": 8.0,
-              "Slider Settings/Block increment": 0.0625
+              "Range/Min": -8.0,
+              "Range/Max": 8.0,
+              "Range/Center": 0.0,
+              "Visuals/Num tick marks": 9,
+              "Visuals/Show text": true
             }
           }
         }
@@ -805,17 +807,22 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/TurnGyro Manual MaxVel",
-                  "_title": "Drive Manual MaxVel Angular"
+                  "_title": "Turn Manual MaxVel Angular"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/TurnGyro Manual MaxAccel",
-                  "_title": "Drive Manual MaxAccel Angular"
+                  "_title": "Turn Manual MaxAccel Angular"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/TurnGyro Manual Target Ang",
-                  "_title": "Drive Manual Target Angle"
+                  "_title": "Turn Manual Target Angle"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/TurnGyro Manual Tolerance",
+                  "_title": "Turn Manual Tolerance"
                 },
                 {
                   "_type": "Command",
