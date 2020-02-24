@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.controller.PIDController;
-
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -84,11 +84,11 @@ public class DriveTurnGyro extends CommandBase {
     this.log = log;
     this.target = driveTrain.normalizeAngle(target);
     this.targetType = type;
-    this.maxVel = maxVel;
-    this.maxAccel = maxAccel;
+    this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxAngularVelocity);
+    this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAngularAcceleration);
     this.regenerate = regenerate;
     this.fromShuffleboard = false;
-    this.angleTolerance = angleTolerance;
+    this.angleTolerance = Math.abs(angleTolerance);
 
     addRequirements(driveTrain, limeLight);
 
@@ -158,8 +158,11 @@ public class DriveTurnGyro extends CommandBase {
     if(fromShuffleboard) {
       target = SmartDashboard.getNumber("TurnGyro Manual Target Ang", 90);
       maxVel = SmartDashboard.getNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity*0.08);
+      maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxAngularVelocity);
       maxAccel = SmartDashboard.getNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
+      maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAngularAcceleration);
       angleTolerance = SmartDashboard.getNumber("TurnGyro Manual Tolerance", 2);
+      angleTolerance = Math.abs(angleTolerance);
     }
     // If constants were updated from Shuffleboard, then update PID
     pidAngVel.setPID(kPAngular, kIAngular, kDAngular);

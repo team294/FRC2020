@@ -122,7 +122,7 @@ public class LimeLight extends SubsystemBase {
       patternFormula = 14;
     }
     myPattern = LED.patternLibrary[patternFormula];
-    if (seesTarget()) {
+    if (!seesTarget()) {
       myPattern = LED.patternLibrary[15];
     }
     return myPattern;
@@ -153,7 +153,8 @@ public class LimeLight extends SubsystemBase {
     area = ta.getDouble(1000.0);
     theoreticalWidth = Math.sqrt(area) * 1.526;
 
-    SmartDashboard.putNumber("LimeLight x", x);
+    // Invert X on SmartDashboard, since bars on SmartDashboard always go from - (left) to + (right)
+    SmartDashboard.putNumber("LimeLight x", -x);
     SmartDashboard.putNumber("LimeLight y", y);
     //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
     SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
