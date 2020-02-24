@@ -27,16 +27,13 @@ public class Climb extends SubsystemBase {
   private final WPI_TalonFX climbMotorLeft = new WPI_TalonFX(canClimbMotorLeft); // 50 to 1 gear ratio, 1 inch per second
   private final WPI_TalonFX climbMotorRight = new WPI_TalonFX(canClimbMotorRight);
   private final DoubleSolenoid climbPistons = new DoubleSolenoid(pcmClimbPistonsOut, pcmClimbPistonsIn);
-  private final TalonFXSensorCollection leftLimit;
-  private final TalonFXSensorCollection rightLimit;
+  private final TalonFXSensorCollection leftLimit, rightLimit;
 
   private FileLog log;
 
-  private double leftTargetVelocity, leftCurrentVelocity;
-  private double rightTargetVelocity, rightCurrentVelocity;
+  private double leftTargetVelocity, leftCurrVelocity, rightTargetVelocity, rightCurrVelocity;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 30;
-  private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
 
   public Climb(FileLog log) {
     this.log = log;
@@ -95,32 +92,39 @@ public class Climb extends SubsystemBase {
    ***************************/
 
    /**
-    * @param velocity velocity (inches/second)
-    * @return parameter velocity converted to equivalent native units (ticks per 100 ms)
+    * @param ips velocity, in inches per second
+    * @return parameter inches per second converted to equivalent ticks per 100ms
     */
-  public double velocityToNativeUnits(double velocity) {
-    System.out.println((velocity * ticksPerInch) / 10);
-    return (velocity * ticksPerInch) / 10;
+  public double ipsToTicksPer100ms(double ips) {
+    return (ips * ticksPerInch) / 10;
   }
 
   /**
-   * @param velocity target velocity (inches/second)
+    * @param ticksPer100ms velocity, in ticks per 100ms
+    * @return parameter ticks per 100ms converted to equivalent inches per second
+    */
+    public double ticksPer100msToIPS(double ticksPer100ms) {
+      return (ticksPer100ms / ticksPerInch) * 10;
+    }
+
+  /**
+   * @param velocity target velocity, in inches per second
    */
   public void climbMotorLeftSetVelocity(double velocity) {
     leftTargetVelocity = velocity;
-    climbMotorLeft.set(ControlMode.Velocity, velocityToNativeUnits(velocity));
+    climbMotorLeft.set(ControlMode.Velocity, ipsToTicksPer100ms(velocity));
   }
 
   /**
-   * @param velocity target velocity (inches/second)
+   * @param velocity target velocity, in inches per second
    */
   public void climbMotorRightSetVelocity(double velocity) {
     rightTargetVelocity = velocity;
-    climbMotorLeft.set(ControlMode.Velocity, velocityToNativeUnits(velocity));
+    climbMotorLeft.set(ControlMode.Velocity, ipsToTicksPer100ms(velocity));
   }
 
   /**
-   * @param velocity target velocity for both motors (inches/second)
+   * @param velocity target velocity for both motors, in inches per second
    */
   public void climbMotorsSetVelocity(double velocity) {
     climbMotorLeftSetVelocity(velocity);
@@ -140,7 +144,7 @@ public class Climb extends SubsystemBase {
   }
 
   /**
-   * @return true = right limit switch is triggerd, false = not triggered
+   * @return true = right limit switch is triggered, false = not triggered
    */
   public boolean getRightLimit() {
     if(rightLimit.isRevLimitSwitchClosed() == 1) return true;
@@ -166,14 +170,14 @@ public class Climb extends SubsystemBase {
   }
 
   /**
-   * Set the current position on the left climb arm as zero.
+   * Set current position on the left climb arm as zero
    */
   public void zeroLeftEncoder() {
     climbMotorLeft.setSelectedSensorPosition(0);
   }
 
   /**
-   * Set the current position on the right climb arm as zero.
+   * Set current position on the right climb arm as zero
    */
   public void zeroRightEncoder() {
     climbMotorRight.setSelectedSensorPosition(0);
@@ -260,41 +264,46 @@ public class Climb extends SubsystemBase {
    ***************************/
   
   /**
-   * @param inches position, in inches
+   * @param inches target position, in inches
    */
-  /*public void climbMotorsSetPosition(double inches) {
+  public void climbMotorsSetPosition(double inches) {
     climbMotorLeftSetPosition(inches);
     climbMotorRightSetPosition(inches);
-  }*/
+  }
 
   /**
-   * @param inches left arm position, in inches
+   * @param inches left arm target position, in inches
    */
-  /*public void climbMotorLeftSetPosition(double inches) {
-    climbMotorLeft.set(ControlMode.Position, inchesToEncoderTicks(inches), DemandType.ArbitraryFeedForward, kFF);
-  }*/
+  public void climbMotorLeftSetPosition(double inches) {
+    climbMotorLeft.set(ControlMode.Position, inchesToEncoderTicks(inches));
+  }
 
   /**
-   * @param inches right arm position, in inches
+   * @param inches right arm target position, in inches
    */
-  /*public void climbMotorRightSetPosition(double inches) {
-    climbMotorRight.set(ControlMode.Position, inchesToEncoderTicks(inches), DemandType.ArbitraryFeedForward, kFF);
-  }*/
+  public void climbMotorRightSetPosition(double inches) {
+    climbMotorRight.set(ControlMode.Position, inchesToEncoderTicks(inches));
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    updateClimbLog(false);
-
     if(getLeftLimit()) zeroLeftEncoder();
     if(getRightLimit()) zeroRightEncoder();
 
-    SmartDashboard.putBoolean("ClimbLeft Limit", getLeftLimit());
-    //SmartDashboard.putBoolean("ClimbRight Limit", getRightLimit());
-    SmartDashboard.putNumber("ClimbLeft Position", getLeftEncoderInches());
-    //SmartDashboard.putNumber("ClimbRight Position", getRightEncoderInches());
-    SmartDashboard.putNumber("ClimbLeft Ticks", getLeftEncoderRaw());
-    //SmartDashboard.putNumber("ClimbRight Ticks", getRightEncoderRaw());
+    leftCurrVelocity = ticksPer100msToIPS(climbMotorLeft.getSelectedSensorVelocity());
+    rightCurrVelocity = ticksPer100msToIPS(climbMotorRight.getSelectedSensorVelocity());
+
+    if(log.getLogRotation() == log.CLIMB_CYCLE) {
+      updateClimbLog(false);
+
+      SmartDashboard.putBoolean("ClimbLeft Limit", getLeftLimit());
+      SmartDashboard.putBoolean("ClimbRight Limit", getRightLimit());
+      SmartDashboard.putNumber("ClimbLeft Position", getLeftEncoderInches());
+      SmartDashboard.putNumber("ClimbRight Position", getRightEncoderInches());
+      SmartDashboard.putNumber("ClimbLeft Vel", leftCurrVelocity);
+      SmartDashboard.putNumber("ClimbRight Vel", rightCurrVelocity);
+    }
   }
 
   /**
@@ -303,14 +312,18 @@ public class Climb extends SubsystemBase {
    */
   public void updateClimbLog(boolean logWhenDisabled) {
     log.writeLog(logWhenDisabled, "Climb", "Update Variables",  
-      "Left Motor Volt", climbMotorLeft.getMotorOutputVoltage(), 
-      "Right Motor Volt", climbMotorRight.getMotorOutputVoltage(),
-      "Left Motor Amps", climbMotorLeft.getSupplyCurrent(),
-      "Right Motor Amps", climbMotorRight.getSupplyCurrent(),
+      "Left Volt", climbMotorLeft.getMotorOutputVoltage(), 
+      "Right Volt", climbMotorRight.getMotorOutputVoltage(),
+      "Left Amps", climbMotorLeft.getSupplyCurrent(),
+      "Right Amps", climbMotorRight.getSupplyCurrent(),
       "Left Position", getLeftEncoderInches(),
       "Right Position", getRightEncoderInches(),
       "Left Limit", getLeftLimit(),
-      "Right Limit", getRightLimit()
+      "Right Limit", getRightLimit(),
+      "Left Target Vel", leftTargetVelocity,
+      "Right Target Vel", rightTargetVelocity,
+      "Left Vel", leftCurrVelocity,
+      "Right Vel", rightCurrVelocity
     );
   }
 }

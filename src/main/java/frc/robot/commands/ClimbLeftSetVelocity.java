@@ -19,7 +19,7 @@ public class ClimbLeftSetVelocity extends CommandBase {
    * Set left climb arm velocity.
    * This command ends when the right climb arm gets within the tolerance of the target position.
    * @param velocity velocity (inches/second)
-   * @param position target position (inches)
+   * @param position target position (inches) NOTE: moves negative position when moving away from limit switch
    * @param climb climb subsystem
    */
   public ClimbLeftSetVelocity(double velocity, double position, Climb climb) {
