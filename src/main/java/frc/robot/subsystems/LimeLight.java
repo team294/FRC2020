@@ -52,15 +52,15 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
-   * @return horizontal (x-axis) angle between camera crosshair and target crosshair, in degrees
-   * left is negative, right is positive
+   * @return horizontal (x-axis) angle, in degrees, between camera crosshair and target crosshair
+   * left is positive, right is negative
    */
   public double getXOffset() {
     return x;
   }
 
   /**
-   * @return vertical (y-axis) angle between camera crosshair and target crosshair, in degrees
+   * @return vertical (y-axis) angle, in degrees, between camera crosshair and target crosshair
    * down is negative, up is positive
    */
   public double getYOffset() {
@@ -114,8 +114,7 @@ public class LimeLight extends SubsystemBase {
    */
   public Color[] makePattern() {
     Color[] myPattern = new Color[16];
-    int patternFormula = (int)((x + 7));
-
+    int patternFormula = (int)(-x + 7);
     if (patternFormula < 0) {
       patternFormula = 0;
     } else if (patternFormula > 14) {
@@ -148,13 +147,14 @@ public class LimeLight extends SubsystemBase {
   public void periodic() {
     // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
 
-    // update camera values
-    x = tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
+    // read values periodically
+    x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
     theoreticalWidth = Math.sqrt(area) * 1.526;
 
-    SmartDashboard.putNumber("LimeLight x", x);
+    // Invert X on SmartDashboard, since bars on SmartDashboard always go from - (left) to + (right)
+    SmartDashboard.putNumber("LimeLight x", -x);
     SmartDashboard.putNumber("LimeLight y", y);
     //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
     SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera

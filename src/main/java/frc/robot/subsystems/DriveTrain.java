@@ -47,7 +47,6 @@ public class DriveTrain extends SubsystemBase {
   private final AHRS ahrs;
   private double yawZero = 0;
 
-  private Timer autoTimer;
   private FileLog log;
   private TemperatureCheck tempCheck;
   
@@ -143,7 +142,8 @@ public class DriveTrain extends SubsystemBase {
     zeroRightEncoder();
     zeroGyroRotation();
 
-    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-getGyroRotation()));
+    // Sets initial position to (0,0) facing 0 degrees
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
 
     // initialize angular velocity variables
     prevAng = getGyroRaw();
@@ -237,7 +237,7 @@ public class DriveTrain extends SubsystemBase {
    * @return right encoder position, in ticks
    */
   public double getRightEncoderRaw() {
-    return rightMotor1.getSelectedSensorPosition(0);
+    return -rightMotor1.getSelectedSensorPosition(0);
   }
 
   /**
@@ -298,7 +298,7 @@ public class DriveTrain extends SubsystemBase {
 	 * @return encoder position, in ticks
 	 */
   public double getRightEncoderTicks() {
-    return -(getRightEncoderRaw() - rightEncoderZero);
+    return getRightEncoderRaw() - rightEncoderZero;
   }
 
   /**
@@ -354,31 +354,31 @@ public class DriveTrain extends SubsystemBase {
 
   /**
    * Gets the raw gyro angle (can be greater than 360).
+   * Angle is negated from the gyro, so that + = left and - = right
    * @return raw gyro angle, in degrees.
    */
   public double getGyroRaw() {
-    return ahrs.getAngle();
+    return -ahrs.getAngle();
   }
 
   /**
-	 * Zero the gyro position in software.
+	 * Zero the gyro position in software to the current angle.
 	 */
 	public void zeroGyroRotation() {
     yawZero = getGyroRaw(); // set yawZero to gyro angle
   }
   
   /**
-	 * Resets the gyro position in software to a specified angle.
-	 * @param currentHeading gyro heading to reset to, in degrees
+	 * Zero the gyro position in software against a specified angle.
+	 * @param currentHeading current robot angle compared to the zero angle
 	 */
-	public void setGyroRotation(double currentHeading) {
+	public void zeroGyroRotation(double currentHeading) {
 		// set yawZero to gryo angle, offset to currentHeading
 		yawZero = getGyroRaw() - currentHeading;
-		// System.err.println("PLZ Never Zero the Gyro Rotation it is not good");
   }
 
   /**
-	 * @return gyro angle from -180 to 180, in degrees
+	 * @return gyro angle from 180 to -180, in degrees (postitive is left, negative is right)
 	 */
 	public double getGyroRotation() {
 		double angle = getGyroRaw() - yawZero;
@@ -387,10 +387,18 @@ public class DriveTrain extends SubsystemBase {
 		return angle;
   }
 
+  /**
+   * Verifies if Gyro is still reading
+   * @return true = gryo is connected to Rio
+   */
   public boolean isGyroReading() {
     return ahrs.isConnected();
   }
 
+  /**
+   * @return gyro angular velocity (with some averaging to reduce noise), in degrees per second.
+   * Positive is turning left, negative is turning right.
+   */
   public double getAngularVelocity () {
     return angularVelocity;
   }
@@ -544,26 +552,23 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));
     SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
     SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
-    SmartDashboard.putNumber("Drive Gyro Rotation", getGyroRotation());
+    SmartDashboard.putNumber("Drive Gyro Rotation", degrees);
     SmartDashboard.putNumber("Drive Raw Gyro", getGyroRaw());
     SmartDashboard.putBoolean("Drive isGyroReading", isGyroReading());
 
-    odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
+    odometry.update(Rotation2d.fromDegrees(degrees), leftMeters, rightMeters);
 
     // track position from odometry (helpful for autos)
     var translation = odometry.getPoseMeters().getTranslation();
     SmartDashboard.putNumber("Drive Odometry X",translation.getX());
     SmartDashboard.putNumber("Drive Odometry Y",translation.getY());
 
-    // TODO keep in code until values can be tuned for ACTUAL 2020 robot
      // save new current value for calculating angVel
      currAng = getGyroRaw();
      currTime = System.currentTimeMillis();
  
-     // calculate angVel
+     // calculate angVel in degrees per second
      angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
- 
-     // convert angVel to degrees per sec & put on SmartDashboard
      SmartDashboard.putNumber("Drive AngVel", angularVelocity);
      
      if(log.getLogRotation() == log.DRIVE_CYCLE) {
@@ -578,8 +583,28 @@ public class DriveTrain extends SubsystemBase {
     prevTime = currTime; 
   }
 
+  /**
+   * Get current robot location and facing on the field
+   * @return current robot pose
+   */
   public Pose2d getPose() {
     return odometry.getPoseMeters();
+  }
+
+  /**
+   * Resets the robot pose on the field to the given location and rotation
+   * <p>Note:  This method resets the encoders to 0 and sets the gyro
+   * to the current robot rotation.
+   * <p>Robot X: 0 = middle of robot, wherever the robot starts auto mode (+=away from our drivestation)
+   * <p>Robot Y: 0 = middle of robot, wherever the robot starts auto mode (+=left when looking from our drivestation)
+   * <p>Robot angle: 0 = facing away from our drivestation
+   * @param robotPoseInMeters Current robot pose, in meters
+   */
+  public void resetPose(Pose2d robotPoseInMeters) {
+    zeroLeftEncoder();
+    zeroRightEncoder();
+    zeroGyroRotation(robotPoseInMeters.getRotation().getDegrees());
+    odometry.resetPosition(robotPoseInMeters, Rotation2d.fromDegrees(getGyroRotation()));
   }
 
   /**
@@ -590,19 +615,11 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Start the timer for the autonomous period. Useful for comparing to generated trajectories.
-   */
-  public void startAutoTimer() {
-    if (this.autoTimer == null) this.autoTimer = new Timer();
-    this.autoTimer.reset();
-    this.autoTimer.start();
-  }
-
-  /**
    * Writes information about the drive train to the filelog
    * @param logWhenDisabled true will log when disabled, false will discard the string
    */
   public void updateDriveLog(boolean logWhenDisabled) {
+    var translation = odometry.getPoseMeters().getTranslation();
     log.writeLog(logWhenDisabled, "Drive", "updates", 
       "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
       "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
@@ -612,7 +629,9 @@ public class DriveTrain extends SubsystemBase {
       "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
       "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
       "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
-      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
+      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), 
+      "Gyro Velocity", angularVelocity, 
+      "Odometry X", translation.getX(), "Odometry Y", translation.getY()
       );
   }
 

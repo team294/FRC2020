@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.DriveTurnGyro.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -27,7 +28,7 @@ public class AutoShootBackup extends SequentialCommandGroup {
     addCommands(
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
         
