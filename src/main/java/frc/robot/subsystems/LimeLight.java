@@ -145,49 +145,39 @@ public class LimeLight extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
-
-    // read values periodically
+    // This method will be called once per scheduler run
     x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
     theoreticalWidth = Math.sqrt(area) * 1.526;
-
-    // Invert X on SmartDashboard, since bars on SmartDashboard always go from - (left) to + (right)
-    SmartDashboard.putNumber("LimeLight x", -x);
-    SmartDashboard.putNumber("LimeLight y", y);
-    //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
-    SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
-    SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
-    SmartDashboard.putBoolean("Limelight Updating", isGettingData());
-    SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
-    
-    // logging to graph accuracy of distance calculation, can probably be commented out after testing is done
-    log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12), "X", x, "Y", y);
+    // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
 
     pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
-
+      
     if (getPipeline() != pipe) {
       System.out.println("Pipeline changed: " + pipe);
       setPipe(pipe);
     }
+  
+    if (makePattern() == LED.patternLibrary[15]) led.setPattern(makePattern(), 0.1, 0);
+    else led.setPattern(makePattern(), 0.5, 0);
 
-    if (makePattern() == LED.patternLibrary[15]) {
-      led.setPattern(makePattern(), 0.1, 0);
-    } else {
-      led.setPattern(makePattern(), 0.5, 0);
-    }
-
-    // led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
-    // ledAnimation.setDelayCounter();
-
-    // updateLimeLightLog(false);
+    if(!isGettingData()) RobotPreferences.recordStickyFaults("LimeLight", log);
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
       updateLimeLightLog(false);
-      if(!isGettingData()) {
-        RobotPreferences.recordStickyFaults("LimeLight", log);
-      }
+
+      // logging to graph accuracy of distance calculation TODO comment out after testing is done
+      log.writeLog(true, "LimeLight Distance", "Data", "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12), "X", x, "Y", y);
+
+      // Invert X on SmartDashboard, since bars on SmartDashboard always go from - (left) to + (right)
+      SmartDashboard.putNumber("LimeLight x", -x);
+      SmartDashboard.putNumber("LimeLight y", y);
+      // SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
+      SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
+      SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
+      SmartDashboard.putBoolean("Limelight Updating", isGettingData());
+      SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
     }
   }
 

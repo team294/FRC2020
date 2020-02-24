@@ -13,13 +13,18 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.FileLog;
 
 import static frc.robot.Constants.HopperConstants.*;
 
 public class Hopper extends SubsystemBase {
   private final WPI_VictorSPX hopperMotor = new WPI_VictorSPX(canHopperMotor);
+
+  private FileLog log;
   
-  public Hopper() {
+  public Hopper(FileLog log) {
+    this.log = log;
+
     hopperMotor.configFactoryDefault();
     hopperMotor.setInverted(true);
     hopperMotor.setNeutralMode(NeutralMode.Brake);
@@ -42,8 +47,23 @@ public class Hopper extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Hopper % Output", hopperGetPercentOutput());
-    SmartDashboard.putNumber("Hopper Voltage", hopperMotor.getMotorOutputVoltage());
     // This method will be called once per scheduler run
+    if(log.getLogRotation() == log.HOPPER_CYCLE) {
+      updateHopperLog(false);
+
+      SmartDashboard.putNumber("Hopper % Output", hopperMotor.getMotorOutputPercent());
+      SmartDashboard.putNumber("Hopper Voltage", hopperMotor.getMotorOutputVoltage());
+    }
+  }
+
+  /**
+   * Write information about hopper to fileLog.
+   * @param logWhenDisabled true = log when disabled, false = discard the string
+   */
+	public void updateHopperLog(boolean logWhenDisabled) {
+		log.writeLog(logWhenDisabled, "Hopper", "Update Variables",  
+      "Motor Volt", hopperMotor.getMotorOutputVoltage(), 
+      "Motor Output %", hopperMotor.getMotorOutputPercent()
+    );
   }
 }

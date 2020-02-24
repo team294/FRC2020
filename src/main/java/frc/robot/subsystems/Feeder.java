@@ -109,31 +109,31 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // read PID coefficients from SmartDashboard
-    ff = SmartDashboard.getNumber("Feeder FF", 0);
-    p = SmartDashboard.getNumber("Feeder P", 0);
-    i = SmartDashboard.getNumber("Feeder I", 0);
-    d = SmartDashboard.getNumber("Feeder D", 0);
-
-    // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if(ff != kFF) feederMotor.config_kF(0, ff, timeoutMs); kFF = ff;
-    if(p != kP) feederMotor.config_kP(0, p, timeoutMs); kP = p;
-    if(i != kI) feederMotor.config_kI(0, i, timeoutMs); kI = i;
-    if(d != kD) feederMotor.config_kD(0, d, timeoutMs); kD = d;
-
     measuredVelocityRaw = feederMotor.getSelectedSensorVelocity(0);
     measuredRPM = measuredVelocityRaw * ticksPer100ms; // converts ticks per 100ms to RPM
-    
-    SmartDashboard.putNumber("Feeder SetPoint RPM", setPoint * ticksPer100ms);
-    SmartDashboard.putNumber("Feeder RPM", measuredRPM);
-    SmartDashboard.putNumber("Feeder Encoder", feederMotor.getSelectedSensorPosition());
-    SmartDashboard.putNumber("Feeder Voltage", feederMotor.getMotorOutputVoltage());
-    SmartDashboard.putNumber("Feeder SetPoint", setPoint);
-    SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
-    SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
-    
+
     if(log.getLogRotation() == log.FEEDER_CYCLE) {
       updateFeederLog(false);
+
+      // read PID coefficients from SmartDashboard
+      ff = SmartDashboard.getNumber("Feeder FF", 0);
+      p = SmartDashboard.getNumber("Feeder P", 0);
+      i = SmartDashboard.getNumber("Feeder I", 0);
+      d = SmartDashboard.getNumber("Feeder D", 0);
+
+      // if PID coefficients on SmartDashboard have changed, write new values to controller
+      if(ff != kFF) feederMotor.config_kF(0, ff, timeoutMs); kFF = ff;
+      if(p != kP) feederMotor.config_kP(0, p, timeoutMs); kP = p;
+      if(i != kI) feederMotor.config_kI(0, i, timeoutMs); kI = i;
+      if(d != kD) feederMotor.config_kD(0, d, timeoutMs); kD = d;
+
+      SmartDashboard.putNumber("Feeder SetPoint RPM", setPoint * ticksPer100ms);
+      SmartDashboard.putNumber("Feeder RPM", measuredRPM);
+      SmartDashboard.putNumber("Feeder Encoder", feederMotor.getSelectedSensorPosition());
+      SmartDashboard.putNumber("Feeder Voltage", feederMotor.getMotorOutputVoltage());
+      SmartDashboard.putNumber("Feeder SetPoint", setPoint);
+      SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
+      SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
     }
   }
 
@@ -142,11 +142,11 @@ public class Feeder extends SubsystemBase {
    * @param logWhenDisabled true = log when disabled, false = discard the string
    */
   public void updateFeederLog(boolean logWhenDisabled) {
-    log.writeLog(logWhenDisabled, "Feeder", "updates", 
-      "Feeder Volts", feederMotor.getMotorOutputVoltage(), 
-      "Feeder Amps", feederMotor.getSupplyCurrent(), 
-      // "Feeder Temp", feederMotor.getTemperature(),
-      "Feeder RPM", feederMotor.getSelectedSensorVelocity(0) * ticksPer100ms 
+    log.writeLog(logWhenDisabled, "Feeder", "Update Variables", 
+      "Motor Volt", feederMotor.getMotorOutputVoltage(), 
+      "Motor Amps", feederMotor.getSupplyCurrent(), 
+      // "Motor Temp", feederMotor.getTemperature(),
+      "Measured RPM", measuredRPM 
     );
   }
 

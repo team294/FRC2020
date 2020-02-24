@@ -36,7 +36,9 @@ public class FileLog {
     public final int FEEDER_CYCLE = 3;
     public final int SHOOTER_CYCLE = 5;
     public final int CLIMB_CYCLE = 7;
-    public final int LIMELIGHT_CYCLE = 9;
+	public final int LIMELIGHT_CYCLE = 9;
+	public final int HOPPER_CYCLE = 11;
+	public final int INTAKE_CYCLE = 13;
     
 	/**
 	 * Creates a new log file called "/home/lvuser/logfile.ver.date.time.txt"

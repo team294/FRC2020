@@ -201,53 +201,43 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // read PID coefficients from SmartDashboard
-    double ff = SmartDashboard.getNumber("Shooter FF", 0);
-    double p = SmartDashboard.getNumber("Shooter P", 0);
-    double i = SmartDashboard.getNumber("Shooter I", 0);
-    double d = SmartDashboard.getNumber("Shooter D", 0);
-
-    
-
-    // if PID coefficients on SmartDashboard have changed, write new values to controller
-    if(ff != kFF) shooterMotorLeft.config_kF(0, ff, timeoutMs); kFF = ff;
-    if(p != kP) shooterMotorLeft.config_kP(0, p, timeoutMs); kP = p;
-    if(i != kI) shooterMotorLeft.config_kI(0, i, timeoutMs); kI = i;
-    if(d != kD) shooterMotorLeft.config_kD(0, d, timeoutMs); kD = d;
-    
     measuredRPM = getMeasuredRPM();
     
-    SmartDashboard.putNumber("Shooter SetPoint RPM", setPoint * ticksPer100ms);
-    SmartDashboard.putNumber("Shooter RPM", measuredRPM);
-    SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
-    SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
-    SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
-    SmartDashboard.putNumber("Shooter Motor 1 PercentOutput", shooterMotorLeft.getMotorOutputPercent());
-    SmartDashboard.putNumber("Shooter Motor 2 PercentOutput", shooterMotorRight.getMotorOutputPercent());
-    // SmartDashboard.putNumber("Shooter Motor 1 Voltage", shooterMotorLeft.getMotorOutputVoltage());
-    // SmartDashboard.putNumber("Shooter Motor 2 Voltage", shooterMotorRight.getMotorOutputVoltage());
-
-    SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
-    SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
-    SmartDashboard.putBoolean("Cell Present", prevCell);
-    
-    if(log.getLogRotation() == log.SHOOTER_CYCLE) {
-      updateShooterLog(false);
-    }
-
-    //if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
     if (getCell() && !prevCell) {
       powerCellsShot++;
       led.setBallLights(powerCellsShot);
     }
 
-    if (voltageTarget == 0) {
-      powerCellsShot = 0;
-      
-    }
+    if (voltageTarget == 0) powerCellsShot = 0;
+    if(voltageTarget == 0 && (powerCellsShot != prevPowerCellsShot)) led.setBallLights(powerCellsShot);
 
-    if(voltageTarget == 0 && (powerCellsShot != prevPowerCellsShot)){
-      led.setBallLights(powerCellsShot);
+    if(log.getLogRotation() == log.SHOOTER_CYCLE) {
+      updateShooterLog(false);
+
+      // read PID coefficients from SmartDashboard
+      double ff = SmartDashboard.getNumber("Shooter FF", 0);
+      double p = SmartDashboard.getNumber("Shooter P", 0);
+      double i = SmartDashboard.getNumber("Shooter I", 0);
+      double d = SmartDashboard.getNumber("Shooter D", 0);
+
+      // if PID coefficients on SmartDashboard have changed, write new values to controller
+      if(ff != kFF) shooterMotorLeft.config_kF(0, ff, timeoutMs); kFF = ff;
+      if(p != kP) shooterMotorLeft.config_kP(0, p, timeoutMs); kP = p;
+      if(i != kI) shooterMotorLeft.config_kI(0, i, timeoutMs); kI = i;
+      if(d != kD) shooterMotorLeft.config_kD(0, d, timeoutMs); kD = d;
+
+      SmartDashboard.putNumber("Shooter SetPoint RPM", setPoint * ticksPer100ms);
+      SmartDashboard.putNumber("Shooter RPM", measuredRPM);
+      SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
+      SmartDashboard.putNumber("Shooter Motor 2 Current", shooterMotorRight.getSupplyCurrent());
+      SmartDashboard.putNumber("Shooter PID Error", getShooterPIDError());
+      SmartDashboard.putNumber("Shooter Motor 1 PercentOutput", shooterMotorLeft.getMotorOutputPercent());
+      SmartDashboard.putNumber("Shooter Motor 2 PercentOutput", shooterMotorRight.getMotorOutputPercent());
+      SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
+      SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
+      SmartDashboard.putBoolean("Cell Present", prevCell);
+      // SmartDashboard.putNumber("Shooter Motor 1 Voltage", shooterMotorLeft.getMotorOutputVoltage());
+      // SmartDashboard.putNumber("Shooter Motor 2 Voltage", shooterMotorRight.getMotorOutputVoltage());
     }
 
     prevCell = getCell();
@@ -260,7 +250,8 @@ public class Shooter extends SubsystemBase {
    */
 	public void updateShooterLog(boolean logWhenDisabled) {
 		log.writeLog(logWhenDisabled, "Shooter", "Update Variables",  
-      "Motor Volt", shooterMotorLeft.getMotorOutputVoltage(), 
+      "Left Motor Volt", shooterMotorLeft.getMotorOutputVoltage(), 
+      "Right Motor Volt", shooterMotorRight.getMotorOutputVoltage(),
       "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
       "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
       "Measured RPM", measuredRPM,
