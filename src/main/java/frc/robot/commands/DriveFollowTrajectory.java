@@ -8,6 +8,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.CoordType;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.FileLog;
@@ -42,6 +43,7 @@ import static edu.wpi.first.wpilibj.util.ErrorMessages.requireNonNullParam;
 public class DriveFollowTrajectory extends CommandBase {
   private final Timer m_timer = new Timer();
   private final Trajectory m_trajectory;
+  private final CoordType m_trajectoryType;
 
   private Pose2d initialPose;
 
@@ -88,7 +90,8 @@ public class DriveFollowTrajectory extends CommandBase {
    * @param driveTrain      The driveTrain subsystem to be controlled.
    * @param log             File for logging
    */
-  public DriveFollowTrajectory(Trajectory trajectory, boolean useRamsete, PIDType pidType, DriveTrain driveTrain, FileLog log) {
+  public DriveFollowTrajectory(CoordType trajectoryType, Trajectory trajectory, boolean useRamsete, PIDType pidType, DriveTrain driveTrain, FileLog log) {
+    m_trajectoryType = trajectoryType;
     m_trajectory = requireNonNullParam(trajectory, "trajectory", "RamseteCommand");
     m_useRamsete = useRamsete;
     m_pidType = pidType;
@@ -100,19 +103,19 @@ public class DriveFollowTrajectory extends CommandBase {
   
   /**
   * Constructs a new command that, when executed, will follow the provided trajectory.
-  * PID control and feedforward are handled internally, and outputs are scaled -12 to 12
-  * representing units of volts.
+  * PID control and feedforward are handled internally.
   *
   * <p>Note: The controller will *not* set the outputVolts to zero upon completion of the path -
   * this
   * is left to the user, since it is not appropriate for paths with nonstationary endstates.
   *
+  * 
   * @param trajectory      The trajectory to follow.
   * @param driveTrain      The driveTrain subsystem to be controlled.
   * @param log             File for logging
   */
- public DriveFollowTrajectory(Trajectory trajectory, DriveTrain driveTrain, FileLog log) {
-   this(trajectory, true, PIDType.kTalon, driveTrain, log);
+ public DriveFollowTrajectory(CoordType trajectoryType, Trajectory trajectory, DriveTrain driveTrain, FileLog log) {
+   this(trajectoryType, trajectory, true, PIDType.kTalon, driveTrain, log);
  }
 
   // Called when the command is initially scheduled.
@@ -152,7 +155,11 @@ public class DriveFollowTrajectory extends CommandBase {
     double dt = curTime - m_prevTime;
     State desiredState = m_trajectory.sample(curTime);
 
-    Pose2d robotPose = driveTrain.getPose().relativeTo(initialPose);
+    Pose2d robotPose = driveTrain.getPose();
+    if (m_trajectoryType == CoordType.kRelative) {
+        robotPose = robotPose.relativeTo(initialPose);
+    }
+
     DifferentialDriveWheelSpeeds robotSpeeds = driveTrain.getWheelSpeeds();
 
     DifferentialDriveWheelSpeeds targetWheelSpeeds;
