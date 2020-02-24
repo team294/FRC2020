@@ -48,7 +48,7 @@ public class TrajectoryTest {
 				DriveConstants.kMaxAccelerationMetersPerSecondSquared * 0.6)
 				.setKinematics(driveKinematics)
 				.addConstraint(autoVoltageConstraint)
-				.setReversed(true);			// Set to true if robot is running backwards
+				.setReversed(false);			// Set to true if robot is running backwards
 
 			// drive from line to trench (assumes starting directly in front and facing target)		  
 			// the trajectory to follow (all units in meters)
@@ -64,7 +64,7 @@ public class TrajectoryTest {
 					// new Translation2d(1.06, 0.44) 
 				),
 				// new Pose2d(3, 0, new Rotation2d(0.0)), config);
-				new Pose2d(-1.5, -1.5, new Rotation2d(Math.toRadians(90.0))), config);
+				new Pose2d(3.0, 0, new Rotation2d(Math.toRadians(0.0))), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);

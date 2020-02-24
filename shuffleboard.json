@@ -614,97 +614,15 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "4,0": {
-            "size": [
-              2,
-              6
-            ],
-            "content": {
-              "_type": "List Layout",
-              "_title": "Shooter PID",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter P",
-                  "_title": "Shooter P"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter I",
-                  "_title": "Shooter I"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter D",
-                  "_title": "Shooter D"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter FF",
-                  "_title": "Shooter FF"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter SetPoint RPM",
-                  "_title": "Shooter SetPoint RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
-                  "_title": "Shooter Actual RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint RPM",
-                  "_title": "Shooter Manual SetPoint RPM"
-                },
-                {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter PID Error",
-                  "_title": "Shooter Error"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint",
-                  "_title": "Shooter Manual SetPoint"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
-                  "_title": "Shooter STOP"
-                },
-                {
-                  "_type": "Grid Layout",
-                  "_title": "Shooter PercentOutput",
-                  "Layout/Number of columns": 2,
-                  "Layout/Number of rows": 1,
-                  "Layout/Label position": "BOTTOM",
-                  "_children": {
-                    "0,0": {
-                      "_type": "Text View",
-                      "_source0": "network_table:///SmartDashboard/Shooter Motor 1 PercentOutput",
-                      "_title": "L %"
-                    },
-                    "1,0": {
-                      "_type": "Text View",
-                      "_source0": "network_table:///SmartDashboard/Shooter Motor 2 PercentOutput",
-                      "_title": "R %"
-                    }
-                  }
-                }
-              ]
-            }
-          },
           "2,0": {
             "size": [
               2,
-              6
+              4
             ],
             "content": {
               "_type": "List Layout",
               "_title": "Feeder PID",
-              "Layout/Label position": "BOTTOM",
+              "Layout/Label position": "LEFT",
               "_children": [
                 {
                   "_type": "Text View",
@@ -767,12 +685,12 @@
           "7,0": {
             "size": [
               2,
-              6
+              4
             ],
             "content": {
               "_type": "Subsystem Layout",
               "_title": "Drive Angular PID",
-              "Layout/Label position": "BOTTOM",
+              "Layout/Label position": "LEFT",
               "_children": [
                 {
                   "_type": "Text View",
@@ -807,12 +725,12 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/TurnGyro Manual MaxVel",
-                  "_title": "Turn Manual MaxVel Angular"
+                  "_title": "Turn Manual MaxVel"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/TurnGyro Manual MaxAccel",
-                  "_title": "Turn Manual MaxAccel Angular"
+                  "_title": "Turn Manual MaxAccel"
                 },
                 {
                   "_type": "Text View",
@@ -840,12 +758,12 @@
           "9,0": {
             "size": [
               2,
-              6
+              4
             ],
             "content": {
               "_type": "Subsystem Layout",
               "_title": "Drive Linear PID",
-              "Layout/Label position": "BOTTOM",
+              "Layout/Label position": "LEFT",
               "_children": [
                 {
                   "_type": "Text View",
@@ -880,12 +798,12 @@
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/DriveStraight Manual MaxVel",
-                  "_title": "Drive Manual MaxVel Linear"
+                  "_title": "Drive Manual MaxVel"
                 },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/DriveStraight Manual MaxAccel",
-                  "_title": "Drive Manual MaxAccel Linear"
+                  "_title": "Drive Manual MaxAccel"
                 },
                 {
                   "_type": "Text View",
@@ -901,6 +819,121 @@
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Drive Average Dist in Meters",
                   "_title": "Drive Dist in Meters"
+                }
+              ]
+            }
+          },
+          "11,0": {
+            "size": [
+              2,
+              3
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "List Layout",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ZeroOdometry",
+                  "_title": "ZeroOdometry"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Odometry X",
+                  "_title": "Drive Odometry X"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Odometry Y",
+                  "_title": "Drive Odometry Y"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Gyro Rotation",
+                  "_title": "Drive Gyro Rotation"
+                }
+              ]
+            }
+          },
+          "4,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "Shooter PID",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter P",
+                  "_title": "Shooter P"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter I",
+                  "_title": "Shooter I"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter D",
+                  "_title": "Shooter D"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter FF",
+                  "_title": "Shooter FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter SetPoint RPM",
+                  "_title": "Shooter SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
+                  "_title": "Shooter Actual RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint RPM",
+                  "_title": "Shooter Manual SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter PID Error",
+                  "_title": "Shooter Error"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint",
+                  "_title": "Shooter Manual SetPoint"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
+                  "_title": "Shooter STOP"
+                },
+                {
+                  "_type": "Grid Layout",
+                  "_title": "Shooter % Output",
+                  "Layout/Number of columns": 2,
+                  "Layout/Number of rows": 1,
+                  "Layout/Label position": "BOTTOM",
+                  "_children": {
+                    "1,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 1 PercentOutput",
+                      "_title": "L %"
+                    },
+                    "2,0": {
+                      "_type": "Text View",
+                      "_source0": "network_table:///SmartDashboard/Shooter Motor 2 PercentOutput",
+                      "_title": "R %"
+                    }
+                  }
                 }
               ]
             }

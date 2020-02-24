@@ -142,7 +142,10 @@ public class RobotContainer {
     // Testing for autos and trajectories
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("ZeroEncoders", new DriveZeroEncoders(driveTrain));
-    SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(CoordType.kRelative, TrajectoryTest.calcTrajectory(log), driveTrain, log)
+    SmartDashboard.putData("ZeroOdometry", new DriveResetPose(0, 0, 0, driveTrain));
+    SmartDashboard.putData("DriveTrajectoryRelative", new DriveFollowTrajectory(CoordType.kRelative, TrajectoryTest.calcTrajectory(log), driveTrain, log)
+        .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
+    SmartDashboard.putData("DriveTrajectoryAbsolute", new DriveFollowTrajectory(CoordType.kAbsolute, TrajectoryTest.calcTrajectory(log), driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
     // auto selection widget
