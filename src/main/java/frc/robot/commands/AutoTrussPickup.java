@@ -10,7 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import frc.robot.commands.DriveTurnGyro.TargetType;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -30,13 +30,13 @@ public class AutoTrussPickup extends SequentialCommandGroup {
       new DriveZeroGyro(180, driveTrain),
 
       new ParallelDeadlineGroup(
-        new DriveStraight(2.08, 0.5, 1.0, true, driveTrain, log), // drive to 2 of balls on truss
+        new DriveStraight(2.08, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log), // drive to 2 of balls on truss
         new IntakePistonSetPosition(true, intake), // deploy intake piston
         new IntakeSetPercentOutput(intake) // spin intake
       ),
 
       new ParallelDeadlineGroup(
-        new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log), // back up a short ammount 
+        new DriveStraight(-0.5, TargetType.kRelative, 0.0, 0.5, 1, true, driveTrain, limeLight, log), // back up a short ammount 
         new IntakeSequence(intake) // keep intake spinning
       ),
       //new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log),

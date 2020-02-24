@@ -12,6 +12,7 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -24,6 +25,8 @@ public class DriveStraight extends CommandBase {
    */
 
   private DriveTrain driveTrain; // reference to driveTrain
+  private LimeLight limeLight;
+  private TargetType angleType;
   private double target; // how many more degrees to the right to turn
   private double maxVel; // max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants 
   private double maxAccel; // max acceleration, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
@@ -40,6 +43,7 @@ public class DriveStraight extends CommandBase {
   private double timeSinceStart;
   private boolean regenerate;
   private boolean fromShuffleboard;
+  private double angleInput, angleTarget;
   private FileLog log;
 
   private double aFF;
@@ -53,17 +57,26 @@ public class DriveStraight extends CommandBase {
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
   /**
+   * Drives the robot straight.
    * @param target distance to travel, in meters
+   * @param angleType kRelative (angle is relative to current robot facing),
+   *   kAbsolute (angle is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to drive towards the goal)
+   * @param angle angle to drive along when driving straight (+ = left, - = right)
    * @param maxVel max velocity in meters/second, between 0 and kMaxSpeedMetersPerSecond in Constants
    * @param maxAccel max acceleration in meters/second2, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
    * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
    * @param driveTrain reference to the drive train subsystem
+   * @param limelight reference to the limelight subsystem
    * @param log
    */
-  public DriveStraight(double target, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, FileLog log) {
+  public DriveStraight(double target, TargetType angleType, double angle, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
     this.log = log;
+    this.angleType = angleType;
+    angleInput = angle;
     this.regenerate = regenerate;
     this.fromShuffleboard = false;
     this.target = target;
@@ -74,16 +87,24 @@ public class DriveStraight extends CommandBase {
     aFF = 0.0;
   }
 
-    /**
+  /**
    * Use this constructor when reading values from Shuffleboard
+   * @param angleType kRelative (angle is relative to current robot facing),
+   *   kAbsolute (angle is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to drive towards the goal)
+   * @param angle angle to drive along when driving straight (+ = left, - = right)
    * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
    * @param driveTrain reference to the drive train subsystem
+   * @param limelight reference to the limelight subsystem
    * @param log
    */
-  public DriveStraight(boolean regenerate, DriveTrain driveTrain, FileLog log) {
+  public DriveStraight(TargetType angleType, double angle, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
     this.log = log;
+    this.angleType = angleType;
+    angleInput = angle;
     this.regenerate = regenerate;
     this.fromShuffleboard = true;
     this.target = 0;
@@ -110,6 +131,17 @@ public class DriveStraight extends CommandBase {
     driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
 
     driveTrain.setDriveModeCoast(false);
+
+    switch (angleType) {
+      case kRelative:
+        angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + angleInput);
+        break;
+      case kAbsolute:
+        angleTarget = driveTrain.normalizeAngle(angleInput);
+        break;
+      case kVision:
+        angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + limeLight.getXOffset());
+    }
 
     if(fromShuffleboard) {
       target = SmartDashboard.getNumber("DriveStraight Manual Target Dist", 2);
@@ -149,13 +181,15 @@ public class DriveStraight extends CommandBase {
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart);
 
+    // TODO: Separate targetVel for left/right, with modifiers to maintain angle.
+
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
     aFF = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
 
-    SmartDashboard.putNumber("pos: ", tStateNext.position);
-    SmartDashboard.putNumber("vel: ", targetVel);
-    SmartDashboard.putNumber("%: ", aFF);
+    // SmartDashboard.putNumber("pos: ", tStateNext.position);
+    // SmartDashboard.putNumber("vel: ", targetVel);
+    // SmartDashboard.putNumber("%: ", aFF);
 
     // System.out.println("pos: " + tStateNext.position);
     // System.out.println("vel: " + targetVel);

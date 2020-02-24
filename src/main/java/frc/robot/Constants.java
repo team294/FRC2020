@@ -74,14 +74,29 @@ public final class Constants {
         public static final double cameraAngle = 28; // in degrees 26.5 measured but 28 works better?, 14 on proto
     }
 
+    /**
+     * Options to select driving coordinates.
+     */
     public enum CoordType {
         kRelative(0),
         kAbsolute(1);
     
         @SuppressWarnings({"MemberName", "PMD.SingularField"})
         public final int value;
-    
         CoordType(int value) { this.value = value; }
+    }
+
+    /**
+     * Options to select driving target types.
+     */
+    public enum TargetType {
+        kRelative(0),
+        kAbsolute(1),
+        kVision(2);
+    
+        @SuppressWarnings({"MemberName", "PMD.SingularField"})
+        public final int value;
+        TargetType(int value) { this.value = value; }
     }
 
     public static final class DriveConstants {
