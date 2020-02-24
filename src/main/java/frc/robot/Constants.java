@@ -148,21 +148,18 @@ public final class Constants {
         public static double kDAngular = 0;
         public static double kIAngular = 0;
 
-        // verify these
+        // DriveStraight constants
         public static double kMaxSpeedMetersPerSecond = 5.22; // 5.0 on practice bot, 5.22 on competition bot
-        public static double kMaxAccelerationMetersPerSecondSquared = 3.8; // 3.8 on practice bot, 3.8 on competition
-                                                                           // bot
+        public static double kMaxAccelerationMetersPerSecondSquared = 3.8; // 3.8 on practice bot, 3.8 on competition bot
         public static double kVLinear = 0.187; // 0.148 on practice bot, 0.187 on competition bot
-        public static double kALinear = 0.025; // 0.025 on practice bot, 0.0184 on competition bot (competition
-                                               // cal=0.0184)
+        public static double kALinear = 0.025; // 0.025 on practice bot, 0.0184 on competition bot (competition cal=0.0184)
         public static double kSLinear = 0.024; // 0.022 on practice bot, 0.024 on competition bot
-
         public static double kPLinear = 0.100; // 0.100 on practice bot, 0.100 on competition bot
         public static double kILinear = 0; // 0.0 on practice bot
         public static double kDLinear = 0; // 0.0 on practice bot
+        public static double kAngLinear = 0.030; // 0.030 (initial test)
 
-        // from robot characteristics
-
+        // Trajectory generation constants
         public static double kS = kSLinear * compensationVoltage; 
         public static double kV = kVLinear * compensationVoltage; 
         public static double kA = kALinear * compensationVoltage; 
@@ -170,7 +167,6 @@ public final class Constants {
         public static double TRACK_WIDTH = Units.inchesToMeters(24.93);   // 25.35 on practice bot, 24.93 on competition bot
 
         public static void updateDerivedConstants() {
-
             kS = kSLinear * compensationVoltage; 
             kV = kVLinear * compensationVoltage; 
             kA = kALinear * compensationVoltage; 

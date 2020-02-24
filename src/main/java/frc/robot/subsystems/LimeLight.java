@@ -10,7 +10,6 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.RobotPreferences;
@@ -60,7 +59,7 @@ public class LimeLight extends SubsystemBase {
 
   /**
    * @return horizontal (x-axis) angle, in degrees, between camera crosshair and target crosshair
-   * left is positive, right is negative
+   * + = target is to the left, - = target is to the right
    */
   public double getXOffset() {
     return x;
