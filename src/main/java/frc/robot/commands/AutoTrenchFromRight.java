@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.CoordType;
 import frc.robot.subsystems.DriveTrain;
 import frc.robot.utilities.FileLog;
 
@@ -18,7 +19,7 @@ public class AutoTrenchFromRight extends SequentialCommandGroup {
   public AutoTrenchFromRight(DriveTrain driveTrain, FileLog log, Trajectory trajectory) {
 
     addCommands(
-      new DriveFollowTrajectory(trajectory, driveTrain, log)
+      new DriveFollowTrajectory(CoordType.kRelative, trajectory, driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false))
     );
 

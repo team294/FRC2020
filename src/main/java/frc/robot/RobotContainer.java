@@ -18,7 +18,9 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.CoordType;
 import frc.robot.commands.*;
+import frc.robot.commands.DriveTurnGyro.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.triggers.*;
@@ -119,24 +121,31 @@ public class RobotContainer {
     SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, shooter));
     SmartDashboard.putData("ShooterHood CLOSE", new ShooterHoodPistonSequence(false, shooter));
 
-    // buttons for testing turnGyro, not updating numbers from SmartDashboard
-    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 0.5, 0.8, true, driveTrain, log));
-    SmartDashboard.putData("TurnVision", new DriveTurnGyro(0, 0.04, 1.0, true, true, 0.5, driveTrain, limeLight, log));
-    SmartDashboard.putData("TurnGyro", new DriveTurnGyro(181, 0.08, 1.0, false, true, 1, driveTrain, limeLight, log));
+    // buttons for testing drive code, not updating numbers from SmartDashboard
+    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
+    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 2.66, 3.8, true, driveTrain, log));
+    SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 45, 200, 0.5, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 90, 90, 200, 1, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kAbsolute, 90, 90, 200, 1, driveTrain, limeLight, log));
 
     // drive profile calibration buttons
-    SmartDashboard.putData("TurnGyroManual", new DriveTurnGyro(false, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyroManual", new DriveTurnGyro(TargetType.kRelative, true, driveTrain, limeLight, log));
     SmartDashboard.putNumber("TurnGyro Manual Target Ang", 90);
-    SmartDashboard.putNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity);
-    SmartDashboard.putNumber("TurnGyro Manual MaxAng", kMaxAngularAcceleration);
+    SmartDashboard.putNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity*0.08);
+    SmartDashboard.putNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
+    SmartDashboard.putNumber("TurnGyro Manual Tolerance", 2);
     SmartDashboard.putData("DriveStraightManual", new DriveStraight(true, driveTrain, log));
     SmartDashboard.putNumber("DriveStraight Manual Target Dist", 2);
     SmartDashboard.putNumber("DriveStraight Manual MaxVel", kMaxSpeedMetersPerSecond);
     SmartDashboard.putNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
     
+    // Testing for autos and trajectories
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
     SmartDashboard.putData("ZeroEncoders", new DriveZeroEncoders(driveTrain));
-    SmartDashboard.putData("DriveTrajectory", new DriveFollowTrajectory(TrajectoryTest.calcTrajectory(log), driveTrain, log)
+    SmartDashboard.putData("ZeroOdometry", new DriveResetPose(0, 0, 0, driveTrain));
+    SmartDashboard.putData("DriveTrajectoryRelative", new DriveFollowTrajectory(CoordType.kRelative, TrajectoryTest.calcTrajectory(log), driveTrain, log)
+        .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
+    SmartDashboard.putData("DriveTrajectoryAbsolute", new DriveFollowTrajectory(CoordType.kAbsolute, TrajectoryTest.calcTrajectory(log), driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
     // auto selection widget
@@ -223,7 +232,7 @@ public class RobotContainer {
 
     // joystick right button
     // left[2].whenPressed(new Wait(0));
-    right[2].whenHeld(new DriveTurnGyro(160, 0.04, 1.0, true, true, 1, driveTrain, limeLight, log)); // turn gyro with vision
+    right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 0.04, 1.0, 1, driveTrain, limeLight, log)); // turn gyro with vision
   }
 
   /** CoPanel Layout
@@ -343,7 +352,6 @@ public class RobotContainer {
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
     led.setStrip("Purple", 1);
-    driveTrain.startAutoTimer();
     driveTrain.setDriveModeCoast(false);
 
     // NOTE:  Do NOT reset the gyro or encoder here!!!!!

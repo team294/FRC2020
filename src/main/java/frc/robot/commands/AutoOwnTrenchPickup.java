@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.DriveTurnGyro.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -23,10 +24,9 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
   public AutoOwnTrenchPickup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     
     addCommands(
-
-
       
-    
+      new DriveZeroGyro(driveTrain),
+
       new ParallelDeadlineGroup(
         
         new DriveStraight(-1.5494, 0.5, 1.0, true, driveTrain, log), // drive to edge of trench
@@ -35,7 +35,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       ),
       
       new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
 
@@ -51,7 +51,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
         new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
       ),
       new ParallelRaceGroup(
-        new DriveTurnGyro(-163, 0.8, 1, false, true, 1, driveTrain, limeLight, log), // turn towards trench
+        new DriveTurnGyro(TargetType.kAbsolute, 180, 0.8, 1, 1, driveTrain, limeLight, log), // turn towards trench
         new Wait(1.5)
       ),
       new ParallelDeadlineGroup( // drive down trench with intake
@@ -61,11 +61,11 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       
       //new DriveStraight(-2, 0.5, 1.0, true, driveTrain, log),
 
-      new DriveTurnGyro(165, 0.8, 1.0, false, true, 4, driveTrain, limeLight, log),
+      new DriveTurnGyro(TargetType.kAbsolute, 25, 0.8, 1.0, 4, driveTrain, limeLight, log),
 
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
-          new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
         

@@ -8,9 +8,10 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
-
+import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -51,13 +52,11 @@ public class DriveStraight extends CommandBase {
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
-//TODO fill in comments, change multipliers to absolute values
-
   /**
    * @param target distance to travel, in meters
-   * @param maxVelMultiplier max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants
-   * @param maxAccelMultiplier max acceleration, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
-   * @param regenerate
+   * @param maxVel max velocity in meters/second, between 0 and kMaxSpeedMetersPerSecond in Constants
+   * @param maxAccel max acceleration in meters/second2, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
+   * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
    * @param driveTrain reference to the drive train subsystem
    * @param log
    */
@@ -68,8 +67,8 @@ public class DriveStraight extends CommandBase {
     this.regenerate = regenerate;
     this.fromShuffleboard = false;
     this.target = target;
-    this.maxVel = maxVel;
-    this.maxAccel = maxAccel;
+    this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
+    this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
     addRequirements(driveTrain);
 
     aFF = 0.0;
@@ -77,10 +76,9 @@ public class DriveStraight extends CommandBase {
 
     /**
    * Use this constructor when reading values from Shuffleboard
+   * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
    * @param driveTrain reference to the drive train subsystem
-   * @param target degrees to turn to the right
-   * @param maxVel between 0.0 and 1.0, multipier for limiting max velocity
-   * @param maxAccel between 0.0 and 1.0, multiplier for limiting max acceleration
+   * @param log
    */
   public DriveStraight(boolean regenerate, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -89,8 +87,8 @@ public class DriveStraight extends CommandBase {
     this.regenerate = regenerate;
     this.fromShuffleboard = true;
     this.target = 0;
-    this.maxVel = 0.5;
-    this.maxAccel = 0.5;
+    this.maxVel = 0.5 * DriveConstants.kMaxSpeedMetersPerSecond;
+    this.maxAccel = 0.5 * DriveConstants.kMaxAccelerationMetersPerSecondSquared;
     addRequirements(driveTrain);
 
     if(SmartDashboard.getNumber("DriveStraight Manual Target Dist", -9999) == -9999) {
@@ -116,7 +114,9 @@ public class DriveStraight extends CommandBase {
     if(fromShuffleboard) {
       target = SmartDashboard.getNumber("DriveStraight Manual Target Dist", 2);
       maxVel = SmartDashboard.getNumber("DriveStraight Manual MaxVel", kMaxSpeedMetersPerSecond);
+      maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
       maxAccel = SmartDashboard.getNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
+      maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
     }
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
