@@ -7,12 +7,13 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Climb;
 
 public class ClimbSetPercentOutput extends CommandBase {
   private Climb climb;
-  private double percent;
+  private double percent, timeRemaining;
 
   /**
    * Set percent output of both climb motors.
@@ -23,13 +24,16 @@ public class ClimbSetPercentOutput extends CommandBase {
   public ClimbSetPercentOutput(double percent, Climb climb) {
     this.climb = climb;
     this.percent = percent;
+    timeRemaining = DriverStation.getInstance().getMatchTime();
     addRequirements(climb);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climb.climbMotorsSetPercentOutput(percent);
+    // if it is the last 30 seconds of the match and the piston is extended, set left and right motor perecnt output
+    // if (timeRemaining <= 30 && climb.climbPistonsGetPosition())
+      climb.climbMotorsSetPercentOutput(percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -46,6 +50,8 @@ public class ClimbSetPercentOutput extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    // if it is the last 30 seconds of the match and the piston is extended, do not finish
+    /* if (timeRemaining <= 30 && climb.climbPistonsGetPosition()) */ return false;
+    // else return true;
   }
 }

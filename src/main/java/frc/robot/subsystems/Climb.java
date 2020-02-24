@@ -91,21 +91,21 @@ public class Climb extends SubsystemBase {
    * VELOCITY CONTROL
    ***************************/
 
-   /**
-    * @param ips velocity, in inches per second
-    * @return parameter inches per second converted to equivalent ticks per 100ms
-    */
+  /**
+   * @param ips velocity, in inches per second
+   * @return parameter inches per second converted to equivalent ticks per 100ms
+   */
   public double ipsToTicksPer100ms(double ips) {
     return (ips * ticksPerInch) / 10;
   }
 
   /**
-    * @param ticksPer100ms velocity, in ticks per 100ms
-    * @return parameter ticks per 100ms converted to equivalent inches per second
-    */
-    public double ticksPer100msToIPS(double ticksPer100ms) {
-      return (ticksPer100ms / ticksPerInch) * 10;
-    }
+   * @param ticksPer100ms velocity, in ticks per 100ms
+   * @return parameter ticks per 100ms converted to equivalent inches per second
+   */
+  public double ticksPer100msToIPS(double ticksPer100ms) {
+    return (ticksPer100ms / ticksPerInch) * 10;
+  }
 
   /**
    * @param velocity target velocity, in inches per second

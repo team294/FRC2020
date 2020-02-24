@@ -7,13 +7,14 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.Climb;
 
 public class ClimbRightSetVelocity extends CommandBase {
   private Climb climb;
-  private double velocity, position;
+  private double velocity, position, timeRemaining;
 
   /**
    * Set right climb arm velocity.
@@ -32,7 +33,10 @@ public class ClimbRightSetVelocity extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    climb.climbMotorRightSetVelocity(velocity);
+    timeRemaining = DriverStation.getInstance().getMatchTime();
+    // if it is the last 30 seconds of the match and the piston is extended, set right motor velocity
+    // if (timeRemaining <= 30 && climb.climb.climbPistonsGetPosition())
+      climb.climbMotorRightSetVelocity(velocity);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -43,13 +47,16 @@ public class ClimbRightSetVelocity extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climb.climbMotorsSetPercentOutput(0);
+    climb.climbMotorRightSetPercentOutput(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance) return true;
-    else return false;
+    // if it is the last 30 seconds of the match and the piston is extended, check for being at target position
+    // if (timeRemaining <= 30 && climb.climb.climbPistonsGetPosition()) {
+      if (Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance) return true;
+      else return false;
+    // } else return true;
   }
 }

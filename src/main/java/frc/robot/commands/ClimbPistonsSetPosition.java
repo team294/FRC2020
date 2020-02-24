@@ -7,12 +7,14 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
 public class ClimbPistonsSetPosition extends CommandBase {
   private Climb climb;
   private boolean extend;
+  private double matchTime;
   
   /**
    * Set piston position of both climb arms.
@@ -23,6 +25,7 @@ public class ClimbPistonsSetPosition extends CommandBase {
   public ClimbPistonsSetPosition(boolean extend, Climb climb) {
     this.climb = climb;
     this.extend = extend;
+    this.matchTime = DriverStation.getInstance().getMatchTime();
     addRequirements(climb);
 
   }
@@ -35,7 +38,8 @@ public class ClimbPistonsSetPosition extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    climb.climbPistonsSetPosition(extend);
+    // if (matchTime <= 30 && climb.getLeftEncoderInches() > -2 && climb.getRightEncoderInches() > -2)
+      climb.climbPistonsSetPosition(extend);
   }
 
   // Called once the command ends or is interrupted.
