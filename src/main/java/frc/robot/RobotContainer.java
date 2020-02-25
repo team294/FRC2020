@@ -160,9 +160,11 @@ public class RobotContainer {
     SmartDashboard.putData("Autonomous routine", autoChooser);
     SmartDashboard.putNumber("Autonomous delay", 0);
 
-    // display sticky faults
+    // display sticky faults%
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+    SmartDashboard.putData("Drive Vision Assist", new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
+    
   }
 
   /**
