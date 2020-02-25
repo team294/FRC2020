@@ -416,8 +416,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "Problem Exists",
-              "Colors/Color when true": "#8B0000FF",
-              "Colors/Color when false": "#7CFC00FF"
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#4D4D4DFF"
             }
           },
           "1,0": {
@@ -561,8 +561,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "Problem Exists",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#4D4D4DFF"
             }
           },
           "0,3": {
@@ -823,6 +823,11 @@
                 },
                 {
                   "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kAng Linear",
+                  "_title": "Drive kAng Linear"
+                },
+                {
+                  "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/DriveStraight Manual MaxVel",
                   "_title": "Drive Manual MaxVel"
                 },
@@ -856,7 +861,7 @@
             ],
             "content": {
               "_type": "List Layout",
-              "_title": "List Layout",
+              "_title": "Odometry",
               "Layout/Label position": "LEFT",
               "_children": [
                 {
@@ -986,8 +991,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "problemExists",
-              "Colors/Color when true": "#8B0000FF",
-              "Colors/Color when false": "#7CFC00FF"
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#4D4D4DFF"
             }
           },
           "5,0": {

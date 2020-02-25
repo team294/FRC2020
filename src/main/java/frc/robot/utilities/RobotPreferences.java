@@ -42,6 +42,7 @@ public class RobotPreferences {
         DriveConstants.kPLinear = readDouble("Drive.kPLinear", DriveConstants.kPLinear);
         DriveConstants.kILinear = readDouble("Drive.kILinear", DriveConstants.kILinear);
         DriveConstants.kDLinear = readDouble("Drive.kDLinear", DriveConstants.kDLinear);
+        DriveConstants.kAngLinear = readDouble("Drive.kAngLinear", DriveConstants.kAngLinear);
 
         DriveConstants.kMaxAngularVelocity = readDouble("Drive.kMaxAngularVelocityDegS", DriveConstants.kMaxAngularVelocity);
         DriveConstants.kMaxAngularAcceleration = readDouble("Drive.kMaxAngularAccelerationDegSS", DriveConstants.kMaxAngularAcceleration);
