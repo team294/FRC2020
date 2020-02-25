@@ -48,6 +48,8 @@ public final class Constants {
         
         public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2400},{15,2900},{20,2900},{25,3100},{30,3200}};
         // TODO figure out max distance of robot from target so table includes all necessary values
+
+        public static final double maxSecondsToShoot3balls = 5.0; // max time to wait while shooting 3 balls. use this in commands to timeout
     }
 
     public static final class FeederConstants {
@@ -147,6 +149,7 @@ public final class Constants {
         public static double kPAngular = 0.0005;   // was 0.001
         public static double kDAngular = 0;
         public static double kIAngular = 0;
+        public static final double maxSecondsForTurnGyro = 2.0; // max time to wait for turn gyro. use this in commands to timeout
 
         // DriveStraight constants
         public static double kMaxSpeedMetersPerSecond = 5.22; // 5.0 on practice bot, 5.22 on competition bot
