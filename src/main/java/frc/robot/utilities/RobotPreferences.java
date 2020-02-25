@@ -42,6 +42,7 @@ public class RobotPreferences {
         DriveConstants.kPLinear = readDouble("Drive.kPLinear", DriveConstants.kPLinear);
         DriveConstants.kILinear = readDouble("Drive.kILinear", DriveConstants.kILinear);
         DriveConstants.kDLinear = readDouble("Drive.kDLinear", DriveConstants.kDLinear);
+        DriveConstants.kAngLinear = readDouble("Drive.kAngLinear", DriveConstants.kAngLinear);
 
         DriveConstants.kMaxAngularVelocity = readDouble("Drive.kMaxAngularVelocityDegS", DriveConstants.kMaxAngularVelocity);
         DriveConstants.kMaxAngularAcceleration = readDouble("Drive.kMaxAngularAccelerationDegSS", DriveConstants.kMaxAngularAcceleration);
@@ -142,5 +143,13 @@ public class RobotPreferences {
     private static void editStickyFaultsInPrefs(String problemSubsystem, boolean problemExists) {
         prefs.putString("problemSubsystem", problemSubsystem);
         prefs.putBoolean("problemExists", problemExists);
+    }
+
+    /**
+     * Verifies that RobotPreferences is not empty (reset all preferences by accident)
+     * @return true = preferences exist on robot
+     */
+    public static boolean prefsExist() {
+        return prefs.containsKey("problemSubsystem");
     }
 }
