@@ -282,7 +282,7 @@
               ]
             }
           },
-          "1,2": {
+          "1,3": {
             "size": [
               2,
               2
@@ -388,8 +388,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "Problem Exists",
-              "Colors/Color when true": "#8B0000FF",
-              "Colors/Color when false": "#7CFC00FF"
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#4D4D4DFF"
             }
           },
           "1,0": {
@@ -403,9 +403,9 @@
               "_title": "Problem Subsystem"
             }
           },
-          "1,1": {
+          "1,2": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -453,6 +453,30 @@
               "Layout/Label position": "BOTTOM",
               "_children": []
             }
+          },
+          "5,2": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
+              "_title": "ShooterFeederHopperIntakeStop"
+            }
+          },
+          "1,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
+              "_title": "/SmartDashboard/RobotPrefs Initialized",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
           }
         }
       }
@@ -486,7 +510,7 @@
               "imageHeight": 0
             }
           },
-          "1,2": {
+          "1,5": {
             "size": [
               1,
               1
@@ -519,8 +543,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "Problem Exists",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#4D4D4DFF"
             }
           },
           "0,3": {
@@ -570,6 +594,19 @@
               "Range/Center": 0.0,
               "Visuals/Num tick marks": 9,
               "Visuals/Show text": true
+            }
+          },
+          "1,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
+              "_title": "/SmartDashboard/RobotPrefs Initialized",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
@@ -768,6 +805,11 @@
                 },
                 {
                   "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive kAng Linear",
+                  "_title": "Drive kAng Linear"
+                },
+                {
+                  "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/DriveStraight Manual MaxVel",
                   "_title": "Drive Manual MaxVel"
                 },
@@ -801,7 +843,7 @@
             ],
             "content": {
               "_type": "List Layout",
-              "_title": "List Layout",
+              "_title": "Odometry",
               "Layout/Label position": "LEFT",
               "_children": [
                 {
@@ -931,8 +973,8 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "problemExists",
-              "Colors/Color when true": "#8B0000FF",
-              "Colors/Color when false": "#7CFC00FF"
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#4D4D4DFF"
             }
           },
           "5,0": {

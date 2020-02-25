@@ -10,7 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.DriveTurnGyro.TargetType;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -29,7 +29,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
 
       new ParallelDeadlineGroup(
         
-        new DriveStraight(-1.5494, 0.5, 1.0, true, driveTrain, log), // drive to edge of trench
+        new DriveStraight(-1.5494, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log), // drive to edge of trench
         new ShooterSetPID(2800, shooter, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
@@ -55,7 +55,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
         new Wait(1.5)
       ),
       new ParallelDeadlineGroup( // drive down trench with intake
-        new DriveStraight(3.2, 0.4, 1.0, true, driveTrain, log),
+        new DriveStraight(3.2, TargetType.kRelative, 0.0, 0.4, 1.0, true, driveTrain, limeLight, log),
         new IntakeSequence(intake)
       ),
       

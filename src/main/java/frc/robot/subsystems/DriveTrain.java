@@ -17,7 +17,6 @@ import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.LinearFilter;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -51,7 +50,6 @@ public class DriveTrain extends SubsystemBase {
   private TemperatureCheck tempCheck;
   
   // variables to help calculate angular velocity for turnGyro
-  private int gyroFailCount = 0; // number of times that gyro has returned exactly 0 (meaning it isn't reading correctly)
   private double prevAng; // last recorded gyro angle
   private double currAng; // current recorded gyro angle
   private double prevTime; // last time gyro angle was recorded
@@ -159,6 +157,7 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Drive kP Linear", kPLinear);
     SmartDashboard.putNumber("Drive kI Linear", kILinear);
     SmartDashboard.putNumber("Drive kD Linear", kDLinear);
+    SmartDashboard.putNumber("Drive kAng Linear", kAngLinear);
 
     SmartDashboard.putNumber("Drive kV Angular", kVAngular); // Angular coefficients
     SmartDashboard.putNumber("Drive kA Angular", kAAngular);
@@ -509,73 +508,60 @@ public class DriveTrain extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // read PID coefficients from SmartDashboard
-    double vL = SmartDashboard.getNumber("Drive kV Linear", 0);
-    double aL = SmartDashboard.getNumber("Drive kA Linear", 0);
-    double sL = SmartDashboard.getNumber("Drive kS Linear", 0);
-    double pL = SmartDashboard.getNumber("Drive kP Linear", 0);
-    double iL = SmartDashboard.getNumber("Drive kI Linear", 0);
-    double dL = SmartDashboard.getNumber("Drive kD Linear", 0);
 
-    double vA = SmartDashboard.getNumber("Drive kV Angular", 0);
-    double aA = SmartDashboard.getNumber("Drive kA Angular", 0);
-    double sA = SmartDashboard.getNumber("Drive kS Angular", 0);
-    double pA = SmartDashboard.getNumber("Drive kP Angular", 0);
-    double iA = SmartDashboard.getNumber("Drive kI Angular", 0);
-    double dA = SmartDashboard.getNumber("Drive kD Angular", 0);
-
-    if(vL != kVLinear) kVLinear = vL;
-    if(aL != kALinear) kALinear = aL;
-    if(sL != kSLinear) kSLinear = sL;
-    if(pL != kPLinear) kPLinear = pL;
-    if(iL != kILinear) kILinear = iL;
-    if(dL != kDLinear) kDLinear = dL;
-
-    if(vA != kVAngular) kVAngular = vA;
-    if(aA != kAAngular) kAAngular = aA;
-    if(sA != kSAngular) kSAngular = sA;
-    if(pA != kPAngular) kPAngular = pA;
-    if(iA != kIAngular) kIAngular = iA;
-    if(dA != kDAngular) kDAngular = dA;
-
-    // if PID coefficients on SmartDashboard have changed, write new values to controller
-
-
+    // Update robot odometry
     double degrees = getGyroRotation();
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
-
-    SmartDashboard.putNumber("Drive Right Raw", getRightEncoderRaw());
-    SmartDashboard.putNumber("Drive Left Raw", getLeftEncoderRaw());
-    SmartDashboard.putNumber("Drive Right Enc", getRightEncoderInches());
-    SmartDashboard.putNumber("Drive Left Enc", getLeftEncoderInches());
-    SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));
-    SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
-    SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
-    SmartDashboard.putNumber("Drive Gyro Rotation", degrees);
-    SmartDashboard.putNumber("Drive Raw Gyro", getGyroRaw());
-    SmartDashboard.putBoolean("Drive isGyroReading", isGyroReading());
-
     odometry.update(Rotation2d.fromDegrees(degrees), leftMeters, rightMeters);
 
-    // track position from odometry (helpful for autos)
-    var translation = odometry.getPoseMeters().getTranslation();
-    SmartDashboard.putNumber("Drive Odometry X",translation.getX());
-    SmartDashboard.putNumber("Drive Odometry Y",translation.getY());
-
-     // save new current value for calculating angVel
-     currAng = getGyroRaw();
-     currTime = System.currentTimeMillis();
+    // save current angle and time for calculating angVel
+    currAng = getGyroRaw();
+    currTime = System.currentTimeMillis();
  
-     // calculate angVel in degrees per second
-     angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
-     SmartDashboard.putNumber("Drive AngVel", angularVelocity);
+    // calculate angVel in degrees per second
+    angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
      
-     if(log.getLogRotation() == log.DRIVE_CYCLE) {
+    if(log.getLogRotation() == log.DRIVE_CYCLE) {
       updateDriveLog(false);
+
       if(!isGyroReading()) {
         RobotPreferences.recordStickyFaults("Gyro", log);
       }
+
+      // read PID coefficients from SmartDashboard
+      kVLinear = SmartDashboard.getNumber("Drive kV Linear", kVLinear);
+      kALinear = SmartDashboard.getNumber("Drive kA Linear", kALinear);
+      kSLinear = SmartDashboard.getNumber("Drive kS Linear", kSLinear);
+      kPLinear = SmartDashboard.getNumber("Drive kP Linear", kPLinear);
+      kILinear = SmartDashboard.getNumber("Drive kI Linear", kILinear);
+      kDLinear = SmartDashboard.getNumber("Drive kD Linear", kDLinear);
+      kAngLinear = SmartDashboard.getNumber("Drive kAng Linear", kAngLinear);
+
+      kVAngular = SmartDashboard.getNumber("Drive kV Angular", kVAngular);
+      kAAngular = SmartDashboard.getNumber("Drive kA Angular", kAAngular);
+      kSAngular = SmartDashboard.getNumber("Drive kS Angular", kSAngular);
+      kPAngular = SmartDashboard.getNumber("Drive kP Angular", kPAngular);
+      kIAngular = SmartDashboard.getNumber("Drive kI Angular", kIAngular);
+      kDAngular = SmartDashboard.getNumber("Drive kD Angular", kDAngular);
+      
+      // Update data on SmartDashboard
+      SmartDashboard.putNumber("Drive Right Raw", getRightEncoderRaw());
+      SmartDashboard.putNumber("Drive Left Raw", getLeftEncoderRaw());
+      SmartDashboard.putNumber("Drive Right Enc", getRightEncoderInches());
+      SmartDashboard.putNumber("Drive Left Enc", getLeftEncoderInches());
+      SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));
+      SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
+      SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
+      SmartDashboard.putNumber("Drive Gyro Rotation", degrees);
+      SmartDashboard.putNumber("Drive AngVel", angularVelocity);
+      SmartDashboard.putNumber("Drive Raw Gyro", getGyroRaw());
+      SmartDashboard.putBoolean("Drive isGyroReading", isGyroReading());
+
+      // position from odometry (helpful for autos)
+      var translation = odometry.getPoseMeters().getTranslation();
+      SmartDashboard.putNumber("Drive Odometry X",translation.getX());
+      SmartDashboard.putNumber("Drive Odometry Y",translation.getY());
     }
 
     // save current angVel values as previous values for next calculation

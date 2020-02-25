@@ -74,14 +74,29 @@ public final class Constants {
         public static final double cameraAngle = 28; // in degrees 26.5 measured but 28 works better?, 14 on proto
     }
 
+    /**
+     * Options to select driving coordinates.
+     */
     public enum CoordType {
         kRelative(0),
         kAbsolute(1);
     
         @SuppressWarnings({"MemberName", "PMD.SingularField"})
         public final int value;
-    
         CoordType(int value) { this.value = value; }
+    }
+
+    /**
+     * Options to select driving target types.
+     */
+    public enum TargetType {
+        kRelative(0),
+        kAbsolute(1),
+        kVision(2);
+    
+        @SuppressWarnings({"MemberName", "PMD.SingularField"})
+        public final int value;
+        TargetType(int value) { this.value = value; }
     }
 
     public static final class DriveConstants {
@@ -131,21 +146,18 @@ public final class Constants {
         public static double kDAngular = 0;
         public static double kIAngular = 0;
 
-        // verify these
+        // DriveStraight constants
         public static double kMaxSpeedMetersPerSecond = 5.22; // 5.0 on practice bot, 5.22 on competition bot
-        public static double kMaxAccelerationMetersPerSecondSquared = 3.8; // 3.8 on practice bot, 3.8 on competition
-                                                                           // bot
+        public static double kMaxAccelerationMetersPerSecondSquared = 3.8; // 3.8 on practice bot, 3.8 on competition bot
         public static double kVLinear = 0.187; // 0.148 on practice bot, 0.187 on competition bot
-        public static double kALinear = 0.025; // 0.025 on practice bot, 0.0184 on competition bot (competition
-                                               // cal=0.0184)
+        public static double kALinear = 0.025; // 0.025 on practice bot, 0.0184 on competition bot (competition cal=0.0184)
         public static double kSLinear = 0.024; // 0.022 on practice bot, 0.024 on competition bot
-
         public static double kPLinear = 0.100; // 0.100 on practice bot, 0.100 on competition bot
-        public static double kILinear = 0; // 0.0 on practice bot
-        public static double kDLinear = 0; // 0.0 on practice bot
+        public static double kILinear = 0; // 0.0 on both bot
+        public static double kDLinear = 0; // 0.0 on both bot
+        public static double kAngLinear = 0.030; // 0.030 on both bots
 
-        // from robot characteristics
-
+        // Trajectory generation constants
         public static double kS = kSLinear * compensationVoltage; 
         public static double kV = kVLinear * compensationVoltage; 
         public static double kA = kALinear * compensationVoltage; 
@@ -153,7 +165,6 @@ public final class Constants {
         public static double TRACK_WIDTH = Units.inchesToMeters(24.93);   // 25.35 on practice bot, 24.93 on competition bot
 
         public static void updateDerivedConstants() {
-
             kS = kSLinear * compensationVoltage; 
             kV = kVLinear * compensationVoltage; 
             kA = kALinear * compensationVoltage; 
