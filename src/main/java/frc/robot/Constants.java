@@ -73,6 +73,7 @@ public final class Constants {
         public static final int pcmClimbPistonsOut = 5;
         public static final double ticksPerInch = 2048 * 54 / 2 / Math.PI; // ticksPerRotation * gearRatio(54:1) / pi / radius
         public static final double positionTolerance = 1;
+        public static final double maxHeight = 33;
     }
 
     public static final class LimeLightConstants {

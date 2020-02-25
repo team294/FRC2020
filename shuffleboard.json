@@ -473,24 +473,29 @@
                 {
                   "_type": "Boolean Box",
                   "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
-                  "_title": "SmartDashboard/ClimbLeft Limit",
+                  "_title": "ClimbLeft Limit",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
                 },
                 {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ClimbLeft 2 ips",
-                  "_title": "SmartDashboard/ClimbLeft 2 ips"
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Position",
+                  "_title": "ClimbLeft Position"
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ClimbLeft 0.3%",
-                  "_title": "SmartDashboard/ClimbLeft 0.3%"
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft 0.8%",
+                  "_title": "ClimbLeft 0.8%"
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ClimbLeft -0.3%",
-                  "_title": "SmartDashboard/ClimbLeft -0.6%"
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft -0.8%",
+                  "_title": "ClimbLeft -0.8%"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft 6 ips",
+                  "_title": "ClimbLeft -6 ips"
                 }
               ]
             }

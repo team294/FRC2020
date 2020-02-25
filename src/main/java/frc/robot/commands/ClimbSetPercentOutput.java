@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.Climb;
 
 public class ClimbSetPercentOutput extends CommandBase {
@@ -44,14 +45,17 @@ public class ClimbSetPercentOutput extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if (interrupted) climb.climbMotorsSetPercentOutput(0.0);
+    climb.climbMotorsSetPercentOutput(0.0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     // if it is the last 30 seconds of the match and the piston is extended, do not finish
-    /* if (timeRemaining <= 30 && climb.climbPistonsGetPosition()) */ return false;
+    /* if (timeRemaining <= 30 && climb.climbPistonsGetPosition()) return false; */
     // else return true;
+    if (climb.getLeftEncoderInches() >= ClimbConstants.maxHeight && percent > 0
+      /*|| climb.getRightEncoderInches() >= ClimbConstants.maxHeight*/) return true;
+    else return false;
   }
 }
