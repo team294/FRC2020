@@ -76,7 +76,11 @@ public class LimeLight extends SubsystemBase {
   public double getArea() {
     return area;
   }
-
+  public double getSweetSpot() {
+    double sweetSpotDistance;
+    sweetSpotDistance = getDistanceNew() - endDistance;
+    return sweetSpotDistance;
+  }
   /**
    * @return distance, on the floor, from camera to target
    * takes into account not being in line with the target

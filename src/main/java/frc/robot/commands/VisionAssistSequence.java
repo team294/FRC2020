@@ -7,10 +7,10 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
@@ -19,37 +19,20 @@ import frc.robot.utilities.*;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
-public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
+public class VisionAssistSequence extends SequentialCommandGroup {
+  /**
+   * Creates a new VisionAssistSequence.
+   */
 
- 
-  // start robot infront of opponents trench with the intake facing the trench
-
-  public AutoOpponentTrenchPickup(Trajectory trajectory, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public VisionAssistSequence(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, LED led, Hopper hopper, Intake intake) {
+    super();
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     addCommands(
+      new DriveTurnGyro(TargetType.kVision, 0, 2.61, 3.8, 4, driveTrain, limeLight, log), // turn towards the general target
+      new DriveStraight(limeLight.getSweetSpot(), TargetType.kVision, 0, 10, 10, true, driveTrain, limeLight, log),
+      new DriveTurnGyro(TargetType.kVision, 0, 2.61, 3.8, 1, driveTrain, limeLight, log),
 
-      new DriveZeroGyro(180, driveTrain),
-
-      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
-        new DriveStraight(3.2512, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log), // drive forward into trench
-        new IntakePistonSetPosition(true, intake), // depoy intake piston
-        new IntakeSetPercentOutput(intake) // start intake 
-      ),
-      
-      new DriveFollowTrajectory(CoordType.kRelative, trajectory, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
-          .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)),
-
-      new ParallelDeadlineGroup(
-          new DriveTurnGyro(TargetType.kAbsolute, 0, 0.5, 1.0, 2, driveTrain, limeLight, log), // turn towards the general target
-          new ShooterSetPID(3000, shooter, led) // start shooter while shooting
-        ), 
-
-      new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(2)
-        ),
-        
       new ParallelDeadlineGroup(
         new WaitForPowerCells(5, shooter),
         new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
@@ -61,5 +44,6 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
       )
       
     );
+    
   }
 }

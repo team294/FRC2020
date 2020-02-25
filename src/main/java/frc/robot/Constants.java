@@ -72,6 +72,7 @@ public final class Constants {
         public static final double cameraHeight = 1.625; // in feet, height from floor to lens of mounted camera, 2.104 on protobot
         public static final double targetHeight = 7.0; // in feet, height to middle of crosshair on target
         public static final double cameraAngle = 28; // in degrees 26.5 measured but 28 works better?, 14 on proto
+        public static final double endDistance = 20; // distance of the "sweet spot" 
     }
 
     /**

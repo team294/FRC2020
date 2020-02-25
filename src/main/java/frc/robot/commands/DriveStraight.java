@@ -45,7 +45,7 @@ public class DriveStraight extends CommandBase {
   private TrapezoidProfileBCR.State tStateNext; // next state of the system as calculated by the profile generator
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
-
+ 
   /**
    * Drives the robot straight.
    * @param target distance to travel, in meters
