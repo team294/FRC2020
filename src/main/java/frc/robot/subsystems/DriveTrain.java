@@ -31,7 +31,6 @@ import frc.robot.utilities.*;
 import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.DriveConstants.*;
 
-
 public class DriveTrain extends SubsystemBase {
   private final WPI_TalonFX leftMotor1;
   private final WPI_TalonFX leftMotor2;

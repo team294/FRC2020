@@ -11,54 +11,65 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.FeederConstants;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.Feeder;
 
-/**
- * Command to set the feeder PID.
- */
 public class FeederSetPID extends CommandBase {
   private Feeder feeder;
   private double rpm;
-  private boolean getRPMFromShuffleboard;
+  private boolean fromShuffleboard;
   private Timer timer;
 
   /**
-   * @param rpm setpoint in RPM
-   * @param feeder feeder subsystem to use
+   * Set feeder PID using parameter RPM.
+   * This command ends when feeder RPM is within tolerance.
+   * @param rpm setpoint, in RPM
+   * @param feeder feeder subsystem
    */
-  public FeederSetPID(int rpm, Feeder feeder) {
+  public FeederSetPID(double rpm, Feeder feeder) {
     this.feeder = feeder;
     this.rpm = rpm;
-    this.getRPMFromShuffleboard = false;
-    timer = new Timer();
+    this.fromShuffleboard = false;
+    this.timer = new Timer();
     addRequirements(feeder);
   }
 
   /**
-   * Turn on the feeder PID using RPM from Shuffleboard.
-   * @param feeder feeder subsystem to use
+   * Set feeder PID using RPM from shuffleboard.
+   * This command ends when feeder RPM is within tolerance.
+   * @param feeder feeder subsystem
    */
   public FeederSetPID(Feeder feeder) {
     this.feeder = feeder;
     this.rpm = 0;
-    getRPMFromShuffleboard = true;
-    timer = new Timer();
+    this.fromShuffleboard = true;
+    this.timer = new Timer();
     addRequirements(feeder);
 
     if(SmartDashboard.getNumber("Feeder Manual SetPoint RPM", -9999) == -9999)
       SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 2000);
   }
 
+  /**
+   * Set feeder PID using either RPM from shuffleboard or default RPM from constants.
+   * This command ends when feeder RPM is within tolerance.
+   * @param feeder feeder subsystem
+   */
   public FeederSetPID(boolean fromShuffleboard, Feeder feeder) {
     this.feeder = feeder;
-    this.getRPMFromShuffleboard = false;
     this.rpm = FeederConstants.feederDefaultRPM;
+    this.fromShuffleboard = fromShuffleboard;
+    this.timer = new Timer();
+    addRequirements(feeder);
+
+    if(SmartDashboard.getNumber("Feeder Manual SetPoint RPM", -9999) == -9999)
+      SmartDashboard.putNumber("Feeder Manual SetPoint RPM", 2000);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    if(getRPMFromShuffleboard) rpm = SmartDashboard.getNumber("Feeder Manual SetPoint RPM", 2000);
+    if(fromShuffleboard) rpm = SmartDashboard.getNumber("Feeder Manual SetPoint RPM", 2000);
     timer.reset();
     timer.start();
     feeder.setFeederPID(rpm);
@@ -79,7 +90,7 @@ public class FeederSetPID extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (timer.hasPeriodPassed(0.1) && Math.abs(feeder.getFeederPIDError()) < 200) return true;
+    if (timer.hasPeriodPassed(0.1) && Math.abs(feeder.getFeederPIDError()) < RobotConstants.pidErrorTolerance) return true;
     else return false;
   }
 }

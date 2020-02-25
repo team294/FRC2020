@@ -16,20 +16,16 @@ import frc.robot.utilities.RobotPreferences;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import frc.robot.subsystems.LED;
 import static frc.robot.Constants.LimeLightConstants.*;
 
 public class LimeLight extends SubsystemBase {
-
   private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
   private static NetworkTable table = tableInstance.getTable("limelight");
   private NetworkTableEntry tv, tx, ty, ta, pipeline;
-  public double x, y, area;
+  private double x, y, area, pipe, theoreticalWidth;
   private FileLog log;
   private LED led;
-  private DriveTrain driveTrain; // for testing distance calculation, probs can be taken out dist calc finished
-  private double pipe;
-  private double theoreticalWidth;
+  private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
 
   /*
    * Limelight settings: ~~input~~ Exposure: 2 Black level offset: 0 red balance:
@@ -41,7 +37,6 @@ public class LimeLight extends SubsystemBase {
    * send raw corners? : nah send raw contours: no crosshair mode: Single
    * crosshair x: 0 y: 0 ~~3d experimental~~ no changes
    */
-
   public LimeLight(FileLog log, LED led, DriveTrain driveTrain) {
     this.log = log;
     this.led = led;
@@ -54,7 +49,6 @@ public class LimeLight extends SubsystemBase {
     ta = table.getEntry("ta");
     pipeline = table.getEntry("pipeline");
     SmartDashboard.putNumber("Pipeline", 0);
-
   }
 
   /**
@@ -73,30 +67,36 @@ public class LimeLight extends SubsystemBase {
     return y;
   }
 
+  /**
+   * @return area of target
+   */
   public double getArea() {
     return area;
   }
 
   /**
-   * @return distance, on the floor, from camera to target
-   * takes into account not being in line with the target
+   * Takes into account not being in line with the target.
+   * @return distance from camera to target, on the floor
    */
-  public double getDistanceNew(){
-    double myDistance = (targetHeight-cameraHeight)/((Math.tan(Math.toRadians(cameraAngle + y)))*(Math.cos(Math.toRadians(x))));
+  public double getDistanceNew() {
+    double myDistance = (targetHeight - cameraHeight) / ((Math.tan(Math.toRadians(cameraAngle + y))) * (Math.cos(Math.toRadians(x))));
     return myDistance;
   }
 
   /**
-   * @return distance, on the floor, from camera to target
-   * assumes camera is perfectly in line with the target
-   * used for preliminary distanceCalc tests
-   * DO NOT USE FOR ACTUAL DISTANCE CALCULATIONS, USE NEW GETDIST
+   * Does not take into account not being in line with the target.
+   * Assumes camera is perfectly in line with the target, and was only used
+   * for preliminary distanceCalc tests (not for actual distance calculations).
+   * @return distance from camera to target, on the floor
    */
   public double getDistance() {
-    double myDistance = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle+y));
+    double myDistance = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle + y));
     return myDistance;
   }
 
+  /**
+   * @return current pipeline number
+   */
   public double getPipeline() {
     return table.getEntry("getpipe").getDouble(0);
   }
@@ -109,20 +109,21 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
-   * chooses which pattern to display based on the x offset value from limelight
-   * returns Color2[] array
+   * Choose which LED pattern to display, based on the x offset from camera.
+   * @return Color array of the pattern
    */
   public Color[] makePattern() {
     Color[] myPattern = new Color[16];
-    int patternFormula = (int) ((-x + 7));
+    int patternFormula = (int)(-x + 7);
     if (patternFormula < 0) {
       patternFormula = 0;
     } else if (patternFormula > 14) {
       patternFormula = 14;
     }
-    myPattern = LED.patternLibrary[patternFormula];
+
+    myPattern = LED.visionTargetLibrary[patternFormula];
     if (!seesTarget()) {
-      myPattern = LED.patternLibrary[15];
+      myPattern = LED.visionTargetLibrary[15];
     }
     return myPattern;
   }
@@ -152,7 +153,7 @@ public class LimeLight extends SubsystemBase {
     area = ta.getDouble(1000.0);
     theoreticalWidth = Math.sqrt(area) * 1.526;
 
-    if (makePattern() == LED.patternLibrary[15]) {
+    if (makePattern() == LED.visionTargetLibrary[15]) {
       led.setPattern(makePattern(), 0.1, 0);
     } else {
       led.setPattern(makePattern(), 0.5, 0);
@@ -188,7 +189,6 @@ public class LimeLight extends SubsystemBase {
 
   /**
    * Write information about limelight to fileLog.
-   * 
    * @param logWhenDisabled true = log when disabled, false = discard the string
    */
   public void updateLimeLightLog(boolean logWhenDisabled) {
