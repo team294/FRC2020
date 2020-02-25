@@ -9,44 +9,42 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LED;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj.Timer;
 
-
-/**
- * Command to send a solid color to the LED strip.
- */
 public class LEDRainbow extends CommandBase {
   private LED led;
-  private int ledStrip;
-  private double intensity = 0.5;
-  private Color[][] rainbowLibrary = LED.rainbowLibrary;
-  private Timer timer = new Timer();;
-  private double duration = 0.05;
+  private int strip; // which strip to set rainbow
+  private double speed; // how often to shift rainbow, in seconds
+  private Timer timer;
+  private int patternNum = 0;
  
+  /**
+   * Set LED strip to a shifting rainbow, with parameter seconds between each shift.
+   * This command never ends.
+   * @param strip strip number (0 or 1)
+   * @param speed how often to shift rainbow, in seconds
+   * @param led led strip (subsystem)
+   */
+  public LEDRainbow(int strip, double speed, LED led) {
+    this.led = led;
+    this.strip = strip;
+    this.speed = speed;
+    this.timer = new Timer();
+    addRequirements(led);
+  }
 
   /**
-   * Only use this to turn off LEDs.
-   * @param color color as a string (first letter capital)
-   * @param led LED subsystem to use
-   **/
-	public LEDRainbow(LED led, int ledStrip) {
+   * Set LED strip to a shifting rainbow, with 0.5 seconds between each shift.
+   * This command never ends.
+   * @param strip strip number (0 or 1)
+   * @param led led strip (subsystem)
+   */
+  public LEDRainbow(int strip, LED led) {
     this.led = led;
-    this.ledStrip = ledStrip;
+    this.strip = strip;
+    this.speed = 0.5;
+    this.timer = new Timer();
     addRequirements(led);
-  
-  }
-  
-  /**
-   * @param color color as a string (first letter capital)
-   * @param intensity LED intensity (0 to 1)
-   * @param led LED subsystem to use
-   **/
-	public LEDRainbow(int ledStrip, double intensity, LED led) {
-    this.led = led;
-    this.ledStrip = ledStrip;
-    this.intensity = intensity;
-	  addRequirements(led);
   }
 
 	// Called when the command is initially scheduled.
@@ -55,25 +53,19 @@ public class LEDRainbow extends CommandBase {
     timer.reset();
     timer.start();
   }
-    
-  private int patternNum = 0;
+      
   // Called every time the scheduler runs while the command is scheduled.
   @Override
 	public void execute() {  
-    if(patternNum > rainbowLibrary.length - 1){
-      patternNum = 0;
-    }
+    if(patternNum > LED.rainbowLibrary.length - 1) patternNum = 0;
     
-    led.setPattern(rainbowLibrary[patternNum], intensity, ledStrip);
+    led.setPattern(LED.rainbowLibrary[patternNum], 0.5, strip);
     
-    if(timer.hasPeriodPassed(duration)){
+    if(timer.hasPeriodPassed(speed)) {
       patternNum++;
       timer.reset();
       timer.start();
     }
-    
-
-
 	}
 
   // Called once the command ends or is interrupted.
