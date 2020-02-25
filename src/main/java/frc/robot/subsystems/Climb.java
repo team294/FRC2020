@@ -41,8 +41,8 @@ public class Climb extends SubsystemBase {
     climbMotorLeft.configFactoryDefault();
     climbMotorRight.configFactoryDefault();
 
-    climbMotorLeft.setInverted(true); // TODO determine motor inversion
-    climbMotorRight.setInverted(false);
+    climbMotorLeft.setInverted(false); // TODO determine motor inversion
+    climbMotorRight.setInverted(true);
 
     climbMotorLeft.setNeutralMode(NeutralMode.Coast);
     climbMotorLeft.configClosedloopRamp(0.05); // seconds from neutral to full
