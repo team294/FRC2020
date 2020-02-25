@@ -145,6 +145,7 @@ public class RobotContainer {
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
     autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
+    autoChooser.addOption("ShootForward", AutoSelection.SHOOT_FORWARD);
     autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
     autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
@@ -299,15 +300,13 @@ public class RobotContainer {
    * @return command to run in autonomous
    */
   public Command getAutonomousCommand() {
-    // get value of delay for beginning of auto from Shuffleboard
-    // TODO actually implement autoDelay variable in auto
     if(SmartDashboard.getNumber("Autonomous delay", -9999) == -9999) {
       SmartDashboard.putNumber("Autonomous delay", 0);
     }
     autoDelay = SmartDashboard.getNumber("Autonomous delay", 0);
     autoDelay = (autoDelay < 0) ? 0 : autoDelay; // make sure autoDelay isn't negative
     autoDelay = (autoDelay > 15) ? 15 : autoDelay; // make sure autoDelay is only active during auto
-    return autoSelection.getAutoCommand(autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
+    return autoSelection.getAutoCommand(autoDelay, autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 
   /**
