@@ -17,23 +17,26 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 /******************************
  *  import frc.robot.utilities.ColorSensor;
- *All references to the color sensor are commented out since as of now we are not using one
+ *  All references to the color sensor are commented out, since as of now we are not using one.
  *****************************/
 
 import static edu.wpi.first.wpilibj.util.Color.*;
 
 public class LED extends SubsystemBase {
-  private AddressableLED led; // strip
+  private AddressableLED led; // led strip
   private AddressableLEDBuffer ledBuffer; // data passed to strip
-  private final int length = 48; // length of strip in pixels
+  private final int length = 48; // length of strip, in pixels
   private final int firstStripLength = 16;
   private int startingInd = 0;
   // private boolean runAnimation = false;
   // private int currPattern = -1;
-  //private String prevColor, currColor; // colors on the control panel
-  //private final ColorSensor colorSensor; // Reference to the color sensor
+  // private String prevColor, currColor; // colors on the control panel
+  // private final ColorSensor colorSensor; // reference to the color sensor
 
-  public static final Color[][] patternLibrary = {
+  /**
+   * Color library for tracking the vision target.
+   */
+  public static final Color[][] visionTargetLibrary = {
     {kRed, kRed, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kRed, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kRed, kRed, kRed, kRed, kRed, kBlue, kBlue, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
@@ -51,7 +54,11 @@ public class LED extends SubsystemBase {
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlue, kBlue, kRed, kRed, kRed, kRed, kRed, kRed, kRed},
     {kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow, kYellow}
   };
-  public static final Color[][] shooterLibrary = {
+
+  /**
+   * Color library for counting power cells shot.
+   */
+  public static final Color[][] powerCellsLibrary = {
     {kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
@@ -59,8 +66,11 @@ public class LED extends SubsystemBase {
     {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kBlack, kBlack, kBlack, kBlack, kBlack},
     {kBlack, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack, kYellow, kYellow, kYellow, kYellow, kBlack},
-    
   };
+
+  /**
+   * Color library for rainbow pattern.
+   */
   public static final Color[][] rainbowLibrary = {
     {kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple},
     {kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed},
@@ -100,7 +110,6 @@ public class LED extends SubsystemBase {
     {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue}
   };
   
-  
   /**********************
    * Controls LED strips on the robot.
    
@@ -120,16 +129,14 @@ public class LED extends SubsystemBase {
   }
 ******************************/
   
-
   /**
-   * Controls LED strips on the robot without parameter for ColorSensor.
+   * Controls LED strips on without the ColorSensor.
    */
   public LED () {
-    led = new AddressableLED(0); // must be a PWM port
-                                 // currently port 0
+    led = new AddressableLED(0); // must be a PWM port, currently port 0
     ledBuffer = new AddressableLEDBuffer(length);
     led.setLength(length);
-/** 
+    /** 
     // save reference to the color sensor
     this.colorSensor = new ColorSensor();
 
@@ -142,10 +149,10 @@ public class LED extends SubsystemBase {
   }
  
   /**
-   * Sets color of individual pixel
+   * Set color of individual pixel on LED strip.
    * @param index index of pixel to be changed
-   * @param intensity multiplier for brightness (0.5 is half brightness)
-   * @param color String name of color, case sensitive
+   * @param intensity multiplier for brightness (0 to 1)
+   * @param color string of color name, case sensitive (ex: "Blue")
    */
   public void setColor(int index, double intensity, String color) {
     if (color.equals("Yellow")) ledBuffer.setRGB(index, (int)(255*intensity), (int)(255*intensity), 0);
@@ -160,8 +167,6 @@ public class LED extends SubsystemBase {
     else if (color.equals("Orange")) ledBuffer.setRGB(index, (int)(255*intensity), (int)(102*intensity), 0);
     else if (color.equals("Turquoise")) ledBuffer.setRGB(index, 0, (int)(255*intensity), (int)(128*intensity));
     else ledBuffer.setRGB(index, 0, 0, 0);
-   //ledBuffer.setRGB(index, 255, 0, 0);
-   //System.out.println(index);
   }
 
   /**
@@ -180,7 +185,7 @@ public class LED extends SubsystemBase {
 
   public void setBallLights(int powerCellsShot) {
     if(powerCellsShot > 6) powerCellsShot = 6;
-    setPattern(shooterLibrary[powerCellsShot], 0.5, 1);
+    setPattern(powerCellsLibrary[powerCellsShot], 0.5, 1);
   }
 
   /**

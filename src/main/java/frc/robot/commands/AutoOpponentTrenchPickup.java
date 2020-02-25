@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.CoordType;
-import frc.robot.commands.DriveTurnGyro.TargetType;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -32,7 +32,7 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
       new DriveZeroGyro(180, driveTrain),
 
       new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
-        new DriveStraight(3.2512, 0.5, 1.0, true, driveTrain, log), // drive forward into trench
+        new DriveStraight(3.2512, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log), // drive forward into trench
         new IntakePistonSetPosition(true, intake), // depoy intake piston
         new IntakeSetPercentOutput(intake) // start intake 
       ),
@@ -52,12 +52,12 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
         
       new ParallelDeadlineGroup(
         new WaitForPowerCells(5, shooter),
-        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
+        new ShootSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
       ),
       
       new ParallelDeadlineGroup(
         new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       )
       
     );
