@@ -156,9 +156,9 @@ public final class Constants {
         public static double kALinear = 0.025; // 0.025 on practice bot, 0.0184 on competition bot (competition cal=0.0184)
         public static double kSLinear = 0.024; // 0.022 on practice bot, 0.024 on competition bot
         public static double kPLinear = 0.100; // 0.100 on practice bot, 0.100 on competition bot
-        public static double kILinear = 0; // 0.0 on practice bot
-        public static double kDLinear = 0; // 0.0 on practice bot
-        public static double kAngLinear = 0.030; // 0.030 (initial test)
+        public static double kILinear = 0; // 0.0 on both bot
+        public static double kDLinear = 0; // 0.0 on both bot
+        public static double kAngLinear = 0.030; // 0.030 on both bots
 
         // Trajectory generation constants
         public static double kS = kSLinear * compensationVoltage; 

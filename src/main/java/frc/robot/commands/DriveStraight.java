@@ -168,10 +168,11 @@ public class DriveStraight extends CommandBase {
     double targetAccel = tStateNext.acceleration;
 
     // Calculate correction to maintain angle
+    double curAngle = driveTrain.getGyroRotation();
     if (angleType == TargetType.kVision) {
-        angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + limeLight.getXOffset());
+        angleTarget = driveTrain.normalizeAngle(curAngle + limeLight.getXOffset());
     }
-    double pAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - angleTarget) * kAngLinear;
+    double pAngle = driveTrain.normalizeAngle(curAngle - angleTarget) * kAngLinear;
     double targetVelL = targetVel * (1 + pAngle);
     double targetVelR = targetVel * (1 - pAngle);
     
@@ -187,7 +188,8 @@ public class DriveStraight extends CommandBase {
     driveTrain.setLeftTalonPIDVelocity(Units.metersToInches(targetVelL), aFFL);
     driveTrain.setRightTalonPIDVelocity(Units.metersToInches(targetVelR), aFFR, true);
 
-    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, 
+    log.writeLog(false, "DriveStraight", "profile", "angT", angleTarget, "angA", curAngle,
+      "posT", tStateNext.position, 
       "velLT", targetVelL, "velRT", targetVelR, "accT", targetAccel,
       "posA", currDist, "posLA", currDistLeft, "posRA", currDistRight, 
       "velLA", Units.inchesToMeters(driveTrain.getLeftEncoderVelocity()), 
