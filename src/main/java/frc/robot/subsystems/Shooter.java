@@ -135,7 +135,7 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * @return true = unlocked (retracted), false = locked (extended)
+   * @return true = locked (extended), false = unlocked (retracted)
    */
   public boolean getLockPiston() {
     return shooterLockPiston.get();

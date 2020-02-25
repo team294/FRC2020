@@ -99,7 +99,7 @@ public class ShooterSetPID extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(interrupted) shooter.setShooterVoltage(0);
+    if(interrupted && end) shooter.setShooterVoltage(0);
     ledTimer.stop();
   }
 
