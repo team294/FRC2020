@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
+import frc.robot.Constants.TargetType;
 import frc.robot.commands.*;
-import frc.robot.commands.DriveTurnGyro.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.triggers.*;
@@ -123,7 +123,9 @@ public class RobotContainer {
 
     // buttons for testing drive code, not updating numbers from SmartDashboard
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
-    SmartDashboard.putData("DriveStraight", new DriveStraight(3, 2.66, 3.8, true, driveTrain, log));
+    SmartDashboard.putData("DriveStraightRel", new DriveStraight(3, TargetType.kRelative, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("DriveStraightAbs", new DriveStraight(3, TargetType.kAbsolute, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("DriveStraightVis", new DriveStraight(3, TargetType.kVision, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 45, 200, 0.5, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 90, 90, 200, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kAbsolute, 90, 90, 200, 1, driveTrain, limeLight, log));
@@ -134,8 +136,9 @@ public class RobotContainer {
     SmartDashboard.putNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity*0.08);
     SmartDashboard.putNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
     SmartDashboard.putNumber("TurnGyro Manual Tolerance", 2);
-    SmartDashboard.putData("DriveStraightManual", new DriveStraight(true, driveTrain, log));
+    SmartDashboard.putData("DriveStraightManual", new DriveStraight(TargetType.kRelative, true, driveTrain, limeLight, log));
     SmartDashboard.putNumber("DriveStraight Manual Target Dist", 2);
+    SmartDashboard.putNumber("DriveStraight Manual Angle", 0);
     SmartDashboard.putNumber("DriveStraight Manual MaxVel", kMaxSpeedMetersPerSecond);
     SmartDashboard.putNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
     
