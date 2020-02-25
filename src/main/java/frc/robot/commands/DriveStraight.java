@@ -8,9 +8,11 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
-
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -23,25 +25,18 @@ public class DriveStraight extends CommandBase {
    */
 
   private DriveTrain driveTrain; // reference to driveTrain
+  private LimeLight limeLight;
+  private TargetType angleType;
   private double target; // how many more degrees to the right to turn
   private double maxVel; // max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants 
   private double maxAccel; // max acceleration, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
   private long profileStartTime; // initial time (time of starting point)
-  private long currProfileTime;
-  private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
-  private double targetAccel;
-  private double startDistLeft;
-  private double startDistRight;
-  private double endTime;
+  private double startDistLeft, startDistRight;
   private double currDist;
-  private double currDistLeft;
-  private double currDistRight;
-  private double timeSinceStart;
   private boolean regenerate;
   private boolean fromShuffleboard;
+  private double angleInput, angleTarget;   // angleTarget is an absolute gyro angle
   private FileLog log;
-
-  private double aFF;
 
   private int accuracyCounter = 0;
 
@@ -51,50 +46,64 @@ public class DriveStraight extends CommandBase {
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
-//TODO fill in comments, change multipliers to absolute values
-
   /**
+   * Drives the robot straight.
    * @param target distance to travel, in meters
-   * @param maxVelMultiplier max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants
-   * @param maxAccelMultiplier max acceleration, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
-   * @param regenerate
+   * @param angleType kRelative (angle is relative to current robot facing),
+   *   kAbsolute (angle is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to drive towards the goal)
+   * @param angle angle to drive along when driving straight (+ = left, - = right)
+   * @param maxVel max velocity in meters/second, between 0 and kMaxSpeedMetersPerSecond in Constants
+   * @param maxAccel max acceleration in meters/second2, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
+   * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
    * @param driveTrain reference to the drive train subsystem
+   * @param limelight reference to the limelight subsystem
    * @param log
    */
-  public DriveStraight(double target, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, FileLog log) {
+  public DriveStraight(double target, TargetType angleType, double angle, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
     this.log = log;
+    this.angleType = angleType;
+    angleInput = angle;
     this.regenerate = regenerate;
     this.fromShuffleboard = false;
     this.target = target;
-    this.maxVel = maxVel;
-    this.maxAccel = maxAccel;
+    this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
+    this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
     addRequirements(driveTrain);
-
-    aFF = 0.0;
   }
 
-    /**
+  /**
    * Use this constructor when reading values from Shuffleboard
+   * @param angleType kRelative (angle is relative to current robot facing),
+   *   kAbsolute (angle is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to drive towards the goal)
+   * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
    * @param driveTrain reference to the drive train subsystem
-   * @param target degrees to turn to the right
-   * @param maxVel between 0.0 and 1.0, multipier for limiting max velocity
-   * @param maxAccel between 0.0 and 1.0, multiplier for limiting max acceleration
+   * @param limelight reference to the limelight subsystem
+   * @param log
    */
-  public DriveStraight(boolean regenerate, DriveTrain driveTrain, FileLog log) {
+  public DriveStraight(TargetType angleType, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
     this.log = log;
+    this.angleType = angleType;
+    angleInput = 0;
     this.regenerate = regenerate;
     this.fromShuffleboard = true;
     this.target = 0;
-    this.maxVel = 0.5;
-    this.maxAccel = 0.5;
+    this.maxVel = 0.5 * DriveConstants.kMaxSpeedMetersPerSecond;
+    this.maxAccel = 0.5 * DriveConstants.kMaxAccelerationMetersPerSecondSquared;
     addRequirements(driveTrain);
 
     if(SmartDashboard.getNumber("DriveStraight Manual Target Dist", -9999) == -9999) {
       SmartDashboard.putNumber("DriveStraight Manual Target Dist", 2);
+    }
+    if(SmartDashboard.getNumber("DriveStraight Manual Angle", -9999) == -9999) {
+      SmartDashboard.putNumber("DriveStraight Manual Angle", 0);
     }
     if(SmartDashboard.getNumber("DriveStraight Manual MaxVel", -9999) == -9999) {
       SmartDashboard.putNumber("DriveStraight Manual MaxVel", kMaxSpeedMetersPerSecond);
@@ -102,73 +111,90 @@ public class DriveStraight extends CommandBase {
     if(SmartDashboard.getNumber("DriveStraight Manual MaxAccel", -9999) == -9999) {
       SmartDashboard.putNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
     }
-
-    aFF = 0.0;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
-
-    driveTrain.setDriveModeCoast(false);
-
     if(fromShuffleboard) {
       target = SmartDashboard.getNumber("DriveStraight Manual Target Dist", 2);
+      angleInput = SmartDashboard.getNumber("DriveStraight Manual Angle", 0);
       maxVel = SmartDashboard.getNumber("DriveStraight Manual MaxVel", kMaxSpeedMetersPerSecond);
+      maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
       maxAccel = SmartDashboard.getNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
+      maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
+    }
+
+    // Set angleTarget to absolute gyro target angle
+    switch (angleType) {
+      case kRelative:
+        angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + angleInput);
+        break;
+      case kAbsolute:
+        angleTarget = driveTrain.normalizeAngle(angleInput);
+        break;
+      case kVision:
+        angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + limeLight.getXOffset());
     }
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
-
-    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel * kMaxSpeedMetersPerSecond, maxAccel * kMaxAccelerationMetersPerSecondSquared); // initialize velocity
-                                                                                                                          // and accel limits
+    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel); // initialize velocity and accel limits
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
     log.writeLog(false, "DriveStraight", "init", "Profile total time", tProfile.totalTime());
     
-    endTime = tProfile.totalTime();
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
-    currProfileTime = profileStartTime;
     startDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches());
     startDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches());
     
-    aFF = 0.0;
     driveTrain.setTalonPIDConstants(kPLinear, kILinear, kDLinear, 0);
     driveTrain.resetTalonPIDs();
+    driveTrain.setDriveModeCoast(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    currProfileTime = System.currentTimeMillis();
-    currDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDistLeft;
-    currDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches()) - startDistRight;
+    // Update data for this iteration
+    long currProfileTime = System.currentTimeMillis();
+    double timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
+    double currDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches()) - startDistLeft;
+    double currDistRight = Units.inchesToMeters(driveTrain.getRightEncoderInches()) - startDistRight;
     currDist = (currDistLeft + currDistRight) * 0.5;
 
-    timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
-    tStateNext = tProfile.calculate(timeSinceStart);
+    // Get next state from trapezoid profile
+    tStateNext = tProfile.calculate(timeSinceStart + 0.010);
+    double targetVel = tStateNext.velocity;
+    double targetAccel = tStateNext.acceleration;
 
-    targetVel = tStateNext.velocity;
-    targetAccel = tStateNext.acceleration;
-    aFF = (kSLinear * Math.signum(targetVel)) + (targetVel * kVLinear) + (targetAccel * kALinear);
+    // Calculate correction to maintain angle
+    double curAngle = driveTrain.getGyroRotation();
+    if (angleType == TargetType.kVision) {
+        angleTarget = driveTrain.normalizeAngle(curAngle + limeLight.getXOffset());
+    }
+    double pAngle = driveTrain.normalizeAngle(curAngle - angleTarget) * kAngLinear;
+    double targetVelL = targetVel * (1 + pAngle);
+    double targetVelR = targetVel * (1 - pAngle);
+    
+    // Calculate feedforward power
+    double aFFL = (kSLinear * Math.signum(targetVelL)) + (targetVelL * kVLinear) + (targetAccel * kALinear);
+    double aFFR = (kSLinear * Math.signum(targetVelR)) + (targetVelR * kVLinear) + (targetAccel * kALinear);
 
-    SmartDashboard.putNumber("pos: ", tStateNext.position);
-    SmartDashboard.putNumber("vel: ", targetVel);
-    SmartDashboard.putNumber("%: ", aFF);
+    // For calibrating:  driving with feedforward only
+    // driveTrain.setLeftMotorOutput(aFFL);
+    // driveTrain.setRightMotorOutput(aFFR);
 
-    // System.out.println("pos: " + tStateNext.position);
-    // System.out.println("vel: " + targetVel);
-    // System.out.println("V: " + aFF);
+    // For competition:  driving with feedforward and feedback
+    driveTrain.setLeftTalonPIDVelocity(Units.metersToInches(targetVelL), aFFL);
+    driveTrain.setRightTalonPIDVelocity(Units.metersToInches(targetVelR), aFFR, true);
 
-    // driveTrain.setLeftMotorOutput(aFF);
-    // driveTrain.setRightMotorOutput(aFF);
-    driveTrain.setLeftTalonPIDVelocity(Units.metersToInches(targetVel), aFF);
-    driveTrain.setRightTalonPIDVelocity(Units.metersToInches(targetVel), aFF, true);
-
-    log.writeLog(false, "DriveStraight", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
-      "posA", (currDist), "posLA", (currDistLeft), "posRA", (currDistRight), 
-      "velLA", (Units.inchesToMeters(driveTrain.getLeftEncoderVelocity())), "velRA", (driveTrain.getRightEncoderVelocity()*2.54 / 100), "aFF", aFF,
+    log.writeLog(false, "DriveStraight", "profile", "angT", angleTarget, "angA", curAngle,
+      "posT", tStateNext.position, 
+      "velLT", targetVelL, "velRT", targetVelR, "accT", targetAccel,
+      "posA", currDist, "posLA", currDistLeft, "posRA", currDistRight, 
+      "velLA", Units.inchesToMeters(driveTrain.getLeftEncoderVelocity()), 
+      "velRA", Units.inchesToMeters(driveTrain.getRightEncoderVelocity()), 
+      "aFFL", aFFL, "aFFR", aFFR,
       "pctOutLA", driveTrain.getLeftOutputPercent(), "VoutNormA", driveTrain.getLeftOutputVoltage()/compensationVoltage, "VbusLA", driveTrain.getLeftBusVoltage(),
       "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
       "targetRawL", driveTrain.getTalonLeftClosedLoopTarget());

@@ -10,7 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.DriveTurnGyro.TargetType;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -41,14 +41,14 @@ public class AutoShootBackup extends SequentialCommandGroup {
           new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
           new Wait(10)
         ), 
-        new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
+        new ShootSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
       ),
       new ParallelDeadlineGroup(
         new Wait(0.1),
-        new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       ),
       
-      new DriveStraight(-1, 0.5, 1.0, true, driveTrain, log) // back up 1 meter to get off auto line
+      new DriveStraight(-1, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log) // back up 1 meter to get off auto line
 
     );
   }

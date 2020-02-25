@@ -10,31 +10,40 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
 
-/**
- * Command to send a pattern to the LED strip.
- */
 public class LEDSetPattern extends CommandBase {
   private LED led;
   private int rowNumber;
   private double intensity;
  
-  
   /**
-   * @param led LED subsystem to use
+   * Send a pattern to the LED strip, with parameter intensity.
    * @param rowNumber row in the patternLibrary
-   * @param intensity LED intensity (0 to 1)
+   * @param intensity percent intensity (0 to 1)
+   * @param led led strip (subsystem)
    */
   public LEDSetPattern(int rowNumber, double intensity, LED led) {
-    this.intensity = intensity;
     this.led = led;
-    //this.led = led2; 
     this.rowNumber = rowNumber;
+    this.intensity = intensity;
     addRequirements(led);
-  }    
+  }
+
+  /**
+   * Send a pattern to the LED strip, with 0.5 intensity.
+   * @param rowNumber row in the patternLibrary
+   * @param led led strip (subsystem)
+   */
+  public LEDSetPattern(int rowNumber, LED led) {
+    this.led = led;
+    this.rowNumber = rowNumber;
+    this.intensity = 0.5;
+    addRequirements(led);
+  }
+
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    led.setPattern(LED.patternLibrary[rowNumber], intensity, 1);
+    led.setPattern(LED.visionTargetLibrary[rowNumber], intensity, 1);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

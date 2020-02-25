@@ -10,20 +10,18 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
-/**
- * Command to wait until a specified number of power cells are shot.
- */
 public class WaitForPowerCells extends CommandBase {
-  private int cells;
   private Shooter shooter;
+  private int cells;
 
   /**
-   * @param cells number of power cells to wait for to finish
-   * @param shooter shooter subsystem to use
+   * Wait until parameter number of power cells are shot.
+   * @param cells number of power cells to wait for
+   * @param shooter shooter subsystem
    */
   public WaitForPowerCells(int cells, Shooter shooter) {
-    this.cells = cells;
     this.shooter = shooter;
+    this.cells = cells;
   }
 
   // Called when the command is initially scheduled.

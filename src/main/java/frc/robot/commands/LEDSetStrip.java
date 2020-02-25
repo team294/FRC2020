@@ -10,32 +10,30 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LED;
 
-
-/**
- * Command to send a solid color to the LED strip.
- */
 public class LEDSetStrip extends CommandBase {
   private LED led;
   private String color;
-  private double intensity = -1;
+  private double intensity;
  
-
   /**
-   * Only use this to turn off LEDs.
-   * @param color color as a string (first letter capital)
-   * @param led LED subsystem to use
+   * Send a solid color to the LED strip, at 0.5 intensity.
+   * This command immediately finishes.
+   * @param color string of color name, case sensitive (ex: "Blue")
+   * @param led led strip (subsystem)
    **/
 	public LEDSetStrip(String color, LED led) {
     this.led = led;
     this.color = color;
+    this.intensity = 0.5;
     addRequirements(led);
-  
   }
   
   /**
-   * @param color color as a string (first letter capital)
-   * @param intensity LED intensity (0 to 1)
-   * @param led LED subsystem to use
+   * Send a solid color to the LED strip, at parameter intensity.
+   * This command immediately finishes.
+   * @param color string of color name (first letter capital, ex: "Blue")
+   * @param intensity percent intensity (0 to 1)
+   * @param led led strip (subsystem)
    **/
 	public LEDSetStrip(String color, double intensity, LED led) {
     this.led = led;
