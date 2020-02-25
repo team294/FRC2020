@@ -127,6 +127,21 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
+   * @return true = opened (retracted), false = closed (extended)
+   */
+  public boolean getHoodPiston() {
+    if (shooterHoodPiston.get() == Value.kReverse) return true;
+    else return false;
+  }
+
+  /**
+   * @return true = unlocked (retracted), false = locked (extended)
+   */
+  public boolean getLockPiston() {
+    return shooterLockPiston.get();
+  }
+
+  /**
    * @param lock true = unlock (retract), false = lock (extend)
    */
   public void setLockPiston(boolean lock) {

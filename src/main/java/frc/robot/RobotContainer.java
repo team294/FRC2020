@@ -190,12 +190,14 @@ public class RobotContainer {
     // xb[4].whenPressed(new Wait(0)));
 
     // LB = 5, RB = 6
-    xb[5].whenPressed(new ShooterHoodPistonSequence(false, false, shooter)); // open shooter hood
-    xb[6].whileHeld(new ShooterSetPID(true, false, shooter, limeLight, led)); // set shooter rpm
+    xb[5].whileHeld(new ShootSequenceSetup(false, shooter, limeLight, led)); // close shot setup
+    xb[5].whenReleased(new ShootSequence(shooter, feeder, hopper, intake, led)); // shooting sequence
+    // xb[6].whileHeld(new ShooterSetPID(true, false, shooter, limeLight, led)); // set shooter rpm
+    xb[6].whileHeld(new ShootSequenceSetup(true, shooter, limeLight, led)); // normal and far shot setup
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence
 
-    // back = 7, start = 8
-    xb[7].whenPressed(new ShooterHoodPistonSequence(true, false, shooter)); // close shooter hood and do not lock angle
+    // back = 7, start = 8 
+    // xb[7].whenPressed(new ShooterHoodPistonSequence(true, false, shooter)); // close shooter hood and do not lock angle
     // xb[8].whenPressed(new Wait(0));
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
@@ -209,7 +211,7 @@ public class RobotContainer {
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
-    xbLT.whenActive(new ShooterHoodPistonSequence(true, true, shooter)); // close shooter hood and lock angle
+    // xbLT.whenActive(new ShooterHoodPistonSequence(true, true, shooter)); // close shooter hood and lock angle
     xbRT.whenActive(new ShootSequenceStop(shooter, feeder, hopper, intake, led)); // stop motors and set shooter to low rpm
   }
 

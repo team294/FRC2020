@@ -7,9 +7,12 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.HopperConstants;
+import frc.robot.Constants.LimeLightConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.*;
 
 public class ShootSequence extends SequentialCommandGroup {
@@ -24,8 +27,20 @@ public class ShootSequence extends SequentialCommandGroup {
    * @param led led strip (subsystem)
    */
   public ShootSequence(boolean rpmFromDistance, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, LED led) {
-    addCommands( 
-      new ShooterSetPID(rpmFromDistance, shooter, limeLight, led),
+    addCommands(
+      parallel(
+        // If hood is not closed, wait 0.5 seconds before moving on from setting hood position.
+        // Otherwise, immediately move on from setting hood position.
+        new ConditionalCommand(new Wait(0.5), new Wait(0), () -> shooter.getHoodPiston()),
+        // If getting RPM from distance and within range to do unlocked hood shot,
+        // unlock the hood but close it. Otherwise, close and lock the hood.
+        new ConditionalCommand(
+          new ShooterHoodPistonSequence(true, false, shooter),
+          new ShooterHoodPistonSequence(true, true, shooter),
+          () -> rpmFromDistance && limeLight.getDistanceNew() < LimeLightConstants.unlockedHoodMaxDistance
+        )
+      ),
+      new ShooterSetPID(rpmFromDistance, true, shooter, limeLight, led),
       new FeederSetPID(FeederConstants.feederDefaultRPM, feeder),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper),
       parallel(
@@ -47,6 +62,32 @@ public class ShootSequence extends SequentialCommandGroup {
   public ShootSequence(int rpm, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     addCommands( 
       new ShooterSetPID(rpm, shooter, led),
+      new FeederSetPID(feeder),
+      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper),
+      parallel(
+        new IntakeSetPercentOutput(intake), 
+        new HopperReverse(hopper)
+      )
+    );
+  }
+
+  /**
+   * Set shooter to setpoint RPM for short shot. Then run the feeder, intake, and hopper.
+   * @param shooter shooter subsystem
+   * @param feeder feeder subsystem
+   * @param hopper hopper subsystem
+   * @param intake intake subsystem
+   * @param led led strip
+   */
+  public ShootSequence(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+    addCommands( 
+      parallel(
+        // If hood is not open, wait 0.3 seconds before moving on from setting hood position.
+        // Otherwise, immediately move on from setting hood position.
+        new ConditionalCommand(new Wait(0.3), new Wait(0), () -> !shooter.getHoodPiston()),
+        new ShooterHoodPistonSequence(false, false, shooter) 
+      ),
+      new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led),
       new FeederSetPID(feeder),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper),
       parallel(
