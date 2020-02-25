@@ -145,6 +145,10 @@ public class RobotPreferences {
         prefs.putBoolean("problemExists", problemExists);
     }
 
+    /**
+     * Verifies that RobotPreferences is not empty (reset all preferences by accident)
+     * @return true = preferences exist on robot
+     */
     public static boolean prefsExist() {
         return prefs.containsKey("problemSubsystem");
     }
