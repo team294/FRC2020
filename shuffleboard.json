@@ -310,7 +310,7 @@
               ]
             }
           },
-          "1,2": {
+          "1,3": {
             "size": [
               2,
               2
@@ -431,9 +431,9 @@
               "_title": "Problem Subsystem"
             }
           },
-          "1,1": {
+          "1,2": {
             "size": [
-              1,
+              2,
               1
             ],
             "content": {
@@ -482,6 +482,19 @@
               "_source0": "network_table:///SmartDashboard/ShooterFeederHopperIntakeStop",
               "_title": "ShooterFeederHopperIntakeStop"
             }
+          },
+          "1,1": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
+              "_title": "/SmartDashboard/RobotPrefs Initialized",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
           }
         }
       }
@@ -515,7 +528,7 @@
               "imageHeight": 0
             }
           },
-          "1,2": {
+          "1,5": {
             "size": [
               1,
               1
@@ -599,6 +612,19 @@
               "Range/Center": 0.0,
               "Visuals/Num tick marks": 9,
               "Visuals/Show text": true
+            }
+          },
+          "1,2": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
+              "_title": "/SmartDashboard/RobotPrefs Initialized",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
             }
           }
         }
