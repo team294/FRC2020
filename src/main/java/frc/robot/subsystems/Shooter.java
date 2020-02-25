@@ -152,8 +152,8 @@ public class Shooter extends SubsystemBase {
    * @return PID error, in RPM
    */
   public double getShooterPIDError() {
-    return shooterMotorLeft.getClosedLoopError() * ticksPer100ms;
-    // return shooterRPM - measuredRPM; TODO change to this calculation
+    // return shooterMotorLeft.getClosedLoopError() * ticksPer100ms;
+    return shooterRPM - measuredRPM;
   }
 
   /**

@@ -108,7 +108,7 @@ public class ShooterSetPID extends CommandBase {
   public boolean isFinished() {
     if (!end) return false;
 
-    if (Math.abs(shooter.getMeasuredRPM() - rpm) < RobotConstants.pidErrorTolerance) { // TODO change to use shooter.getPIDError()
+    if (shooter.getShooterPIDError() < RobotConstants.pidErrorTolerance) {
       SmartDashboard.putBoolean("Shooter Up To Speed", true);
       led.setStrip("Blue", 0.5, 1);
       return true;
