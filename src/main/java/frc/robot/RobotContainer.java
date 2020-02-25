@@ -11,6 +11,7 @@ package frc.robot;
 //import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -25,6 +26,7 @@ import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 import frc.robot.triggers.*;
 
+import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.OIConstants.*;
 import static frc.robot.Constants.DriveConstants.*;
 
@@ -36,6 +38,7 @@ import static frc.robot.Constants.DriveConstants.*;
  */
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
+  private final PowerDistributionPanel pdp = new PowerDistributionPanel(powerDistributionPanel);
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final Hopper hopper = new Hopper();
   private final Feeder feeder = new Feeder(log, tempCheck);
