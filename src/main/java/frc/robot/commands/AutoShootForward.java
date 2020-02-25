@@ -10,11 +10,14 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.commands.DriveTurnGyro.TargetType;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
 public class AutoShootForward extends SequentialCommandGroup {
+
+  // multiplier to adjust max values down to a safe percent to use when driving
+  private static final double MAX_ADJUSTMENT = 0.6; 
 
   /**
    * Creates a command group that waits a specified time, shoots and then moves forward out of the way. 
@@ -40,7 +43,14 @@ public class AutoShootForward extends SequentialCommandGroup {
 
       // turn towards target w/ vision
       deadline(
-        new DriveTurnGyro(TargetType.kVision, 0, DriveConstants.kMaxAngularVelocity * 0.7, DriveConstants.kMaxAngularAcceleration * 0.7, 0.8, driveTrain, limeLight, log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
+        new DriveTurnGyro(TargetType.kVision, 
+          0, 
+          DriveConstants.kMaxAngularVelocity * MAX_ADJUSTMENT, 
+          DriveConstants.kMaxAngularAcceleration * MAX_ADJUSTMENT, 
+          0.8, 
+          driveTrain, 
+          limeLight, 
+          log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
         new ShooterSetPID(2800, shooter, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
@@ -48,14 +58,22 @@ public class AutoShootForward extends SequentialCommandGroup {
       // start shooter and wait for 3 power cells to be shot
       deadline(
         new WaitForPowerCells(3, shooter).withTimeout(ShooterConstants.maxSecondsToShoot3balls), 
-        new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led) 
+        new ShootSequence(2800, shooter, feeder, hopper, intake, led) 
       ),
       
       // stop all motors
-      new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led).withTimeout(0.1), 
+      new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1), 
       
-      //go forward 2 meters to get off auto line
-      new DriveStraight(2, DriveConstants.kMaxSpeedMetersPerSecond * 0.7, DriveConstants.kMaxAccelerationMetersPerSecondSquared * 0.7, true, driveTrain, log) 
+      // go forward 2 meters to get off auto line
+      new DriveStraight(2,
+        TargetType.kRelative, 
+        0,
+        DriveConstants.kMaxSpeedMetersPerSecond * MAX_ADJUSTMENT, 
+        DriveConstants.kMaxAccelerationMetersPerSecondSquared * MAX_ADJUSTMENT, 
+        true, 
+        driveTrain, 
+        limeLight,
+        log) 
 
     );
   }
