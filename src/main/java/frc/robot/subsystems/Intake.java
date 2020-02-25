@@ -34,7 +34,9 @@ public class Intake extends SubsystemBase {
   public void intakeSetPercentOutput(double percent) {
     intakeMotor.set(ControlMode.PercentOutput, percent);
   }
-
+  public double intakeGetPercentOutput() {
+    return intakeMotor.getMotorOutputPercent();
+  }
   /**
    * @param extend true = extend, false = retract
    */

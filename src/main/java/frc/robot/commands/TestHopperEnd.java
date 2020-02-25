@@ -41,10 +41,9 @@ public class TestHopperEnd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-  if(hopper.hopperGetPercentOutput() > 0.8)
+  if(hopper.hopperGetPercentOutput() > 0.6 && hopper.hopperGetPercentOutput() < 0.8)
   {
-    System.out.println("hopperwork");
-  }
+    System.out.println("hopper work");
   }
 
   // Called once the command ends or is interrupted.

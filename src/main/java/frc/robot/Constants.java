@@ -45,7 +45,8 @@ public final class Constants {
         public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
         
         public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2400},{15,2900},{20,2900},{25,3100},{30,3200}};
-        // TODO figure out max distance of robot from target so table includes all necessary values
+        // TODO figure out max distance of robot from target so table includes all necessary valuesConstants.DriveConstants.kMaxSpeedMetersPerSecond / 2
+        public static final int timeout3Balls = 5; // the amount of time, in seconds, needed in a timeout for shooting 3 balls
     }
 
     public static final class FeederConstants {

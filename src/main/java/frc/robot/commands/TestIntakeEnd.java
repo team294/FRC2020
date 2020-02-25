@@ -41,10 +41,10 @@ public class TestIntakeEnd extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-//  if(intake.intakeGetPercentOutput() > 0.5)
- // {
- //   System.out.println("intakework");
- // }
+ if(intake.intakeGetPercentOutput() > 0.5)
+ {
+   System.out.println("intakework");
+ }
   
   }
 
