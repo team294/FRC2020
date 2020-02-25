@@ -43,7 +43,6 @@ public class RobotContainer {
   private final LED led = new LED();
   // private final Test test = new Test();
   
-  private final RobotPreferences robotPrefs = new RobotPreferences();
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final LimeLight limeLight = new LimeLight(log, led, driveTrain);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led, limeLight);
@@ -315,6 +314,10 @@ public class RobotContainer {
    * Method called when robot is initialized
    */
   public void robotInit() {
+    SmartDashboard.putBoolean("RobotPrefs Initialized", RobotPreferences.prefsExist());
+    if(!RobotPreferences.prefsExist()) {
+      RobotPreferences.recordStickyFaults("RobotPreferences", log);
+    }
   }
 
   /**

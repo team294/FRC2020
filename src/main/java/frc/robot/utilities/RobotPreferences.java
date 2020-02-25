@@ -143,4 +143,8 @@ public class RobotPreferences {
         prefs.putString("problemSubsystem", problemSubsystem);
         prefs.putBoolean("problemExists", problemExists);
     }
+
+    public static boolean prefsExist() {
+        return prefs.containsKey("problemSubsystem");
+    }
 }
