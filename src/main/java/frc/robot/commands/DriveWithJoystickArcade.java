@@ -48,8 +48,10 @@ public class DriveWithJoystickArcade extends CommandBase {
     leftPercent = -leftJoystick.getY();
     rightPercent = rightJoystick.getX();
 
-    log.writeLog(false, "DriveWithJoystickArcade", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
-
+    if(log.getLogRotation() == log.DRIVE_CYCLE) {
+      log.writeLog(false, "DriveWithJoystickArcade", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
+    }
+    
     driveTrain.arcadeDrive(leftPercent, rightPercent * 0.6);
   }
 

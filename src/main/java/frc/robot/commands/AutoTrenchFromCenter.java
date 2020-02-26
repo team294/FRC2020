@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.CoordType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.FileLog;
 
@@ -32,7 +33,7 @@ public class AutoTrenchFromCenter extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
       */
 
-        new DriveFollowTrajectory(trajectory, driveTrain, log)
+        new DriveFollowTrajectory(CoordType.kRelative, trajectory, driveTrain, log)
           .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)
 
         /*  ),

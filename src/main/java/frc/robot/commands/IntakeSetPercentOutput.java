@@ -11,14 +11,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.Intake;
 
-/**
- * Command to set the intake percent output.
- */
 public class IntakeSetPercentOutput extends CommandBase {
   private Intake intake;
   private double percent;
 
   /**
+   * Set intake percent output using parameter percent.
+   * This command never ends.
    * @param percent percent output (0 to 1)
    * @param intake intake subsystem to use
    */
@@ -29,12 +28,14 @@ public class IntakeSetPercentOutput extends CommandBase {
   }
 
   /**
-   * Set the intake percent output to default percent output from constants.
+   * Set intake percent output using default percent from constants.
+   * This command never ends.
    * @param intake intake subsystem to use
    */
   public IntakeSetPercentOutput(Intake intake) {
     this.intake = intake;
     this.percent = IntakeConstants.intakeDefaultPercentOutput;
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
