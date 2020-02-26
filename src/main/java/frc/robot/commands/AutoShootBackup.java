@@ -24,31 +24,34 @@ public class AutoShootBackup extends SequentialCommandGroup {
   public AutoShootBackup(DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
 
     // can start anywhere on auto line between left most pole from driver perspective and close to right edge of the field, needs to be semi lined up with target
+    // one front wheel on line, one behind
 
     addCommands(
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 400, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
         
-        new ShooterSetPID(2800, shooter, led), // start shooter
+        new ShooterSetPID(true, shooter, limeLight, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
+
+      new ShooterHoodPistonSequence(true, false, shooter),
 
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
           new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
           new Wait(10)
         ), 
-        new ShootSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // start shooter
       ),
       new ParallelDeadlineGroup(
         new Wait(0.1),
         new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       ),
       
-      new DriveStraight(-1, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log) // back up 1 meter to get off auto line
+      new DriveStraight(-1, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log) // back up 1 meter to get off auto line
 
     );
   }

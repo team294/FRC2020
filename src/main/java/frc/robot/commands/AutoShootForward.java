@@ -31,7 +31,7 @@ public class AutoShootForward extends SequentialCommandGroup {
    * @param feeder         feeder subsystem to use
    * @param hopper         hopper subsystem to use
    * @param intake         intake subsystem to use
-   * @param led            intake subsystem to use
+   * @param led            led subsystem to use
    */
   public AutoShootForward(double waitTime, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
 

@@ -32,23 +32,41 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
       new DriveZeroGyro(180, driveTrain),
 
       new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
-        new DriveStraight(3.2512, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log), // drive forward into trench
-        new IntakePistonSetPosition(true, intake), // depoy intake piston
-        new IntakeSetPercentOutput(intake) // start intake 
+        new DriveStraight(2.6, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
+        new IntakeSequence(intake)
+      ),
+
+      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
+        new DriveStraight(-0.5, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
+        new IntakeSequence(intake)
       ),
       
-      new DriveFollowTrajectory(CoordType.kRelative, trajectory, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
-          .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)),
+      new DriveTurnGyro(TargetType.kRelative, -35, 300, 200, 2, driveTrain, limeLight, log),
+
+      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
+        new DriveStraight(0.75, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
+        new IntakeSequence(intake)
+      ),
+
+      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
+        new DriveStraight(-2, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
+        new IntakeSequence(intake)
+      ),
+
+     // new DriveFollowTrajectory(CoordType.kRelative, trajectory, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
+       //   .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)),
 
       new ParallelDeadlineGroup(
-          new DriveTurnGyro(TargetType.kAbsolute, 0, 0.5, 1.0, 2, driveTrain, limeLight, log), // turn towards the general target
+          new DriveTurnGyro(TargetType.kAbsolute, -45, 400, 200, 3, driveTrain, limeLight, log), // turn towards the general target
           new ShooterSetPID(3000, shooter, led) // start shooter while shooting
         ), 
 
       new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 400, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
+
+      new ShooterHoodPistonSequence(true, false, shooter),
         
       new ParallelDeadlineGroup(
         new WaitForPowerCells(5, shooter),

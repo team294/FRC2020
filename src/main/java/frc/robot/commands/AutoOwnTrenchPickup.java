@@ -29,13 +29,13 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
 
       new ParallelDeadlineGroup(
         
-        new DriveStraight(-1.5494, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log), // drive to edge of trench
-        new ShooterSetPID(2800, shooter, led), // start shooter
+        new DriveStraight(-1.5494, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to edge of trench
+        new ShooterSetPID(true, shooter, limeLight, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
       
       new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 400.0, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
 
@@ -44,32 +44,32 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
           new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
           new Wait(4)
         ), 
-        new ShootSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // start shooter
       ),
       new ParallelDeadlineGroup(
         new Wait(0.1),
         new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       ),
       new ParallelRaceGroup(
-        new DriveTurnGyro(TargetType.kAbsolute, 180, 0.8, 1, 1, driveTrain, limeLight, log), // turn towards trench
+        new DriveTurnGyro(TargetType.kAbsolute, 180, 400.0, 200, 1, driveTrain, limeLight, log), // turn towards trench
         new Wait(1.5)
       ),
       new ParallelDeadlineGroup( // drive down trench with intake
-        new DriveStraight(3.2, TargetType.kRelative, 0.0, 0.4, 1.0, true, driveTrain, limeLight, log),
+        new DriveStraight(3.2, TargetType.kRelative, 0.0, 2.088, 3.8, true, driveTrain, limeLight, log),
         new IntakeSequence(intake)
       ),
       
       //new DriveStraight(-2, 0.5, 1.0, true, driveTrain, log),
 
-      new DriveTurnGyro(TargetType.kAbsolute, 25, 0.8, 1.0, 4, driveTrain, limeLight, log),
+      new DriveTurnGyro(TargetType.kAbsolute, 25, 400.0, 200, 4, driveTrain, limeLight, log),
 
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 400.0, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
         
-        new ShooterSetPID(3500, shooter, led) // start shooter
+        new ShooterSetPID(true, shooter, limeLight, led) // start shooter
       ),
 
       new ParallelDeadlineGroup(
@@ -77,7 +77,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
           new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
           new Wait(4)
         ), 
-        new ShootSequence(3000, shooter, feeder, hopper, intake, led) // start shooter
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // start shooter
       ),
       new ParallelDeadlineGroup(
         new Wait(0.1),
