@@ -20,11 +20,12 @@ public class TestShooterFinish extends CommandBase {
   private Shooter shooter;
 
   private int rpm;
+
   public TestShooterFinish(Shooter shooter) {
     this.shooter = shooter;
-  
+
     // Use addRequirements() here to declare subsystem dependencies.
-   
+
     addRequirements(shooter);
 
   }
@@ -33,40 +34,36 @@ public class TestShooterFinish extends CommandBase {
   @Override
   public void initialize() {
 
-   
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    rpm = (int)shooter.getMeasuredRPM();
-    
-      if(rpm < 1700)
-      {
-        System.out.println("Shooter is too slow. RPM is: " + rpm);
-      } 
-      if(rpm > 2300) 
-      {
-      System.out.println("Shooter is too fast. RPM is: " + rpm);
-      }
-     // if(shooter.getLockPiston)
-     // {
-     //   shooter.SetLockPiston(false);
-     //   System.out.Println("LockPiston Working")
-    //  }
-    ///  if(shooter.getHoodPistontrue)
-    //  {
-      
-    //  shooter.SetHoodPiston(true);
-   //   System.out.println("HoodPiston Working");
-   //   }
+    rpm = (int) shooter.getMeasuredRPM();
+
+    if (rpm < 1700) {
+      System.out.println("Shooter is too slow. RPM is: " + rpm);
     }
-  
+    if (rpm > 2300) {
+      System.out.println("Shooter is too fast. RPM is: " + rpm);
+    }
+    // if(shooter.getLockPiston)
+    // {
+    // shooter.SetLockPiston(false);
+    // System.out.Println("LockPiston Working")
+    // }
+    /// if(shooter.getHoodPistontrue)
+    // {
+
+    // shooter.SetHoodPiston(true);
+    // System.out.println("HoodPiston Working");
+    // }
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    
+
     shooter.setShooterPID(0);
     shooter.setHoodPiston(false);
   }

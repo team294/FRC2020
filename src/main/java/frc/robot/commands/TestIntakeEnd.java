@@ -16,36 +16,33 @@ public class TestIntakeEnd extends CommandBase {
   /**
    * Creates a new FeederHopperIntakeTest.
    */
- 
+
   private Intake intake;
 
-  
   public TestIntakeEnd(Intake intake) {
 
     this.intake = intake;
 
- 
-    //var timer = new Timer();
+    // var timer = new Timer();
     // Use addRequirements() here to declare subsystem dependencies.
 
     addRequirements(intake);
-   
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
- if(intake.intakeGetPercentOutput() > 0.5)
- {
-   System.out.println("intakework");
- }
-  
+    if (intake.intakeGetPercentOutput() > 0.5) {
+      System.out.println("intakework");
+    }
+
   }
 
   // Called once the command ends or is interrupted.

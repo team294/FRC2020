@@ -15,6 +15,7 @@ public class TestShooterStart extends CommandBase {
    * Creates a new Shootertest.
    */
   private Shooter shooter;
+
   public TestShooterStart(Shooter shooter) {
     this.shooter = shooter;
 
@@ -27,7 +28,7 @@ public class TestShooterStart extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-   
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
