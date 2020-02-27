@@ -77,9 +77,10 @@ public class ShootSequence extends SequentialCommandGroup {
    * @param feeder feeder subsystem
    * @param hopper hopper subsystem
    * @param intake intake subsystem
-   * @param led led strip
+   * @param limeLight limelight camera (subsystem)
+   * @param led led strip (subsystem)
    */
-  public ShootSequence(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public ShootSequence(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, LED led) {
     addCommands( 
       parallel(
         // If hood is not open, wait 0.3 seconds before moving on from setting hood position.
@@ -87,7 +88,11 @@ public class ShootSequence extends SequentialCommandGroup {
         new ConditionalCommand(new Wait(0.3), new Wait(0), () -> !shooter.getHoodPiston()),
         new ShooterHoodPistonSequence(false, false, shooter) 
       ),
-      new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led),
+      new ConditionalCommand(
+        new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led),
+        new ShooterSetPID(true, true, shooter, limeLight, led),
+        () -> limeLight.getDistanceNew() != 0
+      ),
       new FeederSetPID(feeder),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper),
       parallel(

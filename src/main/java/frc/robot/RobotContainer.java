@@ -192,7 +192,7 @@ public class RobotContainer {
 
     // LB = 5, RB = 6
     xb[5].whileHeld(new ShootSequenceSetup(false, shooter, limeLight, led)); // close shot setup
-    xb[5].whenReleased(new ShootSequence(shooter, feeder, hopper, intake, led)); // shooting sequence
+    xb[5].whenReleased(new ShootSequence(shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence
     // xb[6].whileHeld(new ShooterSetPID(true, false, shooter, limeLight, led)); // set shooter rpm
     xb[6].whileHeld(new ShootSequenceSetup(true, shooter, limeLight, led)); // normal and far shot setup
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence
