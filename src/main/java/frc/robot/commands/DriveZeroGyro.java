@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.utilities.FileLog;
 
 public class DriveZeroGyro extends CommandBase {
   /**
@@ -16,15 +17,18 @@ public class DriveZeroGyro extends CommandBase {
    */
 
   private DriveTrain driveTrain;
+  private FileLog log;
   private double zeroAngle;
 
   /**
 	 * Zero the gyro position in software.
    * @param driveTrain DriveTrain subsytem
+   * @param log FileLog
 	 */
-  public DriveZeroGyro(DriveTrain driveTrain) {
+  public DriveZeroGyro(DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.log = log;
     zeroAngle = 0;
     addRequirements(driveTrain);
   }
@@ -33,10 +37,12 @@ public class DriveZeroGyro extends CommandBase {
 	 * Zero the gyro position in software against a specified angle.
 	 * @param zeroAngle current robot angle compared to the zero angle
    * @param driveTrain DriveTrain subsytem
+   * @param log FileLog
 	 */
-  public DriveZeroGyro(double zeroAngle, DriveTrain driveTrain) {
+  public DriveZeroGyro(double zeroAngle, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.log = log;
     this.zeroAngle = zeroAngle;
     addRequirements(driveTrain);
   }
@@ -45,6 +51,7 @@ public class DriveZeroGyro extends CommandBase {
   @Override
   public void initialize() {
     driveTrain.zeroGyroRotation(zeroAngle);
+    log.writeLog(false, "DriveZeroGyro", "Initialize");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
