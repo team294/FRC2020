@@ -59,7 +59,7 @@ public class AutoShootForward extends SequentialCommandGroup {
 
       // start shooter and wait for 3 power cells to be shot
       deadline(
-        new WaitForPowerCells(3, shooter).withTimeout(10), 
+        new WaitForPowerCells(3, shooter).withTimeout(5), 
         new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) 
       ),
       
