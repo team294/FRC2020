@@ -35,7 +35,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       ),
       
       new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 400.0, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 450.0, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
 
@@ -65,7 +65,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
 
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 400.0, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 450.0, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
         

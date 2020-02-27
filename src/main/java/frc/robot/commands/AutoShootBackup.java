@@ -29,7 +29,7 @@ public class AutoShootBackup extends SequentialCommandGroup {
     addCommands(
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 400, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
         
