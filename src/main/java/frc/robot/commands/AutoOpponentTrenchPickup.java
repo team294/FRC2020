@@ -29,7 +29,7 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
     // super(new FooCommand(), new BarCommand());
     addCommands(
 
-      new DriveZeroGyro(180, driveTrain),
+      new DriveZeroGyro(180, driveTrain, log),
 
       new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
         new DriveStraight(2.6, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench

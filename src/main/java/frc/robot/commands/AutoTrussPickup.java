@@ -27,7 +27,7 @@ public class AutoTrussPickup extends SequentialCommandGroup {
     
     addCommands(
 
-      new DriveZeroGyro(180, driveTrain),
+      new DriveZeroGyro(180, driveTrain, log),
 
       new ParallelDeadlineGroup(
         new DriveStraight(2.08, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to 2 of balls on truss
