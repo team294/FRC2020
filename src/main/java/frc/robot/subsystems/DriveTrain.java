@@ -58,6 +58,11 @@ public class DriveTrain extends SubsystemBase {
   private double angularVelocity;  // Robot angular velocity in degrees per second
   private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
 
+  private double motorDifferenceThresh = 10;
+  private double motorLowThresh = 5;
+  private double motorHighThresh = 40;
+  private MotorCheck leftMotorCheck;
+  private MotorCheck rightMotorCheck;
   
   public DriveTrain(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
@@ -131,6 +136,9 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2.configOpenloopRamp(0.4);
     rightMotor1.configOpenloopRamp(0.4);
     rightMotor2.configOpenloopRamp(0.4);
+
+    leftMotorCheck = new MotorCheck(leftMotor1, leftMotor2, "Drive", log);
+    rightMotorCheck = new MotorCheck(rightMotor1, rightMotor2, "Drive", log);
 
     // create the differential drive AFTER configuring the motors
     diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
@@ -525,6 +533,7 @@ public class DriveTrain extends SubsystemBase {
      
     if(log.getLogRotation() == log.DRIVE_CYCLE) {
       updateDriveLog(false);
+      //checkMotors();
 
       if(!isGyroReading()) {
         RobotPreferences.recordStickyFaults("Gyro", log);
@@ -620,6 +629,11 @@ public class DriveTrain extends SubsystemBase {
       "Gyro Velocity", angularVelocity, 
       "Odometry X", translation.getX(), "Odometry Y", translation.getY()
       );
+  }
+
+  public void checkMotors() {
+    leftMotorCheck.checkMotorCurrents(motorDifferenceThresh, motorLowThresh, motorHighThresh);
+    rightMotorCheck.checkMotorCurrents(motorDifferenceThresh, motorLowThresh, motorHighThresh);
   }
 
   /**
