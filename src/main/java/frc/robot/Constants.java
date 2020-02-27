@@ -38,6 +38,7 @@ public final class Constants {
         public static final int pcmShooterHoodPistonOut = 3; // close hood (extend)
         public static final int pcmShooterLockPiston = 6; // lock and unlock hood angle
         public static final double shooterDefaultRPM = 2800;
+        public static final double shooterDefaultShortRPM = 1400;
         public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for
                                                        // counting power cells)
         public static final int dioPowerCell = 9;
@@ -45,7 +46,7 @@ public final class Constants {
         // public static final double currentCheck = 60; // voltage the shooter will reach if power cell is shot (for counting power cells)
         public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
         
-        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2400},{15,2900},{20,2900},{25,3100},{30,3200}};
+        public static final double[][] distanceFromTargetToRPMTable = {{4,1400},{5,1500},{10,2500},{15,2900},{20,2900},{25,3100},{30,3200}};
         // TODO figure out max distance of robot from target so table includes all necessary values
 
         public static final double maxSecondsToShoot3balls = 5.0; // max time to wait while shooting 3 balls. use this in commands to timeout
@@ -74,6 +75,7 @@ public final class Constants {
         public static final double cameraHeight = 1.625; // in feet, height from floor to lens of mounted camera, 2.104 on protobot
         public static final double targetHeight = 7.0; // in feet, height to middle of crosshair on target
         public static final double cameraAngle = 28; // in degrees 26.5 measured but 28 works better?, 14 on proto
+        public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shot
     }
 
     /**
