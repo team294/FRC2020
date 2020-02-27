@@ -164,7 +164,9 @@ public class RobotContainer {
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
     SmartDashboard.putData("Drive Vision Assist", new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
+
     
+   
   }
 
   /**

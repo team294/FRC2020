@@ -79,6 +79,8 @@ public class LimeLight extends SubsystemBase {
   public double getSweetSpot() {
     double sweetSpotDistance;
     sweetSpotDistance = getDistanceNew() - endDistance;
+    SmartDashboard.putNumber("Sweet spot distance", sweetSpotDistance);
+    System.out.println("sweet spot distance " + sweetSpotDistance);
     return sweetSpotDistance;
   }
   /**
@@ -180,7 +182,6 @@ public class LimeLight extends SubsystemBase {
       SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
       SmartDashboard.putBoolean("Limelight Updating", isGettingData());
       SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
-      
       pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
 
       if (getPipeline() != pipe) {

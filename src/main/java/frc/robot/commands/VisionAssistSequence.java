@@ -30,10 +30,12 @@ public class VisionAssistSequence extends SequentialCommandGroup {
     // super(new FooCommand(), new BarCommand());
     addCommands(
       new DriveTurnGyro(TargetType.kVision, 0, 2.61, 3.8, 4, driveTrain, limeLight, log), // turn towards the general target
-      new DriveStraight(limeLight.getSweetSpot(), TargetType.kVision, 0, 10, 10, true, driveTrain, limeLight, log),
-      new DriveTurnGyro(TargetType.kVision, 0, 2.61, 3.8, 1, driveTrain, limeLight, log),
+    //  new DriveStraight(limeLight.getSweetSpot(), TargetType.kVision, 0, 10, 10, true, driveTrain, limeLight, log),
+    new DriveStraight(limeLight.getSweetSpot(), TargetType.kVision, 0, 10, 10, true, driveTrain, limeLight, log),
+    
+      new DriveTurnGyro(TargetType.kVision, 0, 2.61, 3.8, 1, driveTrain, limeLight, log)
 
-      new ParallelDeadlineGroup(
+      /*new ParallelDeadlineGroup(
         new WaitForPowerCells(5, shooter),
         new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
       ),
@@ -42,7 +44,7 @@ public class VisionAssistSequence extends SequentialCommandGroup {
         new Wait(0.1),
         new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led) // stop all motors
       )
-      
+      */
     );
     
   }
