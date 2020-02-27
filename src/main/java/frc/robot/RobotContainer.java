@@ -9,11 +9,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
@@ -52,6 +54,9 @@ public class RobotContainer {
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   public double autoDelay;
+
+  private final Timer disabledDisplayTimer = new Timer();
+  private int displayCount = 1;
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -101,7 +106,7 @@ public class RobotContainer {
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
-    SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
+    SmartDashboard.putData("LEDRainbow", new LEDSetPattern(LED.rainbowLibrary, 1, 0.5, led));
 
     // command sequences
     SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led));
@@ -335,7 +340,9 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
-    led.setStrip("Green", 1);
+
+    disabledDisplayTimer.reset();
+    disabledDisplayTimer.start();
 
     driveTrain.setDriveModeCoast(true);
     shooter.setPowerCellsShot(0);
@@ -349,6 +356,12 @@ public class RobotContainer {
    * Method called once every scheduler cycle when robot is disabled.
    */
   public void disabledPeriodic() {
+    if(displayCount > 1) displayCount = 0;
+    led.setPattern(LED.teamFlashingColorsLibrary[displayCount], 0.5, 1);
+
+    if(disabledDisplayTimer.hasPeriodPassed(0.25)) {
+      displayCount++;
+    }
   }
   
   /**
