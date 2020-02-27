@@ -11,7 +11,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.controller.PIDController;
-
+import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -25,18 +26,19 @@ public class DriveTurnGyro extends CommandBase {
 
   private DriveTrain driveTrain; // reference to driveTrain
   private double target; // how many more degrees to the right to turn
-  private double direction;     // -1 = turn to the left, +1 = turn to the right
-  private double maxVelMultiplier; // multiplier between 0.0 and 1.0 for limiting max velocity
-  private double maxAccelMultiplier; // multiplier between 0.0 and 1.0 for limiting max acceleration
+  private double direction; // -1 = turn to the left, +1 = turn to the right
+  private double maxVel; // max velocity, between 0 and kMaxAngularVelocity in Constants
+  private double maxAccel; // max acceleration, between 0 and kMaxAngularAcceleration in Constants
   private long profileStartTime; // initial time (time of starting point)
   private long currProfileTime;
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
-  private double startAngle; // starting angle in degrees
+  private double startAngle, targetRel; // starting angle in degrees, target angle relative to start angle
   private double currAngle, currVelocity;
   private double timeSinceStart;
-  private boolean useVision;
+  private TargetType targetType;
   private boolean regenerate;
+  private boolean fromShuffleboard;
   private FileLog log;
   private LimeLight limeLight;
   private PIDController pidAngVel;
@@ -52,35 +54,90 @@ public class DriveTurnGyro extends CommandBase {
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
- /**
-  * 
-  * @param target degrees to turn from -180 (left) to 180 (right) relative to current orientation
-  * @param maxVelMultiplier between 0.0 and 1.0, multipier for limiting max velocity
-  * @param maxAccelMultiplier between 0.0 and 1.0, multiplier for limiting max acceleration
-  * @param useVision true to use vison (instead of target angle)
-  * @param regenerate true to regenerate profile while running
-  * @param driveTrain drivetrain
-  * @param limeLight limelight
-  * @param log log
-  */
-  public DriveTurnGyro(double target, double maxVelMultiplier, double maxAccelMultiplier, boolean useVision, boolean regenerate, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+  /**
+   * Turns the robot to a target angle.
+   * @param type kRelative (target is an angle relative to current robot facing),
+   *   kAbsolute (target is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to turn towards the goal)
+   * @param maxVel max velocity in degrees/sec, between 0 and kMaxAngularVelocity in Constants
+   * @param maxAccel max acceleration in degrees/sec2, between 0 and kMaxAngularAcceleration in Constants
+   * @param regenerate true to regenerate profile while running
+   * @param angleTolerance the tolerance to use for turn gyro
+   * @param driveTrain drivetrain
+   * @param limeLight limelight
+   * @param log log
+   */
+  public DriveTurnGyro(TargetType type, double target, double maxVel, double maxAccel, boolean regenerate, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
     this.log = log;
     this.target = driveTrain.normalizeAngle(target);
-    this.maxVelMultiplier = maxVelMultiplier;
-    this.maxAccelMultiplier = maxAccelMultiplier;
-    this.useVision = useVision;
+    this.targetType = type;
+    this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxAngularVelocity);
+    this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAngularAcceleration);
     this.regenerate = regenerate;
-    this.angleTolerance = angleTolerance;
+    this.fromShuffleboard = false;
+    this.angleTolerance = Math.abs(angleTolerance);
 
-    addRequirements(driveTrain);
+    addRequirements(driveTrain, limeLight);
 
     aFF = 0.0;
 
-    //driveTrain.setTalonPIDConstants(kP, kI, kD, 0);
     pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
+  }
+
+  /**
+   * To be used when changing the target value directly from shuffleboard (not a pre-coded target)
+   * @param fromShuffleboard true means the value is being changed from shuffleboard
+   */
+  public DriveTurnGyro(TargetType type, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
+    this.log = log;
+    this.target = 0;
+    this.targetType = type;
+    this.maxVel = 0;
+    this.maxAccel = 0;
+    this.regenerate = regenerate;
+    this.fromShuffleboard = true;
+    this.angleTolerance = 0;
+    addRequirements(driveTrain);
+
+    if(SmartDashboard.getNumber("TurnGyro Manual Target Ang", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual Target Ang", 90);
+    }
+    if(SmartDashboard.getNumber("TurnGyro Manual MaxVel", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity * 0.08);
+    }
+    if(SmartDashboard.getNumber("TurnGyro Manual MaxAccel", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
+    }
+    if(SmartDashboard.getNumber("TurnGyro Manual Tolerance", -9999) == -9999) {
+      SmartDashboard.putNumber("TurnGyro Manual Tolerance", 2);
+    }
+
+    aFF = 0.0;
+
+    pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
+  }
+
+  /**
+   * Turns the robot to a target angle.
+   * @param type kRelative (target is an angle relative to current robot facing),
+   *   kAbsolute (target is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to turn towards the goal)
+   * @param target degrees to turn from +180 (left) to -180 (right) [ignored for kVision]
+   * @param maxVel max velocity in degrees/sec, between 0 and kMaxAngularVelocity in Constants
+   * @param maxAccel max acceleration in degrees/sec2, between 0 and kMaxAngularAcceleration in Constants
+   * @param angleTolerance the tolerance to use for turn gyro
+   * @param driveTrain drivetrain
+   * @param limeLight limelight
+   * @param log log
+   */
+  public DriveTurnGyro(TargetType type, double target, double maxVel, double maxAccel, double angleTolerance, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+    this(type, target, maxVel, maxAccel, true, angleTolerance, driveTrain, limeLight, log);
   }
 
   // Called when the command is initially scheduled.
@@ -88,27 +145,47 @@ public class DriveTurnGyro extends CommandBase {
   public void initialize() {
     driveTrain.setDriveModeCoast(true);
 
+    if(fromShuffleboard) {
+      target = SmartDashboard.getNumber("TurnGyro Manual Target Ang", 90);
+      maxVel = SmartDashboard.getNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity*0.08);
+      maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxAngularVelocity);
+      maxAccel = SmartDashboard.getNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
+      maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAngularAcceleration);
+      angleTolerance = SmartDashboard.getNumber("TurnGyro Manual Tolerance", 2);
+      angleTolerance = Math.abs(angleTolerance);
+    }
+    // If constants were updated from Shuffleboard, then update PID
+    pidAngVel.setPID(kPAngular, kIAngular, kDAngular);
+    pidAngVel.reset();
+
     startAngle = driveTrain.getGyroRotation();
 
-    if (useVision) {
-      target = driveTrain.normalizeAngle(limeLight.getXOffset());
+    switch (targetType) {
+      case kRelative:
+        targetRel = target;
+        break;
+      case kAbsolute:
+        targetRel = driveTrain.normalizeAngle(target - startAngle);
+        break;
+      case kVision:
+        targetRel = driveTrain.normalizeAngle(limeLight.getXOffset());
+        break;
     }
-    direction = Math.signum(target);
 
-    tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
+    direction = Math.signum(targetRel);
+
+    tStateFinal = new TrapezoidProfileBCR.State(targetRel, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
     // initialize velocity and accel limits
-    tConstraints = new TrapezoidProfileBCR.Constraints(kMaxAngularVelocity * maxVelMultiplier, kMaxAngularAcceleration * maxAccelMultiplier); 
+    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel , maxAccel);
     // generate profile
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
 
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     currProfileTime = profileStartTime;
 
-    pidAngVel.reset();
-
-    log.writeLog(false, "DriveTurnGyro", "initialize", "Total Time", tProfile.totalTime());
+    log.writeLog(false, "DriveTurnGyro", "initialize", "Total Time", tProfile.totalTime(), "StartAngleAbs", startAngle, "TargetAngleRel", targetRel);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -116,13 +193,13 @@ public class DriveTurnGyro extends CommandBase {
   public void execute() {
     currProfileTime = System.currentTimeMillis();
     // currAngle is relative to the startAngle.  +90 to -270 if turning left, -90 to +270 if turning right.
-    currAngle = driveTrain.normalizeAngle((driveTrain.getGyroRotation() - startAngle));
+    currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
     currAngle += (direction*currAngle<-90) ? direction*360.0 : 0; 
     currVelocity = driveTrain.getAngularVelocity();
     
-    if (useVision) {
-      target = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
-      tStateFinal = new TrapezoidProfileBCR.State(target, 0.0);
+    if (targetType == TargetType.kVision) {
+      targetRel = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
+      tStateFinal = new TrapezoidProfileBCR.State(targetRel, 0.0);
     }
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
@@ -137,8 +214,8 @@ public class DriveTurnGyro extends CommandBase {
     pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
     //pFB = 0; 
 
-    driveTrain.setLeftMotorOutput(aFF + pFB);
-    driveTrain.setRightMotorOutput(-aFF - pFB);
+    driveTrain.setLeftMotorOutput(-aFF - pFB);
+    driveTrain.setRightMotorOutput(+aFF + pFB);
 
     if (regenerate) {
       tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
@@ -163,9 +240,9 @@ public class DriveTurnGyro extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(target - currAngle) < angleTolerance) {
+    if(Math.abs(targetRel - currAngle) < angleTolerance) {
       accuracyCounter++;
-      // System.out.println("theoretical: " + target);
+      // System.out.println("theoretical: " + targetRel);
       // System.out.println("actual: " + currAngle);
       // System.out.println(accuracyCounter);
     } else {

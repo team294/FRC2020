@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -26,32 +27,44 @@ public class AutoTrussPickup extends SequentialCommandGroup {
     
     addCommands(
 
-      new Wait(waitTime),
+      new DriveZeroGyro(180, driveTrain, log),
 
-      deadline(
-        new DriveStraight(2.08, 0.5, 1.0, true, driveTrain, log), // drive to 2 of balls on truss
-        new IntakePistonSetPosition(true, intake), // deploy intake piston
-        new IntakeSetPercentOutput(intake) // spin intake
+      new ParallelDeadlineGroup(
+        new DriveStraight(2.08, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to 2 of balls on truss
+        new IntakeSequence(intake)
+        // new IntakePistonSetPosition(true, intake), // deploy intake piston
+        // new IntakeSetPercentOutput(intake) // spin intake
       ),
 
-      deadline(
-        new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log), // back up a short ammount 
+      new ParallelDeadlineGroup(
+        new DriveStraight(-1, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // back up a short ammount 
         new IntakeSequence(intake) // keep intake spinning
       ),
 
-      deadline(
-        new DriveTurnGyro(-163, 0.6, 1.0, false, true, 3, driveTrain, limeLight, log), // turn towards general target
-        new ShooterSetPID(3000, shooter, led) // start shooter motors
+      new ParallelDeadlineGroup(
+        new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, 3, driveTrain, limeLight, log), // turn towards general target
+        new ShooterSetPID(true, true, shooter, limeLight, led)
       ),
 
-      new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
+      new ParallelRaceGroup(
+          new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new Wait(2)
+        ),
+
+      new ShooterHoodPistonSequence(true, false, shooter),
         
-      deadline(
-        new WaitForPowerCells(5, shooter).withTimeout(7),  // wait for 5 balls to be shot or 7 seconds
-        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // shoot
+      new ParallelDeadlineGroup(
+        new ParallelRaceGroup(
+          new WaitForPowerCells(5, shooter), 
+          new Wait(7)
+        ),  // wait for 5 balls to be shot or 7 seconds
+        new ShootSequence(3000, shooter, feeder, hopper, intake, led) // shoot
       ),
       
-      new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led).withTimeout(0.1) // stop all motors
+      new ParallelDeadlineGroup(
+        new Wait(0.1),
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
+      )
       
     );
   }

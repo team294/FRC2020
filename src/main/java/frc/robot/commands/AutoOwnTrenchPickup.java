@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -23,46 +24,68 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
   public AutoOwnTrenchPickup(double waitTime, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     
     addCommands(
-    
-      new Wait(waitTime),
+      
+      new DriveZeroGyro(driveTrain, log),
 
-      deadline(
-        new DriveStraight(-1.5494, 0.5, 1.0, true, driveTrain, log), // drive to edge of trench
-        new ShooterSetPID(2800, shooter, led), // start shooter
+      new ParallelDeadlineGroup(
+        
+        new DriveStraight(-1.5494, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to edge of trench
+        new ShooterSetPID(true, true, shooter, limeLight, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
       
-      new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
-        
-     deadline(
-        new WaitForPowerCells(3, shooter).withTimeout(4), // wait for 3 power cells to be shot
-        new ShooterFeederHopperSequence(2800, shooter, feeder, hopper, intake, led) // start shooter
+      new ParallelRaceGroup(
+          new DriveTurnGyro(TargetType.kVision, 0, 450.0, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new Wait(2)
+        ),
+
+      new ParallelDeadlineGroup(
+        new ParallelRaceGroup(
+          new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
+          new Wait(4)
+        ), 
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // start shooter
       ),
-
-      new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led).withTimeout(0.1), // stop all motors
-
-      new DriveTurnGyro(-163, 0.8, 1, false, true, 1, driveTrain, limeLight, log).withTimeout(1.5), // turn towards trench
-    
-      deadline( // drive down trench with intake
-        new DriveStraight(3.2, 0.4, 1.0, true, driveTrain, log),
+      new ParallelDeadlineGroup(
+        new Wait(0.1),
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
+      ),
+      new ParallelRaceGroup(
+        new DriveTurnGyro(TargetType.kAbsolute, 180, 400.0, 200, 1, driveTrain, limeLight, log), // turn towards trench
+        new Wait(1.5)
+      ),
+      new ParallelDeadlineGroup( // drive down trench with intake
+        new DriveStraight(3.2, TargetType.kRelative, 0.0, 2.088, 3.8, true, driveTrain, limeLight, log),
         new IntakeSequence(intake)
       ),
       
       //new DriveStraight(-2, 0.5, 1.0, true, driveTrain, log),
 
-      new DriveTurnGyro(165, 0.8, 1.0, false, true, 4, driveTrain, limeLight, log),
+      new DriveTurnGyro(TargetType.kAbsolute, 25, 400.0, 200, 4, driveTrain, limeLight, log),
 
-      deadline(
-        new DriveTurnGyro(0, 0.5, 1.0, true, true, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
-        new ShooterSetPID(3500, shooter, led) // start shooter
+      new ParallelDeadlineGroup(
+        new ParallelRaceGroup(
+          new DriveTurnGyro(TargetType.kVision, 0, 450.0, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new Wait(2)
+        ),
+        
+        new ShooterSetPID(true, true, shooter, limeLight, led) // start shooter
       ),
 
-      deadline(
-        new WaitForPowerCells(3, shooter).withTimeout(4), // wait for 3 power cells to be shot
-        new ShooterFeederHopperSequence(3000, shooter, feeder, hopper, intake, led) // start shooter
+      new ParallelDeadlineGroup(
+        new ParallelRaceGroup(
+          new WaitForPowerCells(3, shooter), // wait for 3 power cells to be shot
+          new Wait(4)
+        ), 
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // start shooter
+      ),
+      new ParallelDeadlineGroup(
+        new Wait(0.1),
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
       ),
 
-      new ShooterFeederHopperIntakeStop(shooter, feeder, hopper, intake, led).withTimeout(0.1) // stop all motors
+
+      new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1) // stop all motors
 
     );
   }

@@ -10,16 +10,15 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
 
-/**
- * Command to set the shooter voltage.
- */
 public class ShooterSetVoltage extends CommandBase {
   private final Shooter shooter;
-  private final double voltage;
+  private double voltage;
 
   /**
+   * Set shooter voltage using parameter voltage.
+   * This command immediately ends.
    * @param voltage +12 (full forward) to -12 (full reverse)
-   * @param shooter shooter subsystem to use
+   * @param shooter shooter subsystem
    */
   public ShooterSetVoltage(double voltage, Shooter shooter) {
     this.shooter = shooter;

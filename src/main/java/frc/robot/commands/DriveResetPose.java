@@ -7,51 +7,39 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
-import frc.robot.utilities.FileLog;
 
-public class DriveZeroGyro extends CommandBase {
+public class DriveResetPose extends CommandBase {
   /**
-   * Zeros gyro on the drive train
+   * Resets the pose, gyro, and encoders on the drive train
    */
 
   private DriveTrain driveTrain;
-  private FileLog log;
-  private double zeroAngle;
+  private double curX, curY, curAngle;
 
   /**
-	 * Zero the gyro position in software.
+	 * Resets the pose, gyro, and encoders on the drive train
+   * @param curXinMeters Robot X location in the field, in meters (0 = middle of robot wherever the robot starts auto mode, +=away from our drivestation)
+   * @param curYinMeters Robot Y location in the field, in meters (0 = middle of robot wherever the robot starts auto mode, +=left when looking from our drivestation)
+   * @param curAngleinDegrees Robot angle on the field, in degrees (0 = facing away from our drivestation)
    * @param driveTrain DriveTrain subsytem
-   * @param log FileLog
 	 */
-  public DriveZeroGyro(DriveTrain driveTrain, FileLog log) {
+  public DriveResetPose(double curXinMeters, double curYinMeters, double curAngleinDegrees, DriveTrain driveTrain) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
-    this.log = log;
-    zeroAngle = 0;
-    addRequirements(driveTrain);
-  }
-
-  /**
-	 * Zero the gyro position in software against a specified angle.
-	 * @param zeroAngle current robot angle compared to the zero angle
-   * @param driveTrain DriveTrain subsytem
-   * @param log FileLog
-	 */
-  public DriveZeroGyro(double zeroAngle, DriveTrain driveTrain, FileLog log) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.driveTrain = driveTrain;
-    this.log = log;
-    this.zeroAngle = zeroAngle;
+    curX = curXinMeters;
+    curY = curYinMeters;
+    curAngle = curAngleinDegrees;
     addRequirements(driveTrain);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.zeroGyroRotation(zeroAngle);
-    log.writeLog(false, "DriveZeroGyro", "Initialize");
+    driveTrain.resetPose(new Pose2d(curX, curY, new Rotation2d(Math.toRadians(curAngle))));
   }
 
   // Called every time the scheduler runs while the command is scheduled.

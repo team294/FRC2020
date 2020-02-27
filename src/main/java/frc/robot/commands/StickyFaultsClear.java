@@ -8,40 +8,23 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.IntakeConstants;
-import frc.robot.subsystems.Intake;
+import frc.robot.utilities.FileLog;
+import frc.robot.utilities.RobotPreferences;
 
-public class IntakeSetPercentOutput extends CommandBase {
-  private Intake intake;
-  private double percent;
-
+public class StickyFaultsClear extends CommandBase {
   /**
-   * Set intake percent output using parameter percent.
-   * This command never ends.
-   * @param percent percent output (0 to 1)
-   * @param intake intake subsystem to use
+   * Creates a new StickyFaultsClear.
    */
-  public IntakeSetPercentOutput(double percent, Intake intake) {
-    this.intake = intake;
-    this.percent = percent;
-    addRequirements(intake);
-  }
-
-  /**
-   * Set intake percent output using default percent from constants.
-   * This command never ends.
-   * @param intake intake subsystem to use
-   */
-  public IntakeSetPercentOutput(Intake intake) {
-    this.intake = intake;
-    this.percent = IntakeConstants.intakeDefaultPercentOutput;
-    addRequirements(intake);
+  private FileLog log;
+  public StickyFaultsClear(FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.log = log;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    intake.intakeSetPercentOutput(percent);
+    RobotPreferences.clearStickyFaults(log);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -52,12 +35,11 @@ public class IntakeSetPercentOutput extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    if(interrupted) intake.intakeSetPercentOutput(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

@@ -47,7 +47,8 @@ public class TrajectoryOpponentTrenchToShoot {
 			TrajectoryConfig config = new TrajectoryConfig(DriveConstants.kMaxSpeedMetersPerSecond * 0.6,
 				DriveConstants.kMaxAccelerationMetersPerSecondSquared * 0.6)
 				.setKinematics(driveKinematics)
-				.addConstraint(autoVoltageConstraint);
+				.addConstraint(autoVoltageConstraint)
+				.setReversed(true);
 
 			// drive from line to trench (assumes starting directly in front and facing target)		  
 			// the trajectory to follow (all units in meters)
@@ -62,7 +63,7 @@ public class TrajectoryOpponentTrenchToShoot {
 					//new Translation2d(-0.5, -0.5),
 					//new Translation2d(2, 0) // actual is -1.4 but move over to make sure we miss the wall
 				),
-				new Pose2d(-3, -3, new Rotation2d(90.0)), config);
+				new Pose2d(-3, 3, new Rotation2d(Math.toRadians(90.0))), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);

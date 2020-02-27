@@ -8,6 +8,8 @@
 package frc.robot.utilities;
 
 import edu.wpi.first.wpilibj.Preferences;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import static frc.robot.Constants.*;
 
 /**
@@ -15,6 +17,8 @@ import static frc.robot.Constants.*;
  */
 public class RobotPreferences {
     private final static Preferences prefs = Preferences.getInstance();
+    private static String problemSubsystem = "";
+    private static boolean problemExists = false;
 
     /**
      * Reads preferences stored in the RoboRIO flash memory and updates their values in Constants.
@@ -38,6 +42,7 @@ public class RobotPreferences {
         DriveConstants.kPLinear = readDouble("Drive.kPLinear", DriveConstants.kPLinear);
         DriveConstants.kILinear = readDouble("Drive.kILinear", DriveConstants.kILinear);
         DriveConstants.kDLinear = readDouble("Drive.kDLinear", DriveConstants.kDLinear);
+        DriveConstants.kAngLinear = readDouble("Drive.kAngLinear", DriveConstants.kAngLinear);
 
         DriveConstants.kMaxAngularVelocity = readDouble("Drive.kMaxAngularVelocityDegS", DriveConstants.kMaxAngularVelocity);
         DriveConstants.kMaxAngularAcceleration = readDouble("Drive.kMaxAngularAccelerationDegSS", DriveConstants.kMaxAngularAcceleration);
@@ -94,5 +99,57 @@ public class RobotPreferences {
             prefs.putString(keyName, defaultValue);
         } 
         return prefs.getString(keyName, defaultValue);   
+    }
+
+    /**
+	 * Records in robotPreferences, fileLog, and Shuffleboard that a problem was found in a subsystem
+	 * (only records if the subsystem wasn't already flagged)
+	 * @param subsystem String name of subsystem in which a problem exists
+	 */
+	public static void recordStickyFaults(String subsystem, FileLog log) {
+		if (problemSubsystem.indexOf(subsystem) == -1) {
+			if (problemSubsystem.length() != 0) {
+				problemSubsystem = problemSubsystem + ", ";
+			}
+			problemSubsystem = problemSubsystem + subsystem;
+			log.writeLogEcho(true, subsystem, "Sticky Faults Logged", "");
+		}
+		if (!problemExists) {
+			problemExists = true;
+		}
+		editStickyFaultsInPrefs(problemSubsystem, problemExists);
+		showStickyFaults();
+	}
+	
+	/**
+	 * Clears any sticky faults in the RobotPreferences and Shuffleboard
+	 */
+	public static void clearStickyFaults(FileLog log) {
+		problemSubsystem = "";
+		problemExists = false;
+        editStickyFaultsInPrefs(problemSubsystem, problemExists);
+        showStickyFaults();
+		log.writeLog(true, "StickyFaults", "Sticky Faults Cleared", "");
+	}
+
+	/**
+	 * Show any sticky faults on Shuffleboard
+	 */
+	public static void showStickyFaults() {
+		SmartDashboard.putString("problemSubsystem", problemSubsystem);
+		SmartDashboard.putBoolean("problemExists", problemExists);
+	}
+
+    private static void editStickyFaultsInPrefs(String problemSubsystem, boolean problemExists) {
+        prefs.putString("problemSubsystem", problemSubsystem);
+        prefs.putBoolean("problemExists", problemExists);
+    }
+
+    /**
+     * Verifies that RobotPreferences is not empty (reset all preferences by accident)
+     * @return true = preferences exist on robot
+     */
+    public static boolean prefsExist() {
+        return prefs.containsKey("problemSubsystem");
     }
 }

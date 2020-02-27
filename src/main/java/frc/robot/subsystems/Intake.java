@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,7 +24,7 @@ public class Intake extends SubsystemBase {
  
   public Intake() {
     intakeMotor.configFactoryDefault();
-    intakeMotor.setInverted(false);
+    intakeMotor.setInverted(true);
     intakeMotor.setNeutralMode(NeutralMode.Brake);
   }
 
@@ -45,5 +46,7 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("Intake % Output", intakeMotor.getMotorOutputPercent());
+    SmartDashboard.putNumber("Intake Voltage", intakeMotor.getMotorOutputVoltage());
   }
 }

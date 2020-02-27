@@ -23,6 +23,8 @@ public final class Constants {
 
     public static final class RobotConstants {
         // Global constants go here
+        public static final double temperatureCheck = 40; // in celsius
+        public static final double pidErrorTolerance = 200; // in RPM
 
         // Next row is a DEFAULT VALUE. Change this value in RobotPrefrences for each
         // robot, not in this code!
@@ -32,26 +34,27 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int canShooterMotorRight = 31; // 30 on competition bot
         public static final int canShooterMotorLeft = 30; // 31 on competition bot
-        public static final int pcmShooterHoodPistonIn = 3;
-        public static final int pcmShooterHoodPistonOut = 2;
-        public static final int pcmShooterLockPiston = 6;
+        public static final int pcmShooterHoodPistonIn = 2; // open hood (retract)
+        public static final int pcmShooterHoodPistonOut = 3; // close hood (extend)
+        public static final int pcmShooterLockPiston = 6; // lock and unlock hood angle
         public static final double shooterDefaultRPM = 2800;
+        public static final double shooterDefaultShortRPM = 1400;
         public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for
                                                        // counting power cells)
         public static final int dioPowerCell = 9;
         // public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
         // public static final double currentCheck = 60; // voltage the shooter will reach if power cell is shot (for counting power cells)
         public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
-        public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
         
-        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2400},{15,2900},{20,2900},{25,3100},{30,3200}};
+        public static final double[][] distanceFromTargetToRPMTable = {{4,1400},{5,1500},{10,2500},{15,2900},{20,2900},{25,3100},{30,3200}};
         // TODO figure out max distance of robot from target so table includes all necessary values
+
+        public static final double maxSecondsToShoot3balls = 5.0; // max time to wait while shooting 3 balls. use this in commands to timeout
     }
 
     public static final class FeederConstants {
         public static final int canFeederMotor = 40;
         public static final double feederDefaultRPM = 2000;
-        public static final double temperatureCheck = 40; // in celsius
     }
 
     public static final class IntakeConstants {
@@ -72,6 +75,32 @@ public final class Constants {
         public static final double cameraHeight = 1.625; // in feet, height from floor to lens of mounted camera, 2.104 on protobot
         public static final double targetHeight = 7.0; // in feet, height to middle of crosshair on target
         public static final double cameraAngle = 28; // in degrees 26.5 measured but 28 works better?, 14 on proto
+        public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shot
+    }
+
+    /**
+     * Options to select driving coordinates.
+     */
+    public enum CoordType {
+        kRelative(0),
+        kAbsolute(1);
+    
+        @SuppressWarnings({"MemberName", "PMD.SingularField"})
+        public final int value;
+        CoordType(int value) { this.value = value; }
+    }
+
+    /**
+     * Options to select driving target types.
+     */
+    public enum TargetType {
+        kRelative(0),
+        kAbsolute(1),
+        kVision(2);
+    
+        @SuppressWarnings({"MemberName", "PMD.SingularField"})
+        public final int value;
+        TargetType(int value) { this.value = value; }
     }
 
     public static final class DriveConstants {
@@ -85,8 +114,6 @@ public final class Constants {
 
         public static final int canRightDriveMotor1 = 20;
         public static final int canRightDriveMotor2 = 21;
-
-        public static final double temperatureCheck = 40; // in celsius
 
         public static final double compensationVoltage = 12.0; // voltage compensation on drive motors
         public static final double MAX_VOLTAGE_IN_TRAJECTORY = 10.0;
@@ -122,22 +149,20 @@ public final class Constants {
         public static double kPAngular = 0.0005;   // was 0.001
         public static double kDAngular = 0;
         public static double kIAngular = 0;
+        public static final double maxSecondsForTurnGyro = 2.0; // max time to wait for turn gyro. use this in commands to timeout
 
-        // verify these
+        // DriveStraight constants
         public static double kMaxSpeedMetersPerSecond = 5.22; // 5.0 on practice bot, 5.22 on competition bot
-        public static double kMaxAccelerationMetersPerSecondSquared = 3.8; // 3.8 on practice bot, 3.8 on competition
-                                                                           // bot
+        public static double kMaxAccelerationMetersPerSecondSquared = 3.8; // 3.8 on practice bot, 3.8 on competition bot
         public static double kVLinear = 0.187; // 0.148 on practice bot, 0.187 on competition bot
-        public static double kALinear = 0.025; // 0.025 on practice bot, 0.0184 on competition bot (competition
-                                               // cal=0.0184)
+        public static double kALinear = 0.025; // 0.025 on practice bot, 0.0184 on competition bot (competition cal=0.0184)
         public static double kSLinear = 0.024; // 0.022 on practice bot, 0.024 on competition bot
-
         public static double kPLinear = 0.100; // 0.100 on practice bot, 0.100 on competition bot
-        public static double kILinear = 0; // 0.0 on practice bot
-        public static double kDLinear = 0; // 0.0 on practice bot
+        public static double kILinear = 0; // 0.0 on both bot
+        public static double kDLinear = 0; // 0.0 on both bot
+        public static double kAngLinear = 0.030; // 0.030 on both bots
 
-        // from robot characteristics
-
+        // Trajectory generation constants
         public static double kS = kSLinear * compensationVoltage; 
         public static double kV = kVLinear * compensationVoltage; 
         public static double kA = kALinear * compensationVoltage; 
@@ -145,7 +170,6 @@ public final class Constants {
         public static double TRACK_WIDTH = Units.inchesToMeters(24.93);   // 25.35 on practice bot, 24.93 on competition bot
 
         public static void updateDerivedConstants() {
-
             kS = kSLinear * compensationVoltage; 
             kV = kVLinear * compensationVoltage; 
             kA = kALinear * compensationVoltage; 
@@ -153,19 +177,9 @@ public final class Constants {
     }
 
     public static final class OIConstants {
-        public static final int xboxControllerPort = 0;
-        public static final int leftJoystickPort = 1;
-        public static final int rightJoystickPort = 2;
-        public static final int coPanelPort = 3;
-
-        /*
-         * public enum Button { kBumperLeft(5), kBumperRight(6), kStickLeft(9),
-         * kStickRight(10), kA(1), kB(2), kX(3), kY(4), kBack(7), kStart(8);
-         * 
-         * @SuppressWarnings({"MemberName", "PMD.SingularField"}) public final int
-         * value;
-         * 
-         * Button(int value) { this.value = value; } }
-         */
+        public static final int usbXboxController = 0;
+        public static final int usbLeftJoystick = 1;
+        public static final int usbRightJoystick = 2;
+        public static final int usbCoPanel = 3;
     }
 }
