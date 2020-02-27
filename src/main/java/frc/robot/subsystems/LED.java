@@ -109,6 +109,11 @@ public class LED extends SubsystemBase {
     {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
     {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue}
   };
+
+  public static final Color[][] teamColorsLibrary = {
+    {kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue},
+    {kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange}
+  };
   
   /**********************
    * Controls LED strips on the robot.
