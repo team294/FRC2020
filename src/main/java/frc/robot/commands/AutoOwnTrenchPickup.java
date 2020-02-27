@@ -25,7 +25,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
     
     addCommands(
       
-      new DriveZeroGyro(driveTrain),
+      new DriveZeroGyro(driveTrain, log),
 
       new ParallelDeadlineGroup(
         
