@@ -69,8 +69,6 @@ public class LEDSetPattern extends CommandBase {
     
     if(timer.hasPeriodPassed(speed)) {
       patternNum++;
-      timer.reset();
-      timer.start();
     }
 	}
 

@@ -110,9 +110,14 @@ public class LED extends SubsystemBase {
     {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue}
   };
 
-  public static final Color[][] teamColorsLibrary = {
+  public static final Color[][] teamFullColorsLibrary = {
     {kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue},
-    {kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange, kOrange}
+    {kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed}
+  };
+
+  public static final Color[][] teamFlashingColorsLibrary = {
+    {kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed},
+    {kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue}
   };
   
   /**********************

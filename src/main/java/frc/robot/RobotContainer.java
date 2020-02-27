@@ -354,12 +354,10 @@ public class RobotContainer {
    */
   public void disabledPeriodic() {
     if(displayCount > 1) displayCount = 0;
-    led.setPattern(LED.teamColorsLibrary[displayCount], 0.5, 1);
+    led.setPattern(LED.teamFlashingColorsLibrary[displayCount], 0.5, 1);
 
-    if(disabledDisplayTimer.get() > 0.5) {
+    if(disabledDisplayTimer.hasPeriodPassed(0.25)) {
       displayCount++;
-      disabledDisplayTimer.reset();
-      disabledDisplayTimer.start();
     }
   }
   
