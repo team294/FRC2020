@@ -44,7 +44,7 @@ public class AutoTrussPickup extends SequentialCommandGroup {
 
       new ParallelDeadlineGroup(
         new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, 3, driveTrain, limeLight, log), // turn towards general target
-        new ShooterSetPID(true, shooter, limeLight, led)
+        new ShooterSetPID(true, true, shooter, limeLight, led)
       ),
 
       new ParallelRaceGroup(

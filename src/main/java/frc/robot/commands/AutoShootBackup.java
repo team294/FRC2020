@@ -33,7 +33,7 @@ public class AutoShootBackup extends SequentialCommandGroup {
           new Wait(2)
         ),
         
-        new ShooterSetPID(true, shooter, limeLight, led), // start shooter
+        new ShooterSetPID(true, true, shooter, limeLight, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
 
