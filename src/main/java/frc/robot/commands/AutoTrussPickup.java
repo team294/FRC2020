@@ -30,26 +30,29 @@ public class AutoTrussPickup extends SequentialCommandGroup {
       new DriveZeroGyro(180, driveTrain, log),
 
       new ParallelDeadlineGroup(
-        new DriveStraight(2.08, TargetType.kRelative, 0.0, 0.5, 1.0, true, driveTrain, limeLight, log), // drive to 2 of balls on truss
-        new IntakePistonSetPosition(true, intake), // deploy intake piston
-        new IntakeSetPercentOutput(intake) // spin intake
+        new DriveStraight(2.08, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to 2 of balls on truss
+        new IntakeSequence(intake)
+        // new IntakePistonSetPosition(true, intake), // deploy intake piston
+        // new IntakeSetPercentOutput(intake) // spin intake
       ),
 
       new ParallelDeadlineGroup(
-        new DriveStraight(-0.5, TargetType.kRelative, 0.0, 0.5, 1, true, driveTrain, limeLight, log), // back up a short ammount 
+        new DriveStraight(-1, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // back up a short ammount 
         new IntakeSequence(intake) // keep intake spinning
       ),
       //new DriveStraight(-0.5, 0.5, 1, true, driveTrain, log),
 
       new ParallelDeadlineGroup(
-        new DriveTurnGyro(TargetType.kAbsolute, 180, 0.6, 1.0, 3, driveTrain, limeLight, log), // turn towards general target
-        new ShooterSetPID(3000, shooter, led) // start shooter motors
+        new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, 3, driveTrain, limeLight, log), // turn towards general target
+        new ShooterSetPID(true, true, shooter, limeLight, led)
       ),
 
       new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 0.5, 1.0, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
+          new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
           new Wait(2)
         ),
+
+      new ShooterHoodPistonSequence(true, false, shooter),
         
       new ParallelDeadlineGroup(
         new ParallelRaceGroup(

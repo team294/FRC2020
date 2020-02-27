@@ -144,6 +144,7 @@ public class RobotContainer {
     // auto selection widget
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
+    autoChooser.addOption("OpponentTrenchPickup", AutoSelection.OPPONENT_TRENCH_PICKUP);
     autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
     autoChooser.addOption("ShootForward", AutoSelection.SHOOT_FORWARD);
     autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
