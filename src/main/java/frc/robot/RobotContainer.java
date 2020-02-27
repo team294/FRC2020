@@ -133,7 +133,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
     
     // Testing for autos and trajectories
-    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
+    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain, log));
     SmartDashboard.putData("ZeroEncoders", new DriveZeroEncoders(driveTrain));
     SmartDashboard.putData("ZeroOdometry", new DriveResetPose(0, 0, 0, driveTrain));
     SmartDashboard.putData("DriveTrajectoryRelative", new DriveFollowTrajectory(CoordType.kRelative, TrajectoryTest.calcTrajectory(log), driveTrain, log)
