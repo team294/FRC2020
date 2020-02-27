@@ -69,7 +69,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
           new Wait(2)
         ),
         
-        new ShooterSetPID(true, shooter, limeLight, led) // start shooter
+        new ShooterSetPID(true, true, shooter, limeLight, led) // start shooter
       ),
 
       new ParallelDeadlineGroup(
