@@ -45,20 +45,22 @@ public class AutoShootForward extends SequentialCommandGroup {
       deadline(
         new DriveTurnGyro(TargetType.kVision, 
           0, 
-          DriveConstants.kMaxAngularVelocity * MAX_ADJUSTMENT, 
-          DriveConstants.kMaxAngularAcceleration * MAX_ADJUSTMENT, 
+          400, 
+          200, 
           0.8, 
           driveTrain, 
           limeLight, 
-          log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
-        new ShooterSetPID(2800, shooter, led), // start shooter
+          log).withTimeout(2), 
+        new ShooterSetPID(true, shooter, limeLight, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
 
+      new ShooterHoodPistonSequence(true, false, shooter),
+
       // start shooter and wait for 3 power cells to be shot
       deadline(
-        new WaitForPowerCells(3, shooter).withTimeout(ShooterConstants.maxSecondsToShoot3balls), 
-        new ShootSequence(2800, shooter, feeder, hopper, intake, led) 
+        new WaitForPowerCells(3, shooter).withTimeout(10), 
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) 
       ),
       
       // stop all motors
@@ -68,8 +70,8 @@ public class AutoShootForward extends SequentialCommandGroup {
       new DriveStraight(2,
         TargetType.kRelative, 
         0,
-        DriveConstants.kMaxSpeedMetersPerSecond * MAX_ADJUSTMENT, 
-        DriveConstants.kMaxAccelerationMetersPerSecondSquared * MAX_ADJUSTMENT, 
+        2.61, 
+        3.8, 
         true, 
         driveTrain, 
         limeLight,
