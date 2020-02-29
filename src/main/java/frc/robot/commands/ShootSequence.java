@@ -29,9 +29,6 @@ public class ShootSequence extends SequentialCommandGroup {
   public ShootSequence(boolean rpmFromDistance, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, LED led) {
     addCommands(
       parallel(
-        // If hood is not closed, wait 0.5 seconds before moving on from setting hood position.
-        // Otherwise, immediately move on from setting hood position.
-        new ConditionalCommand(new Wait(0.5), new Wait(0), () -> shooter.getHoodPiston()),
         // If the current distance away from the target is greater than the max distance for 
         // unlocking the hood or vision sees no target, close and lock the hood. 
         // Otherwise, close the hood and leave it unlocked.
@@ -64,6 +61,42 @@ public class ShootSequence extends SequentialCommandGroup {
   public ShootSequence(int rpm, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     addCommands( 
       new ShooterSetPID(rpm, shooter, led),
+      new FeederSetPID(feeder),
+      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper),
+      parallel(
+        new IntakeSetPercentOutput(intake), 
+        new HopperReverse(hopper)
+      )
+    );
+  }
+
+  /**
+   * Set shooter to setpoint RPM using default values for shooting from the trench
+   * or the auto line. Then run the feeder, intake, and hopper.
+   * This constructor is used for forcing the shooter to a certain position and RPM,
+   * disregarding what vision is tracking.
+   * @param trench true = shooting from trench, false = shooting from auto line
+   * @param shooter shooter subsystem
+   * @param feeder feeder subsystem
+   * @param hopper hopper subsystem
+   * @param intake intake subsystem
+   * @param led led strip
+   */
+  public ShootSequence(boolean trench, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+    addCommands( 
+      // If shooting from the trench, close the hood, lock it, and set shooter RPM. 
+      // Otherwise, close the hood, leave it unlocked, and set shooter RPM.
+      new ConditionalCommand(
+        sequence(
+          new ShooterHoodPistonSequence(true, true, shooter),
+          new ShooterSetPID(ShooterConstants.shooterDefaultTrenchRPM, shooter, led)
+        ),
+        sequence(
+          new ShooterHoodPistonSequence(true, false, shooter),
+          new ShooterSetPID(ShooterConstants.shooterDefaultRPM, shooter, led)
+        ),
+        () -> trench
+      ),
       new FeederSetPID(feeder),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper),
       parallel(

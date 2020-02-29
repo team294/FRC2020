@@ -191,9 +191,9 @@ public class RobotContainer {
 
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].toggleWhenPressed(new IntakeSequence(intake)); // deploy intake and run rollers in
-    xb[2].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
-    // xb[3].whenPressed(new Wait(0)));
-    xb[4].whenPressed(new IntakePistonSetPosition(false, intake)); // retract intake
+    xb[2].whenPressed(new ShootSequence(false, shooter, feeder, hopper, intake, led)); // shoot with fixed RPM from autoline
+    xb[3].whenPressed(new IntakePistonSetPosition(false, intake)); // retract intake
+    xb[4].whenPressed(new ShootSequence(true, shooter, feeder, hopper, intake, led)); // shoot with fixed RPM from trench
 
     // LB = 5, RB = 6
     xb[5].whileHeld(new ShootSequenceSetup(false, shooter, limeLight, led)); // close shot setup
@@ -203,8 +203,8 @@ public class RobotContainer {
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence
 
     // back = 7, start = 8 
-    // xb[7].whenPressed(new ShooterHoodPistonSequence(true, false, shooter)); // close shooter hood and do not lock angle
-    // xb[8].whenPressed(new Wait(0));
+    // xb[7].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
+    xb[8].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
     // xb[9].whenPressed(new Wait(0));
