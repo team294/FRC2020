@@ -7,17 +7,28 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LimeLight;
 
 public class LimeLightSnapshotTest extends CommandBase {
   /**
-   * Creates a new LimeLightSnapshot.
+   * Take a snapshot of the limelight camera image every cycle either during autonomous
+   * or when the robot is enabled
+   * Intended to help test snapshot capabilities of the limelight
+   * TODO delete once snapshot testing is done
    */
   LimeLight limeLight;
-  public LimeLightSnapshotTest(LimeLight limeLight) {
+  boolean inAuto;
+
+  /**
+   * @param limeLight save reference to limeLight
+   * @param inAuto true = save snapshots only in auto, false = save snapshots whenever enabled
+   */
+  public LimeLightSnapshotTest(LimeLight limeLight, boolean inAuto) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.limeLight = limeLight;
+    this.inAuto = inAuto;
     addRequirements(limeLight);
   }
 
@@ -29,7 +40,13 @@ public class LimeLightSnapshotTest extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    limeLight.setSnapshot(true);
+    if(inAuto && DriverStation.getInstance().isAutonomous()) {
+      limeLight.setSnapshot(true);
+    } else if (!inAuto && DriverStation.getInstance().isEnabled()) {
+      limeLight.setSnapshot(true);
+    } else {
+      limeLight.setSnapshot(false);
+    }
   }
 
   // Called once the command ends or is interrupted.

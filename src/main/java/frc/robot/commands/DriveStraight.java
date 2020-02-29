@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.Constants.DriveConstants;
@@ -174,8 +175,9 @@ public class DriveStraight extends CommandBase {
     double curAngle = driveTrain.getGyroRotation();
     if (angleType == TargetType.kVision) {
         angleTarget = driveTrain.normalizeAngle(curAngle + limeLight.getXOffset());
-        limeLight.setSnapshot(true);
-    }
+        if(DriverStation.getInstance().isAutonomous()) {
+          limeLight.setSnapshot(true);
+        }    }
     double pAngle = driveTrain.normalizeAngle(curAngle - angleTarget) * kAngLinear;
     double targetVelL = targetVel * (1 + direction*pAngle);
     double targetVelR = targetVel * (1 - direction*pAngle);

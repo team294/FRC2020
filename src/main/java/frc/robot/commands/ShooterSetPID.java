@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -83,7 +84,9 @@ public class ShooterSetPID extends CommandBase {
       if (limeLight.getDistanceNew() == 0) rpm = ShooterConstants.shooterDefaultRPM;
       else rpm = shooter.distanceFromTargetToRPM(limeLight.getDistanceNew());
       shooter.setShooterPID(rpm);
-      limeLight.setSnapshot(true);
+      if(DriverStation.getInstance().isAutonomous()) {
+        limeLight.setSnapshot(true);
+      }
     }
     
     SmartDashboard.putString("LED Color", ledColor);

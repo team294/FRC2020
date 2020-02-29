@@ -159,7 +159,7 @@ public class RobotContainer {
     // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
-    SmartDashboard.putData("Limelight Snapshot Test", new LimeLightSnapshotTest(limeLight));
+    SmartDashboard.putData("Limelight Snapshot Test", new LimeLightSnapshotTest(limeLight, true));
   }
 
   /**

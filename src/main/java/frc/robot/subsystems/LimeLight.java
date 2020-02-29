@@ -193,7 +193,7 @@ public class LimeLight extends SubsystemBase {
       SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
       SmartDashboard.putBoolean("Limelight Updating", isGettingData());
       SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
-      SmartDashboard.putNumber("SnapShot", getSnapshot());
+      SmartDashboard.putNumber("Limelight SnapShot Status", getSnapshot());
       
       pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
 

@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TargetType;
@@ -200,8 +201,9 @@ public class DriveTurnGyro extends CommandBase {
     if (targetType == TargetType.kVision) {
       targetRel = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
       tStateFinal = new TrapezoidProfileBCR.State(targetRel, 0.0);
-      limeLight.setSnapshot(true);
-    }
+      if(DriverStation.getInstance().isAutonomous()) {
+        limeLight.setSnapshot(true);
+      }    }
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart + 0.010);
