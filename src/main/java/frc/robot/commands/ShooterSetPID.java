@@ -91,10 +91,8 @@ public class ShooterSetPID extends CommandBase {
     
     SmartDashboard.putString("LED Color", ledColor);
 
-    if(ledTimer.hasPeriodPassed(0.1)) {
+    if(ledTimer.advanceIfElapsed(0.1)) {
       led.setStrip(ledColor, 0.5, 1);
-      ledTimer.reset();
-      ledTimer.start();
       if(ledColor.equals("Blue")) ledColor = "Black";
       else ledColor = "Blue";
     }

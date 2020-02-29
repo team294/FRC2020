@@ -6,8 +6,6 @@ import frc.robot.commands.AutoOpponentTrenchPickup;
 import frc.robot.commands.AutoShootBackup;
 import frc.robot.commands.AutoShootForward;
 import frc.robot.commands.AutoOwnTrenchPickup;
-import frc.robot.commands.AutoTrenchFromCenter;
-import frc.robot.commands.AutoTrenchFromRight;
 import frc.robot.commands.AutoTrussPickup;
 import frc.robot.commands.Wait;
 import frc.robot.subsystems.*;
@@ -18,16 +16,14 @@ import frc.robot.subsystems.*;
  */
 public class AutoSelection {
 
-	public static final int TRENCH_FROM_CENTER = 0;
-	public static final int TRENCH_FROM_RIGHT = 1;
-	public static final int OPPONENT_TRENCH_PICKUP = 2;
-	public static final int SHOOT_BACKUP = 3;
-	public static final int TRUSS_PICKUP = 4;
-	public static final int OWN_TRENCH_PICKUP = 5;
-	public static final int SHOOT_FORWARD = 6;
+	public static final int OPPONENT_TRENCH_PICKUP = 0;
+	public static final int SHOOT_BACKUP = 1;
+	public static final int TRUSS_PICKUP = 2;
+	public static final int OWN_TRENCH_PICKUP = 3;
+	public static final int SHOOT_FORWARD = 4;
 	
 
-	private Trajectory[] trajectoryCache = new Trajectory[3];
+	private Trajectory[] trajectoryCache = new Trajectory[1];
 	
 	/**
 	 * AutoSelection constructor for command group
@@ -55,27 +51,15 @@ public class AutoSelection {
 		Command autonomousCommand = null;
 		Trajectory trajectory;
 
-		if (autoPlan == TRENCH_FROM_RIGHT && trajectoryCache[TRENCH_FROM_RIGHT] != null) {
-			log.writeLogEcho(true, "AutoSelect", "run TrenchFromRight");
-			trajectory = trajectoryCache[TRENCH_FROM_RIGHT];
-			autonomousCommand = new AutoTrenchFromRight(driveTrain, log, trajectory);
-		} 
-			
-		if (autoPlan == TRENCH_FROM_CENTER && trajectoryCache[TRENCH_FROM_CENTER] != null) {
-			log.writeLogEcho(true, "AutoSelect", "run TrenchFromCenter");
-			trajectory = trajectoryCache[TRENCH_FROM_CENTER];
-			autonomousCommand = new AutoTrenchFromCenter(trajectory, driveTrain, shooter, feeder, hopper, intake, limeLight, log);
-		}
-
 		if (autoPlan == OPPONENT_TRENCH_PICKUP && trajectoryCache[OPPONENT_TRENCH_PICKUP] != null) {
 			log.writeLogEcho(true, "AutoSelect", "run TrenchFromRight");
 			trajectory = trajectoryCache[OPPONENT_TRENCH_PICKUP];
-			autonomousCommand = new AutoOpponentTrenchPickup(trajectory, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoOpponentTrenchPickup(waitTime, trajectory, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autoPlan == SHOOT_BACKUP) {
 			log.writeLogEcho(true, "AutoSelect", "run ShootBackup");
-			autonomousCommand = new AutoShootBackup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoShootBackup(waitTime, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autoPlan == SHOOT_FORWARD) {
@@ -85,12 +69,12 @@ public class AutoSelection {
 
 		if (autoPlan == TRUSS_PICKUP) {
 			log.writeLogEcho(true, "AutoSelect", "run TrussPickup");
-			autonomousCommand = new AutoTrussPickup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoTrussPickup(waitTime, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autoPlan == OWN_TRENCH_PICKUP) {
 			log.writeLogEcho(true, "AutoSelect", "run OwnTrenchPickup");
-			autonomousCommand = new AutoOwnTrenchPickup(driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoOwnTrenchPickup(waitTime, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		} 
 
 		if (autonomousCommand == null) {
@@ -105,18 +89,6 @@ public class AutoSelection {
 	 * Calculate all the trajectories so they are ready to use before auto period starts
 	 */  
 	private void calcTrajectories(FileLog log) {
-
-		if (trajectoryCache[TRENCH_FROM_CENTER] == null) {
-			log.writeLogEcho(true, "AutoSelect", "calcTrajectoryTrenchFromCenter", "Start");
-			trajectoryCache[TRENCH_FROM_CENTER] = TrajectoryTrenchFromCenter.calcTrajectory(log);
-			log.writeLogEcho(true, "AutoSelect", "calcTrajectoryTrenchFromCenter", "End");
-		}
-
-		if (trajectoryCache[TRENCH_FROM_RIGHT] == null) {
-			log.writeLogEcho(true, "AutoSelect", "calcTrajectoryTrenchFromRight", "Start");
-			trajectoryCache[TRENCH_FROM_RIGHT] = TrajectoryTrenchFromRight.calcTrajectory(log);
-			log.writeLogEcho(true, "AutoSelect", "calcTrajectoryTrenchFromRight", "End");
-		}
 
 		if (trajectoryCache[OPPONENT_TRENCH_PICKUP] == null) {
 			log.writeLogEcho(true, "AutoSelect", "calcTrajectoryOpponentTrenchPickup", "Start");
