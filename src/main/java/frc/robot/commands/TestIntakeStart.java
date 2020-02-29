@@ -52,6 +52,10 @@ public class TestIntakeStart extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    intake.intakeGetPercentOutput();
+    if (intake.intakeGetPercentOutput() >=  0.5){
+      return true;
   }
+  return false;
+}
 }

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Hopper;
 
 public class TestHopperStart extends CommandBase {
+  double percent = 60;
   /**
    * Creates a new FeederHopperIntakeTest.
    */
@@ -31,17 +32,13 @@ public class TestHopperStart extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+    hopper.hopperSetPercentOutput(percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    hopper.hopperSetPercentOutput(0.7);
-    // if(hopper.hopperGetPercentOutput() > 0.8)
-    // {
-    // System.out.println("hopper work");
-    // }
+
   }
 
   // Called once the command ends or is interrupted.
@@ -53,6 +50,10 @@ public class TestHopperStart extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    hopper.hopperGetPercentOutput();
+    if (hopper.hopperGetPercentOutput() >= 50){
+      return true;
+    }
+    return false;
   }
 }

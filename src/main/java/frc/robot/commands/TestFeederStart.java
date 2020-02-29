@@ -9,8 +9,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Feeder;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class TestFeederStart extends CommandBase {
+  double voltage = 6;
+  double maxvoltage = 40;
   /**
    * Creates a new FeederHopperIntakeTest.
    */
@@ -31,13 +34,14 @@ public class TestFeederStart extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
+   
+    feeder.feederSetVoltage(voltage);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    feeder.feederSetVoltage(6);
+    
   }
 
   // Called once the command ends or is interrupted.
@@ -49,6 +53,12 @@ public class TestFeederStart extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    feeder.feederGetVoltage();
+    if (feeder.feederGetVoltage() <= maxvoltage){
+      return true; //finished = true
+    }
+    return false;
+    
+    
   }
 }
