@@ -104,8 +104,7 @@ public class Feeder extends SubsystemBase {
    * @return PID error, in RPM
    */
   public double getFeederPIDError() {
-    return feederMotor.getClosedLoopError() * ticksPer100ms;
-    // return feederRPM - measuredRPM; TODO change to this calculation
+    return feederRPM - measuredRPM;
   }
 
   @Override

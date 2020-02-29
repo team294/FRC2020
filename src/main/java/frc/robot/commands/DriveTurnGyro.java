@@ -178,7 +178,7 @@ public class DriveTurnGyro extends CommandBase {
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
     // initialize velocity and accel limits
-    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel);
+    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel , maxAccel);
     // generate profile
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
 
@@ -215,7 +215,7 @@ public class DriveTurnGyro extends CommandBase {
     //pFB = 0; 
 
     driveTrain.setLeftMotorOutput(-aFF - pFB);
-    driveTrain.setRightMotorOutput(aFF + pFB);
+    driveTrain.setRightMotorOutput(+aFF + pFB);
 
     if (regenerate) {
       tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);

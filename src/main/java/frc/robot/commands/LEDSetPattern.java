@@ -8,48 +8,69 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.*;
+import frc.robot.subsystems.LED;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDSetPattern extends CommandBase {
   private LED led;
-  private int rowNumber;
-  private double intensity;
+  private Color[][] pattern;
+  private int strip; // which strip to set rainbow
+  private double speed; // how often to shift rainbow, in seconds
+  private Timer timer;
+  private int patternNum = 0;
  
   /**
-   * Send a pattern to the LED strip, with parameter intensity.
-   * @param rowNumber row in the patternLibrary
-   * @param intensity percent intensity (0 to 1)
+   * Set LED strip to a specified shifting pattern, with parameter seconds between each shift.
+   * This command never ends.
+   * @param pattern pattern library to cycle though
+   * @param strip strip number (0 or 1)
+   * @param speed how often to shift rainbow, in seconds
    * @param led led strip (subsystem)
    */
-  public LEDSetPattern(int rowNumber, double intensity, LED led) {
+  public LEDSetPattern(Color[][] pattern, int strip, double speed, LED led) {
     this.led = led;
-    this.rowNumber = rowNumber;
-    this.intensity = intensity;
+    this.pattern = pattern;
+    this.strip = strip;
+    this.speed = speed;
+    this.timer = new Timer();
     addRequirements(led);
   }
 
   /**
-   * Send a pattern to the LED strip, with 0.5 intensity.
-   * @param rowNumber row in the patternLibrary
+   * Set LED strip to a specified shifting pattern, with 0.5 seconds between each shift.
+   * This command never ends.
+   * @param pattern pattern library to cycle through
+   * @param strip strip number (0 or 1)
    * @param led led strip (subsystem)
    */
-  public LEDSetPattern(int rowNumber, LED led) {
+  public LEDSetPattern(Color[][] pattern, int strip, LED led) {
     this.led = led;
-    this.rowNumber = rowNumber;
-    this.intensity = 0.5;
+    this.pattern = pattern;
+    this.strip = strip;
+    this.speed = 0.5;
+    this.timer = new Timer();
     addRequirements(led);
   }
 
-  // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-    led.setPattern(LED.visionTargetLibrary[rowNumber], intensity, 1);
+	// Called when the command is initially scheduled.
+	@Override
+	public void initialize() {
+    timer.reset();
+    timer.start();
   }
-
+      
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-  }
+	public void execute() {  
+    if(patternNum > pattern.length - 1) patternNum = 0;
+    
+    led.setPattern(pattern[patternNum], 0.5, strip);
+    
+    if(timer.hasPeriodPassed(speed)) {
+      patternNum++;
+    }
+	}
 
   // Called once the command ends or is interrupted.
   @Override
@@ -58,7 +79,7 @@ public class LEDSetPattern extends CommandBase {
 
   // Returns true when the command should end.
   @Override
-  public boolean isFinished() {
-    return true;
-  }
+	public boolean isFinished() {
+      return false;
+	}
 }

@@ -109,6 +109,16 @@ public class LED extends SubsystemBase {
     {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
     {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue}
   };
+
+  public static final Color[][] teamFullColorsLibrary = {
+    {kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue},
+    {kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed}
+  };
+
+  public static final Color[][] teamFlashingColorsLibrary = {
+    {kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed},
+    {kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue}
+  };
   
   /**********************
    * Controls LED strips on the robot.

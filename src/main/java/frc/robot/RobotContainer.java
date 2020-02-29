@@ -9,12 +9,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
@@ -53,6 +55,9 @@ public class RobotContainer {
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   public double autoDelay;
+
+  private final Timer disabledDisplayTimer = new Timer();
+  private int displayCount = 1;
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -71,13 +76,13 @@ public class RobotContainer {
    */
   public void configureShuffleboard() {
     // shooter subsystem
-    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, shooter, limeLight, led));
+    SmartDashboard.putData("Shooter Manual SetPoint", new ShooterSetPID(false, true, shooter, limeLight, led));
     SmartDashboard.putData("Shooter STOP", new ShooterSetVoltage(0, shooter));
     SmartDashboard.putNumber("Shooter Manual SetPoint RPM", 2800);
     SmartDashboard.putData("Shooter Forward Calibrate", new ShooterSetVoltage(5, shooter));
 
     // shooter distance to RPM test
-    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, shooter, limeLight, led));
+    SmartDashboard.putData("Shooter Distance SetPoint", new ShooterSetPID(true, true, shooter, limeLight, led));
     SmartDashboard.putNumber("Shooter Distance", 5);
     SmartDashboard.putData("Shooter DistToRPM", new ShooterDistToRPM(shooter));
     SmartDashboard.putNumber("Shooter RPM from Dist", 0);
@@ -102,7 +107,7 @@ public class RobotContainer {
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
-    SmartDashboard.putData("LEDRainbow", new LEDRainbow(1, 0.5, led));
+    SmartDashboard.putData("LEDRainbow", new LEDSetPattern(LED.rainbowLibrary, 1, 0.5, led));
 
     // command sequences
     SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led));
@@ -134,7 +139,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("DriveStraight Manual MaxAccel", kMaxAccelerationMetersPerSecondSquared);
     
     // Testing for autos and trajectories
-    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain));
+    SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain, log));
     SmartDashboard.putData("ZeroEncoders", new DriveZeroEncoders(driveTrain));
     SmartDashboard.putData("ZeroOdometry", new DriveResetPose(0, 0, 0, driveTrain));
     SmartDashboard.putData("DriveTrajectoryRelative", new DriveFollowTrajectory(CoordType.kRelative, TrajectoryTest.calcTrajectory(log), driveTrain, log)
@@ -145,6 +150,7 @@ public class RobotContainer {
     // auto selection widget
     autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
     autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
+    autoChooser.addOption("OpponentTrenchPickup", AutoSelection.OPPONENT_TRENCH_PICKUP);
     autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
     autoChooser.addOption("ShootForward", AutoSelection.SHOOT_FORWARD);
     autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
@@ -195,12 +201,14 @@ public class RobotContainer {
     // xb[4].whenPressed(new Wait(0)));
 
     // LB = 5, RB = 6
-    xb[5].whenPressed(new ShooterHoodPistonSequence(false, false, shooter)); // open shooter hood
-    xb[6].whileHeld(new ShooterSetPID(true, shooter, limeLight, led)); // set shooter rpm
+    xb[5].whileHeld(new ShootSequenceSetup(false, shooter, limeLight, led)); // close shot setup
+    xb[5].whenReleased(new ShootSequence(shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence
+    // xb[6].whileHeld(new ShooterSetPID(true, false, shooter, limeLight, led)); // set shooter rpm
+    xb[6].whileHeld(new ShootSequenceSetup(true, shooter, limeLight, led)); // normal and far shot setup
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led)); // shooting sequence
 
-    // back = 7, start = 8
-    xb[7].whenPressed(new ShooterHoodPistonSequence(true, false, shooter)); // close shooter hood and do not lock angle
+    // back = 7, start = 8 
+    // xb[7].whenPressed(new ShooterHoodPistonSequence(true, false, shooter)); // close shooter hood and do not lock angle
     // xb[8].whenPressed(new Wait(0));
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
@@ -214,7 +222,7 @@ public class RobotContainer {
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
-    xbLT.whenActive(new ShooterHoodPistonSequence(true, true, shooter)); // close shooter hood and lock angle
+    // xbLT.whenActive(new ShooterHoodPistonSequence(true, true, shooter)); // close shooter hood and lock angle
     xbRT.whenActive(new ShootSequenceStop(shooter, feeder, hopper, intake, led)); // stop motors and set shooter to low rpm
   }
 
@@ -336,7 +344,9 @@ public class RobotContainer {
    */
   public void disabledInit() {
     log.writeLogEcho(true, "Disabled", "Mode Init");
-    led.setStrip("Green", 1);
+
+    disabledDisplayTimer.reset();
+    disabledDisplayTimer.start();
 
     driveTrain.setDriveModeCoast(true);
     shooter.setPowerCellsShot(0);
@@ -350,6 +360,12 @@ public class RobotContainer {
    * Method called once every scheduler cycle when robot is disabled.
    */
   public void disabledPeriodic() {
+    if(displayCount > 1) displayCount = 0;
+    led.setPattern(LED.teamFlashingColorsLibrary[displayCount], 0.5, 1);
+
+    if(disabledDisplayTimer.hasPeriodPassed(0.25)) {
+      displayCount++;
+    }
   }
   
   /**
