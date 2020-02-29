@@ -30,6 +30,7 @@ public class LimeLight extends SubsystemBase {
   private DriveTrain driveTrain; // for testing distance calculation, probs can be taken out dist calc finished
   private double pipe;
   private double theoreticalWidth;
+  private double sweetSpot;
 
   /*
    * Limelight settings: ~~input~~ Exposure: 2 Black level offset: 0 red balance:
@@ -77,11 +78,7 @@ public class LimeLight extends SubsystemBase {
     return area;
   }
   public double getSweetSpot() {
-    double sweetSpotDistance;
-    sweetSpotDistance = getDistanceNew() - endDistance;
-    SmartDashboard.putNumber("Sweet spot distance", sweetSpotDistance);
-    System.out.println("sweet spot distance " + sweetSpotDistance);
-    return sweetSpotDistance;
+    return sweetSpot;
   }
   /**
    * @return distance, on the floor, from camera to target
@@ -157,6 +154,9 @@ public class LimeLight extends SubsystemBase {
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
     theoreticalWidth = Math.sqrt(area) * 1.526;
+    sweetSpot = getDistanceNew() - endDistance;
+    SmartDashboard.putNumber("Sweet spot (limelight periodic)", sweetSpot);
+    
 
     if (makePattern() == LED.patternLibrary[15]) {
       led.setPattern(makePattern(), 0.1, 0);
@@ -166,9 +166,9 @@ public class LimeLight extends SubsystemBase {
 
     // led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
     // ledAnimation.setDelayCounter();
+    updateLimeLightLog(true);
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
-      updateLimeLightLog(false);
 
       if(!isGettingData()) {
         RobotPreferences.recordStickyFaults("LimeLight", log);

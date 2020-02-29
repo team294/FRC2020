@@ -15,6 +15,8 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
+import static frc.robot.Constants.LimeLightConstants.*;
+
 
 import static frc.robot.Constants.DriveConstants.*;
 
@@ -37,6 +39,7 @@ public class DriveStraight extends CommandBase {
   private boolean fromShuffleboard;
   private double angleInput, angleTarget;   // angleTarget is an absolute gyro angle
   private FileLog log;
+  private boolean sweetSpot;
 
   private int accuracyCounter = 0;
 
@@ -70,6 +73,33 @@ public class DriveStraight extends CommandBase {
     this.regenerate = regenerate;
     this.fromShuffleboard = false;
     this.target = target;
+    this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
+    this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
+    addRequirements(driveTrain);
+  }
+
+/**
+   * Use this constructor when going to the sweet spot
+   * @param angleType kRelative (angle is relative to current robot facing),
+   *   kAbsolute (angle is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to drive towards the goal)
+   * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
+   * @param driveTrain reference to the drive train subsystem
+   * @param limelight reference to the limelight subsystem
+   * @param log
+   */
+
+  public DriveStraight(boolean sweetSpot, TargetType angleType, double angle, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.sweetSpot = sweetSpot;
+    this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
+    this.log = log;
+    this.angleType = angleType;
+    angleInput = angle;
+    this.regenerate = regenerate;
+    this.fromShuffleboard = false;
+    SmartDashboard.putNumber("sweet spot here (drivetrain)", target);
     this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
     this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
     addRequirements(driveTrain);
@@ -135,6 +165,12 @@ public class DriveStraight extends CommandBase {
         break;
       case kVision:
         angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + limeLight.getXOffset());
+    }
+
+    if(sweetSpot){
+      target = Units.inchesToMeters(limeLight.getSweetSpot() * 12);
+      //target = 0;
+      SmartDashboard.putNumber("sweet spot (init drivetrain)", limeLight.getSweetSpot());
     }
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
