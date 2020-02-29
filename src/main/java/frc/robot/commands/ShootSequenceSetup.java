@@ -45,4 +45,29 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
       )
     );
   }
+
+  /**
+   * Set shooter to setpoint RPM using default values for shooting from the trench
+   * or the auto line and set the hood/lock position.
+   * @param trench true = shooting from trench, false = shooting from autoline
+   * @param shooter shooter subsystem
+   * @param led led strip (subsystem)
+   */
+  public ShootSequenceSetup(boolean trench, Shooter shooter, LED led) {
+    addCommands(
+      // If shooting from the trench, close the hood, lock it, and set shooter RPM. 
+      // Otherwise, close the hood, leave it unlocked, and set shooter RPM.
+      new ConditionalCommand(
+        sequence(
+          new ShooterHoodPistonSequence(true, true, shooter),
+          new ShooterSetPID(false, ShooterConstants.shooterDefaultTrenchRPM, shooter, led)
+        ),
+        sequence(
+          new ShooterHoodPistonSequence(true, false, shooter),
+          new ShooterSetPID(false, ShooterConstants.shooterDefaultRPM, shooter, led)
+        ),
+        () -> trench
+      )
+    );
+  }
 }

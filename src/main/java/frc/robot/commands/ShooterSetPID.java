@@ -44,6 +44,24 @@ public class ShooterSetPID extends CommandBase {
   }
 
   /**
+   * Set shooter PID using parameter RPM.
+   * @param end true = end command when shooter is at setpoint rpm, false = never end
+   * @param rpm setpoint, in RPM
+   * @param shooter shooter subsystem
+   * @param led led strip (subsystem)
+   */
+  public ShooterSetPID(boolean end, double rpm, Shooter shooter, LED led) {
+    this.shooter = shooter;
+    this.led = led;
+    this.rpm = rpm;
+    this.rpmFromShuffleboard = false;
+    this.rpmFromDistance = false;
+    this.end = end;
+    this.ledTimer = new Timer();
+    addRequirements(shooter);
+  }
+
+  /**
    * Turn on the shooter PID using RPM from Shuffleboard.
    * @param rpmFromDistance true = rpm is set with distance from target, false = rpm is set with manual dashboard input
    * @param end true = end command when shooter is at setpoint rpm, false = never end

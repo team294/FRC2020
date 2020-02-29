@@ -20,7 +20,8 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
    */
   public ShooterHoodPistonSequence(boolean close, boolean lock, Shooter shooter) {
     addCommands(
-      new ShooterSetLockPiston(true, shooter),
+      // If opening, unlock hood.
+      new ConditionalCommand(new ShooterSetLockPiston(true, shooter), new Wait(0), () -> !close),
       new ShooterSetHoodPiston(close, shooter),
       // If opening or parameter lock is false, do not lock hood. 
       // If closing and parameter lock is true, delay and then lock hood (extend lock piston).
