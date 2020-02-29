@@ -178,11 +178,11 @@ public class RobotContainer {
    */
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
-    Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
-    Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
+    // Trigger xbPOVDown = new POVTrigger(xboxController, 180);
+    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
     Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
     for (int i = 1; i < xb.length; i++) {
@@ -190,10 +190,10 @@ public class RobotContainer {
     }
 
     // A = 1, B = 2, X = 3, Y = 4
-    // xb[1].whenPressed(new Wait(0)));
-    // xb[2].whenPressed(new Wait(0)));
+    xb[1].toggleWhenPressed(new IntakeSequence(intake)); // deploy intake and run rollers in
+    xb[2].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
     // xb[3].whenPressed(new Wait(0)));
-    // xb[4].whenPressed(new Wait(0)));
+    xb[4].whenPressed(new IntakePistonSetPosition(false, intake)); // retract intake
 
     // LB = 5, RB = 6
     xb[5].whileHeld(new ShootSequenceSetup(false, shooter, limeLight, led)); // close shot setup
@@ -211,9 +211,9 @@ public class RobotContainer {
     // xb[10].whenPressed(new Wait(0));
 
     // pov is the d-pad (up, down, left, right)
-    xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake)); // retract intake
-    xbPOVDown.whileActiveOnce(new IntakeSequence(intake)); // deploy intake and run rollers in
-    xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
+    // xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake)); // retract intake
+    // xbPOVDown.whileActiveOnce(new IntakeSequence(intake)); // deploy intake and run rollers in
+    // xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
