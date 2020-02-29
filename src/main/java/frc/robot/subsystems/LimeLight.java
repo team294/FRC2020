@@ -156,7 +156,6 @@ public class LimeLight extends SubsystemBase {
     area = ta.getDouble(1000.0);
     theoreticalWidth = Math.sqrt(area) * 1.526;
     sweetSpot = getDistanceNew() - endDistance;
-    SmartDashboard.putNumber("Sweet spot (limelight periodic)", sweetSpot);
     
 
     if (makePattern() == LED.visionTargetLibrary[15]) {

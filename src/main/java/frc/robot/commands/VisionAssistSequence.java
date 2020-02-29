@@ -29,19 +29,17 @@ public class VisionAssistSequence extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     addCommands(
-      new DriveTurnGyro(TargetType.kVision, 0, 2.61, 3.8, 4, driveTrain, limeLight, log), // turn towards the general target
+      
+    new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 4, driveTrain, limeLight, log), // turn towards the general target
     //  new DriveStraight(limeLight.getSweetSpot(), TargetType.kVision, 0, 10, 10, true, driveTrain, limeLight, log),
-    new DriveStraight(true, TargetType.kVision, 0, 10, 10, true, driveTrain, limeLight, log),
+    new DriveStraight(true, TargetType.kVision, 0, 2.61, 3.8, true, driveTrain, limeLight, log),
     
-      new DriveTurnGyro(TargetType.kVision, 0, 2.61, 3.8, 1, driveTrain, limeLight, log),
+    new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log),
 
-      deadline(
-        new WaitForPowerCells(3, shooter),
-        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // shoot until we shot 5 balls
-      ),
+    new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // turn shooter on until codriver turns it off manually
       
-      new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1) // stop all motors
       
+       
       
     );
     

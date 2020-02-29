@@ -78,7 +78,7 @@ public final class Constants {
         //public static final double targetHeight = 6.333;
         // public static final double cameraAngle = 0.5; // in degrees 26.5 measured but 28 works better?, 14 on proto
         public static final double cameraAngle = 28;
-        public static final double endDistance = 17; // distance of the "sweet spot" 
+        public static final double endDistance = 18; // distance of the "sweet spot" 
         public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shot
     }
 
