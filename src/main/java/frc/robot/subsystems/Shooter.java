@@ -21,36 +21,33 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
-import frc.robot.subsystems.LED;
 
+import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 
 public class Shooter extends SubsystemBase {
   private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
-  private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonIn, pcmShooterHoodPistonOut); // piston to open and close hood
+  private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonOut, pcmShooterHoodPistonIn); // piston to open and close hood
   private final Solenoid shooterLockPiston = new Solenoid(pcmShooterLockPiston); // piston to lock hood angle
   private FileLog log; // reference to the fileLog
-  private LimeLight limeLight;
   private TemperatureCheck tempCheck;
   private final DigitalInput input = new DigitalInput(dioPowerCell);
   private LED led;
 
-  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint, voltageTarget = 1; // setPoint is in native units
+  private double measuredVelocityRaw, measuredRPM, shooterRPM, setPoint; // setPoint is in native units
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
   private int timeoutMs = 0; // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
-  private int powerCellsShot = 0;
-  private int prevPowerCellsShot = 0;
-  //private double prevVoltage = 0;
-  //private double prevCurrent = 0;
-  private boolean prevCell = false;
+  private double voltageTarget = 1; // target shooter voltage, used to check if shooter is being set to 0 volts
+  private int cellsShot = 0; // counter of total number of power cells shot (reset when shooter is set to 0 volts)
+  private int prevCellsShot = 0; // counter of the previous number of power cells shot ()
+  private boolean prevCellState = false; // used to indicate whether triggers of photo switch are new power cells
   
-  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led, LimeLight limeLight) {
+  public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led) {
     this.log = log; // save reference to the fileLog
     this.tempCheck = tempCheck;
     this.led = led;
-    this.limeLight = limeLight;
 
     setLockPiston(false);
 
@@ -122,29 +119,45 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * @param retract true = retract (open), false = extend (close)
+   * @param open true = open (retract), false = close (extend)
    */
-  public void setHoodPiston(boolean retract) {
-    if (retract) shooterHoodPiston.set(Value.kReverse);
+  public void setHoodPiston(boolean open) {
+    if (open) shooterHoodPiston.set(Value.kReverse);
     else shooterHoodPiston.set(Value.kForward);
   }
 
   /**
-   * @param retract true = retract (unlock), false = extend (lock)
+   * @return true = opened (retracted), false = closed (extended)
    */
-  public void setLockPiston(boolean retract) {
-    shooterLockPiston.set(retract);
+  public boolean getHoodPiston() {
+    if (shooterHoodPiston.get() == Value.kReverse) return true;
+    else return false;
+  }
+
+  /**
+   * @return true = locked (extended), false = unlocked (retracted)
+   */
+  public boolean getLockPiston() {
+    return shooterLockPiston.get();
+  }
+
+  /**
+   * @param lock true = unlock (retract), false = lock (extend)
+   */
+  public void setLockPiston(boolean lock) {
+    shooterLockPiston.set(lock);
   }
 
   /**
    * @return PID error, in RPM
    */
   public double getShooterPIDError() {
-    return shooterMotorLeft.getClosedLoopError() * ticksPer100ms;
+    // return shooterMotorLeft.getClosedLoopError() * ticksPer100ms;
+    return shooterRPM - measuredRPM;
   }
 
   /**
-   * @return measured rpm
+   * @return measured RPM
    */
   public double getMeasuredRPM() {
     measuredVelocityRaw = shooterMotorLeft.getSelectedSensorVelocity(0);
@@ -153,36 +166,37 @@ public class Shooter extends SubsystemBase {
   }
 
    /**
-   * @return Cell present
+   * @return true = power cell in shooter, false = no power cell in shooter
    */
-  public boolean getCell(){
+  public boolean getCell() {
     return !input.get();
   }
 
   /**
-   * @return power cells shot
+   * @return number of power cells shot
    */
   public int getPowerCellsShot() {
-    return powerCellsShot;
+    return cellsShot;
   }
 
-  public void setPowerCellsShot(int pCells){
-    powerCellsShot = pCells;
+  public void setPowerCellsShot(int cells) {
+    cellsShot = cells;
   }
 
   /**
-   * Returns min RPM if robot is less than 5 feet from the target
-   * Returns max RPM if robot is more than 30 feet from the target
-   * Calculates slope between known RPMs for 2 distances (based on array in constants)
-   * Uses slope to calculate RPM at a certain distance between those 2 distances
-   * @param distance distance from the target (as per vision data) in feet
-   * @return RPM to set the shooter to in order to make it into the target
+   * Use distance from the target to calculate target RPM. A slope is created between the 
+   * two closest values in the table to the parameter distance to calculate the target RPM.
+   * This method returns the default RPM if the robot is less than 5 feet from the target, 
+   * and the max RPM in the table if the robot is more than 30 feet from the target.
+   * @param distance distance from target (as per vision data), in feet
+   * @return target RPM for shooter to make it into the target
    */
   public double distanceFromTargetToRPM(double distance) {
     int len = distanceFromTargetToRPMTable.length;
-    if(distance < distanceFromTargetToRPMTable[0][0]) return distanceFromTargetToRPMTable[0][1];
+    if(distance < distanceFromTargetToRPMTable[0][0]) return shooterDefaultRPM; /*return distanceFromTargetToRPMTable[0][1];*/
     if(distance > distanceFromTargetToRPMTable[len-1][0]) return distanceFromTargetToRPMTable[len-1][1];
     int leftBound = 0;
+
     for(int i = len - 1; i >= 0; i--) {
       if(distance > distanceFromTargetToRPMTable[i][0]) {
         leftBound = i;
@@ -191,6 +205,7 @@ public class Shooter extends SubsystemBase {
         return distanceFromTargetToRPMTable[i][1];
       }
     }
+
     double lowerRPM = distanceFromTargetToRPMTable[leftBound][1];
     double upperRPM = distanceFromTargetToRPMTable[leftBound + 1][1];
     double dRPMperMeter = (upperRPM - lowerRPM) / 5;
@@ -200,23 +215,35 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    // read PID coefficients from SmartDashboard
+    // read PID coefficients from Shuffleboard
     double ff = SmartDashboard.getNumber("Shooter FF", 0);
     double p = SmartDashboard.getNumber("Shooter P", 0);
     double i = SmartDashboard.getNumber("Shooter I", 0);
     double d = SmartDashboard.getNumber("Shooter D", 0);
 
-    
-
-    // if PID coefficients on SmartDashboard have changed, write new values to controller
+    // if PID coefficients on Shuffleboard have changed, write new values to controller
     if(ff != kFF) shooterMotorLeft.config_kF(0, ff, timeoutMs); kFF = ff;
     if(p != kP) shooterMotorLeft.config_kP(0, p, timeoutMs); kP = p;
     if(i != kI) shooterMotorLeft.config_kI(0, i, timeoutMs); kI = i;
     if(d != kD) shooterMotorLeft.config_kD(0, d, timeoutMs); kD = d;
-    
+
     measuredRPM = getMeasuredRPM();
+
+    // if photo switch is triggered and it was not previously triggered, increase
+    // counter for power cells shot and set led strip
+    if (getCell() && !prevCellState) {
+      cellsShot++;
+      led.setBallLights(cellsShot);
+    }
+
+    // if voltage target is 0, reset power cell count
+    if (voltageTarget == 0) cellsShot = 0;
+
+    // if voltage target is 0 and current number of power cells shot is not equal to
+    // previous number of power cells shot (previous is not 0), set led strip to current n
+    if(voltageTarget == 0 && cellsShot != prevCellsShot) led.setBallLights(cellsShot); 
     
+    // update Shuffleboard values
     SmartDashboard.putNumber("Shooter SetPoint RPM", setPoint * ticksPer100ms);
     SmartDashboard.putNumber("Shooter RPM", measuredRPM);
     SmartDashboard.putNumber("Shooter Motor 1 Current", shooterMotorLeft.getSupplyCurrent());
@@ -226,32 +253,14 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Motor 2 PercentOutput", shooterMotorRight.getMotorOutputPercent());
     // SmartDashboard.putNumber("Shooter Motor 1 Voltage", shooterMotorLeft.getMotorOutputVoltage());
     // SmartDashboard.putNumber("Shooter Motor 2 Voltage", shooterMotorRight.getMotorOutputVoltage());
-
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
-    SmartDashboard.putNumber("Power Cells Shot", powerCellsShot);
-    SmartDashboard.putBoolean("Cell Present", prevCell);
-    
-    if(log.getLogRotation() == log.SHOOTER_CYCLE) {
-      updateShooterLog(false);
-    }
+    SmartDashboard.putNumber("Power Cells Shot", cellsShot);
+    SmartDashboard.putBoolean("Cell Present", prevCellState);
 
-    //if (getVoltage() > voltageCheck && prevVoltage < voltageCheck && Math.abs(hopper.hopperGetPercentOutput()) > hopperPercentCheck)
-    if (getCell() && !prevCell) {
-      powerCellsShot++;
-      led.setBallLights(powerCellsShot);
-    }
+    prevCellState = getCell();
+    prevCellsShot = cellsShot;
 
-    if (voltageTarget == 0) {
-      powerCellsShot = 0;
-      
-    }
-
-    if(voltageTarget == 0 && (powerCellsShot != prevPowerCellsShot)){
-      led.setBallLights(powerCellsShot);
-    }
-
-    prevCell = getCell();
-    prevPowerCellsShot = powerCellsShot;
+    if(log.getLogRotation() == log.SHOOTER_CYCLE) updateShooterLog(false);
   }
 
   /**
@@ -264,7 +273,7 @@ public class Shooter extends SubsystemBase {
       "Left Motor Amps", shooterMotorLeft.getSupplyCurrent(),
       "Right Motor Amps", shooterMotorRight.getSupplyCurrent(),
       "Measured RPM", measuredRPM,
-      "Power Cell", prevCell
+      "Power Cell", prevCellState
     );
   }
 

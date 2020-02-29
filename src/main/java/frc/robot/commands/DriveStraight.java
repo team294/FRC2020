@@ -30,6 +30,7 @@ public class DriveStraight extends CommandBase {
   private LimeLight limeLight;
   private TargetType angleType;
   private double target; // how many more degrees to the right to turn
+  private double direction;  // +1 = forward, -1 = reverse
   private double maxVel; // max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants 
   private double maxAccel; // max acceleration, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
   private long profileStartTime; // initial time (time of starting point)
@@ -172,6 +173,7 @@ public class DriveStraight extends CommandBase {
       //target = 0;
       SmartDashboard.putNumber("sweet spot (init drivetrain)", limeLight.getSweetSpot());
     }
+    direction = Math.signum(target);
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
@@ -209,8 +211,8 @@ public class DriveStraight extends CommandBase {
         angleTarget = driveTrain.normalizeAngle(curAngle + limeLight.getXOffset());
     }
     double pAngle = driveTrain.normalizeAngle(curAngle - angleTarget) * kAngLinear;
-    double targetVelL = targetVel * (1 + pAngle);
-    double targetVelR = targetVel * (1 - pAngle);
+    double targetVelL = targetVel * (1 + direction*pAngle);
+    double targetVelR = targetVel * (1 - direction*pAngle);
     
     // Calculate feedforward power
     double aFFL = (kSLinear * Math.signum(targetVelL)) + (targetVelL * kVLinear) + (targetAccel * kALinear);

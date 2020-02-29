@@ -24,7 +24,7 @@ public class Intake extends SubsystemBase {
  
   public Intake() {
     intakeMotor.configFactoryDefault();
-    intakeMotor.setInverted(false);
+    intakeMotor.setInverted(true);
     intakeMotor.setNeutralMode(NeutralMode.Brake);
   }
 

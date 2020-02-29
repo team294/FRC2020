@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
 import frc.robot.utilities.TemperatureCheck;
 
+import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.FeederConstants.*;
 
 public class Feeder extends SubsystemBase {
@@ -103,7 +104,7 @@ public class Feeder extends SubsystemBase {
    * @return PID error, in RPM
    */
   public double getFeederPIDError() {
-    return feederMotor.getClosedLoopError() * ticksPer100ms;
+    return feederRPM - measuredRPM;
   }
 
   @Override

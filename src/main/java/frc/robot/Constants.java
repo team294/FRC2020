@@ -23,6 +23,8 @@ public final class Constants {
 
     public static final class RobotConstants {
         // Global constants go here
+        public static final double temperatureCheck = 40; // in celsius
+        public static final double pidErrorTolerance = 200; // in RPM
 
         // Next row is a DEFAULT VALUE. Change this value in RobotPrefrences for each
         // robot, not in this code!
@@ -32,26 +34,27 @@ public final class Constants {
     public static final class ShooterConstants {
         public static final int canShooterMotorRight = 31; // 30 on competition bot
         public static final int canShooterMotorLeft = 30; // 31 on competition bot
-        public static final int pcmShooterHoodPistonIn = 3;
-        public static final int pcmShooterHoodPistonOut = 2;
-        public static final int pcmShooterLockPiston = 6;
+        public static final int pcmShooterHoodPistonIn = 2; // open hood (retract)
+        public static final int pcmShooterHoodPistonOut = 3; // close hood (extend)
+        public static final int pcmShooterLockPiston = 6; // lock and unlock hood angle
         public static final double shooterDefaultRPM = 2800;
+        public static final double shooterDefaultShortRPM = 1400;
         public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for
                                                        // counting power cells)
         public static final int dioPowerCell = 9;
         // public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)
         // public static final double currentCheck = 60; // voltage the shooter will reach if power cell is shot (for counting power cells)
         public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
-        public static final double temperatureCheck = 40; // in celsius TODO this doesn't need to be in every subsystem unless it will have different values??
         
-        public static final double[][] distanceFromTargetToRPMTable = {{5,1200},{10,2400},{15,2900},{20,2900},{25,3100},{30,3200}};
+        public static final double[][] distanceFromTargetToRPMTable = {{4,1400},{5,1500},{10,2500},{15,2900},{20,2900},{25,3100},{30,3200}};
         // TODO figure out max distance of robot from target so table includes all necessary values
+
+        public static final double maxSecondsToShoot3balls = 5.0; // max time to wait while shooting 3 balls. use this in commands to timeout
     }
 
     public static final class FeederConstants {
         public static final int canFeederMotor = 40;
         public static final double feederDefaultRPM = 2000;
-        public static final double temperatureCheck = 40; // in celsius
     }
 
     public static final class IntakeConstants {
@@ -75,6 +78,7 @@ public final class Constants {
         public static final double targetHeight = 6.333;
         public static final double cameraAngle = 0.5; // in degrees 26.5 measured but 28 works better?, 14 on proto
         public static final double endDistance = 50; // distance of the "sweet spot" 
+        public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shot
     }
 
     /**
@@ -114,8 +118,6 @@ public final class Constants {
         public static final int canRightDriveMotor1 = 20;
         public static final int canRightDriveMotor2 = 21;
 
-        public static final double temperatureCheck = 40; // in celsius
-
         public static final double compensationVoltage = 12.0; // voltage compensation on drive motors
         public static final double MAX_VOLTAGE_IN_TRAJECTORY = 10.0;
 
@@ -150,6 +152,7 @@ public final class Constants {
         public static double kPAngular = 0.0005;   // was 0.001
         public static double kDAngular = 0;
         public static double kIAngular = 0;
+        public static final double maxSecondsForTurnGyro = 2.0; // max time to wait for turn gyro. use this in commands to timeout
 
         // DriveStraight constants
         public static double kMaxSpeedMetersPerSecond = 5.22; // 5.0 on practice bot, 5.22 on competition bot
@@ -177,19 +180,9 @@ public final class Constants {
     }
 
     public static final class OIConstants {
-        public static final int xboxControllerPort = 0;
-        public static final int leftJoystickPort = 1;
-        public static final int rightJoystickPort = 2;
-        public static final int coPanelPort = 3;
-
-        /*
-         * public enum Button { kBumperLeft(5), kBumperRight(6), kStickLeft(9),
-         * kStickRight(10), kA(1), kB(2), kX(3), kY(4), kBack(7), kStart(8);
-         * 
-         * @SuppressWarnings({"MemberName", "PMD.SingularField"}) public final int
-         * value;
-         * 
-         * Button(int value) { this.value = value; } }
-         */
+        public static final int usbXboxController = 0;
+        public static final int usbLeftJoystick = 1;
+        public static final int usbRightJoystick = 2;
+        public static final int usbCoPanel = 3;
     }
 }
