@@ -29,9 +29,8 @@ public class ShootSequence extends SequentialCommandGroup {
   public ShootSequence(boolean rpmFromDistance, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, LED led) {
     addCommands(
       parallel(
-        // If the current distance away from the target is greater than the max distance for 
-        // unlocking the hood or vision sees no target, close and lock the hood. 
-        // Otherwise, close the hood and leave it unlocked.
+        // If getting RPM from distance and within range to do unlocked hood shot,
+        // unlock the hood but close it. Otherwise, close and lock the hood.
         new ConditionalCommand(
           new ShooterHoodPistonSequence(true, true, shooter),
           new ShooterHoodPistonSequence(true, false, shooter),
