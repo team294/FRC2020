@@ -14,6 +14,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class ShootSequenceSetup extends SequentialCommandGroup {
   
@@ -25,20 +26,20 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
    * @param limeLight limelight camera (subsystem)
    * @param led led strip (subsystem)
    */
-  public ShootSequenceSetup(boolean closeHood, Shooter shooter, LimeLight limeLight, LED led) {
+  public ShootSequenceSetup(boolean closeHood, Shooter shooter, LimeLight limeLight, LED led, FileLog log) {
     addCommands(
       // If the current distance away from the target is greater than the max distance for 
       // unlocking the hood, close and lock the hood. Otherwise, close the hood and leave it unlocked.
       new ConditionalCommand(
-        new ShooterHoodPistonSequence(closeHood, true, shooter),
-        new ShooterHoodPistonSequence(closeHood, false, shooter),
+        new ShooterHoodPistonSequence(closeHood, true, shooter, log),
+        new ShooterHoodPistonSequence(closeHood, false, shooter, log),
         () -> closeHood && limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance
       ),
       // If closing the hood, set shooter RPM based on distance.
       // Otherwise, set shooter RPM to the default value for the short shot.
       new ConditionalCommand(
-        new ShooterSetPID(true, false, shooter, limeLight, led),
-        new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led),
+        new ShooterSetPID(true, false, shooter, limeLight, led, log),
+        new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led, log),
         () -> closeHood
       )
     );

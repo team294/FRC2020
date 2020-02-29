@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class ShooterHoodPistonSequence extends SequentialCommandGroup {
   /**
@@ -18,15 +19,15 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
    * @param lock true = lock hood at the end, false = do not lock hood at the end
    * @param shooter shooter subsystem
    */
-  public ShooterHoodPistonSequence(boolean close, boolean lock, Shooter shooter) {
+  public ShooterHoodPistonSequence(boolean close, boolean lock, Shooter shooter, FileLog log) {
     addCommands(
-      new ShooterSetLockPiston(true, shooter),
+      new ShooterSetLockPiston(true, shooter, log),
       // If opening, wait 0.5 seconds before setting hood piston. If closing, do not wait before setting hood piston.
       new ConditionalCommand(new Wait(0.5), new Wait(0), () -> !close),
-      new ShooterSetHoodPiston(close, shooter),
+      new ShooterSetHoodPiston(close, shooter, log),
       new Wait(0.75),
       // If opening or parameter lock is false, do not lock hood. If closing and parameter lock is true, lock hood (extend lock piston).
-      new ConditionalCommand(new ShooterSetLockPiston(true, shooter), new ShooterSetLockPiston(false, shooter), () -> !close || !lock)
+      new ConditionalCommand(new ShooterSetLockPiston(true, shooter, log), new ShooterSetLockPiston(false, shooter, log), () -> !close || !lock)
 
       /*new ConditionalCommand(
         // If hood and lock are already in place, end immediately.

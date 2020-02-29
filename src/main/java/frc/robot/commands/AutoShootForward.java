@@ -42,22 +42,22 @@ public class AutoShootForward extends SequentialCommandGroup {
       // turn towards target w/ vision with timeout
       deadline(
         new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
-        new ShooterSetPID(true, false, shooter, limeLight, led), // start shooter
-        new IntakePistonSetPosition(true, intake) // deploy intake piston
+        new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
+        new IntakePistonSetPosition(true, intake, log) // deploy intake piston
       ),
 
-      new ShooterHoodPistonSequence(true, false, shooter),
+      new ShooterHoodPistonSequence(true, false, shooter, log),
 
       // start shooter and wait for 3 power cells to be shot with timeout
       deadline(
-        new WaitForPowerCells(3, shooter).withTimeout(5), 
-        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) 
+        new WaitForPowerCells(3, shooter, log).withTimeout(5), 
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) 
       ),
       
 
       parallel( 
         // stop all motors
-        new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1), 
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1), 
         // go forward 2 meters to get off auto line
         new DriveStraight(2,TargetType.kRelative, 0, 2.61, 3.8, true, driveTrain, limeLight, log)
       ) 

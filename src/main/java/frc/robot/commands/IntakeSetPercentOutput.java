@@ -10,9 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.Intake;
+import frc.robot.utilities.FileLog;
 
 public class IntakeSetPercentOutput extends CommandBase {
   private Intake intake;
+  private FileLog log;
   private double percent;
 
   /**
@@ -21,9 +23,10 @@ public class IntakeSetPercentOutput extends CommandBase {
    * @param percent percent output (0 to 1)
    * @param intake intake subsystem to use
    */
-  public IntakeSetPercentOutput(double percent, Intake intake) {
+  public IntakeSetPercentOutput(double percent, Intake intake, FileLog log) {
     this.intake = intake;
     this.percent = percent;
+    this.log = log;
     addRequirements(intake);
   }
 
@@ -32,8 +35,9 @@ public class IntakeSetPercentOutput extends CommandBase {
    * This command never ends.
    * @param intake intake subsystem to use
    */
-  public IntakeSetPercentOutput(Intake intake) {
+  public IntakeSetPercentOutput(Intake intake, FileLog log) {
     this.intake = intake;
+    this.log = log;
     this.percent = IntakeConstants.intakeDefaultPercentOutput;
     addRequirements(intake);
   }
@@ -42,6 +46,7 @@ public class IntakeSetPercentOutput extends CommandBase {
   @Override
   public void initialize() {
     intake.intakeSetPercentOutput(percent);
+    log.writeLog(false, "IntakeSetPercentOut", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

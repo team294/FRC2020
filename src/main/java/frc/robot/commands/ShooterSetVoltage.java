@@ -9,9 +9,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class ShooterSetVoltage extends CommandBase {
   private final Shooter shooter;
+  private FileLog log;
   private double voltage;
 
   /**
@@ -20,8 +22,9 @@ public class ShooterSetVoltage extends CommandBase {
    * @param voltage +12 (full forward) to -12 (full reverse)
    * @param shooter shooter subsystem
    */
-  public ShooterSetVoltage(double voltage, Shooter shooter) {
+  public ShooterSetVoltage(double voltage, Shooter shooter, FileLog log) {
     this.shooter = shooter;
+    this.log = log;
     this.voltage = voltage;
     addRequirements(shooter);
   }
@@ -30,6 +33,7 @@ public class ShooterSetVoltage extends CommandBase {
   @Override
   public void initialize() {
     shooter.setShooterVoltage(voltage);
+    log.writeLog(false, "ShooterSetVoltage", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

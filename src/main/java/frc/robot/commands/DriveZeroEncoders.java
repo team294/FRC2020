@@ -9,16 +9,19 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.utilities.FileLog;
 
 public class DriveZeroEncoders extends CommandBase {
   /**
    * Command to zero both driveTrain encoders
    */
   private DriveTrain driveTrain;
+  private FileLog log;
 
-  public DriveZeroEncoders(DriveTrain driveTrain) {
+  public DriveZeroEncoders(DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.log = log;
     addRequirements(driveTrain);
   }
 
@@ -27,6 +30,7 @@ public class DriveZeroEncoders extends CommandBase {
   public void initialize() {
     driveTrain.zeroLeftEncoder();
     driveTrain.zeroRightEncoder();
+    log.writeLog(false, "ZeroDriveEncoders", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

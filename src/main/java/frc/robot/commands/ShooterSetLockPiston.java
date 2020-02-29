@@ -9,10 +9,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class ShooterSetLockPiston extends CommandBase {
   private Shooter shooter;
   private boolean unlock;
+  private FileLog log;
 
   /**
    * Set shooter lock piston position.
@@ -20,9 +22,10 @@ public class ShooterSetLockPiston extends CommandBase {
    * @param unlock true = unlock, false = lock
    * @param shooter shooter subsystem
    */
-  public ShooterSetLockPiston(boolean unlock, Shooter shooter) {
+  public ShooterSetLockPiston(boolean unlock, Shooter shooter, FileLog log) {
     this.shooter = shooter;
     this.unlock = unlock;
+    this.log = log;
     addRequirements(shooter);
   }
 
@@ -30,6 +33,7 @@ public class ShooterSetLockPiston extends CommandBase {
   @Override
   public void initialize() {
     shooter.setLockPiston(unlock);
+    log.writeLog(false, "IntakeSetPiston", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

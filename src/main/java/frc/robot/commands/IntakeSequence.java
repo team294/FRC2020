@@ -9,16 +9,17 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Intake;
+import frc.robot.utilities.FileLog;
 
 public class IntakeSequence extends SequentialCommandGroup {
   /**
    * Deploy the intake and run intake rollers in.
    * @param intake intake subsystem
    */
-  public IntakeSequence(Intake intake) {
+  public IntakeSequence(Intake intake, FileLog log) {
     addCommands(
-      new IntakePistonSetPosition(true, intake),
-      new IntakeSetPercentOutput(intake)
+      new IntakePistonSetPosition(true, intake, log),
+      new IntakeSetPercentOutput(intake, log)
     );
   }
 }

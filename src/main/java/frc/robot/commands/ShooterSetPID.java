@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LimeLight;
@@ -20,6 +21,7 @@ public class ShooterSetPID extends CommandBase {
   private final Shooter shooter;
   private LimeLight limeLight;
   private LED led;
+  private FileLog log;
   private double rpm;
   private boolean rpmFromShuffleboard, rpmFromDistance, end;
   private Timer ledTimer;
@@ -31,10 +33,12 @@ public class ShooterSetPID extends CommandBase {
    * @param rpm setpoint, in RPM
    * @param shooter shooter subsystem
    * @param led led strip (subsystem)
+   * @param log Filelog subsystem
    */
-  public ShooterSetPID(double rpm, Shooter shooter, LED led) {
+  public ShooterSetPID(double rpm, Shooter shooter, LED led, FileLog log) {
     this.shooter = shooter;
     this.led = led;
+    this.log = log;
     this.rpm = rpm;
     this.rpmFromShuffleboard = false;
     this.rpmFromDistance = false;
@@ -51,10 +55,11 @@ public class ShooterSetPID extends CommandBase {
    * @param limeLight limeLight to use
    * @param led led to use
    */
-  public ShooterSetPID(boolean rpmFromDistance, boolean end, Shooter shooter, LimeLight limeLight, LED led) {
+  public ShooterSetPID(boolean rpmFromDistance, boolean end, Shooter shooter, LimeLight limeLight, LED led, FileLog log) {
     this.shooter = shooter;
     this.limeLight = limeLight;
     this.led = led;
+    this.log = log;
     this.rpm = 0;
     this.rpmFromShuffleboard = true;
     this.rpmFromDistance = rpmFromDistance;
@@ -74,6 +79,7 @@ public class ShooterSetPID extends CommandBase {
     shooter.setShooterPID(rpm);
     ledTimer.reset();
     ledTimer.start();
+    log.writeLog(false, "ShooterSetPID", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
