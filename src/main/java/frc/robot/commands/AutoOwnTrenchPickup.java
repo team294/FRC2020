@@ -30,7 +30,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       deadline(
         
         new DriveStraight(-1.5494, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to edge of trench
-        new ShooterSetPID(true, true, shooter, limeLight, led), // start shooter
+        new ShooterSetPID(true, false, shooter, limeLight, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
       
@@ -55,7 +55,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
         new DriveTurnGyro(TargetType.kVision, 0, 450.0, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
         
-        new ShooterSetPID(true, true, shooter, limeLight, led) // start shooter
+        new ShooterSetPID(true, false, shooter, limeLight, led) // start shooter
       ),
 
       deadline(

@@ -45,7 +45,7 @@ public class AutoTrussPickup extends SequentialCommandGroup {
 
       deadline(
         new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, 3, driveTrain, limeLight, log), // turn towards general target
-        new ShooterSetPID(true, true, shooter, limeLight, led)
+        new ShooterSetPID(true, false, shooter, limeLight, led)
       ),
 
 
@@ -55,7 +55,7 @@ public class AutoTrussPickup extends SequentialCommandGroup {
         
       deadline(
         new WaitForPowerCells(5, shooter),  // wait for 5 balls to be shot
-        new ShootSequence(3000, shooter, feeder, hopper, intake, led) // shoot
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // shoot
       ),
       
       new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1)// stop all motors

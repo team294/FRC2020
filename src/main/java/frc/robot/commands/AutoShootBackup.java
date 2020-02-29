@@ -7,8 +7,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
@@ -32,16 +30,14 @@ public class AutoShootBackup extends SequentialCommandGroup {
 
       deadline(
         new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
-        new ShooterSetPID(true, true, shooter, limeLight, led), // start shooter
+        new ShooterSetPID(true, false, shooter, limeLight, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
 
       new ShooterHoodPistonSequence(true, false, shooter),
 
        deadline(
-        
         new WaitForPowerCells(3, shooter).withTimeout(7), // wait for 3 power cells to be shot
- 
         new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // start shooter
       ),
 

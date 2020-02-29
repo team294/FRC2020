@@ -60,7 +60,7 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
 
       deadline(
           new DriveTurnGyro(TargetType.kAbsolute, -45, 400, 200, 3, driveTrain, limeLight, log), // turn towards the general target
-          new ShooterSetPID(3000, shooter, led) // start shooter while shooting
+          new ShooterSetPID(true, false, shooter, limeLight, led) // start shooter while shooting
         ), 
 
       new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
@@ -69,7 +69,7 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
         
       deadline(
         new WaitForPowerCells(5, shooter),
-        new ShootSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // shoot until we shot 5 balls
       ),
       
       new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1) // stop all motors
