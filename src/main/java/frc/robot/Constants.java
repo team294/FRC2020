@@ -118,6 +118,8 @@ public final class Constants {
         public static final double compensationVoltage = 12.0; // voltage compensation on drive motors
         public static final double MAX_VOLTAGE_IN_TRAJECTORY = 10.0;
 
+        public static double joystickTurnSensitivity = 2.0;  // 1 = linear control, 2 = square law, etc
+
         // suggested from tutorial
         public static final double kRamseteB = 2.0;
         public static final double kRamseteZeta = 0.70;

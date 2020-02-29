@@ -10,10 +10,8 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -56,18 +54,12 @@ public class DriveWithJoystickArcadeVelocity extends CommandBase {
     double zRotation = rightJoystick.getX();
 
     // driveTrain.arcadeDrive(xSpeed, zRotation * 0.6);     // Note that arcadeDrive multiplies zRotation by an additional 0.7
-    double rotateControl = 2;
+    zRotation *= 0.42;
+
+    // Algorithm copied from DifferentialDrive.arcadeDrive, with modification for zRotation sensitivity
     xSpeed = MathUtil.clamp(xSpeed, -1.0, 1.0);
-
     zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
-    zRotation = Math.copySign( Math.pow(Math.abs(zRotation), rotateControl), zRotation);
-
-    // Square the inputs (while preserving the sign) to increase fine control
-    // while permitting full power.
-    if (squareInputs) {
-      xSpeed = Math.copySign(xSpeed * xSpeed, xSpeed);
-      zRotation = Math.copySign(zRotation * zRotation, zRotation);
-    }
+    zRotation = Math.copySign( Math.pow(Math.abs(zRotation), joystickTurnSensitivity), zRotation);
 
     double leftMotorOutput;
     double rightMotorOutput;
@@ -94,19 +86,28 @@ public class DriveWithJoystickArcadeVelocity extends CommandBase {
       }
     }
 
-    m_leftMotor.set(MathUtil.clamp(leftMotorOutput, -1.0, 1.0) * m_maxOutput);
-    double maxOutput = m_maxOutput * m_rightSideInvertMultiplier;
-    m_rightMotor.set(MathUtil.clamp(rightMotorOutput, -1.0, 1.0) * maxOutput);
+    leftMotorOutput = MathUtil.clamp(leftMotorOutput, -1.0, 1.0);
+    rightMotorOutput = MathUtil.clamp(rightMotorOutput, -1.0, 1.0);
 
+    double targetVelL = leftMotorOutput * DriveConstants.kMaxSpeedMetersPerSecond;
+    double targetVelR = rightMotorOutput * DriveConstants.kMaxSpeedMetersPerSecond;
 
+    double aFFL = (kSLinear * Math.signum(targetVelL)) + (targetVelL * kVLinear);
+    double aFFR = (kSLinear * Math.signum(targetVelR)) + (targetVelR * kVLinear);
 
-
-    // For competition:  driving with feedforward and feedback
     driveTrain.setLeftTalonPIDVelocity(Units.metersToInches(targetVelL), aFFL);
     driveTrain.setRightTalonPIDVelocity(Units.metersToInches(targetVelR), aFFR, true);
 
     if(log.getLogRotation() == log.DRIVE_CYCLE) {
-      log.writeLog(false, "DriveWithJoystickArcadeVelocity", "Joystick", "L Joystick", xSpeed, "R Joystick", zRotation);
+      log.writeLog(false, "DriveWithJoystickArcadeVelocity", "Joystick", "L Joystick", xSpeed, "R Joystick", zRotation,
+        "velLT", targetVelL, "velRT", targetVelR, 
+        "velLA", Units.inchesToMeters(driveTrain.getLeftEncoderVelocity()), 
+        "velRA", Units.inchesToMeters(driveTrain.getRightEncoderVelocity()), 
+        "aFFL", aFFL, "aFFR", aFFR,
+        "pctOutLA", driveTrain.getLeftOutputPercent(), "VoutNormA", driveTrain.getLeftOutputVoltage()/compensationVoltage, "VbusLA", driveTrain.getLeftBusVoltage(),
+        "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
+        "targetRawL", driveTrain.getTalonLeftClosedLoopTarget()
+      );
     }
   }
 

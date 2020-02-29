@@ -53,6 +53,8 @@ public class RobotPreferences {
         DriveConstants.kIAngular = readDouble("Drive.kIAngular", DriveConstants.kIAngular);
         DriveConstants.kDAngular = readDouble("Drive.kDAngular", DriveConstants.kDAngular);
 
+        DriveConstants.joystickTurnSensitivity = readDouble("Drive.joystickTurnSensitivity", DriveConstants.joystickTurnSensitivity);
+
         DriveConstants.updateDerivedConstants();
     }
 
