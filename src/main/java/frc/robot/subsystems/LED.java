@@ -222,7 +222,7 @@ public class LED extends SubsystemBase {
   // public void setBlink(String color, double brightness, int ledStrip){
     
   //   String myColor = color;
-  //   if(timer2.hasPeriodPassed(10)){
+  //   if(timer2.advanceIfElapsed(10)){
   //     setStrip(myColor, brightness, ledStrip);
   //     timer2.reset();
   //     timer2.start();

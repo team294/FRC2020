@@ -158,6 +158,7 @@ public class RobotContainer {
     // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+    SmartDashboard.putData("Rainbow", new LEDSetPattern(LED.rainbowLibrary, 0, led));
   }
 
   /**
@@ -357,7 +358,7 @@ public class RobotContainer {
     if(displayCount > 1) displayCount = 0;
     led.setPattern(LED.teamFlashingColorsLibrary[displayCount], 0.5, 1);
 
-    if(disabledDisplayTimer.hasPeriodPassed(0.25)) {
+    if(disabledDisplayTimer.advanceIfElapsed(0.25)) {
       displayCount++;
     }
   }
