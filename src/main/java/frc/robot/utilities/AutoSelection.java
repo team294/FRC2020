@@ -54,7 +54,7 @@ public class AutoSelection {
 		if (autoPlan == OPPONENT_TRENCH_PICKUP && trajectoryCache[OPPONENT_TRENCH_PICKUP] != null) {
 			log.writeLogEcho(true, "AutoSelect", "run TrenchFromRight");
 			trajectory = trajectoryCache[OPPONENT_TRENCH_PICKUP];
-			autonomousCommand = new AutoOpponentTrenchPickup(trajectory, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+			autonomousCommand = new AutoOpponentTrenchPickup(waitTime, trajectory, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		}
 
 		if (autoPlan == SHOOT_BACKUP) {

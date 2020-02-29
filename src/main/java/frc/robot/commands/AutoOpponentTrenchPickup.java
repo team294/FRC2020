@@ -24,31 +24,33 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
 
   // start robot infront of opponents trench with the intake facing the trench
 
-  public AutoOpponentTrenchPickup(Trajectory trajectory, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public AutoOpponentTrenchPickup(double waitTime, Trajectory trajectory, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     addCommands(
 
       new DriveZeroGyro(180, driveTrain, log),
 
-      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
+      new Wait(waitTime),
+
+      deadline( // ends when we reach the two balls in the trench
         new DriveStraight(2.6, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
         new IntakeSequence(intake)
       ),
 
-      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
+      deadline( // ends when we reach the two balls in the trench
         new DriveStraight(-0.5, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
         new IntakeSequence(intake)
       ),
       
       new DriveTurnGyro(TargetType.kRelative, -35, 300, 200, 2, driveTrain, limeLight, log),
 
-      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
+      deadline( // ends when we reach the two balls in the trench
         new DriveStraight(0.75, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
         new IntakeSequence(intake)
       ),
 
-      new ParallelDeadlineGroup( // ends when we reach the two balls in the trench
+      deadline( // ends when we reach the two balls in the trench
         new DriveStraight(-2, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
         new IntakeSequence(intake)
       ),
@@ -56,27 +58,22 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
      // new DriveFollowTrajectory(CoordType.kRelative, trajectory, driveTrain, log) // run a path to get out of the trench and do a curve to get to shooting position 
        //   .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)),
 
-      new ParallelDeadlineGroup(
+      deadline(
           new DriveTurnGyro(TargetType.kAbsolute, -45, 400, 200, 3, driveTrain, limeLight, log), // turn towards the general target
           new ShooterSetPID(3000, shooter, led) // start shooter while shooting
         ), 
 
-      new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(2)
-        ),
-
+      new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
+          
       new ShooterHoodPistonSequence(true, false, shooter),
         
-      new ParallelDeadlineGroup(
+      deadline(
         new WaitForPowerCells(5, shooter),
         new ShootSequence(3000, shooter, feeder, hopper, intake, led) // shoot until we shot 5 balls
       ),
       
-      new ParallelDeadlineGroup(
-        new Wait(0.1),
-        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
-      )
+      new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1) // stop all motors
+      
       
     );
   }

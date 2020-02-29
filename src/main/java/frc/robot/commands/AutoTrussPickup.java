@@ -27,44 +27,38 @@ public class AutoTrussPickup extends SequentialCommandGroup {
     
     addCommands(
 
+      new Wait(waitTime),
+
       new DriveZeroGyro(180, driveTrain, log),
 
-      new ParallelDeadlineGroup(
+      deadline(
         new DriveStraight(2.08, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to 2 of balls on truss
         new IntakeSequence(intake)
         // new IntakePistonSetPosition(true, intake), // deploy intake piston
         // new IntakeSetPercentOutput(intake) // spin intake
       ),
 
-      new ParallelDeadlineGroup(
+      deadline(
         new DriveStraight(-1, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // back up a short ammount 
         new IntakeSequence(intake) // keep intake spinning
       ),
 
-      new ParallelDeadlineGroup(
+      deadline(
         new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, 3, driveTrain, limeLight, log), // turn towards general target
         new ShooterSetPID(true, true, shooter, limeLight, led)
       ),
 
-      new ParallelRaceGroup(
-          new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log), // turn towards target w/ vision
-          new Wait(2)
-        ),
+
+      new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
 
       new ShooterHoodPistonSequence(true, false, shooter),
         
-      new ParallelDeadlineGroup(
-        new ParallelRaceGroup(
-          new WaitForPowerCells(5, shooter), 
-          new Wait(7)
-        ),  // wait for 5 balls to be shot or 7 seconds
+      deadline(
+        new WaitForPowerCells(5, shooter),  // wait for 5 balls to be shot
         new ShootSequence(3000, shooter, feeder, hopper, intake, led) // shoot
       ),
       
-      new ParallelDeadlineGroup(
-        new Wait(0.1),
-        new ShootSequenceStop(shooter, feeder, hopper, intake, led) // stop all motors
-      )
+      new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1)// stop all motors
       
     );
   }

@@ -9,7 +9,6 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -17,7 +16,6 @@ import frc.robot.utilities.*;
 public class AutoShootForward extends SequentialCommandGroup {
 
   // multiplier to adjust max values down to a safe percent to use when driving
-  private static final double MAX_ADJUSTMENT = 0.6; 
 
   /**
    * Creates a command group that waits a specified time, shoots and then moves forward out of the way. 
