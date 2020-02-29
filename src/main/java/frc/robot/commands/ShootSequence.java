@@ -32,12 +32,14 @@ public class ShootSequence extends SequentialCommandGroup {
         // If hood is not closed, wait 0.5 seconds before moving on from setting hood position.
         // Otherwise, immediately move on from setting hood position.
         new ConditionalCommand(new Wait(0.5), new Wait(0), () -> shooter.getHoodPiston()),
-        // If getting RPM from distance and within range to do unlocked hood shot,
-        // unlock the hood but close it. Otherwise, close and lock the hood.
+        // If the current distance away from the target is greater than the max distance for 
+        // unlocking the hood or vision sees no target, close and lock the hood. 
+        // Otherwise, close the hood and leave it unlocked.
         new ConditionalCommand(
-          new ShooterHoodPistonSequence(true, false, shooter),
           new ShooterHoodPistonSequence(true, true, shooter),
-          () -> rpmFromDistance && limeLight.getDistanceNew() < LimeLightConstants.unlockedHoodMaxDistance
+          new ShooterHoodPistonSequence(true, false, shooter),
+          () -> rpmFromDistance && (limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance
+            || !limeLight.seesTarget())
         )
       ),
       new ShooterSetPID(rpmFromDistance, true, shooter, limeLight, led),

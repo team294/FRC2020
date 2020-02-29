@@ -23,7 +23,6 @@ public class ShooterSetLockPiston extends CommandBase {
   public ShooterSetLockPiston(boolean unlock, Shooter shooter) {
     this.shooter = shooter;
     this.unlock = unlock;
-    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.

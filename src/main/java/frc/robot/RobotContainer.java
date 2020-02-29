@@ -178,10 +178,10 @@ public class RobotContainer {
    */
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
-    // Trigger xbPOVUp = new POVTrigger(xboxController, 0);
+    Trigger xbPOVUp = new POVTrigger(xboxController, 0);
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
-    // Trigger xbPOVDown = new POVTrigger(xboxController, 180);
-    // Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
+    Trigger xbPOVDown = new POVTrigger(xboxController, 180);
+    Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
     // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
     Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
@@ -211,9 +211,9 @@ public class RobotContainer {
     // xb[10].whenPressed(new Wait(0));
 
     // pov is the d-pad (up, down, left, right)
-    // xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake)); // retract intake
-    // xbPOVDown.whileActiveOnce(new IntakeSequence(intake)); // deploy intake and run rollers in
-    // xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
+    xbPOVUp.whenActive(new ShooterHoodPistonSequence(false, false, shooter)); // open the shooter hood
+    xbPOVDown.whenActive(new ShooterHoodPistonSequence(true, false, shooter)); // close and unlock shooter hood
+    xbPOVLeft.whenActive(new ShooterHoodPistonSequence(true, true, shooter)); // close and lock shooter hood
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers

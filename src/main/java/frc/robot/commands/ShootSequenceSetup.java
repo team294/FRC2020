@@ -28,11 +28,13 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
   public ShootSequenceSetup(boolean closeHood, Shooter shooter, LimeLight limeLight, LED led) {
     addCommands(
       // If the current distance away from the target is greater than the max distance for 
-      // unlocking the hood, close and lock the hood. Otherwise, close the hood and leave it unlocked.
+      // unlocking the hood or vision sees no target, close and lock the hood. 
+      // Otherwise, close the hood and leave it unlocked.
       new ConditionalCommand(
         new ShooterHoodPistonSequence(closeHood, true, shooter),
         new ShooterHoodPistonSequence(closeHood, false, shooter),
-        () -> closeHood && limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance
+        () -> closeHood && (limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance 
+          || !limeLight.seesTarget())
       ),
       // If closing the hood, set shooter RPM based on distance.
       // Otherwise, set shooter RPM to the default value for the short shot.
