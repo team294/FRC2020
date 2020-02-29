@@ -147,10 +147,8 @@ public class RobotContainer {
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
 
     // auto selection widget
-    autoChooser.setDefaultOption("TrenchStartingCenter", AutoSelection.TRENCH_FROM_CENTER);
-    autoChooser.addOption("TrenchStartingRight", AutoSelection.TRENCH_FROM_RIGHT);
+    autoChooser.setDefaultOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
     autoChooser.addOption("OpponentTrenchPickup", AutoSelection.OPPONENT_TRENCH_PICKUP);
-    autoChooser.addOption("ShootBackup", AutoSelection.SHOOT_BACKUP);
     autoChooser.addOption("ShootForward", AutoSelection.SHOOT_FORWARD);
     autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
     autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
@@ -160,6 +158,7 @@ public class RobotContainer {
     // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+    SmartDashboard.putData("Rainbow", new LEDSetPattern(LED.rainbowLibrary, 0, led));
   }
 
   /**
@@ -339,7 +338,7 @@ public class RobotContainer {
    * Method called when robot is disabled.
    */
   public void disabledInit() {
-    log.writeLogEcho(true, "Disabled", "Mode Init");
+    log.writeLogEcho(true, "Disabled", "Robot disabled");   // Don't log the word "Init" here -- it affects the Excel macro
 
     disabledDisplayTimer.reset();
     disabledDisplayTimer.start();
@@ -359,7 +358,7 @@ public class RobotContainer {
     if(displayCount > 1) displayCount = 0;
     led.setPattern(LED.teamFlashingColorsLibrary[displayCount], 0.5, 1);
 
-    if(disabledDisplayTimer.hasPeriodPassed(0.25)) {
+    if(disabledDisplayTimer.advanceIfElapsed(0.25)) {
       displayCount++;
     }
   }

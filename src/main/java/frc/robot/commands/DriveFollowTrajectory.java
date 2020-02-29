@@ -234,6 +234,6 @@ public class DriveFollowTrajectory extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_timer.hasPeriodPassed(m_trajectory.getTotalTimeSeconds());
+    return m_timer.hasElapsed(m_trajectory.getTotalTimeSeconds());
   }
 }
