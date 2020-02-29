@@ -20,34 +20,19 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
    */
   public ShooterHoodPistonSequence(boolean close, boolean lock, Shooter shooter) {
     addCommands(
-      // new ConditionalCommand(
-        // If hood is not in position, do entire piston sequence.
-        sequence(
-          new ShooterSetLockPiston(true, shooter),
-          new ShooterSetHoodPiston(close, shooter),
-          new ConditionalCommand(
-            // If opening or parameter lock is false, do not lock hood. 
-            // If closing and parameter lock is true, delay and then lock hood (extend lock piston).
-            new ShooterSetLockPiston(true, shooter),
-            sequence(
-              new Wait(0.75),
-              new ConditionalCommand(new ShooterSetLockPiston(true, shooter), new ShooterSetLockPiston(false, shooter), () -> !close || !lock)
-            ),
-            () -> !close || !lock)          
-        ) //, 
-        // Otherwise, lock or unlock the hood if needed.
-        /*new ConditionalCommand(
-          new ShooterSetLockPiston(true, shooter), 
-          new ShooterSetLockPiston(false, shooter), 
-          () -> !close || !lock
-        ),
-        () -> shooter.getHoodPiston() != close
-      )*/
-    );
-  }
-}
-
       /*
+      new ShooterSetLockPiston(true, shooter),
+      new ShooterSetHoodPiston(close, shooter),
+      // If opening or parameter lock is false, do not lock hood. 
+      // If closing and parameter lock is true, delay and then lock hood (extend lock piston).
+      new ConditionalCommand(
+        sequence(
+          new Wait(0.75),
+          new ShooterSetLockPiston(false, shooter)
+        ),
+        new ShooterSetLockPiston(true, shooter),
+        () -> close && lock 
+      )*/
       new ShooterSetLockPiston(true, shooter),
       // If opening, wait 0.5 seconds before setting hood piston. If closing, do not wait before setting hood piston.
       new ConditionalCommand(new Wait(0.5), new Wait(0), () -> !close),
@@ -55,7 +40,9 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
       new Wait(0.75),
       // If opening or parameter lock is false, do not lock hood. If closing and parameter lock is true, lock hood (extend lock piston).
       new ConditionalCommand(new ShooterSetLockPiston(true, shooter), new ShooterSetLockPiston(false, shooter), () -> !close || !lock)
-      */
+    );
+  }
+}
 
       /*new ConditionalCommand(
         // If hood and lock are already in place, end immediately.
