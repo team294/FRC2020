@@ -28,11 +28,13 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
   public ShootSequenceSetup(boolean closeHood, Shooter shooter, LimeLight limeLight, LED led) {
     addCommands(
       // If the current distance away from the target is greater than the max distance for 
-      // unlocking the hood, close and lock the hood. Otherwise, close the hood and leave it unlocked.
+      // unlocking the hood or vision sees no target, close and lock the hood. 
+      // Otherwise, close the hood and leave it unlocked.
       new ConditionalCommand(
         new ShooterHoodPistonSequence(closeHood, true, shooter),
         new ShooterHoodPistonSequence(closeHood, false, shooter),
-        () -> closeHood && limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance
+        () -> closeHood && (limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance 
+          || !limeLight.seesTarget())
       ),
       // If closing the hood, set shooter RPM based on distance.
       // Otherwise, set shooter RPM to the default value for the short shot.
@@ -40,6 +42,31 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
         new ShooterSetPID(true, false, shooter, limeLight, led),
         new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led),
         () -> closeHood
+      )
+    );
+  }
+
+  /**
+   * Set shooter to setpoint RPM using default values for shooting from the trench
+   * or the auto line and set the hood/lock position.
+   * @param trench true = shooting from trench, false = shooting from autoline
+   * @param shooter shooter subsystem
+   * @param led led strip (subsystem)
+   */
+  public ShootSequenceSetup(boolean trench, Shooter shooter, LED led) {
+    addCommands(
+      // If shooting from the trench, close the hood, lock it, and set shooter RPM. 
+      // Otherwise, close the hood, leave it unlocked, and set shooter RPM.
+      new ConditionalCommand(
+        sequence(
+          new ShooterHoodPistonSequence(true, true, shooter),
+          new ShooterSetPID(false, ShooterConstants.shooterDefaultTrenchRPM, shooter, led)
+        ),
+        sequence(
+          new ShooterHoodPistonSequence(true, false, shooter),
+          new ShooterSetPID(false, ShooterConstants.shooterDefaultRPM, shooter, led)
+        ),
+        () -> trench
       )
     );
   }
