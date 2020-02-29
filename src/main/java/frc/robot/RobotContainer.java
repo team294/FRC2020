@@ -93,16 +93,16 @@ public class RobotContainer {
     SmartDashboard.putData("Feeder Forward Calibrate", new FeederSetVoltage(5, feeder));
 
     // intake subsystem
-    SmartDashboard.putData("Intake Forward Calibrate", new IntakeSetPercentOutput(0.5, intake));
-    SmartDashboard.putData("Intake Reverse Calibrate", new IntakeSetPercentOutput(-0.5, intake));
+    SmartDashboard.putData("Intake Forward Calibrate", new IntakeSetPercentOutput(0.5, false, intake));
+    SmartDashboard.putData("Intake Reverse Calibrate", new IntakeSetPercentOutput(-0.5, false, intake));
     SmartDashboard.putData("IntakePiston EXTEND", new IntakePistonSetPosition(true, intake));
     SmartDashboard.putData("IntakePiston RETRACT", new IntakePistonSetPosition(false, intake));
-    SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, intake));
+    SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, true, intake));
 
     // hopper subsystem
     SmartDashboard.putData("Hopper Forward Calibrate", new HopperSetPercentOutput(0.5, false, hopper));
     SmartDashboard.putData("Hopper Reverse Calibrate", new HopperSetPercentOutput(-0.5, false, hopper));
-    SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, false, hopper));
+    SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, true, hopper));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
@@ -213,7 +213,7 @@ public class RobotContainer {
     // pov is the d-pad (up, down, left, right)
     xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake)); // retract intake
     xbPOVDown.whileActiveOnce(new IntakeSequence(intake)); // deploy intake and run rollers in
-    xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
+    xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake)); // run rollers out
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers

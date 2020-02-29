@@ -18,7 +18,7 @@ public class IntakeSequence extends SequentialCommandGroup {
   public IntakeSequence(Intake intake) {
     addCommands(
       new IntakePistonSetPosition(true, intake),
-      new IntakeSetPercentOutput(intake)
+      new IntakeSetPercentOutput(false, intake)
     );
   }
 }
