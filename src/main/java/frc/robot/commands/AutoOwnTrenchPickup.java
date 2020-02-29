@@ -27,6 +27,8 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       
       new DriveZeroGyro(driveTrain, log),
 
+      new Wait(waitTime),
+
       deadline(
         
         new DriveStraight(-1.5494, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to edge of trench
