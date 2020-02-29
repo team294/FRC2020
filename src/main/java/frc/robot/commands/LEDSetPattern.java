@@ -67,7 +67,7 @@ public class LEDSetPattern extends CommandBase {
     
     led.setPattern(pattern[patternNum], 0.5, strip);
     
-    if(timer.hasPeriodPassed(speed)) {
+    if(timer.advanceIfElapsed(speed)) {
       patternNum++;
     }
 	}

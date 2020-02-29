@@ -90,7 +90,7 @@ public class FeederSetPID extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (timer.hasPeriodPassed(0.1) && Math.abs(feeder.getFeederPIDError()) < RobotConstants.pidErrorTolerance) return true;
+    if (timer.hasElapsed(0.1) && Math.abs(feeder.getFeederPIDError()) < RobotConstants.pidErrorTolerance) return true;
     else return false;
   }
 }
