@@ -212,7 +212,7 @@ public class DriveTrain extends SubsystemBase {
   }
 
   public void arcadeDrive(double speedPct, double rotation) {
-    diffDrive.arcadeDrive(speedPct, rotation * 0.7, false);    // minimize how fast turn operated from joystick
+    diffDrive.arcadeDrive(speedPct, rotation, false);
   }
 
   /**

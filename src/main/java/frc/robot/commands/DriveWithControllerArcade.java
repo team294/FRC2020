@@ -26,7 +26,7 @@ public class DriveWithControllerArcade extends CommandBase {
   @Override
   public void execute() {
     leftPercent = xBoxController.getX(Hand.kRight)*.5;
-    rightPercent = -xBoxController.getY(Hand.kLeft)*.5;
+    rightPercent = -xBoxController.getY(Hand.kLeft)*.35;
 
     driveTrain.arcadeDrive(leftPercent, rightPercent);
   }

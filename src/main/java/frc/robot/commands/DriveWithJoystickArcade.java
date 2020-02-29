@@ -52,7 +52,7 @@ public class DriveWithJoystickArcade extends CommandBase {
       log.writeLog(false, "DriveWithJoystickArcade", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
     }
     
-    driveTrain.arcadeDrive(leftPercent, rightPercent * 0.6);
+    driveTrain.arcadeDrive(leftPercent, rightPercent * 0.42);
   }
 
   // Called once the command ends or is interrupted.

@@ -65,7 +65,7 @@ public class RobotContainer {
     configureButtonBindings(); // configure button bindings
     configureShuffleboard(); // configure shuffleboard
 
-    driveTrain.setDefaultCommand(new DriveWithJoystickArcadeVelocity(driveTrain, leftJoystick, rightJoystick, log));
+    driveTrain.setDefaultCommand(new DriveWithJoystickArcadeStraight(driveTrain, leftJoystick, rightJoystick, log));
 
     autoSelection = new AutoSelection(log); // initialize auto selection widget
   }
@@ -338,7 +338,7 @@ public class RobotContainer {
    * Method called when robot is disabled.
    */
   public void disabledInit() {
-    log.writeLogEcho(true, "Disabled", "Mode Init");
+    log.writeLogEcho(true, "Disabled", "Robot disabled");
 
     disabledDisplayTimer.reset();
     disabledDisplayTimer.start();
