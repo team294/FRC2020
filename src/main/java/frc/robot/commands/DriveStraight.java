@@ -15,9 +15,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
-import static frc.robot.Constants.LimeLightConstants.*;
-
-
 import static frc.robot.Constants.DriveConstants.*;
 
 public class DriveStraight extends CommandBase {
@@ -40,7 +37,7 @@ public class DriveStraight extends CommandBase {
   private boolean fromShuffleboard;
   private double angleInput, angleTarget;   // angleTarget is an absolute gyro angle
   private FileLog log;
-  private boolean sweetSpot;
+  private boolean sweetSpot = false;
 
   private int accuracyCounter = 0;
 
@@ -81,9 +78,12 @@ public class DriveStraight extends CommandBase {
 
 /**
    * Use this constructor when going to the sweet spot
+   * @param sweetSpot true = will initialize target to however far away the sweet spot is
    * @param angleType kRelative (angle is relative to current robot facing),
    *   kAbsolute (angle is an absolute field angle; 0 = away from drive station),
    *   kVision (use limelight to drive towards the goal)
+   * @param angle angle to drive along when driving straight (+ = left, - = right)
+   * @param maxVel max velocity in meters/second, between 0 and kMaxSpeedMetersPerSecond in Constants
    * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
    * @param driveTrain reference to the drive train subsystem
    * @param limelight reference to the limelight subsystem
@@ -170,8 +170,9 @@ public class DriveStraight extends CommandBase {
 
     if(sweetSpot){
       target = Units.inchesToMeters(limeLight.getSweetSpot() * 12);
-      //target = 0;
-      SmartDashboard.putNumber("sweet spot (init drivetrain)", limeLight.getSweetSpot());
+      // target = 0;
+      SmartDashboard.putNumber("distance new meters (init drivestraight)", Units.inchesToMeters(limeLight.getDistanceNew()*12));
+      SmartDashboard.putNumber("sweet spot (init drivestraight)", Units.inchesToMeters(limeLight.getSweetSpot() * 12));
     }
     direction = Math.signum(target);
 
