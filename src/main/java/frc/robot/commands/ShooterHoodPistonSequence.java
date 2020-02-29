@@ -20,6 +20,30 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
    */
   public ShooterHoodPistonSequence(boolean close, boolean lock, Shooter shooter) {
     addCommands(
+      new ConditionalCommand(
+        // if hood is already not in position, do entire piston sequence
+        sequence(
+          new ShooterSetLockPiston(true, shooter),
+          // If opening, wait 0.5 seconds before setting hood piston. If closing, do not wait before setting hood piston.
+          new ConditionalCommand(new Wait(0.5), new Wait(0), () -> !close),
+          new ShooterSetHoodPiston(close, shooter),
+          new Wait(0.75),
+          // If opening or parameter lock is false, do not lock hood. If closing and parameter lock is true, lock hood (extend lock piston).
+          new ConditionalCommand(new ShooterSetLockPiston(true, shooter), new ShooterSetLockPiston(false, shooter), () -> !close || !lock)
+        ), 
+        // otherwise, lock or unlock the hood if needed
+        new ConditionalCommand(
+          new ShooterSetLockPiston(true, shooter), 
+          new ShooterSetLockPiston(false, shooter), 
+          () -> !close || !lock
+        ),
+        () -> shooter.getHoodPiston() != close
+      )
+    );
+  }
+}
+
+      /*
       new ShooterSetLockPiston(true, shooter),
       // If opening, wait 0.5 seconds before setting hood piston. If closing, do not wait before setting hood piston.
       new ConditionalCommand(new Wait(0.5), new Wait(0), () -> !close),
@@ -27,6 +51,7 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
       new Wait(0.75),
       // If opening or parameter lock is false, do not lock hood. If closing and parameter lock is true, lock hood (extend lock piston).
       new ConditionalCommand(new ShooterSetLockPiston(true, shooter), new ShooterSetLockPiston(false, shooter), () -> !close || !lock)
+      */
 
       /*new ConditionalCommand(
         // If hood and lock are already in place, end immediately.
@@ -51,6 +76,3 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
           ), () -> close == !shooter.getHoodPiston() && lock == !shooter.getLockPiston() // condition for hood being already in place but lock is not
         ), () -> close == !shooter.getHoodPiston() && lock == shooter.getLockPiston() // condition for hood and lock already being in place
       )*/
-    );
-  }
-}
