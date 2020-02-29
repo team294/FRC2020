@@ -161,7 +161,6 @@ public class RobotContainer {
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
     SmartDashboard.putData("Rainbow", new LEDSetPattern(LED.rainbowLibrary, 0, led));
-    SmartDashboard.putData("HopperReverseTest", new HopperReverse(hopper));
   }
 
   /**
