@@ -256,6 +256,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
     SmartDashboard.putNumber("Power Cells Shot", cellsShot);
     SmartDashboard.putBoolean("Cell Present", prevCellState);
+    SmartDashboard.putBoolean("Hood Open", getHoodPiston());
+    SmartDashboard.putBoolean("Lock Locked", getLockPiston());
 
     prevCellState = getCell();
     prevCellsShot = cellsShot;
