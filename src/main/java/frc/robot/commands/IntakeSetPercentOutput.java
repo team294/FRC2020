@@ -14,6 +14,7 @@ import frc.robot.subsystems.Intake;
 public class IntakeSetPercentOutput extends CommandBase {
   private Intake intake;
   private double percent;
+  private boolean end;
 
   /**
    * Set intake percent output using parameter percent.
@@ -21,9 +22,10 @@ public class IntakeSetPercentOutput extends CommandBase {
    * @param percent percent output (0 to 1)
    * @param intake intake subsystem to use
    */
-  public IntakeSetPercentOutput(double percent, Intake intake) {
+  public IntakeSetPercentOutput(double percent, boolean end, Intake intake) {
     this.intake = intake;
     this.percent = percent;
+    this.end = end;
     addRequirements(intake);
   }
 
@@ -32,9 +34,10 @@ public class IntakeSetPercentOutput extends CommandBase {
    * This command never ends.
    * @param intake intake subsystem to use
    */
-  public IntakeSetPercentOutput(Intake intake) {
+  public IntakeSetPercentOutput(boolean end, Intake intake) {
     this.intake = intake;
     this.percent = IntakeConstants.intakeDefaultPercentOutput;
+    this.end = end;
     addRequirements(intake);
   }
 
@@ -58,6 +61,7 @@ public class IntakeSetPercentOutput extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (end) return true;
+    else return false;
   }
 }

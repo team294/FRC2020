@@ -40,7 +40,7 @@ public final class Constants {
         public static final double shooterDefaultRPM = 2800;
         public static final double shooterDefaultTrenchRPM = 3000;
         public static final double shooterDefaultShortRPM = 1400;
-        public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for
+        //public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for
                                                        // counting power cells)
         public static final int dioPowerCell = 9;
         // public static final double voltageCheck = 7.5; // voltage the shooter will reach if power cell is shot (for counting power cells)

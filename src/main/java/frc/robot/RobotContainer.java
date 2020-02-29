@@ -93,16 +93,16 @@ public class RobotContainer {
     SmartDashboard.putData("Feeder Forward Calibrate", new FeederSetVoltage(5, feeder));
 
     // intake subsystem
-    SmartDashboard.putData("Intake Forward Calibrate", new IntakeSetPercentOutput(0.5, intake));
-    SmartDashboard.putData("Intake Reverse Calibrate", new IntakeSetPercentOutput(-0.5, intake));
+    SmartDashboard.putData("Intake Forward Calibrate", new IntakeSetPercentOutput(0.5, false, intake));
+    SmartDashboard.putData("Intake Reverse Calibrate", new IntakeSetPercentOutput(-0.5, false, intake));
     SmartDashboard.putData("IntakePiston EXTEND", new IntakePistonSetPosition(true, intake));
     SmartDashboard.putData("IntakePiston RETRACT", new IntakePistonSetPosition(false, intake));
-    SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, intake));
+    SmartDashboard.putData("Intake STOP", new IntakeSetPercentOutput(0, true, intake));
 
     // hopper subsystem
     SmartDashboard.putData("Hopper Forward Calibrate", new HopperSetPercentOutput(0.5, false, hopper));
     SmartDashboard.putData("Hopper Reverse Calibrate", new HopperSetPercentOutput(-0.5, false, hopper));
-    SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, false, hopper));
+    SmartDashboard.putData("Hopper STOP", new HopperSetPercentOutput(0, true, hopper));
 
     // led subsystem
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led));
