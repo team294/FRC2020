@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
@@ -160,6 +159,7 @@ public class RobotContainer {
     // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
+    SmartDashboard.putData("Limelight Snapshot Test", new LimeLightSnapshotTest(limeLight));
   }
 
   /**
@@ -356,6 +356,7 @@ public class RobotContainer {
    * Method called once every scheduler cycle when robot is disabled.
    */
   public void disabledPeriodic() {
+    limeLight.setSnapshot(false);
     if(displayCount > 1) displayCount = 0;
     led.setPattern(LED.teamFlashingColorsLibrary[displayCount], 0.5, 1);
 

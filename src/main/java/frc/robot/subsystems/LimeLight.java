@@ -109,6 +109,22 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
+   * @return whether the limelight is saving a snapshot of the camera feed
+   */
+  public double getSnapshot() {
+    return table.getEntry("snapshot").getDouble(0.0);
+  }
+
+  /**
+   * @param snapshot true is take a snapshot, false is don't take snapshots
+   * 1 will save a snapshot of the camera feed
+   */
+  public void setSnapshot(boolean snapshot) {
+    if(snapshot) table.getEntry("snapshot").setNumber(1);
+    else table.getEntry("snapshot").setNumber(0);
+  }
+
+  /**
    * Choose which LED pattern to display, based on the x offset from camera.
    * @return Color array of the pattern
    */
@@ -177,6 +193,7 @@ public class LimeLight extends SubsystemBase {
       SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
       SmartDashboard.putBoolean("Limelight Updating", isGettingData());
       SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
+      SmartDashboard.putNumber("SnapShot", getSnapshot());
       
       pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
 

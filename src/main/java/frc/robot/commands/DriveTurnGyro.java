@@ -200,6 +200,7 @@ public class DriveTurnGyro extends CommandBase {
     if (targetType == TargetType.kVision) {
       targetRel = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
       tStateFinal = new TrapezoidProfileBCR.State(targetRel, 0.0);
+      limeLight.setSnapshot(true);
     }
 
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
