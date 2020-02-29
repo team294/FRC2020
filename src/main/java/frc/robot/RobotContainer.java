@@ -341,7 +341,7 @@ public class RobotContainer {
    * Method called when robot is disabled.
    */
   public void disabledInit() {
-    log.writeLogEcho(true, "Disabled", "Mode Init");
+    log.writeLogEcho(true, "Disabled", "Robot disabled");   // Don't log the word "Init" here -- it affects the Excel macro
 
     disabledDisplayTimer.reset();
     disabledDisplayTimer.start();

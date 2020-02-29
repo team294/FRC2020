@@ -21,8 +21,8 @@ import static frc.robot.Constants.LimeLightConstants.*;
 public class LimeLight extends SubsystemBase {
   private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
   private static NetworkTable table = tableInstance.getTable("limelight");
-  private NetworkTableEntry tv, tx, ty, ta, pipeline;
-  private double x, y, area, pipe, theoreticalWidth;
+  private NetworkTableEntry tv, tx, ty, ta, tl, pipeline;
+  private double targetExists, x, y, area, latency, pipe;
   private FileLog log;
   private LED led;
   private DriveTrain driveTrain; // for testing distance calculation, probs can be taken out dist calc finished
@@ -48,6 +48,7 @@ public class LimeLight extends SubsystemBase {
     tx = table.getEntry("tx");
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
+    tl = table.getEntry("tl");
     pipeline = table.getEntry("pipeline");
     SmartDashboard.putNumber("Pipeline", 0);
   }
@@ -77,6 +78,13 @@ public class LimeLight extends SubsystemBase {
   public double getSweetSpot() {
     return sweetSpot;
   }
+  /**
+   * @return latency contribution by pipeline
+   */
+  public double getLatency() {
+    return latency;
+  }
+
   /**
    * Takes into account not being in line with the target.
    * @return distance from camera to target, on the floor
@@ -135,7 +143,7 @@ public class LimeLight extends SubsystemBase {
    * @return true when limelight sees a target, false when not seeing a target
    */
   public boolean seesTarget() {
-    return ((x != 0 || y != 0) && x != 1064);
+    return (targetExists==1);
   }
 
   /**
@@ -151,12 +159,12 @@ public class LimeLight extends SubsystemBase {
     // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
 
     // read values periodically
+    targetExists = tv.getDouble(1000.0);
     x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
-    theoreticalWidth = Math.sqrt(area) * 1.526;
     sweetSpot = getDistanceNew() - endDistance;
-    
+    latency = tl.getDouble(1000.0);
 
     if (makePattern() == LED.visionTargetLibrary[15]) {
       led.setPattern(makePattern(), 0.1, 0);
@@ -182,6 +190,8 @@ public class LimeLight extends SubsystemBase {
       SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
       SmartDashboard.putBoolean("Limelight Updating", isGettingData());
       SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
+      SmartDashboard.putNumber("Limelight Latency", getLatency());
+      
       pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
 
       if (getPipeline() != pipe) {
@@ -200,6 +210,7 @@ public class LimeLight extends SubsystemBase {
       "Center Offset X", x, 
       "Center Offset Y", y,
       "Target Area", area,
+      "Latency", latency,
       "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12)
       );
   }
