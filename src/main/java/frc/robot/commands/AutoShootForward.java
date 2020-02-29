@@ -15,7 +15,6 @@ import frc.robot.utilities.*;
 
 public class AutoShootForward extends SequentialCommandGroup {
 
-  // multiplier to adjust max values down to a safe percent to use when driving
 
   /**
    * Creates a command group that waits a specified time, shoots and then moves forward out of the way. 
@@ -37,18 +36,21 @@ public class AutoShootForward extends SequentialCommandGroup {
 
     addCommands(
 
+      // wait before starting
       new Wait(waitTime),
 
-      // turn towards target w/ vision
+      // turn towards target w/ vision with timeout
       deadline(
         new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
         new ShooterSetPID(true, false, shooter, limeLight, led), // start shooter
         new IntakePistonSetPosition(true, intake) // deploy intake piston
       ),
 
-      // start shooter and wait for 3 power cells to be shot
+      new ShooterHoodPistonSequence(true, false, shooter),
+
+      // start shooter and wait for 3 power cells to be shot with timeout
       deadline(
-        new WaitForPowerCells(3, shooter).withTimeout(7), 
+        new WaitForPowerCells(3, shooter).withTimeout(5), 
         new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) 
       ),
       
