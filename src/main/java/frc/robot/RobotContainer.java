@@ -206,7 +206,7 @@ public class RobotContainer {
 
     // back = 7, start = 8 
     // xb[7].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
-    xb[8].toggleWhenActive(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
+    xb[8].toggleWhenActive(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake)); // run rollers out
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
     // xb[9].whenPressed(new Wait(0));
