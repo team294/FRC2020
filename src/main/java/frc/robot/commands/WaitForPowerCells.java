@@ -42,7 +42,10 @@ public class WaitForPowerCells extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (cells <= shooter.getPowerCellsShot()) return true;
+    if (cells <= shooter.getPowerCellsShot()) {
+      shooter.setPowerCellsShot(0);
+      return true;
+    }
     else return false;
   }
 }
