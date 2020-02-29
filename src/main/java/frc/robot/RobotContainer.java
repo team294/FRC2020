@@ -112,9 +112,9 @@ public class RobotContainer {
     SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led));
     SmartDashboard.putData("ShootSequence DIST", new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led));
     SmartDashboard.putData("ShootSequence STOP", new ShootSequenceStop(shooter, feeder, hopper, intake, led));
-    SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(true, false, shooter));
-    SmartDashboard.putData("ShooterHood CLOSE, LOCK", new ShooterHoodPistonSequence(false, true, shooter));
-    SmartDashboard.putData("ShooterHood CLOSE, UNLOCK", new ShooterHoodPistonSequence(false, false, shooter));
+    SmartDashboard.putData("ShooterHood OPEN", new ShooterHoodPistonSequence(false, false, shooter));
+    SmartDashboard.putData("ShooterHood CLOSE, LOCK", new ShooterHoodPistonSequence(true, true, shooter));
+    SmartDashboard.putData("ShooterHood CLOSE, UNLOCK", new ShooterHoodPistonSequence(true, false, shooter));
 
     // buttons for testing drive code, not updating numbers from SmartDashboard
     SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain));
