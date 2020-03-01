@@ -21,8 +21,8 @@ import static frc.robot.Constants.LimeLightConstants.*;
 public class LimeLight extends SubsystemBase {
   private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
   private static NetworkTable table = tableInstance.getTable("limelight");
-  private NetworkTableEntry tv, tx, ty, ta, pipeline;
-  private double x, y, area, pipe, theoreticalWidth;
+  private NetworkTableEntry tx, ty, ta, pipeline;
+  private double x, y, area, pipe;
   private FileLog log;
   private LED led;
   private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
@@ -43,7 +43,7 @@ public class LimeLight extends SubsystemBase {
     this.driveTrain = driveTrain;
     tableInstance.startClientTeam(294);
 
-    tv = table.getEntry("tv");
+    // tv = table.getEntry("tv");
     tx = table.getEntry("tx");
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
@@ -149,7 +149,7 @@ public class LimeLight extends SubsystemBase {
     x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
-    theoreticalWidth = Math.sqrt(area) * 1.526;
+    // theoreticalWidth = Math.sqrt(area) * 1.526;
 
     if (makePattern() == LED.visionTargetLibrary[15]) {
       led.setPattern(makePattern(), 0.1, 0);

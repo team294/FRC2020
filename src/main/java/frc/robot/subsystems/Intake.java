@@ -25,7 +25,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
   private final BaseMotorController intakeMotor;
-  private static double intakeCurrent = 0;
+  private double intakeCurrent = 0;
 
   private final DoubleSolenoid intakePiston = new DoubleSolenoid(pcmIntakePistonOut, pcmIntakePistonIn);
   private FileLog log; 
@@ -87,7 +87,8 @@ public class Intake extends SubsystemBase {
 	public void updateIntakeLog(boolean logWhenDisabled) {
 		log.writeLog(logWhenDisabled, "Intake", "Update Variables",  
       "Motor Volt", intakeMotor.getMotorOutputVoltage(), 
-      "Motor Output %", intakeMotor.getMotorOutputPercent()
+      "Motor Output %", intakeMotor.getMotorOutputPercent(),
+      "Current", intakeCurrent
     );
   }
 }

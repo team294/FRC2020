@@ -30,15 +30,15 @@ public class FileLog {
 	private int logLevel = 3; // Level of detail. Value between 1-3, where 1 is the most detailed and 3 is the least detailed.
     
     // File logging rotation cycles, to spread out logging times between subsystems	
-    // TODO remove/add cycles as we remove/add subsystems
+    // Note:  Remove/add cycles as we remove/add subsystems
 	public int rotation = 0;
-    public final int DRIVE_CYCLE = 1;
+    public final int DRIVE_CYCLE = 0;
+	public final int INTAKE_CYCLE = 2;
     public final int FEEDER_CYCLE = 3;
-    public final int SHOOTER_CYCLE = 5;
+	public final int HOPPER_CYCLE = 5;
+    public final int SHOOTER_CYCLE = 6;
     public final int CLIMB_CYCLE = 7;
 	public final int LIMELIGHT_CYCLE = 9;
-	public final int HOPPER_CYCLE = 11;
-	public final int INTAKE_CYCLE = 13;
     
 	/**
 	 * Creates a new log file called "/home/lvuser/logfile.ver.date.time.txt"
