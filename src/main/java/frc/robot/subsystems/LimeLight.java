@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,6 +26,8 @@ public class LimeLight extends SubsystemBase {
   private double targetExists, x, y, area, latency, pipe;
   private FileLog log;
   private LED led;
+  private Timer snapshotTimer;
+  private int snapshotCount = 0;
   private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
 
   /*
@@ -40,6 +43,9 @@ public class LimeLight extends SubsystemBase {
   public LimeLight(FileLog log, LED led, DriveTrain driveTrain) {
     this.log = log;
     this.led = led;
+    this.snapshotTimer = new Timer();
+    snapshotTimer.reset();
+    snapshotTimer.start();
     this.driveTrain = driveTrain;
     tableInstance.startClientTeam(294);
 
@@ -117,19 +123,25 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
-   * @return whether the limelight is saving a snapshot of the camera feed
-   */
-  public double getSnapshot() {
-    return table.getEntry("snapshot").getDouble(0.0);
-  }
-
-  /**
    * @param snapshot true is take a snapshot, false is don't take snapshots
    * 1 will save a snapshot of the camera feed
    */
   public void setSnapshot(boolean snapshot) {
-    if(snapshot) table.getEntry("snapshot").setNumber(1);
+    if(snapshot) {
+      table.getEntry("snapshot").setNumber(1);
+      snapshotCount++;
+      snapshotTimer.reset();
+      snapshotTimer.start();
+    }
     else table.getEntry("snapshot").setNumber(0);
+  }
+
+  public boolean canTakeSnapshot() {
+    return snapshotTimer.hasElapsed(0.5);
+  }
+
+  public void resetSnapshotCount() {
+    snapshotCount = 0;
   }
 
   /**
@@ -203,7 +215,7 @@ public class LimeLight extends SubsystemBase {
       SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
       SmartDashboard.putBoolean("Limelight Updating", isGettingData());
       SmartDashboard.putNumber("Limelight Latency", getLatency());
-      SmartDashboard.putNumber("Limelight SnapShot Status", getSnapshot());
+      SmartDashboard.putNumber("Limelight Snapshot Count", snapshotCount);
       
       pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
 
@@ -224,6 +236,7 @@ public class LimeLight extends SubsystemBase {
       "Center Offset Y", y,
       "Target Area", area,
       "Latency", latency,
+      "Snapshot Count", snapshotCount,
       "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12)
       );
   }

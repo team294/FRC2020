@@ -7,52 +7,38 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LimeLight;
 
-public class LimeLightSnapshotTest extends CommandBase {
+public class LimelightSnapshotCountReset extends CommandBase {
   /**
-   * Take a snapshot of the limelight camera image every cycle either during autonomous
-   * or when the robot is enabled
-   * Intended to help test snapshot capabilities of the limelight
-   * TODO delete once snapshot testing is done
+   * Creates a new LimelightSnapshotCountReset.
    */
   LimeLight limeLight;
-
-  /**
-   * @param limeLight save reference to limeLight
-   * @param inAuto true = save snapshots only in auto, false = save snapshots whenever enabled
-   */
-  public LimeLightSnapshotTest(LimeLight limeLight) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  public LimelightSnapshotCountReset(LimeLight limeLight) {
     this.limeLight = limeLight;
-    addRequirements(limeLight);
+    // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    limeLight.resetSnapshotCount();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(limeLight.canTakeSnapshot()) {
-      limeLight.setSnapshot(true);
-      System.out.println("Snapshot");
-    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    limeLight.setSnapshot(false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }
