@@ -132,7 +132,7 @@ public class LimeLight extends SubsystemBase {
    * @return true when limelight sees a target, false when not seeing a target
    */
   public boolean seesTarget() {
-    return (x != 0 && x != 1064);
+    return ((x != 0 || y != 0) && x != 1064);
   }
 
   /**

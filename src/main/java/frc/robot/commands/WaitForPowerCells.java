@@ -9,9 +9,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class WaitForPowerCells extends CommandBase {
   private Shooter shooter;
+  private FileLog log;
   private int cells;
 
   /**
@@ -19,14 +21,16 @@ public class WaitForPowerCells extends CommandBase {
    * @param cells number of power cells to wait for
    * @param shooter shooter subsystem
    */
-  public WaitForPowerCells(int cells, Shooter shooter) {
+  public WaitForPowerCells(int cells, Shooter shooter, FileLog log) {
     this.shooter = shooter;
+    this.log = log;
     this.cells = cells;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "WaitForPowerCells", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,7 +46,10 @@ public class WaitForPowerCells extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if (cells <= shooter.getPowerCellsShot()) return true;
+    if (cells <= shooter.getPowerCellsShot()){
+      shooter.setPowerCellsShot(0);
+      return true;
+    } 
     else return false;
   }
 }

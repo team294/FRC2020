@@ -127,6 +127,21 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
+   * @return true = opened (retracted), false = closed (extended)
+   */
+  public boolean getHoodPiston() {
+    if (shooterHoodPiston.get() == Value.kReverse) return true;
+    else return false;
+  }
+
+  /**
+   * @return true = locked (extended), false = unlocked (retracted)
+   */
+  public boolean getLockPiston() {
+    return shooterLockPiston.get();
+  }
+
+  /**
    * @param lock true = unlock (retract), false = lock (extend)
    */
   public void setLockPiston(boolean lock) {
@@ -137,8 +152,8 @@ public class Shooter extends SubsystemBase {
    * @return PID error, in RPM
    */
   public double getShooterPIDError() {
-    return shooterMotorLeft.getClosedLoopError() * ticksPer100ms;
-    // return shooterRPM - measuredRPM; TODO change to this calculation
+    // return shooterMotorLeft.getClosedLoopError() * ticksPer100ms;
+    return shooterRPM - measuredRPM;
   }
 
   /**
@@ -250,6 +265,8 @@ public class Shooter extends SubsystemBase {
       SmartDashboard.putNumber("Shooter Voltage", shooterMotorLeft.getMotorOutputVoltage());
       SmartDashboard.putNumber("Power Cells Shot", cellsShot);
       SmartDashboard.putBoolean("Cell Present", prevCellState);
+      SmartDashboard.putBoolean("Hood Open", getHoodPiston());
+      SmartDashboard.putBoolean("Lock Locked", getLockPiston());
       // SmartDashboard.putNumber("Shooter Motor 1 Voltage", shooterMotorLeft.getMotorOutputVoltage());
       // SmartDashboard.putNumber("Shooter Motor 2 Voltage", shooterMotorRight.getMotorOutputVoltage());
     }

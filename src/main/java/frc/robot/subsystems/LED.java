@@ -109,6 +109,16 @@ public class LED extends SubsystemBase {
     {kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen},
     {kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue, kGreen, kYellow, kOrange, kRed, kPurple, kBlue}
   };
+
+  public static final Color[][] teamFullColorsLibrary = {
+    {kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue, kBlue},
+    {kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed, kOrangeRed}
+  };
+
+  public static final Color[][] teamFlashingColorsLibrary = {
+    {kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed},
+    {kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue}
+  };
   
   /**********************
    * Controls LED strips on the robot.
@@ -212,7 +222,7 @@ public class LED extends SubsystemBase {
   // public void setBlink(String color, double brightness, int ledStrip){
     
   //   String myColor = color;
-  //   if(timer2.hasPeriodPassed(10)){
+  //   if(timer2.advanceIfElapsed(10)){
   //     setStrip(myColor, brightness, ledStrip);
   //     timer2.reset();
   //     timer2.start();

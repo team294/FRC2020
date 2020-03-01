@@ -9,21 +9,29 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
+import frc.robot.Constants.RobotConstants;
 
 import static frc.robot.Constants.HopperConstants.*;
 
 public class Hopper extends SubsystemBase {
-  private final WPI_VictorSPX hopperMotor = new WPI_VictorSPX(canHopperMotor);
-
+  private final BaseMotorController hopperMotor;
   private FileLog log;
   
   public Hopper(FileLog log) {
     this.log = log;
+    if (RobotConstants.prototypeBot) { 
+      hopperMotor = new WPI_VictorSPX(canHopperMotor);
+    }
+    else {
+      hopperMotor = new WPI_TalonSRX(canHopperMotor);
+    }
 
     hopperMotor.configFactoryDefault();
     hopperMotor.setInverted(true);

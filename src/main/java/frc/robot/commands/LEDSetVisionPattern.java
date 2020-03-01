@@ -8,32 +8,47 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.*;
 import frc.robot.utilities.FileLog;
 
-public class ShooterSetVoltage extends CommandBase {
-  private final Shooter shooter;
+public class LEDSetVisionPattern extends CommandBase {
+  private LED led;
   private FileLog log;
-  private double voltage;
+  private int rowNumber;
+  private double intensity;
+ 
+  /**
+   * Send a pattern to the LED strip, with parameter intensity.
+   * @param rowNumber row in the patternLibrary
+   * @param intensity percent intensity (0 to 1)
+   * @param led led strip (subsystem)
+   */
+  public LEDSetVisionPattern(int rowNumber, double intensity, LED led, FileLog log) {
+    this.led = led;
+    this.log = log;
+    this.rowNumber = rowNumber;
+    this.intensity = intensity;
+    addRequirements(led);
+  }
 
   /**
-   * Set shooter voltage using parameter voltage.
-   * This command immediately ends.
-   * @param voltage +12 (full forward) to -12 (full reverse)
-   * @param shooter shooter subsystem
+   * Send a pattern to the LED strip, with 0.5 intensity.
+   * @param rowNumber row in the patternLibrary
+   * @param led led strip (subsystem)
    */
-  public ShooterSetVoltage(double voltage, Shooter shooter, FileLog log) {
-    this.shooter = shooter;
+  public LEDSetVisionPattern(int rowNumber, LED led, FileLog log) {
+    this.led = led;
     this.log = log;
-    this.voltage = voltage;
-    addRequirements(shooter);
+    this.rowNumber = rowNumber;
+    this.intensity = 0.5;
+    addRequirements(led);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    shooter.setShooterVoltage(voltage);
-    log.writeLog(false, "ShooterSetVoltage", "Init");
+    led.setPattern(LED.visionTargetLibrary[rowNumber], intensity, 1);
+    log.writeLog(false, "LEDSetVisionPattern", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

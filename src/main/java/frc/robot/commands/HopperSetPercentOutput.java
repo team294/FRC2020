@@ -10,9 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.HopperConstants;
 import frc.robot.subsystems.Hopper;
+import frc.robot.utilities.FileLog;
 
 public class HopperSetPercentOutput extends CommandBase {
   private Hopper hopper;
+  private FileLog log;
   private double percent;
   private boolean end;
 
@@ -22,9 +24,10 @@ public class HopperSetPercentOutput extends CommandBase {
    * @param end true = end command immediately, false = never end command
    * @param hopper hopper subsystem
    */
-  public HopperSetPercentOutput(double percent, boolean end, Hopper hopper) {
+  public HopperSetPercentOutput(double percent, boolean end, Hopper hopper, FileLog log) {
     this.hopper = hopper;
     this.percent = percent;
+    this.log = log;
     this.end = end;
     addRequirements(hopper);
   }
@@ -35,8 +38,9 @@ public class HopperSetPercentOutput extends CommandBase {
    * @param end true = end command immediately, false = never end command
    * @param hopper hopper subsystem
    */
-  public HopperSetPercentOutput(boolean end, Hopper hopper) {
+  public HopperSetPercentOutput(boolean end, Hopper hopper, FileLog log) {
     this.hopper = hopper;
+    this.log = log;
     this.percent = HopperConstants.hopperDefaultPercentOutput;
     this.end = end;
     addRequirements(hopper);
@@ -46,6 +50,7 @@ public class HopperSetPercentOutput extends CommandBase {
   @Override
   public void initialize() {
     hopper.hopperSetPercentOutput(percent);
+    log.writeLog(false, "HopperSetPercentOutput", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

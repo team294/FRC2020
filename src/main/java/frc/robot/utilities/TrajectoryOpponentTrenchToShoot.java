@@ -63,7 +63,7 @@ public class TrajectoryOpponentTrenchToShoot {
 					//new Translation2d(-0.5, -0.5),
 					//new Translation2d(2, 0) // actual is -1.4 but move over to make sure we miss the wall
 				),
-				new Pose2d(-3, -3, new Rotation2d(Math.toRadians(-90.0))), config);
+				new Pose2d(-3, 3, new Rotation2d(Math.toRadians(90.0))), config);
 
 			// debug logging
 			TrajectoryUtil.dumpTrajectory(trajectory, log);
