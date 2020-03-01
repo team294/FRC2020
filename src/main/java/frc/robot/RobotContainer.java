@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
@@ -37,10 +36,9 @@ import static frc.robot.Constants.DriveConstants.*;
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
+  private final Hopper hopper = new Hopper(log);
+  private final Intake intake = new Intake(log);
   private final LED led = new LED();
-  
-  private final Hopper hopper = new Hopper();
-  private final Intake intake = new Intake();
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
