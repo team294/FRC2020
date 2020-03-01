@@ -37,7 +37,7 @@ public class DriveZeroGyro extends CommandBase {
 	 * Zero the gyro position in software against a specified angle.
 	 * @param zeroAngle current robot angle compared to the zero angle
    * @param driveTrain DriveTrain subsytem
-   * @param log FileLog
+   * @param log2 FileLog
 	 */
   public DriveZeroGyro(double zeroAngle, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -51,7 +51,7 @@ public class DriveZeroGyro extends CommandBase {
   @Override
   public void initialize() {
     driveTrain.zeroGyroRotation(zeroAngle);
-    log.writeLog(false, "DriveZeroGyro", "Initialize");
+    log.writeLog(false, "DriveZeroGyro", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

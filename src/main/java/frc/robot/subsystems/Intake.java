@@ -9,23 +9,41 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.FileLog;
+import frc.robot.Constants.RobotConstants;
 
 import static frc.robot.Constants.IntakeConstants.*;
 
+
 public class Intake extends SubsystemBase {
-  private final WPI_TalonSRX intakeMotor = new WPI_TalonSRX(canIntakeMotor);
+  private final BaseMotorController intakeMotor;
+  private double intakeCurrent = 0;
+
   private final DoubleSolenoid intakePiston = new DoubleSolenoid(pcmIntakePistonOut, pcmIntakePistonIn);
+  private FileLog log; 
  
-  public Intake() {
+  public Intake(FileLog log) {
+    this.log = log;
+
+    if (RobotConstants.prototypeBot) { 
+      intakeMotor = new WPI_VictorSPX(canIntakeMotor);
+    }
+    else {
+      intakeMotor = new WPI_TalonSRX(canIntakeMotor);
+    }
     intakeMotor.configFactoryDefault();
     intakeMotor.setInverted(true);
     intakeMotor.setNeutralMode(NeutralMode.Brake);
+
+    
   }
 
   /**
@@ -46,7 +64,31 @@ public class Intake extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Intake % Output", intakeMotor.getMotorOutputPercent());
-    SmartDashboard.putNumber("Intake Voltage", intakeMotor.getMotorOutputVoltage());
+    if(log.getLogRotation() == log.INTAKE_CYCLE) {
+      if (!RobotConstants.prototypeBot) {
+        intakeCurrent = ((WPI_TalonSRX) intakeMotor).getSupplyCurrent();
+      } else {
+        intakeCurrent = 0;  
+      } 
+
+      updateIntakeLog(false);
+      
+      SmartDashboard.putNumber("Intake % Output", intakeMotor.getMotorOutputPercent());
+      SmartDashboard.putNumber("Intake Voltage", intakeMotor.getMotorOutputVoltage()); 
+      SmartDashboard.putNumber("Intake Current", intakeCurrent);
+      SmartDashboard.putNumber("Intake Percent", intakeMotor.getMotorOutputPercent());
+    }
+  }
+
+  /**
+   * Write information about intake to fileLog.
+   * @param logWhenDisabled true = log when disabled, false = discard the string
+   */
+	public void updateIntakeLog(boolean logWhenDisabled) {
+		log.writeLog(logWhenDisabled, "Intake", "Update Variables",  
+      "Motor Volt", intakeMotor.getMotorOutputVoltage(), 
+      "Motor Output %", intakeMotor.getMotorOutputPercent(),
+      "Current", intakeCurrent
+    );
   }
 }

@@ -8,54 +8,37 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.subsystems.LimeLight;
 
-import frc.robot.subsystems.DriveTrain;
-import frc.robot.utilities.FileLog;
-
-public class DriveSetPercentOutput extends CommandBase {
+public class LimelightSnapshotCountReset extends CommandBase {
   /**
-   * Sets drive motors to percent output
+   * Resets number tracking how many snapshots we have taken so far
    */
-
-   private DriveTrain driveTrain;
-   private FileLog log;
-   private double lPercent;
-   private double rPercent;
-  public DriveSetPercentOutput(double lPercent, double rPercent, DriveTrain driveTrain, FileLog log) {
+  LimeLight limeLight;
+  public LimelightSnapshotCountReset(LimeLight limeLight) {
+    this.limeLight = limeLight;
     // Use addRequirements() here to declare subsystem dependencies.
-    this.driveTrain = driveTrain;
-    this.lPercent = lPercent;
-    this.rPercent = rPercent;
-    this.log = log;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.setLeftMotorOutput(lPercent);
-    driveTrain.setRightMotorOutput(rPercent);
-    log.writeLog(false, "DriveSetPercentOutput", "Init");
+    limeLight.resetSnapshotCount();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("L output:" + lPercent);
-    System.out.println("R output:" + rPercent);
-    driveTrain.setLeftMotorOutput(lPercent);
-    driveTrain.setRightMotorOutput(rPercent);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //driveTrain.setLeftMotorOutput(0);
-    //driveTrain.setRightMotorOutput(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

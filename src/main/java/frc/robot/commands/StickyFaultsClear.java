@@ -25,6 +25,7 @@ public class StickyFaultsClear extends CommandBase {
   @Override
   public void initialize() {
     RobotPreferences.clearStickyFaults(log);
+    log.writeLog(false, "ClearStickyFaults", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

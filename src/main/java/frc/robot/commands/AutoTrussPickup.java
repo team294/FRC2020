@@ -8,8 +8,6 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
@@ -33,32 +31,32 @@ public class AutoTrussPickup extends SequentialCommandGroup {
 
       deadline(
         new DriveStraight(2.08, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to 2 of balls on truss
-        new IntakeSequence(intake)
+        new IntakeSequence(intake, log)
         // new IntakePistonSetPosition(true, intake), // deploy intake piston
         // new IntakeSetPercentOutput(intake) // spin intake
       ),
 
       deadline(
         new DriveStraight(-1, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // back up a short ammount 
-        new IntakeSequence(intake) // keep intake spinning
+        new IntakeSequence(intake, log) // keep intake spinning
       ),
 
       deadline(
         new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, 3, driveTrain, limeLight, log), // turn towards general target
-        new ShooterSetPID(true, false, shooter, limeLight, led)
+        new ShooterSetPID(true, false, shooter, limeLight, led, log)
       ),
 
 
       new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
 
-      new ShooterHoodPistonSequence(true, false, shooter),
+      new ShooterHoodPistonSequence(true, false, shooter, log),
         
       deadline(
-        new WaitForPowerCells(5, shooter),  // wait for 5 balls to be shot
-        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // shoot
+        new WaitForPowerCells(5, shooter, log),  // wait for 5 balls to be shot
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) // shoot
       ),
       
-      new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1)// stop all motors
+      new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1)// stop all motors
       
     );
   }

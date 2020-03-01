@@ -9,9 +9,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LED;
+import frc.robot.utilities.FileLog;
 
 public class LEDSetStrip extends CommandBase {
   private LED led;
+  private FileLog log;
   private String color;
   private double intensity;
  
@@ -21,8 +23,9 @@ public class LEDSetStrip extends CommandBase {
    * @param color string of color name, case sensitive (ex: "Blue")
    * @param led led strip (subsystem)
    **/
-	public LEDSetStrip(String color, LED led) {
+	public LEDSetStrip(String color, LED led, FileLog log) {
     this.led = led;
+    this.log = log;
     this.color = color;
     this.intensity = 0.5;
     addRequirements(led);
@@ -35,8 +38,9 @@ public class LEDSetStrip extends CommandBase {
    * @param intensity percent intensity (0 to 1)
    * @param led led strip (subsystem)
    **/
-	public LEDSetStrip(String color, double intensity, LED led) {
+	public LEDSetStrip(String color, double intensity, LED led, FileLog log) {
     this.led = led;
+    this.log = log;
     this.color = color;
     this.intensity = intensity;
 	  addRequirements(led);
@@ -47,6 +51,7 @@ public class LEDSetStrip extends CommandBase {
 	public void initialize() {
     if (intensity >= 0) led.setStrip(color, intensity, 1);
     else led.setStrip(color, 1);
+    log.writeLog(false, "LEDSetStrip", "Init");
   }
     
   // Called every time the scheduler runs while the command is scheduled.

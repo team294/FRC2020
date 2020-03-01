@@ -10,9 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class ShooterDistToRPM extends CommandBase {
   private Shooter shooter;
+  private FileLog log;
   private double distance, rpm;
   private boolean fromShuffleboard;
 
@@ -21,8 +23,9 @@ public class ShooterDistToRPM extends CommandBase {
    * This command will not end if sample distances are from Shuffleboard (for continuous calculations).
    * @param shooter shooter subsystem
    */
-  public ShooterDistToRPM(Shooter shooter) {
+  public ShooterDistToRPM(Shooter shooter, FileLog log) {
     this.shooter = shooter;
+    this.log = log;
     this.distance = 0;
     this.fromShuffleboard = true;
     addRequirements(shooter);
@@ -36,8 +39,9 @@ public class ShooterDistToRPM extends CommandBase {
    * @param distance distance from target, in feet
    * @param shooter shooter subsystem
    */
-  public ShooterDistToRPM(double distance, Shooter shooter) {
+  public ShooterDistToRPM(double distance, Shooter shooter, FileLog log) {
     this.shooter = shooter;
+    this.log = log;
     this.distance = distance;
     this.fromShuffleboard = false;
     addRequirements(shooter);
@@ -49,6 +53,7 @@ public class ShooterDistToRPM extends CommandBase {
     if(fromShuffleboard) distance = SmartDashboard.getNumber("Shooter Distance", 5);
     rpm = shooter.distanceFromTargetToRPM(distance);
     SmartDashboard.putNumber("Shooter RPM from Dist", rpm);
+    log.writeLog(false, "ShooterDistToRPM", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
