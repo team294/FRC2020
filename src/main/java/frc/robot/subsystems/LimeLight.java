@@ -124,10 +124,11 @@ public class LimeLight extends SubsystemBase {
 
   /**
    * @param snapshot true is take a snapshot, false is don't take snapshots
-   * 1 will save a snapshot of the camera feed
+   * will increment "snapshotCount" to keep track of how many snapshots have been taken
+   * should only be called if canTakeSnapshot() is true
    */
   public void setSnapshot(boolean snapshot) {
-    if(snapshot) {
+    if(snapshot && canTakeSnapshot()) {
       table.getEntry("snapshot").setNumber(1);
       if(table.getEntry("snapshot").getDouble(0)==1) {
         snapshotCount++;
@@ -138,10 +139,21 @@ public class LimeLight extends SubsystemBase {
     else table.getEntry("snapshot").setNumber(0);
   }
 
+  /**
+   * Limelight will only save snapshots every 0.5 seconds
+   * @return true if enough time has passed since the last snapshot to take another snapshot
+   *              in order to prevent overloading the Limelight with snapshot requests
+   *              "takeSnapshots" has to be true in preferences (meaning we want to be taking snapshots)
+   *         false if we shouldn't take a snapshot (either due to delay or not wanting to take snapshots)
+   */
   public boolean canTakeSnapshot() {
     return snapshotTimer.hasElapsed(0.5) && takeSnapshots;
   }
 
+  /**
+   * reset number of snapshots taken (as if we are clearing our cache of snapshots)
+   * This will NOT actually delete the snapshots (we don't have that capability in code)
+   */
   public void resetSnapshotCount() {
     snapshotCount = 0;
   }

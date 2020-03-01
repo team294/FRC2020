@@ -12,7 +12,7 @@ import frc.robot.subsystems.LimeLight;
 
 public class LimelightSnapshotCountReset extends CommandBase {
   /**
-   * Creates a new LimelightSnapshotCountReset.
+   * Resets number tracking how many snapshots we have taken so far
    */
   LimeLight limeLight;
   public LimelightSnapshotCountReset(LimeLight limeLight) {
