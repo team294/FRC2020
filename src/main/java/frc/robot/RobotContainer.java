@@ -347,6 +347,7 @@ public class RobotContainer {
     disabledDisplayTimer.start();
 
     driveTrain.setDriveModeCoast(true);
+    limeLight.setSnapshot(false);
     shooter.setPowerCellsShot(0);
     shooter.setShooterVoltage(0);
     hopper.hopperSetPercentOutput(0);
@@ -358,7 +359,6 @@ public class RobotContainer {
    * Method called once every scheduler cycle when robot is disabled.
    */
   public void disabledPeriodic() {
-    limeLight.setSnapshot(false);
     if(displayCount > 1) displayCount = 0;
     led.setPattern(LED.teamFlashingColorsLibrary[displayCount], 0.5, 1);
 
