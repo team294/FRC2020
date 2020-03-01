@@ -9,9 +9,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Intake;
+import frc.robot.utilities.FileLog;
 
 public class IntakePistonSetPosition extends CommandBase {
   private Intake intake;
+  private FileLog log;
   private boolean deploy;
   
   /**
@@ -20,9 +22,10 @@ public class IntakePistonSetPosition extends CommandBase {
    * @param deploy true = deploy, false = retract
    * @param intake intake subsystem
    */
-  public IntakePistonSetPosition(boolean deploy, Intake intake) {
+  public IntakePistonSetPosition(boolean deploy, Intake intake, FileLog log) {
     this.intake = intake;
     this.deploy = deploy;
+    this.log = log;
     addRequirements(intake);
   }
 
@@ -30,6 +33,7 @@ public class IntakePistonSetPosition extends CommandBase {
   @Override
   public void initialize() {
     intake.intakeSetPiston(deploy);
+    log.writeLog(false, "IntakeSetPiston", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

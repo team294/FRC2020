@@ -13,9 +13,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.FeederConstants;
 import frc.robot.Constants.RobotConstants;
 import frc.robot.subsystems.Feeder;
+import frc.robot.utilities.FileLog;
 
 public class FeederSetPID extends CommandBase {
   private Feeder feeder;
+  private FileLog log;
   private double rpm;
   private boolean fromShuffleboard;
   private Timer timer;
@@ -26,8 +28,9 @@ public class FeederSetPID extends CommandBase {
    * @param rpm setpoint, in RPM
    * @param feeder feeder subsystem
    */
-  public FeederSetPID(double rpm, Feeder feeder) {
+  public FeederSetPID(double rpm, Feeder feeder, FileLog log) {
     this.feeder = feeder;
+    this.log = log;
     this.rpm = rpm;
     this.fromShuffleboard = false;
     this.timer = new Timer();
@@ -39,8 +42,9 @@ public class FeederSetPID extends CommandBase {
    * This command ends when feeder RPM is within tolerance.
    * @param feeder feeder subsystem
    */
-  public FeederSetPID(Feeder feeder) {
+  public FeederSetPID(Feeder feeder, FileLog log) {
     this.feeder = feeder;
+    this.log = log;
     this.rpm = 0;
     this.fromShuffleboard = true;
     this.timer = new Timer();
@@ -55,7 +59,7 @@ public class FeederSetPID extends CommandBase {
    * This command ends when feeder RPM is within tolerance.
    * @param feeder feeder subsystem
    */
-  public FeederSetPID(boolean fromShuffleboard, Feeder feeder) {
+  public FeederSetPID(boolean fromShuffleboard, Feeder feeder, FileLog log) {
     this.feeder = feeder;
     this.rpm = FeederConstants.feederDefaultRPM;
     this.fromShuffleboard = fromShuffleboard;
@@ -73,6 +77,7 @@ public class FeederSetPID extends CommandBase {
     timer.reset();
     timer.start();
     feeder.setFeederPID(rpm);
+    log.writeLog(false, "FeederSetPID", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

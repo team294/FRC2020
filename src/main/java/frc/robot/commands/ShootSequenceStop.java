@@ -9,6 +9,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.*;
+import frc.robot.utilities.FileLog;
 
 public class ShootSequenceStop extends SequentialCommandGroup {
   /**
@@ -19,13 +20,13 @@ public class ShootSequenceStop extends SequentialCommandGroup {
    * @param intake intake subsystem
    * @param led led strip (subsystem)
    */
-  public ShootSequenceStop(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public ShootSequenceStop(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led, FileLog log) {
     addCommands(
       parallel(
-        new ShooterSetPID(1200, shooter, led),
-        new FeederSetVoltage(0, feeder),
-        new IntakeSetPercentOutput(0, true, intake),
-        new HopperSetPercentOutput(0, true, hopper)
+        new ShooterSetPID(1200, shooter, led, log),
+        new FeederSetVoltage(0, feeder, log),
+        new IntakeSetPercentOutput(0, true, intake, log),
+        new HopperSetPercentOutput(0, true, hopper, log)
       )
     );
   }
