@@ -12,6 +12,7 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import frc.robot.Constants.DriveConstants;
+import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -52,17 +53,6 @@ public class DriveTurnGyro extends CommandBase {
   private TrapezoidProfileBCR.State tStateNext; // next state of the system as calculated by the profile generator
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
-
-  public enum TargetType {
-    kRelative(0),
-    kAbsolute(1),
-    kVision(2);
-
-    @SuppressWarnings({"MemberName", "PMD.SingularField"})
-    public final int value;
-
-    TargetType(int value) { this.value = value; }
-  }
 
   /**
    * Turns the robot to a target angle.
@@ -188,7 +178,7 @@ public class DriveTurnGyro extends CommandBase {
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
     // initialize velocity and accel limits
-    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel);
+    tConstraints = new TrapezoidProfileBCR.Constraints(maxVel , maxAccel);
     // generate profile
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
 
@@ -225,7 +215,7 @@ public class DriveTurnGyro extends CommandBase {
     //pFB = 0; 
 
     driveTrain.setLeftMotorOutput(-aFF - pFB);
-    driveTrain.setRightMotorOutput(aFF + pFB);
+    driveTrain.setRightMotorOutput(+aFF + pFB);
 
     if (regenerate) {
       tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);

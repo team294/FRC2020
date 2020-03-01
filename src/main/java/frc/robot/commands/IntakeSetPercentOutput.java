@@ -10,37 +10,47 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.subsystems.Intake;
+import frc.robot.utilities.FileLog;
 
-/**
- * Command to set the intake percent output.
- */
 public class IntakeSetPercentOutput extends CommandBase {
   private Intake intake;
+  private FileLog log;
   private double percent;
+  private boolean end;
 
   /**
+   * Set intake percent output using parameter percent.
+   * This command never ends.
    * @param percent percent output (0 to 1)
    * @param intake intake subsystem to use
    */
-  public IntakeSetPercentOutput(double percent, Intake intake) {
+  public IntakeSetPercentOutput(double percent,boolean end, Intake intake, FileLog log) {
     this.intake = intake;
     this.percent = percent;
+    this.log = log;
+    this.end = end;
     addRequirements(intake);
   }
 
   /**
-   * Set the intake percent output to default percent output from constants.
+   * Set intake percent output using default percent from constants.
+   * This command never ends.
    * @param intake intake subsystem to use
    */
-  public IntakeSetPercentOutput(Intake intake) {
+  public IntakeSetPercentOutput(boolean end, Intake intake, FileLog log) {
     this.intake = intake;
+    this.end = end;
+    this.log = log;
     this.percent = IntakeConstants.intakeDefaultPercentOutput;
+    this.end = end;
+    addRequirements(intake);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     intake.intakeSetPercentOutput(percent);
+    log.writeLog(false, "IntakeSetPercentOut", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -57,6 +67,7 @@ public class IntakeSetPercentOutput extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (end) return true;
+    else return false;
   }
 }
