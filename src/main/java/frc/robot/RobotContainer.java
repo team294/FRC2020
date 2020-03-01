@@ -109,7 +109,7 @@ public class RobotContainer {
 
     // limelight subsystem
     SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight));
-    SmartDashboard.putData("Limelight Snapshot Test", new LimeLightSnapshotTest(limeLight));
+    //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
 
     // command sequences
     SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led, log));

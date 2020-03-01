@@ -139,7 +139,7 @@ public class LimeLight extends SubsystemBase {
   }
 
   public boolean canTakeSnapshot() {
-    return snapshotTimer.hasElapsed(0.5);
+    return snapshotTimer.hasElapsed(0.5) && takeSnapshots;
   }
 
   public void resetSnapshotCount() {
