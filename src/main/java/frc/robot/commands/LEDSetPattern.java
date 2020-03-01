@@ -9,11 +9,13 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LED;
+import frc.robot.utilities.FileLog;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 
 public class LEDSetPattern extends CommandBase {
   private LED led;
+  private FileLog log;
   private Color[][] pattern;
   private int strip; // which strip to set rainbow
   private double speed; // how often to shift rainbow, in seconds
@@ -28,8 +30,9 @@ public class LEDSetPattern extends CommandBase {
    * @param speed how often to shift rainbow, in seconds
    * @param led led strip (subsystem)
    */
-  public LEDSetPattern(Color[][] pattern, int strip, double speed, LED led) {
+  public LEDSetPattern(Color[][] pattern, int strip, double speed, LED led, FileLog log) {
     this.led = led;
+    this.log = log;
     this.pattern = pattern;
     this.strip = strip;
     this.speed = speed;
@@ -44,8 +47,9 @@ public class LEDSetPattern extends CommandBase {
    * @param strip strip number (0 or 1)
    * @param led led strip (subsystem)
    */
-  public LEDSetPattern(Color[][] pattern, int strip, LED led) {
+  public LEDSetPattern(Color[][] pattern, int strip, LED led, FileLog log) {
     this.led = led;
+    this.log = log;
     this.pattern = pattern;
     this.strip = strip;
     this.speed = 0.5;
@@ -58,6 +62,7 @@ public class LEDSetPattern extends CommandBase {
 	public void initialize() {
     timer.reset();
     timer.start();
+    log.writeLog(false, "LEDSetPattern", "Init");
   }
       
   // Called every time the scheduler runs while the command is scheduled.

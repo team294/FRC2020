@@ -10,6 +10,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.utilities.FileLog;
 
 public class DriveSetPercentOutput extends CommandBase {
   /**
@@ -17,13 +18,15 @@ public class DriveSetPercentOutput extends CommandBase {
    */
 
    private DriveTrain driveTrain;
+   private FileLog log;
    private double lPercent;
    private double rPercent;
-  public DriveSetPercentOutput(double lPercent, double rPercent, DriveTrain driveTrain) {
+  public DriveSetPercentOutput(double lPercent, double rPercent, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
     this.lPercent = lPercent;
     this.rPercent = rPercent;
+    this.log = log;
   }
 
   // Called when the command is initially scheduled.
@@ -31,6 +34,7 @@ public class DriveSetPercentOutput extends CommandBase {
   public void initialize() {
     driveTrain.setLeftMotorOutput(lPercent);
     driveTrain.setRightMotorOutput(rPercent);
+    log.writeLog(false, "DriveSetPercentOutput", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

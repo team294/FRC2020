@@ -30,19 +30,19 @@ public class AutoShootBackup extends SequentialCommandGroup {
 
       deadline(
         new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
-        new ShooterSetPID(true, false, shooter, limeLight, led), // start shooter
-        new IntakePistonSetPosition(true, intake) // deploy intake piston
+        new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
+        new IntakePistonSetPosition(true, intake, log) // deploy intake piston
       ),
 
-      new ShooterHoodPistonSequence(true, false, shooter),
+      new ShooterHoodPistonSequence(true, false, shooter, log),
 
        deadline(
-        new WaitForPowerCells(3, shooter).withTimeout(7), // wait for 3 power cells to be shot
-        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // start shooter
+        new WaitForPowerCells(3, shooter, log).withTimeout(5), // wait for 3 power cells to be shot
+        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) // start shooter
       ),
 
       parallel(
-        new ShootSequenceStop(shooter, feeder, hopper, intake, led).withTimeout(0.1), // stop all motors
+        new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1), // stop all motors
       
         new DriveStraight(-1, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log) // back up 1 meter to get off auto line
       )

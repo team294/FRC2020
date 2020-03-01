@@ -9,9 +9,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
+import frc.robot.utilities.FileLog;
 
 public class LEDSetVisionPattern extends CommandBase {
   private LED led;
+  private FileLog log;
   private int rowNumber;
   private double intensity;
  
@@ -21,8 +23,9 @@ public class LEDSetVisionPattern extends CommandBase {
    * @param intensity percent intensity (0 to 1)
    * @param led led strip (subsystem)
    */
-  public LEDSetVisionPattern(int rowNumber, double intensity, LED led) {
+  public LEDSetVisionPattern(int rowNumber, double intensity, LED led, FileLog log) {
     this.led = led;
+    this.log = log;
     this.rowNumber = rowNumber;
     this.intensity = intensity;
     addRequirements(led);
@@ -33,8 +36,9 @@ public class LEDSetVisionPattern extends CommandBase {
    * @param rowNumber row in the patternLibrary
    * @param led led strip (subsystem)
    */
-  public LEDSetVisionPattern(int rowNumber, LED led) {
+  public LEDSetVisionPattern(int rowNumber, LED led, FileLog log) {
     this.led = led;
+    this.log = log;
     this.rowNumber = rowNumber;
     this.intensity = 0.5;
     addRequirements(led);
@@ -44,6 +48,7 @@ public class LEDSetVisionPattern extends CommandBase {
   @Override
   public void initialize() {
     led.setPattern(LED.visionTargetLibrary[rowNumber], intensity, 1);
+    log.writeLog(false, "LEDSetVisionPattern", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
