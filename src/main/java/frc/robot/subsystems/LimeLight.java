@@ -164,6 +164,7 @@ public class LimeLight extends SubsystemBase {
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
     sweetSpot = getDistanceNew() - endDistance;
+    SmartDashboard.putNumber("periodic sweet spot", sweetSpot);
     latency = tl.getDouble(1000.0);
 
     if (makePattern() == LED.visionTargetLibrary[15]) {

@@ -34,12 +34,10 @@ public class VisionAssistSequence extends SequentialCommandGroup {
     //  new DriveStraight(limeLight.getSweetSpot(), TargetType.kVision, 0, 10, 10, true, driveTrain, limeLight, log),
     new DriveStraight(true, TargetType.kVision, 0, 2.61, 3.8, true, driveTrain, limeLight, log),
     
-    new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log),
+    new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)
 
-    new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // turn shooter on until codriver turns it off manually
+   //new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led) // turn shooter on until codriver turns it off manually
       
-      
-       
       
     );
     
