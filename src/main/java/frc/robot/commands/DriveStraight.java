@@ -29,7 +29,8 @@ public class DriveStraight extends CommandBase {
   private TargetType angleType;
   private double target; // how many more degrees to the right to turn
   private double direction;  // +1 = forward, -1 = reverse
-  private double maxVel; // max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants 
+  private double maxVel; // max velocity, between 0 and kMaxSpeedMetersPerSecond in Constants
+  private double endVel; 
   private double maxAccel; // max acceleration, between 0 and kMaxAccelerationMetersPerSecondSquared in Constants
   private long profileStartTime; // initial time (time of starting point)
   private double startDistLeft, startDistRight;
@@ -71,6 +72,23 @@ public class DriveStraight extends CommandBase {
     this.regenerate = regenerate;
     this.fromShuffleboard = false;
     this.target = target;
+    this.endVel = 0;
+    this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
+    this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
+    addRequirements(driveTrain);
+  }
+
+  public DriveStraight(double target, double endVel, TargetType angleType, double angle, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
+    this.log = log;
+    this.angleType = angleType;
+    angleInput = angle;
+    this.regenerate = regenerate;
+    this.fromShuffleboard = false;
+    this.target = target;
+    this.endVel = endVel;
     this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
     this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
     addRequirements(driveTrain);
@@ -94,6 +112,7 @@ public class DriveStraight extends CommandBase {
     this.angleType = angleType;
     angleInput = 0;
     this.regenerate = regenerate;
+    this.endVel = 0;
     this.fromShuffleboard = true;
     this.target = 0;
     this.maxVel = 0.5 * DriveConstants.kMaxSpeedMetersPerSecond;
@@ -140,8 +159,8 @@ public class DriveStraight extends CommandBase {
 
     direction = Math.signum(target);
 
-    tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
-    tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
+    tStateFinal = new TrapezoidProfileBCR.State(target, endVel); // initialize goal state (degrees to turn)
+    tStateCurr = new TrapezoidProfileBCR.State(0.0, driveTrain.getAverageEncoderVelocity()); // initialize initial state (relative turning, so assume initPos is 0 degrees)
     tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel); // initialize velocity and accel limits
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
     log.writeLog(false, "DriveStraight", "init", "Profile total time", tProfile.totalTime());
