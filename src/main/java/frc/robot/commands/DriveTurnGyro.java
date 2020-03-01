@@ -168,7 +168,11 @@ public class DriveTurnGyro extends CommandBase {
         targetRel = driveTrain.normalizeAngle(target - startAngle);
         break;
       case kVision:
-        targetRel = driveTrain.normalizeAngle(limeLight.getXOffset());
+        if(!limeLight.seesTarget()){
+          targetRel = 0;
+        } else {
+          targetRel = driveTrain.normalizeAngle(limeLight.getXOffset());
+        }
         break;
     }
 
