@@ -168,8 +168,8 @@ public class DriveStraight extends CommandBase {
     }
 
     if(sweetSpot){
-      //target = Units.inchesToMeters(limeLight.getSweetSpot() * 12);
-      target = 0;
+      target = Units.inchesToMeters(limeLight.getSweetSpot() * 12);
+      //target = 0;
       SmartDashboard.putNumber("sweet spot (init drivestraight)", Units.inchesToMeters(limeLight.getSweetSpot() * 12));
       driveTrain.setDriveModeCoast(false);
 
@@ -263,8 +263,6 @@ public class DriveStraight extends CommandBase {
     //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
     //   return true;
     // }
-
-  // sweetSpot = false;
 
     driveTrain.setDriveModeCoast(true);
     if(Math.abs(target - currDist) < 0.0125) {
