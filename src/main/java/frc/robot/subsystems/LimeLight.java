@@ -133,6 +133,8 @@ public class LimeLight extends SubsystemBase {
       if(table.getEntry("snapshot").getDouble(0)==1) {
         snapshotCount++;
       }
+      log.writeLog(false, "LimeLight", "setSnapshot", "Snapshot Count", snapshotCount);
+
       snapshotTimer.reset();
       snapshotTimer.start();
     }
@@ -242,6 +244,7 @@ public class LimeLight extends SubsystemBase {
    */
   public void updateLimeLightLog(boolean logWhenDisabled) {
     log.writeLog(logWhenDisabled, "LimeLight", "Update Variables", 
+      "Target Valid", seesTarget(),
       "Center Offset X", x, 
       "Center Offset Y", y,
       "Target Area", area,
