@@ -182,7 +182,7 @@ public class RobotContainer {
     // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
     Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
-    Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
+    // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
     Trigger xbRT = new AxisTrigger(xboxController, 3, 0.9);
 
     for (int i = 1; i < xb.length; i++) {
@@ -190,10 +190,12 @@ public class RobotContainer {
     }
 
     // A = 1, B = 2, X = 3, Y = 4
-    // xb[1].whenPressed(new Wait(0)));
-    // xb[2].whenPressed(new Wait(0)));
-    // xb[3].whenPressed(new Wait(0)));
-    // xb[4].whenPressed(new Wait(0)));
+    xb[1].toggleWhenPressed(new IntakeSequence(intake, log)); // deploy intake and run rollers in
+    xb[2].whileHeld(new ShootSequenceSetup(false, shooter, led, log)); // autoline setup with fixed RPM
+    xb[2].whenReleased(new ShootSequence(false, shooter, feeder, hopper, intake, led, log)); // shoot with fixed RPM from autoline
+    xb[3].whenPressed(new IntakePistonSetPosition(false, intake, log)); // retract intake
+    xb[4].whileHeld(new ShootSequenceSetup(true, shooter, led, log)); // trench setup with fixed RPM
+    xb[4].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, led, log)); // shoot with fixed RPM from trench
 
     // LB = 5, RB = 6
     xb[5].whileHeld(new ShootSequenceSetup(false, shooter, limeLight, led, log)); // close shot setup
@@ -203,17 +205,17 @@ public class RobotContainer {
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log)); // shooting sequence
 
     // back = 7, start = 8 
-    // xb[7].whenPressed(new ShooterHoodPistonSequence(true, false, shooter)); // close shooter hood and do not lock angle
-    // xb[8].whenPressed(new Wait(0));
+    // xb[7].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
+    xb[8].toggleWhenActive(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake, log)); // run rollers out
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
     // xb[9].whenPressed(new Wait(0));
     // xb[10].whenPressed(new Wait(0));
 
     // pov is the d-pad (up, down, left, right)
-    xbPOVUp.whenActive(new IntakePistonSetPosition(false, intake, log)); // retract intake
-    xbPOVDown.whileActiveOnce(new IntakeSequence(intake, log)); // deploy intake and run rollers in
-    xbPOVLeft.whileActiveOnce(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake, log)); // run rollers out
+    xbPOVUp.whenActive(new ShooterHoodPistonSequence(false, false, shooter, log)); // open the shooter hood
+    xbPOVDown.whenActive(new ShooterHoodPistonSequence(true, false, shooter, log)); // close and unlock shooter hood
+    xbPOVLeft.whenActive(new ShooterHoodPistonSequence(true, true, shooter, log)); // close and lock shooter hood
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers

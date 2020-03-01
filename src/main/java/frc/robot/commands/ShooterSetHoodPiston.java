@@ -26,7 +26,6 @@ public class ShooterSetHoodPiston extends CommandBase {
     this.shooter = shooter;
     this.log = log;
     this.close = close;
-    addRequirements(shooter);
   }
 
   // Called when the command is initially scheduled.

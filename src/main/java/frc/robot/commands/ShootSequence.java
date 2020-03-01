@@ -33,9 +33,10 @@ public class ShootSequence extends SequentialCommandGroup {
         // If getting RPM from distance and within range to do unlocked hood shot,
         // unlock the hood but close it. Otherwise, close and lock the hood.
         new ConditionalCommand(
-          new ShooterHoodPistonSequence(true, false, shooter, log),
           new ShooterHoodPistonSequence(true, true, shooter, log),
-          () -> rpmFromDistance && limeLight.getDistanceNew() < LimeLightConstants.unlockedHoodMaxDistance
+          new ShooterHoodPistonSequence(true, false, shooter, log),
+          () -> rpmFromDistance && (limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance
+            || !limeLight.seesTarget())
         )
       ),
       new ShooterSetPID(rpmFromDistance, true, shooter, limeLight, led, log),
@@ -70,16 +71,52 @@ public class ShootSequence extends SequentialCommandGroup {
     );
   }
 
- /**
-  * Set shooter to setpoint RPM for short shot. Then run the feeder, intake, and hopper.
-  * @param shooter shooter subsystem
-  * @param feeder feeder subsystem
-  * @param hopper hopper subsystem
-  * @param intake intake subsystem
-  * @param limeLight limelight camera (subsystem)
-  * @param led led strip (subsystem)
-  * @param log Filelog subsystem
-  */
+  /**
+   * Set shooter to setpoint RPM using default values for shooting from the trench
+   * or the auto line. Then run the feeder, intake, and hopper.
+   * This constructor is used for forcing the shooter to a certain position and RPM,
+   * disregarding what vision is tracking.
+   * @param trench true = shooting from trench, false = shooting from auto line
+   * @param shooter shooter subsystem
+   * @param feeder feeder subsystem
+   * @param hopper hopper subsystem
+   * @param intake intake subsystem
+   * @param led led strip
+   * @param log Filelog subsystem
+   */
+  public ShootSequence(boolean trench, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led, FileLog log) {
+    addCommands( 
+      // If shooting from the trench, close the hood, lock it, and set shooter RPM. 
+      // Otherwise, close the hood, leave it unlocked, and set shooter RPM.
+      new ConditionalCommand(
+        sequence(
+          new ShooterHoodPistonSequence(true, true, shooter, log),
+          new ShooterSetPID(ShooterConstants.shooterDefaultTrenchRPM, shooter, led, log)
+        ),
+        sequence(
+          new ShooterHoodPistonSequence(true, false, shooter,log),
+          new ShooterSetPID(ShooterConstants.shooterDefaultRPM, shooter, led, log)
+        ),
+        () -> trench
+      ),
+      new FeederSetPID(feeder, log),
+      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
+      parallel(
+        new IntakeSetPercentOutput(false, intake, log), 
+        new HopperReverse(hopper,log)
+      )
+    );
+  }
+
+  /**
+   * Set shooter to setpoint RPM for short shot. Then run the feeder, intake, and hopper.
+   * @param shooter shooter subsystem
+   * @param feeder feeder subsystem
+   * @param hopper hopper subsystem
+   * @param intake intake subsystem
+   * @param limeLight limelight camera (subsystem)
+   * @param led led strip (subsystem)
+   */
   public ShootSequence(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, LED led, FileLog log) {
     addCommands( 
       parallel(
