@@ -264,7 +264,8 @@ public class DriveStraight extends CommandBase {
     //   return true;
     // }
 
-    sweetSpot = false;
+  // sweetSpot = false;
+
     driveTrain.setDriveModeCoast(true);
     if(Math.abs(target - currDist) < 0.0125) {
       accuracyCounter++;
