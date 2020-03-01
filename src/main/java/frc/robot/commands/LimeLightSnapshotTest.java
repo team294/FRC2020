@@ -40,7 +40,6 @@ public class LimeLightSnapshotTest extends CommandBase {
   public void execute() {
     if(limeLight.canTakeSnapshot()) {
       limeLight.setSnapshot(true);
-      System.out.println("Snapshot");
     }
   }
 

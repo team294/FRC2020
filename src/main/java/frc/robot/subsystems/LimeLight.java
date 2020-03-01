@@ -129,7 +129,9 @@ public class LimeLight extends SubsystemBase {
   public void setSnapshot(boolean snapshot) {
     if(snapshot) {
       table.getEntry("snapshot").setNumber(1);
-      snapshotCount++;
+      if(table.getEntry("snapshot").getDouble(0)==1) {
+        snapshotCount++;
+      }
       snapshotTimer.reset();
       snapshotTimer.start();
     }
