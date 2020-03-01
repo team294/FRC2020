@@ -49,7 +49,7 @@ public class LimeLight extends SubsystemBase {
     this.driveTrain = driveTrain;
     tableInstance.startClientTeam(294);
 
-    // tv = table.getEntry("tv");
+    tv = table.getEntry("tv");
     tx = table.getEntry("tx");
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
