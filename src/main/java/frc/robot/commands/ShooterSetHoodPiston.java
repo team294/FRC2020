@@ -9,10 +9,12 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class ShooterSetHoodPiston extends CommandBase {
   private Shooter shooter;
   private boolean close;
+  private FileLog log;
 
   /**
    * Set shooter hood piston position.
@@ -20,8 +22,9 @@ public class ShooterSetHoodPiston extends CommandBase {
    * @param close true = close, false = open
    * @param shooter shooter subsystem
    */
-  public ShooterSetHoodPiston(boolean close, Shooter shooter) {
+  public ShooterSetHoodPiston(boolean close, Shooter shooter, FileLog log) {
     this.shooter = shooter;
+    this.log = log;
     this.close = close;
   }
 
@@ -29,6 +32,7 @@ public class ShooterSetHoodPiston extends CommandBase {
   @Override
   public void initialize() {
     shooter.setHoodPiston(close);
+    log.writeLog(false, "ShooterSetHoodPiston", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.

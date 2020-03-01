@@ -14,6 +14,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.LED;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class ShootSequenceSetup extends SequentialCommandGroup {
   
@@ -25,22 +26,22 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
    * @param limeLight limelight camera (subsystem)
    * @param led led strip (subsystem)
    */
-  public ShootSequenceSetup(boolean closeHood, Shooter shooter, LimeLight limeLight, LED led) {
+  public ShootSequenceSetup(boolean closeHood, Shooter shooter, LimeLight limeLight, LED led, FileLog log) {
     addCommands(
       // If the current distance away from the target is greater than the max distance for 
       // unlocking the hood or vision sees no target, close and lock the hood. 
       // Otherwise, close the hood and leave it unlocked.
       new ConditionalCommand(
-        new ShooterHoodPistonSequence(closeHood, true, shooter),
-        new ShooterHoodPistonSequence(closeHood, false, shooter),
+        new ShooterHoodPistonSequence(closeHood, true, shooter, log),
+        new ShooterHoodPistonSequence(closeHood, false, shooter, log),
         () -> closeHood && (limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance 
           || !limeLight.seesTarget())
       ),
       // If closing the hood, set shooter RPM based on distance.
       // Otherwise, set shooter RPM to the default value for the short shot.
       new ConditionalCommand(
-        new ShooterSetPID(true, false, shooter, limeLight, led),
-        new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led),
+        new ShooterSetPID(true, false, shooter, limeLight, led, log),
+        new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led, log),
         () -> closeHood
       )
     );
@@ -53,17 +54,17 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
    * @param shooter shooter subsystem
    * @param led led strip (subsystem)
    */
-  public ShootSequenceSetup(boolean trench, Shooter shooter, LED led) {
+  public ShootSequenceSetup(boolean trench, Shooter shooter, LED led, FileLog log) {
     addCommands(
       // If shooting from the trench, close the hood, lock it, and set shooter RPM. 
       // Otherwise, close the hood, leave it unlocked, and set shooter RPM.
       new ConditionalCommand(
         sequence(
-          new ShooterHoodPistonSequence(true, true, shooter),
+          new ShooterHoodPistonSequence(true, true, shooter, log),
           new ShooterSetPID(false, ShooterConstants.shooterDefaultTrenchRPM, shooter, led)
         ),
         sequence(
-          new ShooterHoodPistonSequence(true, false, shooter),
+          new ShooterHoodPistonSequence(true, false, shooter, log),
           new ShooterSetPID(false, ShooterConstants.shooterDefaultRPM, shooter, led)
         ),
         () -> trench

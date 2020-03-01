@@ -9,9 +9,11 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.Feeder;
+import frc.robot.utilities.FileLog;
 
 public class FeederSetVoltage extends CommandBase {
   private Feeder feeder;
+  private FileLog log;
   private double voltage;
 
   /**
@@ -20,8 +22,9 @@ public class FeederSetVoltage extends CommandBase {
    * @param voltage voltage
    * @param feeder feeder subsystem to use
    */
-  public FeederSetVoltage(double voltage, Feeder feeder) {
+  public FeederSetVoltage(double voltage, Feeder feeder, FileLog log) {
     this.feeder = feeder;
+    this.log = log;
     this.voltage = voltage;
     addRequirements(feeder);
   }
@@ -30,6 +33,7 @@ public class FeederSetVoltage extends CommandBase {
   @Override
   public void initialize() {
     feeder.feederSetVoltage(voltage);
+    log.writeLog(false, "FeederSetVoltage", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
