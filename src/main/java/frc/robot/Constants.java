@@ -62,7 +62,7 @@ public final class Constants {
         public static final int canIntakeMotor = 50;
         public static final int pcmIntakePistonIn = 0;
         public static final int pcmIntakePistonOut = 1;
-        public static final double intakeDefaultPercentOutput = 0.8;
+        public static final double intakeDefaultPercentOutput = 1;
     }
 
     public static final class HopperConstants {

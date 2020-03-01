@@ -236,12 +236,12 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    // joystick left button
+    // joystick top button
     // left[1].whenPressed(new Wait(0));
     // right[1].whenPressed(new Wait(0));
 
-    // joystick right button
-    // left[2].whenPressed(new Wait(0));
+    // joystick bottom button
+    left[2].whenHeld(new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
   }
 
