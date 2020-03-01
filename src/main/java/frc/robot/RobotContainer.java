@@ -106,6 +106,10 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led, log));
     SmartDashboard.putData("LEDRainbow", new LEDSetPattern(LED.rainbowLibrary, 1, 0.5, led, log));
 
+    // limelight subsystem
+    SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight));
+    //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
+
     // command sequences
     SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led, log));
     SmartDashboard.putData("ShootSequence DIST", new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log));
@@ -156,7 +160,6 @@ public class RobotContainer {
     // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
-    SmartDashboard.putData("Rainbow", new LEDSetPattern(LED.rainbowLibrary, 0, led, log));
   }
 
   /**
@@ -344,6 +347,7 @@ public class RobotContainer {
     disabledDisplayTimer.start();
 
     driveTrain.setDriveModeCoast(true);
+    limeLight.setSnapshot(false);
     shooter.setPowerCellsShot(0);
     shooter.setShooterVoltage(0);
     hopper.hopperSetPercentOutput(0);
