@@ -49,7 +49,7 @@ public class LimeLight extends SubsystemBase {
     this.driveTrain = driveTrain;
     tableInstance.startClientTeam(294);
 
-    tv = table.getEntry("tv");
+    // tv = table.getEntry("tv");
     tx = table.getEntry("tx");
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
@@ -184,7 +184,6 @@ public class LimeLight extends SubsystemBase {
   @Override
   public void periodic() {
     // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
-
     // read values periodically
     targetExists = tv.getDouble(1000.0);
     x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
@@ -197,9 +196,6 @@ public class LimeLight extends SubsystemBase {
     } else {
       led.setPattern(makePattern(), 0.5, 0);
     }
-
-    // led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
-    // ledAnimation.setDelayCounter();
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
       updateLimeLightLog(false);
