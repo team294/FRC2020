@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TargetType;
@@ -30,7 +31,7 @@ public class AutoShootForward extends SequentialCommandGroup {
    * @param intake         intake subsystem to use
    * @param led            led subsystem to use
    */
-  public AutoShootForward(double waitTime, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
+  public AutoShootForward(double waitTime, boolean useVision, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
 
     // can start anywhere on auto line between left most pole from driver perspective and close to right edge of the field, needs to be semi lined up with target
 
@@ -39,14 +40,15 @@ public class AutoShootForward extends SequentialCommandGroup {
       // wait before starting
       new Wait(waitTime),
 
+      new ConditionalCommand(
+        new SequentialCommandGroup( 
+          deadline(
+            new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
+            new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
+            new IntakePistonSetPosition(true, intake, log) // deploy intake piston
+          )), new IntakePistonSetPosition(true, intake, log), () -> useVision && limeLight.seesTarget()
+        ),
       // turn towards target w/ vision with timeout
-      deadline(
-        new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
-        new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
-        new IntakePistonSetPosition(true, intake, log) // deploy intake piston
-      ),
-
-      new ShooterHoodPistonSequence(true, false, shooter, log),
 
       // start shooter and wait for 3 power cells to be shot with timeout
       deadline(
