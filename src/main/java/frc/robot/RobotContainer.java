@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
@@ -37,12 +36,11 @@ import static frc.robot.Constants.DriveConstants.*;
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
+  private final Hopper hopper = new Hopper(log);
+  private final Intake intake = new Intake(log);
   private final LED led = new LED();
-  
-  private final Climb climb = new Climb(log);
-  private final Hopper hopper = new Hopper();
-  private final Intake intake = new Intake();
   private final Feeder feeder = new Feeder(log, tempCheck);
+  private final Climb climb = new Climb(log);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final LimeLight limeLight = new LimeLight(log, led, driveTrain);
@@ -55,6 +53,7 @@ public class RobotContainer {
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   public double autoDelay;
+  public boolean autoUseVision;
 
   private final Timer disabledDisplayTimer = new Timer();
   private int displayCount = 1;
@@ -116,6 +115,10 @@ public class RobotContainer {
     SmartDashboard.putData("ClimbPistons EXTEND", new ClimbPistonsSetPosition(true, climb));
     SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb));
     
+    // limelight subsystem
+    SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight));
+    //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
+
     // command sequences
     SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led, log));
     SmartDashboard.putData("ShootSequence DIST", new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log));
@@ -162,11 +165,11 @@ public class RobotContainer {
     autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
     SmartDashboard.putNumber("Autonomous delay", 0);
+    SmartDashboard.putBoolean("Autonomous use vision", true);
 
     // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
-    SmartDashboard.putData("Rainbow", new LEDSetPattern(LED.rainbowLibrary, 0, led, log));
   }
 
   /**
@@ -214,7 +217,7 @@ public class RobotContainer {
 
     // back = 7, start = 8 
     // xb[7].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
-    xb[8].toggleWhenActive(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake, log)); // run rollers out
+    xb[8].toggleWhenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake, log)); // run rollers out
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
     // xb[9].whenPressed(new Wait(0));
@@ -320,10 +323,11 @@ public class RobotContainer {
     if(SmartDashboard.getNumber("Autonomous delay", -9999) == -9999) {
       SmartDashboard.putNumber("Autonomous delay", 0);
     }
+    autoUseVision = SmartDashboard.getBoolean("Autonomous use vision", false);
     autoDelay = SmartDashboard.getNumber("Autonomous delay", 0);
     autoDelay = (autoDelay < 0) ? 0 : autoDelay; // make sure autoDelay isn't negative
     autoDelay = (autoDelay > 15) ? 15 : autoDelay; // make sure autoDelay is only active during auto
-    return autoSelection.getAutoCommand(autoDelay, autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
+    return autoSelection.getAutoCommand(autoDelay, autoUseVision, autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 
   /**
@@ -354,6 +358,7 @@ public class RobotContainer {
     disabledDisplayTimer.start();
 
     driveTrain.setDriveModeCoast(true);
+    limeLight.setSnapshot(false);
     shooter.setPowerCellsShot(0);
     shooter.setShooterVoltage(0);
     hopper.hopperSetPercentOutput(0);

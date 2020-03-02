@@ -86,7 +86,13 @@ public final class Constants {
         public static final double cameraHeight = 1.625; // in feet, height from floor to lens of mounted camera, 2.104 on protobot
         public static final double targetHeight = 7.0; // in feet, height to middle of crosshair on target
         public static final double cameraAngle = 28; // in degrees 26.5 measured but 28 works better?, 14 on proto
-        public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shot
+        public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shotblicc 
+        
+        // *******************************
+        // The constants below are DEFAULT VALUES. Change these value in RobotPrefrences
+        // for each robot, not in this code!
+        // *******************************
+        public static boolean takeSnapshots = true;
     }
 
     /**
