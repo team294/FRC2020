@@ -38,6 +38,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       ),
      
       new ConditionalCommand(
+        // with Vision
         new SequentialCommandGroup(
           
           new DriveTurnGyro(TargetType.kVision, 0, 450.0, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
@@ -71,12 +72,15 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
           new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1) // stop all motors
         ), 
         
+        // Without vision, pickup 2 balls in trench, but dont shoot
         new SequentialCommandGroup(
+          new ShootSequenceStop(shooter, feeder, hopper, intake, led, log),
           new DriveTurnGyro(TargetType.kAbsolute, 180, 450.0, 200, 2, driveTrain, limeLight, log),
           deadline(
             new DriveStraight(1.956, TargetType.kAbsolute, 179, 2.088, 3.8, true, driveTrain, limeLight, log),
             new IntakeSequence(intake, log)
-          )
+          ),
+          new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, true, 2, driveTrain, limeLight, log)
         ), () -> useVision && limeLight.seesTarget()
       )
 

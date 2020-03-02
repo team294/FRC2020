@@ -28,20 +28,34 @@ public class AutoShootBackup extends SequentialCommandGroup {
 
       new Wait(waitTime),
       new ConditionalCommand(
+        // With Vision
         new SequentialCommandGroup(
+          
           deadline(
-          new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
-          new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
-          new IntakePistonSetPosition(true, intake, log) // deploy intake piston
-          )), new IntakePistonSetPosition(true, intake, log), () -> useVision && limeLight.seesTarget()
+            new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
+            new ShooterSetPID(true, false, shooter, limeLight, led, log),
+            new ShooterHoodPistonSequence(true, false, shooter, log)
+          ),
+
+          deadline(
+          new WaitForPowerCells(3, shooter, log).withTimeout(5), // wait for 3 power cells to be shot
+          new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) // start shooter
+        )
+        ), 
+          // Without Vision
+          new SequentialCommandGroup(
+            new IntakePistonSetPosition(true, intake, log), // deploy intake piston
+            
+            deadline(
+              new WaitForPowerCells(3, shooter, log).withTimeout(7), // wait for 3 powercells to be shot
+              new ShooterHoodPistonSequence(true, false, shooter, log), // change hood
+              new ShootSequence(2500, shooter, feeder, hopper, intake, led, log) // shoot
+            )
+          ), 
+          () -> useVision && limeLight.seesTarget()
         ),
       
-      new ShooterHoodPistonSequence(true, false, shooter, log),
-
-      deadline(
-        new WaitForPowerCells(3, shooter, log).withTimeout(5), // wait for 3 power cells to be shot
-        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) // start shooter
-      ),
+      
 
       parallel(
         new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1), // stop all motors
