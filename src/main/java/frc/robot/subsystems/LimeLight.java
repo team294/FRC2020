@@ -44,7 +44,7 @@ public class LimeLight extends SubsystemBase {
     this.driveTrain = driveTrain;
     tableInstance.startClientTeam(294);
 
-    // tv = table.getEntry("tv");
+    tv = table.getEntry("tv");
     tx = table.getEntry("tx");
     ty = table.getEntry("ty");
     ta = table.getEntry("ta");
@@ -87,7 +87,7 @@ public class LimeLight extends SubsystemBase {
 
   /**
    * Takes into account not being in line with the target.
-   * @return distance from camera to target, on the floor
+   * @return distance from camera to target, on the floor, in feet
    */
   public double getDistanceNew() {
     double myDistance = (targetHeight - cameraHeight) / ((Math.tan(Math.toRadians(cameraAngle + y))) * (Math.cos(Math.toRadians(x))));
@@ -164,7 +164,7 @@ public class LimeLight extends SubsystemBase {
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
     sweetSpot = getDistanceNew() - endDistance;
-    SmartDashboard.putNumber("periodic sweet spot", sweetSpot);
+    SmartDashboard.putNumber("Limelight sweet spot", sweetSpot);
     latency = tl.getDouble(1000.0);
 
     if (makePattern() == LED.visionTargetLibrary[15]) {
