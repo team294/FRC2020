@@ -10,8 +10,6 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.util.Units;
-import frc.robot.Constants.DriveConstants;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
 
@@ -22,7 +20,8 @@ public class DriveWithJoystickArcadeStraight extends CommandBase {
   private final FileLog log;
   private final Joystick leftJoystick, rightJoystick;
   private boolean driveStraight;
-  private double priorLeftEncoder, priorRightEncoder;
+  // private double priorLeftEncoder, priorRightEncoder;
+  private double priorAngle;
 
   /**
    * Drives the robot with correction to keep it driving straight.
@@ -44,10 +43,9 @@ public class DriveWithJoystickArcadeStraight extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    priorLeftEncoder = driveTrain.getLeftEncoderInches();
-    priorRightEncoder = driveTrain.getRightEncoderInches();
-
-    driveTrain.setDriveModeCoast(false);
+    // priorLeftEncoder = driveTrain.getLeftEncoderInches();
+    // priorRightEncoder = driveTrain.getRightEncoderInches();
+    priorAngle = driveTrain.getGyroRotation();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -65,17 +63,20 @@ public class DriveWithJoystickArcadeStraight extends CommandBase {
     zRotation = MathUtil.clamp(zRotation, -1.0, 1.0);
     zRotation = Math.copySign( Math.pow(Math.abs(zRotation), joystickTurnSensitivity), zRotation);
 
-    double distLeft = driveTrain.getLeftEncoderInches() - priorLeftEncoder;
-    double distRight = driveTrain.getRightEncoderInches() - priorRightEncoder;
+    // double distLeft = driveTrain.getLeftEncoderInches() - priorLeftEncoder;
+    // double distRight = driveTrain.getRightEncoderInches() - priorRightEncoder;
+    double angleRelative = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - priorAngle);
 
     if (driveStraight) {
-      zRotation = MathUtil.clamp((distRight - distLeft) * 0.5, -1.0, 1.0) * Math.abs(xSpeed);
+      // zRotation = MathUtil.clamp((distRight - distLeft) * 0.5, -1.0, 1.0) * Math.abs(xSpeed);
+      zRotation = MathUtil.clamp(angleRelative * kAngLinear * 0.2, -Math.abs(xSpeed), Math.abs(xSpeed));
     } else {
       zRotation *= 0.42;    // minimize max rotation speed from joystick
 
       // Reset the saved encoder values for the next time that we start driving straight
-      priorLeftEncoder = driveTrain.getLeftEncoderInches();
-      priorRightEncoder = driveTrain.getRightEncoderInches();
+      // priorLeftEncoder = driveTrain.getLeftEncoderInches();
+      // priorRightEncoder = driveTrain.getRightEncoderInches();
+      priorAngle = driveTrain.getGyroRotation();
     }
 
     driveTrain.arcadeDrive(xSpeed, zRotation);
@@ -119,11 +120,11 @@ public class DriveWithJoystickArcadeStraight extends CommandBase {
       //   "velRawLA", driveTrain.getLeftEncoderVelocityRaw(), "errRawLA", driveTrain.getTalonLeftClosedLoopError(), 
       //   "targetRawL", driveTrain.getTalonLeftClosedLoopTarget()
       // );
-      log.writeLog(false, "DriveWithJoystickArcadeStraight", "Joystick", "L Joystick", xSpeed, "R Joystick", zRotation,
+      log.writeLog(false, "DriveWithJoystickArcadeStraight", "Joystick", "L Joystick", xSpeed, "R Joystick", rRaw, "zRotation", zRotation,
         "velLA", driveTrain.getLeftEncoderVelocity(), 
         "velRA", driveTrain.getRightEncoderVelocity(),
-        "distLeft", distLeft, "distRight", distRight, "deltaDist", distRight-distLeft,
-        "gyro", driveTrain.getGyroRotation(), "RRaw", rRaw
+        // "distLeft", distLeft, "distRight", distRight, "deltaDist", distRight-distLeft,
+        "gyro", driveTrain.getGyroRotation(), "deltaAngle", angleRelative
       );
     }
   }
@@ -133,7 +134,6 @@ public class DriveWithJoystickArcadeStraight extends CommandBase {
   public void end(boolean interrupted) {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
-    // driveTrain.setDriveModeCoast(false);
   }
 
   // Returns true when the command should end.
