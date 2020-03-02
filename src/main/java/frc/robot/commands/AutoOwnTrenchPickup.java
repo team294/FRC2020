@@ -74,7 +74,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
         new SequentialCommandGroup(
           new DriveTurnGyro(TargetType.kAbsolute, 180, 450.0, 200, 2, driveTrain, limeLight, log),
           deadline(
-            new DriveStraight(1.956, TargetType.kAbsolute, 180, 2.088, 3.8, true, driveTrain, limeLight, log),
+            new DriveStraight(1.956, TargetType.kAbsolute, 179, 2.088, 3.8, true, driveTrain, limeLight, log),
             new IntakeSequence(intake, log)
           )
         ), () -> useVision && limeLight.seesTarget()
