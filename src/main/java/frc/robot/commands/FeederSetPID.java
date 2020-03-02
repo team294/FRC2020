@@ -77,7 +77,7 @@ public class FeederSetPID extends CommandBase {
     timer.reset();
     timer.start();
     feeder.setFeederPID(rpm);
-    log.writeLog(false, "FeederSetPID", "Init");
+    log.writeLog(false, "FeederSetPID", "Init", "TargetRPM", rpm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

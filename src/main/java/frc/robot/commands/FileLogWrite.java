@@ -13,7 +13,7 @@ import frc.robot.utilities.FileLog;
 public class FileLogWrite extends CommandBase {
   /**
    * Command to write something to the fileLog
-   * To be called in commandGroups (so we don't have to use the method)
+   * To be called in commandGroups (since we can't use the method)
    */
   FileLog log;
   boolean echo;

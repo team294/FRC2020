@@ -236,7 +236,7 @@ public class DriveTurnGyro extends CommandBase {
     driveTrain.setRightMotorOutput(0);
     driveTrain.setDriveModeCoast(false);
 
-    log.writeLog(false, "DriveTurnGyro", "end");
+    log.writeLog(false, "DriveTurnGyro", "End");
   }
 
   // Returns true when the command should end.
@@ -244,9 +244,7 @@ public class DriveTurnGyro extends CommandBase {
   public boolean isFinished() {
     if(Math.abs(targetRel - currAngle) < angleTolerance) {
       accuracyCounter++;
-      // System.out.println("theoretical: " + targetRel);
-      // System.out.println("actual: " + currAngle);
-      // System.out.println(accuracyCounter);
+      log.writeLog(false, "DriveTurnGyro", "WithinTolerance", "Target Ang", targetRel, "Actual Ang", currAngle, "Counter", accuracyCounter);
     } else {
       accuracyCounter = 0;
     }

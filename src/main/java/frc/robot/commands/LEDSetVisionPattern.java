@@ -32,7 +32,7 @@ public class LEDSetVisionPattern extends CommandBase {
   }
 
   /**
-   * Send a pattern to the LED strip, with 0.5 intensity.
+   * Send a pattern to the LED strip, with default 0.5 intensity.
    * @param rowNumber row in the patternLibrary
    * @param led led strip (subsystem)
    */
@@ -48,7 +48,7 @@ public class LEDSetVisionPattern extends CommandBase {
   @Override
   public void initialize() {
     led.setPattern(LED.visionTargetLibrary[rowNumber], intensity, 1);
-    log.writeLog(false, "LEDSetVisionPattern", "Init");
+    log.writeLog(false, "LEDSetVisionPattern", "Init", "Pattern", rowNumber);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

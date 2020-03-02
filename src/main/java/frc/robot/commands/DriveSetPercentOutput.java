@@ -34,14 +34,14 @@ public class DriveSetPercentOutput extends CommandBase {
   public void initialize() {
     driveTrain.setLeftMotorOutput(lPercent);
     driveTrain.setRightMotorOutput(rPercent);
-    log.writeLog(false, "DriveSetPercentOutput", "Init");
+    log.writeLog(false, "DriveSetPercentOutput", "Init", "Target % L", lPercent, "Target % R", rPercent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("L output:" + lPercent);
-    System.out.println("R output:" + rPercent);
+    // System.out.println("L output:" + lPercent);
+    // System.out.println("R output:" + rPercent);
     driveTrain.setLeftMotorOutput(lPercent);
     driveTrain.setRightMotorOutput(rPercent);
   }

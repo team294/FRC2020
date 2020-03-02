@@ -33,7 +33,7 @@ public class FeederSetVoltage extends CommandBase {
   @Override
   public void initialize() {
     feeder.feederSetVoltage(voltage);
-    log.writeLog(false, "FeederSetVoltage", "Init");
+    log.writeLog(false, "FeederSetVoltage", "Init", "TargetVolts", voltage);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
