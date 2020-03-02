@@ -43,7 +43,7 @@ public class ShootSequence extends SequentialCommandGroup {
       new FeederSetPID(FeederConstants.feederDefaultRPM, feeder, log),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
       parallel(
-        new IntakeSetPercentOutput(false, intake, log), 
+        new IntakeSetPercentOutput(0.8, false, intake, log), 
         new HopperReverse(hopper, log)
       )
     );
@@ -65,7 +65,7 @@ public class ShootSequence extends SequentialCommandGroup {
       new FeederSetPID(feeder, log),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
       parallel(
-        new IntakeSetPercentOutput(false, intake, log), 
+        new IntakeSetPercentOutput(0.8, false, intake, log), 
         new HopperReverse(hopper, log)
       )
     );
@@ -102,7 +102,7 @@ public class ShootSequence extends SequentialCommandGroup {
       new FeederSetPID(feeder, log),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
       parallel(
-        new IntakeSetPercentOutput(false, intake, log), 
+        new IntakeSetPercentOutput(0.8, false, intake, log), 
         new HopperReverse(hopper,log)
       )
     );
@@ -133,7 +133,7 @@ public class ShootSequence extends SequentialCommandGroup {
       new FeederSetPID(feeder, log),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
       parallel(
-        new IntakeSetPercentOutput(false, intake, log), 
+        new IntakeSetPercentOutput(0.8, false, intake, log), 
         new HopperReverse(hopper, log)
       )
     );

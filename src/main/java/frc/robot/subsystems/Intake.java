@@ -15,9 +15,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
+import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.RobotConstants;
 
 import static frc.robot.Constants.IntakeConstants.*;
@@ -26,12 +28,17 @@ import static frc.robot.Constants.IntakeConstants.*;
 public class Intake extends SubsystemBase {
   private final BaseMotorController intakeMotor;
   private double intakeCurrent = 0;
+  private Timer ledTimer;
+  private String ledColor = "Green";
 
   private final DoubleSolenoid intakePiston = new DoubleSolenoid(pcmIntakePistonOut, pcmIntakePistonIn);
   private FileLog log; 
+  private LED led;
  
-  public Intake(FileLog log) {
+  public Intake(FileLog log, LED led) {
     this.log = log;
+    this.led = led;
+    this.ledTimer = new Timer();
 
     if (RobotConstants.prototypeBot) { 
       intakeMotor = new WPI_VictorSPX(canIntakeMotor);
@@ -42,8 +49,6 @@ public class Intake extends SubsystemBase {
     intakeMotor.configFactoryDefault();
     intakeMotor.setInverted(true);
     intakeMotor.setNeutralMode(NeutralMode.Brake);
-
-    
   }
 
   /**
@@ -51,7 +56,15 @@ public class Intake extends SubsystemBase {
    */
   public void intakeSetPercentOutput(double percent) {
     intakeMotor.set(ControlMode.PercentOutput, percent);
+    if (percent == 0) {
+      ledTimer.stop();
+      ledTimer.reset();
+    } else if (percent == IntakeConstants.intakeDefaultPercentOutput) {
+      ledTimer.start();
+    }
   }
+
+
 
   /**
    * @param extend true = extend, false = retract
@@ -69,7 +82,13 @@ public class Intake extends SubsystemBase {
         intakeCurrent = ((WPI_TalonSRX) intakeMotor).getSupplyCurrent();
       } else {
         intakeCurrent = 0;  
-      } 
+      }
+
+      if (ledTimer.advanceIfElapsed(0.1)) {
+        led.setStrip(ledColor, 0.5, 1);
+        if (ledColor.equals("Blue")) ledColor = "Black";
+        else ledColor = "Blue";
+      }
 
       updateIntakeLog(false);
       
