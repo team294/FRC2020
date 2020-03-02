@@ -57,6 +57,8 @@ public class RobotContainer {
 
   private final Timer disabledDisplayTimer = new Timer();
   private int displayCount = 1;
+
+  private boolean isRumbling = false;
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -400,5 +402,11 @@ public class RobotContainer {
    * Method called once every scheduler cycle when teleop mode is initialized/enabled.
    */
   public void teleopPeriodic() {
+    if(limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
+      setXBoxRumble(0.4);
+      isRumbling = true;
+    } else if (isRumbling) {
+      setXBoxRumble(0);
+    }
   }
 }
