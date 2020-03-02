@@ -52,6 +52,7 @@ public class RobotContainer {
   private AutoSelection autoSelection;
   private SendableChooser<Integer> autoChooser = new SendableChooser<>();
   public double autoDelay;
+  public boolean autoUseVision;
 
   private final Timer disabledDisplayTimer = new Timer();
   private int displayCount = 1;
@@ -156,6 +157,7 @@ public class RobotContainer {
     autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
     SmartDashboard.putData("Autonomous routine", autoChooser);
     SmartDashboard.putNumber("Autonomous delay", 0);
+    SmartDashboard.putBoolean("Autonomous use vision", true);
 
     // display sticky faults
     RobotPreferences.showStickyFaults();
@@ -313,10 +315,11 @@ public class RobotContainer {
     if(SmartDashboard.getNumber("Autonomous delay", -9999) == -9999) {
       SmartDashboard.putNumber("Autonomous delay", 0);
     }
+    autoUseVision = SmartDashboard.getBoolean("Autonomous use vision", false);
     autoDelay = SmartDashboard.getNumber("Autonomous delay", 0);
     autoDelay = (autoDelay < 0) ? 0 : autoDelay; // make sure autoDelay isn't negative
     autoDelay = (autoDelay > 15) ? 15 : autoDelay; // make sure autoDelay is only active during auto
-    return autoSelection.getAutoCommand(autoDelay, autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
+    return autoSelection.getAutoCommand(autoDelay, autoUseVision, autoChooser.getSelected(), driveTrain, shooter, feeder, hopper, intake, limeLight, log, led);
   }
 
   /**
