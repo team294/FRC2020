@@ -27,7 +27,7 @@ import static frc.robot.Constants.IntakeConstants.*;
 
 public class Intake extends SubsystemBase {
   private final BaseMotorController intakeMotor;
-  private double intakeCurrent = 0;
+  private double intakeCurrent = 0, targetPercentOutput = 0;
   private Timer ledTimer;
   private String ledColor = "Green";
 
@@ -56,15 +56,21 @@ public class Intake extends SubsystemBase {
    */
   public void intakeSetPercentOutput(double percent) {
     intakeMotor.set(ControlMode.PercentOutput, percent);
+    targetPercentOutput = percent;
     if (percent == 0) {
       ledTimer.stop();
       ledTimer.reset();
-    } else if (percent == IntakeConstants.intakeDefaultPercentOutput) {
+    } else if (percent == IntakeConstants.intakeDefaultPercentOutput && !ledTimer.hasElapsed(0.1)) {
       ledTimer.start();
     }
   }
 
-
+  /**
+   * @return target percent output (0 to 1)
+   */
+  public double intakeGetPercentOutput() {
+    return targetPercentOutput;
+  }
 
   /**
    * @param extend true = extend, false = retract

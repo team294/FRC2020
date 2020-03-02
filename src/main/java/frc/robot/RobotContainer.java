@@ -36,9 +36,9 @@ import static frc.robot.Constants.DriveConstants.*;
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
-  private final Hopper hopper = new Hopper(log);
-  private final Intake intake = new Intake(log);
   private final LED led = new LED();
+  private final Hopper hopper = new Hopper(log);
+  private final Intake intake = new Intake(log, led);
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
@@ -56,6 +56,7 @@ public class RobotContainer {
 
   private final Timer disabledDisplayTimer = new Timer();
   private int displayCount = 1;
+  private boolean rumbling = false;
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -306,6 +307,9 @@ public class RobotContainer {
 	public void setXBoxRumble(double percentRumble) {
 		xboxController.setRumble(RumbleType.kLeftRumble, percentRumble);
     xboxController.setRumble(RumbleType.kRightRumble, percentRumble);
+
+    if (percentRumble == 0) rumbling = false;
+    else rumbling = true;
   }
 
   /**
@@ -405,5 +409,12 @@ public class RobotContainer {
    * Method called once every scheduler cycle when teleop mode is initialized/enabled.
    */
   public void teleopPeriodic() {
+    /*if(limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
+      setXBoxRumble(0.4);
+    } else */if (!rumbling && intake.intakeGetPercentOutput() == Constants.IntakeConstants.intakeDefaultPercentOutput) {
+      setXBoxRumble(0.8);
+    } else if (rumbling) {
+      setXBoxRumble(0);
+    }
   }
 }
