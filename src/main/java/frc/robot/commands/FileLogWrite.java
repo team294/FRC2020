@@ -8,32 +8,38 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import frc.robot.subsystems.Shooter;
 import frc.robot.utilities.FileLog;
 
-public class ShooterSetLockPiston extends CommandBase {
-  private Shooter shooter;
-  private boolean unlock;
-  private FileLog log;
-
+public class FileLogWrite extends CommandBase {
   /**
-   * Set shooter lock piston position.
-   * This command immediately ends.
-   * @param unlock true = unlock, false = lock
-   * @param shooter shooter subsystem
+   * Command to write something to the fileLog
+   * To be called in commandGroups (so we don't have to use the method)
    */
-  public ShooterSetLockPiston(boolean unlock, Shooter shooter, FileLog log) {
-    this.shooter = shooter;
-    this.unlock = unlock;
+  FileLog log;
+  boolean echo;
+  boolean logWhenDisabled;
+  String subsystemOrCommand;
+  String event;
+  Object paramArray;
+
+  public FileLogWrite(boolean echo, boolean logWhenDisabled, String subsystemOrCommand, String event, FileLog log, Object... paramArray) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.echo = echo;
+    this.logWhenDisabled = logWhenDisabled;
+    this.subsystemOrCommand = subsystemOrCommand;
+    this.event = event;
+    this.paramArray = paramArray;
     this.log = log;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    log.writeLog(false, "IntakeSetPiston", "Init", (unlock) ? "Unlock" : "Lock");
-    shooter.setLockPiston(unlock);
+    if(echo) {
+      log.writeLogEcho(logWhenDisabled, subsystemOrCommand, event, paramArray);
+    } else {
+      log.writeLog(logWhenDisabled, subsystemOrCommand, event, paramArray);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.

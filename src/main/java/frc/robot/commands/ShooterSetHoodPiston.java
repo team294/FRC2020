@@ -31,8 +31,8 @@ public class ShooterSetHoodPiston extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "ShooterSetHoodPiston", "Init", (close) ? "Close" : "Open");
     shooter.setHoodPiston(close);
-    log.writeLog(false, "ShooterSetHoodPiston", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
