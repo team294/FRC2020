@@ -56,7 +56,6 @@ public class DriveTrain extends SubsystemBase {
   private double currTime; // current time gyro angle is being recorded
   private double angularVelocity;  // Robot angular velocity in degrees per second
   private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
-
   
   public DriveTrain(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog

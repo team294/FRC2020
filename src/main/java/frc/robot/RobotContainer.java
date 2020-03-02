@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.CoordType;
@@ -37,10 +36,9 @@ import static frc.robot.Constants.DriveConstants.*;
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
+  private final Hopper hopper = new Hopper(log);
+  private final Intake intake = new Intake(log);
   private final LED led = new LED();
-  
-  private final Hopper hopper = new Hopper();
-  private final Intake intake = new Intake();
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
@@ -109,6 +107,10 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led, log));
     SmartDashboard.putData("LEDRainbow", new LEDSetPattern(LED.rainbowLibrary, 1, 0.5, led, log));
 
+    // limelight subsystem
+    SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight));
+    //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
+
     // command sequences
     SmartDashboard.putData("ShootSequence 2800", new ShootSequence(2800, shooter, feeder, hopper, intake, led, log));
     SmartDashboard.putData("ShootSequence DIST", new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log));
@@ -160,7 +162,6 @@ public class RobotContainer {
     // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
-    SmartDashboard.putData("Rainbow", new LEDSetPattern(LED.rainbowLibrary, 0, led, log));
   }
 
   /**
@@ -208,7 +209,7 @@ public class RobotContainer {
 
     // back = 7, start = 8 
     // xb[7].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
-    xb[8].toggleWhenActive(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake, log)); // run rollers out
+    xb[8].toggleWhenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake, log)); // run rollers out
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
     // xb[9].whenPressed(new Wait(0));
@@ -349,6 +350,7 @@ public class RobotContainer {
     disabledDisplayTimer.start();
 
     driveTrain.setDriveModeCoast(true);
+    limeLight.setSnapshot(false);
     shooter.setPowerCellsShot(0);
     shooter.setShooterVoltage(0);
     hopper.hopperSetPercentOutput(0);
