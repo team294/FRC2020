@@ -12,17 +12,17 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.Climb;
 
-public class ClimbSetPercentOutput extends CommandBase {
+public class ClimbRightSetPercentOutput extends CommandBase {
   private Climb climb;
   private double percent, timeRemaining;
 
   /**
-   * Set percent output of both climb motors.
+   * Set percent output of left climb motor.
    * This command never ends.
    * @param percent percent output (0 to 1)
    * @param climb climb subsystem
    */
-  public ClimbSetPercentOutput(double percent, Climb climb) {
+  public ClimbRightSetPercentOutput(double percent, Climb climb) {
     this.climb = climb;
     this.percent = percent;
     timeRemaining = DriverStation.getInstance().getMatchTime();
@@ -34,7 +34,7 @@ public class ClimbSetPercentOutput extends CommandBase {
   public void initialize() {
     // if it is the last 30 seconds of the match and the piston is extended, set left and right motor perecnt output
     if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition())
-      climb.climbMotorsSetPercentOutput(percent);
+      climb.climbMotorRightSetPercentOutput(percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -45,7 +45,7 @@ public class ClimbSetPercentOutput extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    climb.climbMotorsSetPercentOutput(0.0);
+    climb.climbMotorRightSetPercentOutput(0);
   }
 
   // Returns true when the command should end.
@@ -53,9 +53,7 @@ public class ClimbSetPercentOutput extends CommandBase {
   public boolean isFinished() {
     // if it is the last 30 seconds of the match and the piston is extended, do not finish
     /* if (timeRemaining <= 30 && climb.climbPistonsGetPosition()) return false; */
-    // else return true;
-    if (climb.getLeftEncoderInches() >= ClimbConstants.maxHeight && percent > 0
-      /*|| climb.getRightEncoderInches() >= ClimbConstants.maxHeight*/) return true;
+    if (climb.getRightEncoderInches() >= ClimbConstants.maxHeight && percent > 0) return true;
     else return false;
   }
 }

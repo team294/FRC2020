@@ -44,7 +44,7 @@ public class Climb extends SubsystemBase {
     climbMotorLeft.setInverted(false); // TODO determine motor inversion
     climbMotorRight.setInverted(true);
 
-    climbMotorLeft.setNeutralMode(NeutralMode.Coast);
+    climbMotorLeft.setNeutralMode(NeutralMode.Brake);
     climbMotorLeft.configClosedloopRamp(0.05); // seconds from neutral to full
     climbMotorLeft.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, 0, timeoutMs); 
     climbMotorLeft.configVelocityMeasurementPeriod(VelocityMeasPeriod.Period_10Ms);
