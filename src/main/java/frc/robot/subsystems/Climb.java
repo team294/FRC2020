@@ -120,7 +120,7 @@ public class Climb extends SubsystemBase {
    */
   public void climbMotorRightSetVelocity(double velocity) {
     rightTargetVelocity = velocity;
-    climbMotorLeft.set(ControlMode.Velocity, ipsToTicksPer100ms(velocity));
+    climbMotorRight.set(ControlMode.Velocity, ipsToTicksPer100ms(velocity));
   }
 
   /**
@@ -303,6 +303,7 @@ public class Climb extends SubsystemBase {
       SmartDashboard.putNumber("ClimbRight Position", getRightEncoderInches());
       SmartDashboard.putNumber("ClimbLeft Vel", leftCurrVelocity);
       SmartDashboard.putNumber("ClimbRight Vel", rightCurrVelocity);
+      SmartDashboard.putBoolean("ClimbExtended", climbPistonsGetPosition());
     }
   }
 

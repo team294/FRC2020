@@ -20,7 +20,7 @@ public class ClimbLeftSetVelocity extends CommandBase {
    * Set left climb arm velocity.
    * This command ends when the right climb arm gets within the tolerance of the target position.
    * @param velocity velocity (inches/second)
-   * @param position target position (inches) NOTE: moves negative position when moving away from limit switch
+   * @param position target position (inches)
    * @param climb climb subsystem
    */
   public ClimbLeftSetVelocity(double velocity, double position, Climb climb) {
@@ -35,7 +35,7 @@ public class ClimbLeftSetVelocity extends CommandBase {
   public void initialize() {
     timeRemaining = DriverStation.getInstance().getMatchTime();
     // if it is the last 30 seconds of the match and the piston is extended, set left motor velocity
-    // if (initMatchTime <= 30 && climb.climb.climbPistonsGetPosition())
+    if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition())
       climb.climbMotorLeftSetVelocity(velocity);
   }
 
@@ -54,9 +54,9 @@ public class ClimbLeftSetVelocity extends CommandBase {
   @Override
   public boolean isFinished() {
     // if it is the last 30 seconds of the match and the piston is extended, check for being at target position
-    // if (initMatchTime <= 30 && climb.climb.climbPistonsGetPosition()) {
+    if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition()) {
       if (Math.abs(climb.getLeftEncoderInches() - position) <= ClimbConstants.positionTolerance) return true;
       else return false;
-    // } else return true;
+    } else return true;
   }
 }

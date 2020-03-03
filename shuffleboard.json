@@ -428,7 +428,7 @@
           "3,0": {
             "size": [
               2,
-              4
+              6
             ],
             "content": {
               "_type": "List Layout",
@@ -443,9 +443,21 @@
                   "Colors/Color when false": "#8B0000FF"
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/ClimbLeft Position",
-                  "_title": "ClimbLeft Position"
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
+                  "_title": "ClimbRight Limit",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft -6 ips",
+                  "_title": "ClimbLeft -6 ips"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight -6 ips",
+                  "_title": "ClimbRight -6 ips"
                 },
                 {
                   "_type": "Command",
@@ -454,13 +466,28 @@
                 },
                 {
                   "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight 0.8%",
+                  "_title": "ClimbRight 0.8%"
+                },
+                {
+                  "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ClimbLeft -0.8%",
                   "_title": "ClimbLeft -0.8%"
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ClimbLeft 6 ips",
-                  "_title": "ClimbLeft -6 ips"
+                  "_source0": "network_table:///SmartDashboard/ClimbRight -0.8%",
+                  "_title": "ClimbRight -0.8%"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Position",
+                  "_title": "ClimbLeft Position"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight Position",
+                  "_title": "ClimbRight Position"
                 }
               ]
             }

@@ -71,13 +71,16 @@ public final class Constants {
     }
 
     public static final class ClimbConstants {
-        public static final int canClimbMotorLeft = 45;
-        public static final int canClimbMotorRight = 46;
+        public static final int canClimbMotorLeft = 46;
+        public static final int canClimbMotorRight = 45;
         public static final int pcmClimbPistonsIn = 4;
         public static final int pcmClimbPistonsOut = 5;
         public static final double ticksPerInch = 2048 * 54 / 2 / Math.PI; // ticksPerRotation * gearRatio(54:1) / pi / radius
         public static final double positionTolerance = 1;
         public static final double maxHeight = 33;
+        public static final double targetLowPosition = 3; // target low position in inches
+        public static final double targetHighPosition = 25; // target high position in inches
+        public static final double defaultVelocity = -6;
     }
 
     public static final class LimeLightConstants {

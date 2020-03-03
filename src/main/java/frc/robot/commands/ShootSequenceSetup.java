@@ -61,11 +61,11 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
       new ConditionalCommand(
         sequence(
           new ShooterHoodPistonSequence(true, true, shooter, log),
-          new ShooterSetPID(false, ShooterConstants.shooterDefaultTrenchRPM, shooter, led)
+          new ShooterSetPID(false, ShooterConstants.shooterDefaultTrenchRPM, shooter, led, log)
         ),
         sequence(
           new ShooterHoodPistonSequence(true, false, shooter, log),
-          new ShooterSetPID(false, ShooterConstants.shooterDefaultRPM, shooter, led)
+          new ShooterSetPID(false, ShooterConstants.shooterDefaultRPM, shooter, led, log)
         ),
         () -> trench
       )
