@@ -160,7 +160,7 @@ public class RobotContainer {
     SmartDashboard.putNumber("Autonomous delay", 0);
     SmartDashboard.putBoolean("Autonomous use vision", true);
 
-    // display sticky faults%
+    // display sticky faults
     RobotPreferences.showStickyFaults();
     SmartDashboard.putData("Clear Sticky Faults", new StickyFaultsClear(log));
   }
@@ -239,11 +239,11 @@ public class RobotContainer {
       right[i] = new JoystickButton(rightJoystick, i);
     }
 
-    // joystick top button
+    // joystick left button
     // left[1].whenPressed(new Wait(0));
     // right[1].whenPressed(new Wait(0));
 
-    // joystick bottom button
+    // joystick right button
     left[2].whenHeld(new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
   }

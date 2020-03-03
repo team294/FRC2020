@@ -216,8 +216,6 @@ public class LimeLight extends SubsystemBase {
       led.setPattern(makePattern(), 0.5, 0);
     }
 
-    // led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
-    // ledAnimation.setDelayCounter();
     updateLimeLightLog(true);   //TODO move this back into the if block below
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {

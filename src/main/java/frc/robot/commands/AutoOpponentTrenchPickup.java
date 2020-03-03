@@ -18,7 +18,6 @@ import frc.robot.utilities.*;
 // information, see:
 // https://docs.wpilib.org/en/latest/docs/software/commandbased/convenience-features.html
 public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
-
  
   // start robot infront of opponents trench with the intake facing the trench
 
