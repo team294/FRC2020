@@ -7,6 +7,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -25,8 +26,10 @@ public class LimeLight extends SubsystemBase {
   private double targetExists, x, y, area, latency, pipe;
   private FileLog log;
   private LED led;
-  private DriveTrain driveTrain; // for testing distance calculation, probs can be taken out dist calc finished
   private double sweetSpot;
+  private Timer snapshotTimer;
+  private int snapshotCount = 0;
+  private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
 
   /*
    * Limelight settings: ~~input~~ Exposure: 2 Black level offset: 0 red balance:
@@ -41,6 +44,9 @@ public class LimeLight extends SubsystemBase {
   public LimeLight(FileLog log, LED led, DriveTrain driveTrain) {
     this.log = log;
     this.led = led;
+    this.snapshotTimer = new Timer();
+    snapshotTimer.reset();
+    snapshotTimer.start();
     this.driveTrain = driveTrain;
     tableInstance.startClientTeam(294);
 
@@ -78,6 +84,7 @@ public class LimeLight extends SubsystemBase {
   public double getSweetSpot() {
     return sweetSpot;
   }
+
   /**
    * @return latency contribution by pipeline
    */
@@ -120,6 +127,44 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
+   * @param snapshot true is take a snapshot, false is don't take snapshots
+   * will increment "snapshotCount" to keep track of how many snapshots have been taken
+   * should only be called if canTakeSnapshot() is true
+   */
+  public void setSnapshot(boolean snapshot) {
+    if(snapshot && canTakeSnapshot()) {
+      table.getEntry("snapshot").setNumber(1);
+      if(table.getEntry("snapshot").getDouble(0)==1) {
+        snapshotCount++;
+      }
+      log.writeLog(false, "LimeLight", "setSnapshot", "Snapshot Count", snapshotCount);
+
+      snapshotTimer.reset();
+      snapshotTimer.start();
+    }
+    else table.getEntry("snapshot").setNumber(0);
+  }
+
+  /**
+   * Limelight will only save snapshots every 0.5 seconds
+   * @return true if enough time has passed since the last snapshot to take another snapshot
+   *              in order to prevent overloading the Limelight with snapshot requests
+   *              "takeSnapshots" has to be true in preferences (meaning we want to be taking snapshots)
+   *         false if we shouldn't take a snapshot (either due to delay or not wanting to take snapshots)
+   */
+  public boolean canTakeSnapshot() {
+    return snapshotTimer.hasElapsed(0.5) && takeSnapshots;
+  }
+
+  /**
+   * reset number of snapshots taken (as if we are clearing our cache of snapshots)
+   * This will NOT actually delete the snapshots (we don't have that capability in code)
+   */
+  public void resetSnapshotCount() {
+    snapshotCount = 0;
+  }
+
+  /**
    * Choose which LED pattern to display, based on the x offset from camera.
    * @return Color array of the pattern
    */
@@ -156,16 +201,14 @@ public class LimeLight extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
-
     // read values periodically
     targetExists = tv.getDouble(1000.0);
     x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
-    sweetSpot = getDistanceNew() - endDistance;
-    SmartDashboard.putNumber("Limelight sweet spot", sweetSpot);
     latency = tl.getDouble(1000.0);
+
+    sweetSpot = getDistanceNew() - endDistance;
 
     if (makePattern() == LED.visionTargetLibrary[15]) {
       led.setPattern(makePattern(), 0.1, 0);
@@ -175,7 +218,7 @@ public class LimeLight extends SubsystemBase {
 
     // led.setPattern(ledAnimation.getNextPattern(), 0.5, 1);
     // ledAnimation.setDelayCounter();
-    updateLimeLightLog(true);
+    updateLimeLightLog(true);   //TODO move this back into the if block below
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
 
@@ -186,12 +229,14 @@ public class LimeLight extends SubsystemBase {
       // Invert X on SmartDashboard, since bars on SmartDashboard always go from - (left) to + (right)
       SmartDashboard.putNumber("LimeLight x", -x);
       SmartDashboard.putNumber("LimeLight y", y);
+      SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
       //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
       SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
       SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
+      SmartDashboard.putNumber("Limelight sweet spot", sweetSpot);
       SmartDashboard.putBoolean("Limelight Updating", isGettingData());
-      SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
       SmartDashboard.putNumber("Limelight Latency", getLatency());
+      SmartDashboard.putNumber("Limelight Snapshot Count", snapshotCount);
       
       pipe = SmartDashboard.getNumber("Pipeline", 0); // default is vision pipeline
 
@@ -208,10 +253,12 @@ public class LimeLight extends SubsystemBase {
    */
   public void updateLimeLightLog(boolean logWhenDisabled) {
     log.writeLog(logWhenDisabled, "LimeLight", "Update Variables", 
+      "Target Valid", seesTarget(),
       "Center Offset X", x, 
       "Center Offset Y", y,
       "Target Area", area,
       "Latency", latency,
+      "Snapshot Count", snapshotCount,
       "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12)
       );
   }

@@ -225,17 +225,9 @@ public class Shooter extends SubsystemBase {
       led.setBallLights(cellsShot);
     }
 
-    // if voltage target is 0, reset power cell count
-    if (voltageTarget == 0) cellsShot = 0;
-
     // if voltage target is 0 and current number of power cells shot is not equal to
     // previous number of power cells shot (previous is not 0), set led strip to current n
-    if(voltageTarget == 0 && cellsShot != prevCellsShot) led.setBallLights(cellsShot); 
-    
-    if (getCell() && !prevCellState) {
-      cellsShot++;
-      led.setBallLights(cellsShot);
-    }
+    if(voltageTarget == 0 && cellsShot != prevCellsShot) led.setBallLights(cellsShot);
 
     if (voltageTarget == 0) cellsShot = 0;
     if(voltageTarget == 0 && (cellsShot != prevCellsShot)) led.setBallLights(cellsShot);

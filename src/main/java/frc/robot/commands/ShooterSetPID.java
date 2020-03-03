@@ -107,6 +107,9 @@ public class ShooterSetPID extends CommandBase {
       if (limeLight.getDistanceNew() == 0) rpm = ShooterConstants.shooterDefaultRPM;
       else rpm = shooter.distanceFromTargetToRPM(limeLight.getDistanceNew());
       shooter.setShooterPID(rpm);
+      if(limeLight.canTakeSnapshot()) {
+        limeLight.setSnapshot(true);
+      }    
     }
     
     SmartDashboard.putString("LED Color", ledColor);

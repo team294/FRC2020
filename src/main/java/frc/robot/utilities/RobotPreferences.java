@@ -31,6 +31,8 @@ public class RobotPreferences {
         // DriveConstants.kA = readDouble("DriveKA", DriveConstants.kA);
         RobotConstants.prototypeBot = readBoolean("prototypeBot", RobotConstants.prototypeBot);
 
+        LimeLightConstants.takeSnapshots = readBoolean("Limelight.takeSnapshots", LimeLightConstants.takeSnapshots);
+
         DriveConstants.ticksPerInch = readDouble("Drive.ticksPerInch", DriveConstants.ticksPerInch);
         DriveConstants.TRACK_WIDTH = readDouble("Drive.TrackWidth", DriveConstants.TRACK_WIDTH);
 
