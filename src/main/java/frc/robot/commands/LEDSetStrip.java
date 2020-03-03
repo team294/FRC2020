@@ -51,7 +51,7 @@ public class LEDSetStrip extends CommandBase {
 	public void initialize() {
     if (intensity >= 0) led.setStrip(color, intensity, 1);
     else led.setStrip(color, 1);
-    log.writeLog(false, "LEDSetStrip", "Init");
+    log.writeLog(false, "LEDSetStrip", "Init", "SetColor", color);
   }
     
   // Called every time the scheduler runs while the command is scheduled.
