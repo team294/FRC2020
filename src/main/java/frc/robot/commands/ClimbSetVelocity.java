@@ -18,7 +18,8 @@ public class ClimbSetVelocity extends CommandBase {
 
   /**
    * Set both climb arm velocities.
-   * This command ends when the right climb arm gets within the tolerance of the target position.
+   * This command ends when the both climb arms gets within the tolerance of the target position.
+   * However, it will stop applying power to an arm if it reaches the target position sooner.
    * @param velocity velocity (inches/second)
    * @param position target position (inches)
    * @param climb climb subsystem
@@ -26,6 +27,22 @@ public class ClimbSetVelocity extends CommandBase {
   public ClimbSetVelocity(double velocity, double position, Climb climb) {
     this.climb = climb;
     this.velocity = velocity;
+    this.position = position;
+    addRequirements(climb);
+  }
+
+  /**
+   * Set both climb arm velocities with the default velocity.
+   * This command ends when the both climb arms gets within the tolerance of the target position.
+   * However, it will stop applying power to an arm if it reaches the target position sooner.
+   * @param down true = climb going up (lifting), false = climb going up (latching)
+   * @param position target position (inches)
+   * @param climb climb subsystem
+   */
+  public ClimbSetVelocity(boolean down, double position, Climb climb) {
+    this.climb = climb;
+    if (down) this.velocity = ClimbConstants.defaultVelocity;
+    else this.velocity = -1 * ClimbConstants.defaultVelocity;
     this.position = position;
     addRequirements(climb);
   }
