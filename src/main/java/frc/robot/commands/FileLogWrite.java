@@ -20,7 +20,7 @@ public class FileLogWrite extends CommandBase {
   boolean logWhenDisabled;
   String subsystemOrCommand;
   String event;
-  Object paramArray;
+  Object[] paramArray;
 
   public FileLogWrite(boolean echo, boolean logWhenDisabled, String subsystemOrCommand, String event, FileLog log, Object... paramArray) {
     // Use addRequirements() here to declare subsystem dependencies.

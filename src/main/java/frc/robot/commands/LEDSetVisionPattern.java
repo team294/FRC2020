@@ -48,7 +48,7 @@ public class LEDSetVisionPattern extends CommandBase {
   @Override
   public void initialize() {
     led.setPattern(LED.visionTargetLibrary[rowNumber], intensity, 1);
-    log.writeLog(false, "LEDSetVisionPattern", "Init", "Pattern", rowNumber);
+    log.writeLog(false, "LEDSetVisionPattern", "Init", "Row #", rowNumber);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
