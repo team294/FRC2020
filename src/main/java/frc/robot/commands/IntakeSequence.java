@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Intake;
 import frc.robot.utilities.FileLog;
@@ -18,8 +19,14 @@ public class IntakeSequence extends SequentialCommandGroup {
    */
   public IntakeSequence(Intake intake, FileLog log) {
     addCommands(
+      new ConditionalCommand(
+        sequence(
+          new IntakePistonSetPosition(true, intake, log),
+          new Wait(0.4)
+        ), 
+        new Wait(0), 
+        () -> !intake.intakeGetPiston()),
       new FileLogWrite(false, false, "IntakeSequence", "Init", log),
-      new IntakePistonSetPosition(true, intake, log),
       new IntakeSetPercentOutput(false, intake, log)
     );
   }

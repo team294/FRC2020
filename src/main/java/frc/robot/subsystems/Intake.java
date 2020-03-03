@@ -61,6 +61,14 @@ public class Intake extends SubsystemBase {
     else if (!extend) intakePiston.set(Value.kReverse);
   }
 
+  /**
+   * @return true = extended, false = retracted
+   */
+  public boolean intakeGetPiston() {
+    if (intakePiston.get() == Value.kForward) return true;
+    else return false;
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
