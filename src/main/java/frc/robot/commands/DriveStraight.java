@@ -169,18 +169,15 @@ public class DriveStraight extends CommandBase {
 
     if(sweetSpot){
       target = Units.inchesToMeters(limeLight.getSweetSpot() * 12);
-      //target = 0;
-      SmartDashboard.putNumber("sweet spot (init drivestraight)", Units.inchesToMeters(limeLight.getSweetSpot() * 12));
-      driveTrain.setDriveModeCoast(false);
-
     }
+
     direction = Math.signum(target);
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
     tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel); // initialize velocity and accel limits
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
-    log.writeLog(false, "DriveStraight", "init", "Profile total time", tProfile.totalTime());
+    log.writeLog(false, "DriveStraight", "init", "Target", target, "Profile total time", tProfile.totalTime());
     
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     startDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches());
@@ -254,25 +251,13 @@ public class DriveStraight extends CommandBase {
   public void end(boolean interrupted) {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
-    driveTrain.setDriveModeCoast(false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // if((startAng + target) - Units.inchesToMeters(driveTrain.getAverageDistance()) < 0.1) {
-    //   System.out.println("Start: " + startAng);
-    //   System.out.println("theoretical: " + (startAng + target));
-    //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
-    //   return true;
-    // }
-
-    driveTrain.setDriveModeCoast(true);
     if(Math.abs(target - currDist) < 0.0125) {
       accuracyCounter++;
-      // System.out.println("theoretical: " + target);
-      // System.out.println("actual: " + currDist);
-      // System.out.println(accuracyCounter);
       log.writeLog(false, "DriveStraight", "WithinTolerance", "Target Dist", target, "Actual Dist", currDist, "Counter", accuracyCounter);
     } else {
       accuracyCounter = 0;

@@ -81,6 +81,11 @@ public class LimeLight extends SubsystemBase {
   public double getArea() {
     return area;
   }
+
+  /**
+   * Distance from the robot to the shooting "sweet spot"
+   * @return distance to the "sweet spot", in feet (+ = move towards target)
+   */
   public double getSweetSpot() {
     return sweetSpot;
   }
@@ -216,9 +221,9 @@ public class LimeLight extends SubsystemBase {
       led.setPattern(makePattern(), 0.5, 0);
     }
 
-    updateLimeLightLog(true);   //TODO move this back into the if block below
-
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
+
+      updateLimeLightLog(false);
 
       if(!isGettingData()) {
         RobotPreferences.recordStickyFaults("LimeLight", log);
