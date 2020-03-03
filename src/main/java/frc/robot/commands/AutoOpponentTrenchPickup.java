@@ -28,12 +28,10 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     addCommands(
-      deadline(
-        // wait before starting
-        new Wait(waitTime),
-        new FileLogWrite(true, true, "AutoOpponentTrenchPickup", "Start", log),
-        new DriveZeroGyro(180, driveTrain, log)
-      ),
+
+      new DriveZeroGyro(180.0, driveTrain, log),
+
+      new Wait(waitTime),
 
       deadline( // ends when we reach the two balls in the trench
         new DriveStraight(2.6, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench

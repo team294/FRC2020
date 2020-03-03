@@ -26,12 +26,9 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
   public AutoOwnTrenchPickup(double waitTime, boolean useVision, DriveTrain driveTrain, LimeLight limeLight, FileLog log, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led) {
     
     addCommands(
-      deadline(
-        // wait before starting
-        new Wait(waitTime),
-        new FileLogWrite(true, true, "AutoOwnTrenchPickup", "Start", log),
-        new DriveZeroGyro(driveTrain, log)
-      ),
+      
+      new DriveZeroGyro(driveTrain, log),
+      new Wait(waitTime),
 
       deadline(
         

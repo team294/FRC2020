@@ -36,11 +36,9 @@ public class AutoShootForward extends SequentialCommandGroup {
     // can start anywhere on auto line between left most pole from driver perspective and close to right edge of the field, needs to be semi lined up with target
 
     addCommands(
-      deadline(
-        // wait before starting
-        new Wait(waitTime),
-        new FileLogWrite(true, true, "AutoShootForward", "Start", log)
-      ),  
+
+      // wait before starting
+      new Wait(waitTime),
 
       new ConditionalCommand(
         new SequentialCommandGroup( 

@@ -7,7 +7,6 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
@@ -25,12 +24,10 @@ public class AutoTrussPickup extends SequentialCommandGroup {
     // start with edge of bumpers to the left edge of the center line, intake facing towards truss, line up straight
     
     addCommands(
-      deadline(
-        // wait before starting
-        new Wait(waitTime),
-        new FileLogWrite(true, true, "AutoTrussPickup", "Start", log),
-        new DriveZeroGyro(180, driveTrain, log)
-      ),
+
+      new Wait(waitTime),
+
+      new DriveZeroGyro(180, driveTrain, log),
 
       deadline(
         new DriveStraight(2.08, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive to 2 of balls on truss
