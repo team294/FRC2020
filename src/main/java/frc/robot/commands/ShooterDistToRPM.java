@@ -53,7 +53,7 @@ public class ShooterDistToRPM extends CommandBase {
     if(fromShuffleboard) distance = SmartDashboard.getNumber("Shooter Distance", 5);
     rpm = shooter.distanceFromTargetToRPM(distance);
     SmartDashboard.putNumber("Shooter RPM from Dist", rpm);
-    log.writeLog(false, "ShooterDistToRPM", "Init");
+    log.writeLog(false, "ShooterDistToRPM", "Init", "TargetRPM", rpm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -100,7 +100,7 @@ public class ShooterSetPID extends CommandBase {
     shooter.setShooterPID(rpm);
     ledTimer.reset();
     ledTimer.start();
-    log.writeLog(false, "ShooterSetPID", "Init");
+    log.writeLog(false, "ShooterSetPID", "Init", "TargetRPM", rpm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

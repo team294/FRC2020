@@ -23,6 +23,7 @@ public class ShootSequenceStop extends SequentialCommandGroup {
   public ShootSequenceStop(Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led, FileLog log) {
     addCommands(
       parallel(
+        new FileLogWrite(false, false, "ShootSequence", "Stop", log),
         new ShooterSetPID(1200, shooter, led, log),
         new FeederSetVoltage(0, feeder, log),
         new IntakeSetPercentOutput(0, true, intake, log),

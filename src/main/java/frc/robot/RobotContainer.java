@@ -120,7 +120,7 @@ public class RobotContainer {
     SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb));
     
     // limelight subsystem
-    SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight));
+    SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight, log));
     //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
 
     // command sequences
@@ -155,7 +155,7 @@ public class RobotContainer {
     // Testing for autos and trajectories
     SmartDashboard.putData("ZeroGyro", new DriveZeroGyro(driveTrain, log));
     SmartDashboard.putData("ZeroEncoders", new DriveZeroEncoders(driveTrain, log));
-    SmartDashboard.putData("ZeroOdometry", new DriveResetPose(0, 0, 0, driveTrain));
+    SmartDashboard.putData("ZeroOdometry", new DriveResetPose(0, 0, 0, driveTrain, log));
     SmartDashboard.putData("DriveTrajectoryRelative", new DriveFollowTrajectory(CoordType.kRelative, TrajectoryTest.calcTrajectory(log), driveTrain, log)
         .andThen(() -> driveTrain.tankDrive(0.0, 0.0, false)));
     SmartDashboard.putData("DriveTrajectoryAbsolute", new DriveFollowTrajectory(CoordType.kAbsolute, TrajectoryTest.calcTrajectory(log), driveTrain, log)

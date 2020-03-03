@@ -26,6 +26,7 @@ public class IntakeSequence extends SequentialCommandGroup {
         ), 
         new Wait(0), 
         () -> !intake.intakeGetPiston()),
+      new FileLogWrite(false, false, "IntakeSequence", "Init", log),
       new IntakeSetPercentOutput(false, intake, log)
     );
   }
