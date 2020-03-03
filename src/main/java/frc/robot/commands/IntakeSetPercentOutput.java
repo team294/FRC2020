@@ -51,7 +51,7 @@ public class IntakeSetPercentOutput extends CommandBase {
   @Override
   public void initialize() {
     intake.intakeSetPercentOutput(percent);
-    log.writeLog(false, "IntakeSetPercentOut", "Init");
+    log.writeLog(false, "IntakeSetPercentOut", "Init", "Target %", percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

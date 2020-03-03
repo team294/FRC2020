@@ -18,6 +18,7 @@ public class IntakeSequence extends SequentialCommandGroup {
    */
   public IntakeSequence(Intake intake, FileLog log) {
     addCommands(
+      new FileLogWrite(false, false, "IntakeSequence", "Init", log),
       new IntakePistonSetPosition(true, intake, log),
       new IntakeSetPercentOutput(false, intake, log)
     );

@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveTrain;
+import frc.robot.utilities.FileLog;
 
 public class DriveResetPose extends CommandBase {
   /**
@@ -18,6 +19,7 @@ public class DriveResetPose extends CommandBase {
    */
 
   private DriveTrain driveTrain;
+  private FileLog log;
   private double curX, curY, curAngle;
 
   /**
@@ -27,9 +29,10 @@ public class DriveResetPose extends CommandBase {
    * @param curAngleinDegrees Robot angle on the field, in degrees (0 = facing away from our drivestation)
    * @param driveTrain DriveTrain subsytem
 	 */
-  public DriveResetPose(double curXinMeters, double curYinMeters, double curAngleinDegrees, DriveTrain driveTrain) {
+  public DriveResetPose(double curXinMeters, double curYinMeters, double curAngleinDegrees, DriveTrain driveTrain, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.driveTrain = driveTrain;
+    this.log = log;
     curX = curXinMeters;
     curY = curYinMeters;
     curAngle = curAngleinDegrees;
@@ -39,6 +42,7 @@ public class DriveResetPose extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "DriveResetPose", "Init", "Curr X", curX, "CurrY", curY, "CurAng", curAngle);
     driveTrain.resetPose(new Pose2d(curX, curY, new Rotation2d(Math.toRadians(curAngle))));
   }
 

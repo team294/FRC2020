@@ -33,8 +33,14 @@ public class ShootSequence extends SequentialCommandGroup {
         // If getting RPM from distance and within range to do unlocked hood shot,
         // unlock the hood but close it. Otherwise, close and lock the hood.
         new ConditionalCommand(
-          new ShooterHoodPistonSequence(true, true, shooter, log),
-          new ShooterHoodPistonSequence(true, false, shooter, log),
+          parallel(
+            new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Unlock and Close"),
+            new ShooterHoodPistonSequence(true, true, shooter, log)
+          ),
+          parallel(
+            new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Lock and Close"),
+            new ShooterHoodPistonSequence(true, false, shooter, log)
+          ),
           () -> rpmFromDistance && (limeLight.getDistanceNew() > LimeLightConstants.unlockedHoodMaxDistance
             || !limeLight.seesTarget())
         )
@@ -61,6 +67,7 @@ public class ShootSequence extends SequentialCommandGroup {
   */
   public ShootSequence(int rpm, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led, FileLog log) {
     addCommands( 
+      new FileLogWrite(false, false, "ShootSequence", "Start", log, "RPM", rpm),
       new ShooterSetPID(rpm, shooter, led, log),
       new FeederSetPID(feeder, log),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
@@ -90,10 +97,12 @@ public class ShootSequence extends SequentialCommandGroup {
       // Otherwise, close the hood, leave it unlocked, and set shooter RPM.
       new ConditionalCommand(
         sequence(
+          new FileLogWrite(false, false, "ShootSequence", "Start", log, "ShootFrom", "Trench", "Hood", "Lock and Close"),
           new ShooterHoodPistonSequence(true, true, shooter, log),
           new ShooterSetPID(ShooterConstants.shooterDefaultTrenchRPM, shooter, led, log)
         ),
         sequence(
+          new FileLogWrite(false, false, "ShootSequence", "Start", log, "Hood", "Unlock and Close"),
           new ShooterHoodPistonSequence(true, false, shooter,log),
           new ShooterSetPID(ShooterConstants.shooterDefaultRPM, shooter, led, log)
         ),
@@ -122,6 +131,7 @@ public class ShootSequence extends SequentialCommandGroup {
       parallel(
         // If hood is not open, wait 0.3 seconds before moving on from setting hood position.
         // Otherwise, immediately move on from setting hood position.
+        new FileLogWrite(false, false, "ShootSequence", "Start", log),
         new ConditionalCommand(new Wait(0.3), new Wait(0), () -> !shooter.getHoodPiston()),
         new ShooterHoodPistonSequence(false, false, shooter, log) 
       ),

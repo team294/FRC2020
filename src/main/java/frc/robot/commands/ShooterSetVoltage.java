@@ -33,7 +33,7 @@ public class ShooterSetVoltage extends CommandBase {
   @Override
   public void initialize() {
     shooter.setShooterVoltage(voltage);
-    log.writeLog(false, "ShooterSetVoltage", "Init");
+    log.writeLog(false, "ShooterSetVoltage", "Init", "TargetVolts", voltage);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

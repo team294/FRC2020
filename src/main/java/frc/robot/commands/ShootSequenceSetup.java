@@ -40,8 +40,14 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
       // If closing the hood, set shooter RPM based on distance.
       // Otherwise, set shooter RPM to the default value for the short shot.
       new ConditionalCommand(
-        new ShooterSetPID(true, false, shooter, limeLight, led, log),
-        new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led, log),
+        parallel(
+          new FileLogWrite(false, false, "ShootSequence", "Setup", log, "Hood", "Close"),
+          new ShooterSetPID(true, false, shooter, limeLight, led, log)
+        ),
+        parallel(
+          new FileLogWrite(false, false, "ShootSequence", "Setup", log, "Hood", "Open"),
+          new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led, log)
+        ),
         () -> closeHood
       )
     );
@@ -60,12 +66,14 @@ public class ShootSequenceSetup extends SequentialCommandGroup {
       // Otherwise, close the hood, leave it unlocked, and set shooter RPM.
       new ConditionalCommand(
         sequence(
+          new FileLogWrite(false, false, "ShootSequence", "Setup", log, "ShootFrom", "Trench"),
           new ShooterHoodPistonSequence(true, true, shooter, log),
-          new ShooterSetPID(false, ShooterConstants.shooterDefaultTrenchRPM, shooter, led)
+          new ShooterSetPID(false, ShooterConstants.shooterDefaultTrenchRPM, shooter, led, log)
         ),
         sequence(
+          new FileLogWrite(false, false, "ShootSequence", "Setup", log, "ShootFrom", "Autoline"),
           new ShooterHoodPistonSequence(true, false, shooter, log),
-          new ShooterSetPID(false, ShooterConstants.shooterDefaultRPM, shooter, led)
+          new ShooterSetPID(false, ShooterConstants.shooterDefaultRPM, shooter, led, log)
         ),
         () -> trench
       )
