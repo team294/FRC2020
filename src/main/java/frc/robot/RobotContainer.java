@@ -281,14 +281,15 @@ public class RobotContainer {
     coP[1].whenPressed(new ClimbPistonsSetPosition(true, climb)); // deploy climb pistons
     coP[2].whenPressed(new ClimbPistonsSetPosition(false, climb)); // retract climb pistons
 
-    coP[3].whenPressed(new ClimbSetVelocity(false, ClimbConstants.latchHeight, climb)); // raise climb arms to default latching height
-    coP[4].whenPressed(new ClimbSetVelocity(false, ClimbConstants.latchExtensionHeight, climb)); // raise climb arms to slightly above default latching height
+    coP[3].whenPressed(new ClimbSetVelocity(true, ClimbConstants.latchHeight, climb)); // raise climb arms to default latching height
+    coP[4].whenPressed(new ClimbSetVelocity(true, ClimbConstants.latchExtensionHeight, climb)); // raise climb arms to slightly above default latching height
 
     coP[5].whileHeld(new ClimbSetPercentOutput(0.4, climb)); // manually raise climb arms, slowly
     coP[6].whileHeld(new ClimbSetPercentOutput(-0.4, climb)); // manually lower climb arms, slowly
     
     // top row RED SWITCH
-    coP[8].whenPressed(new ClimbSetVelocity(ClimbConstants.defaultVelocity, ClimbConstants.liftHeight, climb)); // climb lift sequence
+    coP[8].whenPressed(new ClimbLiftSequence(climb, led, log)); // climb lift sequence (rainbow LEDs and climb arms lower to lifting height)
+    // coP[8].whenPressed(new ClimbSetVelocity(true, ClimbConstants.liftHeight, climb)); // climb arms lower to lifting height
 
     // middle row UP then DOWN, from LEFT to RIGHT
     coP[9].whileHeld(new ClimbLeftSetPercentOutput(0.4, climb)); // manually raise left climb arm, slowly

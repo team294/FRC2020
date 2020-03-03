@@ -35,7 +35,7 @@ public class ClimbSetVelocity extends CommandBase {
    * Set both climb arm velocities with the default velocity.
    * This command ends when the both climb arms gets within the tolerance of the target position.
    * However, it will stop applying power to an arm if it reaches the target position sooner.
-   * @param down true = climb going up (lifting), false = climb going up (latching)
+   * @param down true = climb going down (lifting), false = climb going up (latching)
    * @param position target position (inches)
    * @param climb climb subsystem
    */
