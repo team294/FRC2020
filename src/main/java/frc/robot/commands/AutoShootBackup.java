@@ -25,8 +25,12 @@ public class AutoShootBackup extends SequentialCommandGroup {
     // can start anywhere on auto line between left most pole from driver perspective and close to right edge of the field, needs to be semi lined up with target
     // one front wheel on line, one behind
     addCommands(
+      deadline(
+        // wait before starting
+        new Wait(waitTime),
+        new FileLogWrite(true, true, "AutoShootBackward", "Start", log)
+      ),      
 
-      new Wait(waitTime),
       new ConditionalCommand(
         // With Vision
         new SequentialCommandGroup(
