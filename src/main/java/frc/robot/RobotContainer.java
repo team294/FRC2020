@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ClimbConstants;
 import frc.robot.Constants.CoordType;
 import frc.robot.Constants.TargetType;
 import frc.robot.commands.*;
@@ -40,6 +41,7 @@ public class RobotContainer {
   private final Hopper hopper = new Hopper(log);
   private final Intake intake = new Intake(log, led);
   private final Feeder feeder = new Feeder(log, tempCheck);
+  private final Climb climb = new Climb(log);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
   private final DriveTrain driveTrain = new DriveTrain(log, tempCheck);
   private final LimeLight limeLight = new LimeLight(log, led, driveTrain);
@@ -108,6 +110,16 @@ public class RobotContainer {
     SmartDashboard.putData("LEDSetStrip OFF", new LEDSetStrip("Red", 0, led, log));
     SmartDashboard.putData("LEDRainbow", new LEDSetPattern(LED.rainbowLibrary, 1, 0.5, led, log));
 
+    // climber subsystem
+    SmartDashboard.putData("ClimbLeft 0.8%", new ClimbLeftSetPercentOutput(0.8, climb));
+    SmartDashboard.putData("ClimbLeft -0.8%", new ClimbLeftSetPercentOutput(-0.8, climb));
+    SmartDashboard.putData("ClimbLeft -6 ips", new ClimbLeftSetVelocity(-6, 6, climb));
+    SmartDashboard.putData("ClimbRight 0.8%", new ClimbRightSetPercentOutput(0.8, climb));
+    SmartDashboard.putData("ClimbRight -0.8%", new ClimbRightSetPercentOutput(-0.8, climb));
+    SmartDashboard.putData("ClimbRight -6 ips", new ClimbRightSetVelocity(-6, 6, climb));
+    SmartDashboard.putData("ClimbPistons EXTEND", new ClimbPistonsSetPosition(true, climb));
+    SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb));
+    
     // limelight subsystem
     SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight, log));
     //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
@@ -268,26 +280,26 @@ public class RobotContainer {
     }
 
     // top row UP, from left to right
-    /*coP[1].whenPressed(new ClimbPistonSetPosition(true)); // deploy climb pistons
-    coP[3].whenPressed(new ClimbLeftSetPercentOutput(0.5)); // manually raise left climb arm
-    coP[5].whenPressed(new ClimbRightSetPercentOutput(0.5)); // manually raise right climb arm
+    coP[1].whenPressed(new ClimbPistonsSetPosition(true, climb)); // deploy climb pistons
+    coP[3].whileHeld(new ClimbLeftSetPercentOutput(0.8, climb)); // manually raise left climb arm
+    coP[5].whileHeld(new ClimbRightSetPercentOutput(0.8, climb)); // manually raise right climb arm
 
     // top row DOWN, from left to right
-    coP[2].whenPressed(new ClimbPistonSetPosition(false)); // retract climb pistons
-    coP[4].whenPressed(new ClimbLeftSetPercentOutput(-0.5)); // manually lower left climb arm
-    coP[6].whenPressed(new ClimbRightSetPercentOutput(-0.5)); // manually lower right climb arm
+    coP[2].whenPressed(new ClimbPistonsSetPosition(false, climb)); // retract climb pistons
+    coP[4].whileHeld(new ClimbLeftSetPercentOutput(-0.8, climb)); // manually lower left climb arm
+    coP[6].whileHeld(new ClimbRightSetPercentOutput(-0.8, climb)); // manually lower right climb arm
 
     // top row RED SWITCH
-    coP[8].whenPressed(new ClimbSequence()); // climb sequence
+    coP[8].whenPressed(new ClimbSetVelocity(ClimbConstants.defaultVelocity, ClimbConstants.targetLowPosition, climb)); // climb lift sequence
 
     // middle row UP, from left to right
-    coP[9].whenPressed(new Wait(0));
-    coP[11].whenPressed(new Wait(0));
-    coP[13].whenPressed(new Wait(0));
+    coP[9].whileHeld(new ClimbSetPercentOutput(0.8, climb));
+    coP[11].whenPressed(new ClimbSetVelocity(-1 * ClimbConstants.defaultVelocity, ClimbConstants.targetHighPosition, climb)); // climb grab sequence
+    /*coP[13].whenPressed(new Wait(0));*/
 
     // middle row DOWN, from left to right
-    coP[10].whenPressed(new Wait(0));
-    coP[12].whenPressed(new Wait(0));
+    coP[10].whileHeld(new ClimbSetPercentOutput(-0.4, climb));
+    /*coP[12].whenPressed(new Wait(0));
     coP[14].whenPressed(new Wait(0));*/
 
     // middle row UP OR DOWN, fourth button

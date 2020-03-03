@@ -428,13 +428,68 @@
           "3,0": {
             "size": [
               2,
-              4
+              6
             ],
             "content": {
               "_type": "List Layout",
               "_title": "Climb",
               "Layout/Label position": "BOTTOM",
-              "_children": []
+              "_children": [
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
+                  "_title": "ClimbLeft Limit",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
+                  "_title": "ClimbRight Limit",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft -6 ips",
+                  "_title": "ClimbLeft -6 ips"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight -6 ips",
+                  "_title": "ClimbRight -6 ips"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft 0.8%",
+                  "_title": "ClimbLeft 0.8%"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight 0.8%",
+                  "_title": "ClimbRight 0.8%"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft -0.8%",
+                  "_title": "ClimbLeft -0.8%"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight -0.8%",
+                  "_title": "ClimbRight -0.8%"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Position",
+                  "_title": "ClimbLeft Position"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight Position",
+                  "_title": "ClimbRight Position"
+                }
+              ]
             }
           },
           "1,1": {
@@ -1052,9 +1107,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1056.0
+    "x": -6.0,
+    "y": 1.0,
+    "width": 1932.0,
+    "height": 1045.0
   }
 }
