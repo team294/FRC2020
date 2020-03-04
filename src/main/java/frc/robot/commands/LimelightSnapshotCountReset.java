@@ -9,20 +9,25 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LimeLight;
+import frc.robot.utilities.FileLog;
 
 public class LimelightSnapshotCountReset extends CommandBase {
   /**
    * Resets number tracking how many snapshots we have taken so far
    */
   LimeLight limeLight;
-  public LimelightSnapshotCountReset(LimeLight limeLight) {
+  FileLog log;
+
+  public LimelightSnapshotCountReset(LimeLight limeLight, FileLog log) {
     this.limeLight = limeLight;
+    this.log = log;
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "LimlightSnapshotCountReset", "Init");
     limeLight.resetSnapshotCount();
   }
 

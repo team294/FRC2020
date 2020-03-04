@@ -30,7 +30,7 @@ public class WaitForPowerCells extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    log.writeLog(false, "WaitForPowerCells", "Init");
+    log.writeLog(false, "WaitForPowerCells", "Init", "TargetCell #", cells);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

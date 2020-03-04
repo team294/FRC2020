@@ -53,10 +53,12 @@ public class ShooterSetPID extends CommandBase {
    * @param rpm setpoint, in RPM
    * @param shooter shooter subsystem
    * @param led led strip (subsystem)
+   * @param log filelog utility
    */
-  public ShooterSetPID(boolean end, double rpm, Shooter shooter, LED led) {
+  public ShooterSetPID(boolean end, double rpm, Shooter shooter, LED led, FileLog log) {
     this.shooter = shooter;
     this.led = led;
+    this.log = log;
     this.rpm = rpm;
     this.rpmFromShuffleboard = false;
     this.rpmFromDistance = false;
@@ -72,6 +74,7 @@ public class ShooterSetPID extends CommandBase {
    * @param shooter shooter subsystem to use
    * @param limeLight limeLight to use
    * @param led led to use
+   * @param log filelog utility
    */
   public ShooterSetPID(boolean rpmFromDistance, boolean end, Shooter shooter, LimeLight limeLight, LED led, FileLog log) {
     this.shooter = shooter;
@@ -97,7 +100,7 @@ public class ShooterSetPID extends CommandBase {
     shooter.setShooterPID(rpm);
     ledTimer.reset();
     ledTimer.start();
-    log.writeLog(false, "ShooterSetPID", "Init");
+    log.writeLog(false, "ShooterSetPID", "Init", "TargetRPM", rpm);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

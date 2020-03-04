@@ -50,7 +50,7 @@ public class HopperSetPercentOutput extends CommandBase {
   @Override
   public void initialize() {
     hopper.hopperSetPercentOutput(percent);
-    log.writeLog(false, "HopperSetPercentOutput", "Init");
+    log.writeLog(false, "HopperSetPercentOutput", "Init", "Target %", percent);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
