@@ -92,7 +92,7 @@ public class LimeLight extends SubsystemBase {
    * Takes into account not being in line with the target.
    * @return distance from camera to target, on the floor
    */
-  public double getDistanceNew() {
+  public double getDistanceNew() {    //  TODO  this could return a erroneous value if vision misses a frame or is temporarily blocked.  Use avgrging or filtering
     double myDistance = (targetHeight - cameraHeight) / ((Math.tan(Math.toRadians(cameraAngle + y))) * (Math.cos(Math.toRadians(x))));
     return myDistance;
   }
@@ -103,7 +103,7 @@ public class LimeLight extends SubsystemBase {
    * for preliminary distanceCalc tests (not for actual distance calculations).
    * @return distance from camera to target, on the floor
    */
-  public double getDistance() {
+  public double getDistance() {   //TODO is this used anymore?  If so why?Newf not remove and rename ...new
     double myDistance = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle + y));
     return myDistance;
   }

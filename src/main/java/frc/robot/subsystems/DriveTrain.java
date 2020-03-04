@@ -210,8 +210,14 @@ public class DriveTrain extends SubsystemBase {
     feedTheDog();
   }
 
+  /**
+   * 
+   * @param speedPct
+   * @param rotation
+   * @param squareInputs
+   */
   public void arcadeDrive(double speedPct, double rotation) {
-    diffDrive.arcadeDrive(speedPct, rotation * 0.7, false);    // minimize how fast turn operated from joystick
+    diffDrive.arcadeDrive(speedPct, rotation * 0.5, false);    // minimize how fast turn operated from joystick
   }
 
   /**
