@@ -100,8 +100,8 @@ public class Intake extends SubsystemBase {
 
       if (ledTimer.advanceIfElapsed(0.1)) {
         led.setStrip(ledColor, 0.5, 1);
-        if (ledColor.equals("Blue")) ledColor = "Black";
-        else ledColor = "Blue";
+        if (ledColor.equals("Green")) ledColor = "Black";
+        else ledColor = "Green";
       }
 
       updateIntakeLog(false);
