@@ -604,7 +604,7 @@
             "content": {
               "_type": "Text View",
               "_source0": "network_table:///SmartDashboard/Autonomous delay",
-              "_title": "Autonomous Delay"
+              "_title": "Auto Delay"
             }
           },
           "2,5": {
@@ -631,9 +631,44 @@
             "content": {
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
-              "_title": "/SmartDashboard/RobotPrefs Initialized",
+              "_title": "Prefs Initialized",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Auto",
+      "autoPopulate": false,
+      "autoPopulatePrefix": "",
+      "widgetPane": {
+        "gridSize": 128.0,
+        "showGrid": true,
+        "hgap": 16.0,
+        "vgap": 16.0,
+        "tiles": {
+          "4,0": {
+            "size": [
+              4,
+              1
+            ],
+            "content": {
+              "_type": "ComboBox Chooser",
+              "_source0": "network_table:///SmartDashboard/Autonomous routine",
+              "_title": "Autonomous routine"
+            }
+          },
+          "4,1": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/Autonomous delay",
+              "_title": "Autonomous Delay"
             }
           }
         }
@@ -1030,7 +1065,7 @@
       }
     },
     {
-      "title": "Tab 5",
+      "title": "Checkout",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
       "widgetPane": {
@@ -1039,67 +1074,144 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
+          "0,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "DriveTrain",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_Table:///SmartDashboard/DriveForever",
+                  "_title": "Drive Forward"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Drive isGyroReading",
+                  "_title": "Gyro Working",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                }
+              ]
+            }
+          },
+          "2,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Intake \u0026 Hopper",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
+                  "_title": "IntakePiston EXTEND"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Intake Forward Calibrate",
+                  "_title": "Intake Roll IN"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Intake Reverse Calibrate",
+                  "_title": "Intake Roll OUT"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Intake STOP",
+                  "_title": "Intake STOP"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Hopper Forward Calibrate",
+                  "_title": "Hopper Roll IN"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Hopper Reverse Calibrate",
+                  "_title": "Hopper Roll OUT"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Hopper STOP",
+                  "_title": "Hopper STOP"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
+                  "_title": "IntakePiston RETRACT"
+                }
+              ]
+            }
+          },
           "4,0": {
             "size": [
               2,
-              1
+              4
             ],
             "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Autonomous routine",
-              "_title": "SmartDashboard/Autonomous routine"
+              "_type": "Subsystem Layout",
+              "_title": "Feeder",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder Forward Calibrate",
+                  "_title": "Feeder IN"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder STOP",
+                  "_title": "Feeder STOP"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint RPM",
+                  "_title": "Feeder Manual SetPoint RPM"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint",
+                  "_title": "Feeder Manual SetPoint"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Feeder STOP",
+                  "_title": "Feeder STOP"
+                }
+              ]
             }
           },
           "6,0": {
             "size": [
-              5,
-              3
+              2,
+              4
             ],
             "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://limelight",
-              "_title": "limelight",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
+              "_type": "Subsystem Layout",
+              "_title": "Shooter",
+              "Layout/Label position": "LEFT",
+              "_children": []
             }
           },
-          "3,1": {
+          "8,0": {
             "size": [
-              1,
-              1
+              2,
+              4
             ],
             "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Drive Gyro Rotation",
-              "_title": "SmartDashboard/Drive Gyro Rotation"
-            }
-          },
-          "4,2": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/ZeroGyro",
-              "_title": "SmartDashboard/ZeroGyro"
-            }
-          },
-          "4,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnAbsolute",
-              "_title": "SmartDashboard/TurnAbsolute"
+              "_type": "Subsystem Layout",
+              "_title": "Climb",
+              "Layout/Label position": "LEFT",
+              "_children": []
             }
           }
         }
@@ -1107,9 +1219,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -6.0,
-    "y": 1.0,
-    "width": 1932.0,
-    "height": 1045.0
+    "x": -8.0,
+    "y": -8.0,
+    "width": 1936.0,
+    "height": 1056.0
   }
 }
