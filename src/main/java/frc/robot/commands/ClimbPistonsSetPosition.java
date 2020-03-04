@@ -7,37 +7,39 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Shooter;
-import frc.robot.utilities.FileLog;
+import frc.robot.subsystems.*;
 
-public class ShooterSetLockPiston extends CommandBase {
-  private Shooter shooter;
-  private boolean unlock;
-  private FileLog log;
-
+public class ClimbPistonsSetPosition extends CommandBase {
+  private Climb climb;
+  private boolean extend;
+  private double matchTime;
+  
   /**
-   * Set shooter lock piston position.
+   * Set piston position of both climb arms.
    * This command immediately ends.
-   * @param unlock true = unlock, false = lock
-   * @param shooter shooter subsystem
+   * @param extend true = extend pistons, false = retract pistons
+   * @param climb climb subsystem
    */
-  public ShooterSetLockPiston(boolean unlock, Shooter shooter, FileLog log) {
-    this.shooter = shooter;
-    this.unlock = unlock;
-    this.log = log;
+  public ClimbPistonsSetPosition(boolean extend, Climb climb) {
+    this.climb = climb;
+    this.extend = extend;
+    this.matchTime = DriverStation.getInstance().getMatchTime();
+    addRequirements(climb);
+
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    log.writeLog(false, "IntakeSetPiston", "Init", (unlock) ? "Unlock" : "Lock");
-    shooter.setLockPiston(unlock);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    // if (matchTime <= 30 && climb.getLeftEncoderInches() > -2 && climb.getRightEncoderInches() > -2)
+      climb.climbPistonsSetPosition(extend);
   }
 
   // Called once the command ends or is interrupted.

@@ -51,7 +51,7 @@ public class DriveZeroGyro extends CommandBase {
   @Override
   public void initialize() {
     driveTrain.zeroGyroRotation(zeroAngle);
-    log.writeLog(false, "DriveZeroGyro", "Init");
+    log.writeLog(false, "DriveZeroGyro", "Init", "CurrAng", zeroAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

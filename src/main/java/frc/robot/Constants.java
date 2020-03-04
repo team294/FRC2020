@@ -70,13 +70,32 @@ public final class Constants {
         public static final double hopperDefaultPercentOutput = 0.8;
     }
 
+    public static final class ClimbConstants {
+        public static final int canClimbMotorLeft = 46;
+        public static final int canClimbMotorRight = 45;
+        public static final int pcmClimbPistonsIn = 4;
+        public static final int pcmClimbPistonsOut = 5;
+        public static final double ticksPerInch = 2048 * 54 / 2 / Math.PI; // ticksPerRotation * gearRatio(54:1) / pi / radius
+        public static final double positionTolerance = 1;
+        public static final double maxHeight = 33;
+        public static final double targetLowPosition = 3; // target low position in inches
+        public static final double targetHighPosition = 25; // target high position in inches
+        public static final double defaultVelocity = -6;
+    }
+
     public static final class LimeLightConstants {
         public static final double angleMultiplier = 1.064;
         public static final double offset = 1.33; // in feet
         public static final double cameraHeight = 1.625; // in feet, height from floor to lens of mounted camera, 2.104 on protobot
         public static final double targetHeight = 7.0; // in feet, height to middle of crosshair on target
         public static final double cameraAngle = 28; // in degrees 26.5 measured but 28 works better?, 14 on proto
-        public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shot
+        public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shotblicc 
+        
+        // *******************************
+        // The constants below are DEFAULT VALUES. Change these value in RobotPrefrences
+        // for each robot, not in this code!
+        // *******************************
+        public static boolean takeSnapshots = true;
     }
 
     /**

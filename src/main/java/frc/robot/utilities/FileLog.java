@@ -30,13 +30,15 @@ public class FileLog {
 	private int logLevel = 3; // Level of detail. Value between 1-3, where 1 is the most detailed and 3 is the least detailed.
     
     // File logging rotation cycles, to spread out logging times between subsystems	
-    // TODO remove/add cycles as we remove/add subsystems
+    // Note:  Remove/add cycles as we remove/add subsystems
 	public int rotation = 0;
-    public final int DRIVE_CYCLE = 1;
+    public final int DRIVE_CYCLE = 0;
+	public final int INTAKE_CYCLE = 2;
     public final int FEEDER_CYCLE = 3;
-    public final int SHOOTER_CYCLE = 5;
+	public final int HOPPER_CYCLE = 5;
+    public final int SHOOTER_CYCLE = 6;
     public final int CLIMB_CYCLE = 7;
-    public final int LIMELIGHT_CYCLE = 9;
+	public final int LIMELIGHT_CYCLE = 9;
     
 	/**
 	 * Creates a new log file called "/home/lvuser/logfile.ver.date.time.txt"
@@ -103,11 +105,11 @@ public class FileLog {
     /**
 	 * Writes a message to the log file. The message will be timestamped. Does not echo the message to the screen.
 	 * @param logWhenDisabled true will log when disabled, false will discard the message
-     * @param subsystemOrCommand The name of the subsytem or command generating the message.
+     * @param subsystemOrCommand The name of the subsystem or command generating the message.
 	 * @param event A description of the event (ex. start, data, event).
 	 * @param paramArray... List of descriptions and values (variable number of parameters)
 	 */
-	public void writeLog(boolean logWhenDisabled, String subsytemOrCommand, String event, Object... paramArray) {
+	public void writeLog(boolean logWhenDisabled, String subsystemOrCommand, String event, Object... paramArray) {
         // If system clock has reset by more than 24 hours (like when the clock is set
         // at the start of a match), then fix the filename.
 		if (System.currentTimeMillis() - startTime > 1000*3600*24) {
@@ -117,7 +119,7 @@ public class FileLog {
 		// Write the message to the file.
 		if(logWhenDisabled || DriverStation.getInstance().isEnabled()) {
             try {
-			fileWriter.write(buildStringWithCommas((dateFormat.format(System.currentTimeMillis())), subsytemOrCommand, event, buildStringWithCommas((Object [])paramArray).concat("\n")));
+			fileWriter.write(buildStringWithCommas((dateFormat.format(System.currentTimeMillis())), subsystemOrCommand, event, buildStringWithCommas((Object [])paramArray).concat("\n")));
             fileWriter.flush();
 		    } catch (IOException exception) {
             }
@@ -127,13 +129,13 @@ public class FileLog {
     /**
 	 * Writes a message to the log file. The message will be timestamped. Does not echo the message to the screen.
 	 * @param logWhenDisabled true will log when disabled, false will discard the message
-     * @param subsystemOrCommand The name of the subsytem or command generating the message.
+     * @param subsystemOrCommand The name of the subsystem or command generating the message.
 	 * @param event A description of the event (ex. start, data, event).
 	 * @param paramArray... List of descriptions and values (variable number of parameters)
 	 */
-	public void writeLogEcho(boolean logWhenDisabled, String subsytemOrCommand, String event, Object... paramArray) {
-		writeLog(logWhenDisabled, subsytemOrCommand, event, (Object [])paramArray);
-		System.out.println(buildStringWithCommas("Log", subsytemOrCommand, event, buildStringWithCommas((Object [])paramArray)));
+	public void writeLogEcho(boolean logWhenDisabled, String subsystemOrCommand, String event, Object... paramArray) {
+		writeLog(logWhenDisabled, subsystemOrCommand, event, (Object [])paramArray);
+		System.out.println(buildStringWithCommas("Log", subsystemOrCommand, event, buildStringWithCommas((Object [])paramArray)));
 	}
 	
     /**

@@ -22,6 +22,7 @@ public class ShooterHoodPistonSequence extends SequentialCommandGroup {
   public ShooterHoodPistonSequence(boolean close, boolean lock, Shooter shooter, FileLog log) {
     addCommands(
       // If opening, unlock hood.
+      new FileLogWrite(false, false, "ShooterHoodPistonSequence", "Init", log, "Hood", (close) ? "Close" : "Open", "HoodLock", (lock) ? "Locked" : "Unlocked"),
       new ConditionalCommand(new ShooterSetLockPiston(true, shooter, log), new Wait(0), () -> !close),
       new ShooterSetHoodPiston(close, shooter, log),
       // If opening or parameter lock is false, do not lock hood. 

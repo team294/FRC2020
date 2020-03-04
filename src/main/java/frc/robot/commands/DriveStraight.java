@@ -173,7 +173,10 @@ public class DriveStraight extends CommandBase {
     // Calculate correction to maintain angle
     double curAngle = driveTrain.getGyroRotation();
     if (angleType == TargetType.kVision) {
-        angleTarget = driveTrain.normalizeAngle(curAngle + limeLight.getXOffset());
+      angleTarget = driveTrain.normalizeAngle(curAngle + limeLight.getXOffset());
+      if(limeLight.canTakeSnapshot()) {
+        limeLight.setSnapshot(true);
+      }    
     }
     double pAngle = driveTrain.normalizeAngle(curAngle - angleTarget) * kAngLinear;
     double targetVelL = targetVel * (1 + direction*pAngle);
@@ -213,6 +216,7 @@ public class DriveStraight extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    log.writeLog(false, "DriveStraight", "End");
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
     driveTrain.setDriveModeCoast(false);

@@ -8,49 +8,47 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-
-import frc.robot.subsystems.DriveTrain;
+import frc.robot.subsystems.LimeLight;
 import frc.robot.utilities.FileLog;
 
-public class DriveSetPercentOutput extends CommandBase {
+public class LimeLightTakeSnapshots extends CommandBase {
   /**
-   * Sets drive motors to percent output
+   * Take a snapshot of the limelight camera image every cycle either during autonomous
+   * or when the robot is enabled
+   * Intended to help test snapshot capabilities of the limelight
    */
+  LimeLight limeLight;
+  FileLog log;
 
-   private DriveTrain driveTrain;
-   private FileLog log;
-   private double lPercent;
-   private double rPercent;
-  public DriveSetPercentOutput(double lPercent, double rPercent, DriveTrain driveTrain, FileLog log) {
+  /**
+   * @param limeLight save reference to limeLight
+   * @param inAuto true = save snapshots only in auto, false = save snapshots whenever enabled
+   */
+  public LimeLightTakeSnapshots(LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
-    this.driveTrain = driveTrain;
-    this.lPercent = lPercent;
-    this.rPercent = rPercent;
+    this.limeLight = limeLight;
     this.log = log;
+    addRequirements(limeLight);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.setLeftMotorOutput(lPercent);
-    driveTrain.setRightMotorOutput(rPercent);
-    log.writeLog(false, "DriveSetPercentOutput", "Init", "Target % L", lPercent, "Target % R", rPercent);
+    log.writeLog(false, "LimelightTakeSnapshots", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // System.out.println("L output:" + lPercent);
-    // System.out.println("R output:" + rPercent);
-    driveTrain.setLeftMotorOutput(lPercent);
-    driveTrain.setRightMotorOutput(rPercent);
+    if(limeLight.canTakeSnapshot()) {
+      limeLight.setSnapshot(true);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //driveTrain.setLeftMotorOutput(0);
-    //driveTrain.setRightMotorOutput(0);
+    limeLight.setSnapshot(false);
   }
 
   // Returns true when the command should end.
