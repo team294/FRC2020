@@ -37,9 +37,9 @@ import static frc.robot.Constants.DriveConstants.*;
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
-  private final Hopper hopper = new Hopper(log);
-  private final Intake intake = new Intake(log);
   private final LED led = new LED();
+  private final Hopper hopper = new Hopper(log);
+  private final Intake intake = new Intake(log, led);
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Climb climb = new Climb(log);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
@@ -58,8 +58,7 @@ public class RobotContainer {
 
   private final Timer disabledDisplayTimer = new Timer();
   private int displayCount = 1;
-
-  private boolean isRumbling = false;
+  private boolean rumbling = false;
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -112,14 +111,14 @@ public class RobotContainer {
     SmartDashboard.putData("LEDRainbow", new LEDSetPattern(LED.rainbowLibrary, 1, 0.5, led, log));
 
     // climber subsystem
-    SmartDashboard.putData("ClimbLeft 0.8%", new ClimbLeftSetPercentOutput(0.8, climb));
-    SmartDashboard.putData("ClimbLeft -0.8%", new ClimbLeftSetPercentOutput(-0.8, climb));
-    SmartDashboard.putData("ClimbLeft -6 ips", new ClimbLeftSetVelocity(-6, 6, climb));
-    SmartDashboard.putData("ClimbRight 0.8%", new ClimbRightSetPercentOutput(0.8, climb));
-    SmartDashboard.putData("ClimbRight -0.8%", new ClimbRightSetPercentOutput(-0.8, climb));
-    SmartDashboard.putData("ClimbRight -6 ips", new ClimbRightSetVelocity(-6, 6, climb));
-    SmartDashboard.putData("ClimbPistons EXTEND", new ClimbPistonsSetPosition(true, climb));
-    SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb));
+    SmartDashboard.putData("ClimbLeft 0.8%", new ClimbLeftSetPercentOutput(0.8, climb, log));
+    SmartDashboard.putData("ClimbLeft -0.8%", new ClimbLeftSetPercentOutput(-0.8, climb, log));
+    SmartDashboard.putData("ClimbLeft -6 ips", new ClimbLeftSetVelocity(-6, 6, climb, log));
+    SmartDashboard.putData("ClimbRight 0.8%", new ClimbRightSetPercentOutput(0.8, climb, log));
+    SmartDashboard.putData("ClimbRight -0.8%", new ClimbRightSetPercentOutput(-0.8, climb, log));
+    SmartDashboard.putData("ClimbRight -6 ips", new ClimbRightSetVelocity(-6, 6, climb, log));
+    SmartDashboard.putData("ClimbPistons EXTEND", new ClimbPistonsSetPosition(true, climb, log));
+    SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb, log));
     
     // limelight subsystem
     SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight, log));
@@ -134,10 +133,14 @@ public class RobotContainer {
     SmartDashboard.putData("ShooterHood CLOSE, UNLOCK", new ShooterHoodPistonSequence(true, false, shooter, log));
 
     // buttons for testing drive code, not updating numbers from SmartDashboard
-    SmartDashboard.putData("DriveForever", new DriveSetPercentOutput(0.4, 0.4, driveTrain, log));
+    SmartDashboard.putData("DriveForward", new DriveSetPercentOutput(0.4, 0.4, driveTrain, log));
+    SmartDashboard.putData("DriveBackward", new DriveSetPercentOutput(-0.4, -0.4, driveTrain, log));
+    SmartDashboard.putData("DriveTurnLeft", new DriveSetPercentOutput(-0.4, 0.4, driveTrain, log));
+    SmartDashboard.putData("DriveTurnRight", new DriveSetPercentOutput(0.4, -0.4, driveTrain, log));
     SmartDashboard.putData("DriveStraightRel", new DriveStraight(3, TargetType.kRelative, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveStraightAbs", new DriveStraight(3, TargetType.kAbsolute, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveStraightVis", new DriveStraight(3, TargetType.kVision, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("Drive Vision Assist", new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 45, 200, 0.5, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 90, 90, 200, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kAbsolute, 90, 90, 200, 1, driveTrain, limeLight, log));
@@ -169,6 +172,7 @@ public class RobotContainer {
     autoChooser.addOption("ShootForward", AutoSelection.SHOOT_FORWARD);
     autoChooser.addOption("TrussPickup", AutoSelection.TRUSS_PICKUP);
     autoChooser.addOption("OwnTrenchPickup", AutoSelection.OWN_TRENCH_PICKUP);
+    autoChooser.addOption("ShortShot", AutoSelection.SHORT_SHOT);
     SmartDashboard.putData("Autonomous routine", autoChooser);
     SmartDashboard.putNumber("Autonomous delay", 0);
     SmartDashboard.putBoolean("Autonomous use vision", true);
@@ -257,7 +261,7 @@ public class RobotContainer {
     // right[1].whenPressed(new Wait(0));
 
     // joystick right button
-    // left[2].whenPressed(new Wait(0));
+    left[2].whenHeld(new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
   }
 
@@ -281,25 +285,25 @@ public class RobotContainer {
     }
 
     // top row UP, from left to right
-    coP[1].whenPressed(new ClimbPistonsSetPosition(true, climb)); // deploy climb pistons
-    coP[3].whileHeld(new ClimbLeftSetPercentOutput(0.8, climb)); // manually raise left climb arm
-    coP[5].whileHeld(new ClimbRightSetPercentOutput(0.8, climb)); // manually raise right climb arm
+    coP[1].whenPressed(new ClimbPistonsSetPosition(true, climb, log)); // deploy climb pistons
+    coP[3].whileHeld(new ClimbLeftSetPercentOutput(0.8, climb, log)); // manually raise left climb arm
+    coP[5].whileHeld(new ClimbRightSetPercentOutput(0.8, climb, log)); // manually raise right climb arm
 
     // top row DOWN, from left to right
-    coP[2].whenPressed(new ClimbPistonsSetPosition(false, climb)); // retract climb pistons
-    coP[4].whileHeld(new ClimbLeftSetPercentOutput(-0.8, climb)); // manually lower left climb arm
-    coP[6].whileHeld(new ClimbRightSetPercentOutput(-0.8, climb)); // manually lower right climb arm
+    coP[2].whenPressed(new ClimbPistonsSetPosition(false, climb, log)); // retract climb pistons
+    coP[4].whileHeld(new ClimbLeftSetPercentOutput(-0.8, climb, log)); // manually lower left climb arm
+    coP[6].whileHeld(new ClimbRightSetPercentOutput(-0.8, climb, log)); // manually lower right climb arm
 
     // top row RED SWITCH
-    coP[8].whenPressed(new ClimbSetVelocity(ClimbConstants.defaultVelocity, ClimbConstants.targetLowPosition, climb)); // climb lift sequence
+    coP[8].whenPressed(new ClimbSetVelocity(ClimbConstants.defaultVelocity, ClimbConstants.targetLowPosition, climb, log)); // climb lift sequence
 
     // middle row UP, from left to right
-    coP[9].whileHeld(new ClimbSetPercentOutput(0.8, climb));
-    coP[11].whenPressed(new ClimbSetVelocity(-1 * ClimbConstants.defaultVelocity, ClimbConstants.targetHighPosition, climb)); // climb grab sequence
+    coP[9].whileHeld(new ClimbSetPercentOutput(0.8, climb, log));
+    coP[11].whenPressed(new ClimbSetVelocity(-1 * ClimbConstants.defaultVelocity, ClimbConstants.targetHighPosition, climb, log)); // climb grab sequence
     /*coP[13].whenPressed(new Wait(0));*/
 
     // middle row DOWN, from left to right
-    coP[10].whileHeld(new ClimbSetPercentOutput(-0.4, climb));
+    coP[10].whileHeld(new ClimbSetPercentOutput(-0.4, climb, log));
     /*coP[12].whenPressed(new Wait(0));
     coP[14].whenPressed(new Wait(0));*/
 
@@ -320,6 +324,9 @@ public class RobotContainer {
 	public void setXBoxRumble(double percentRumble) {
 		xboxController.setRumble(RumbleType.kLeftRumble, percentRumble);
     xboxController.setRumble(RumbleType.kRightRumble, percentRumble);
+
+    if (percentRumble == 0) rumbling = false;
+    else rumbling = true;
   }
 
   /**
@@ -419,10 +426,15 @@ public class RobotContainer {
    * Method called once every scheduler cycle when teleop mode is initialized/enabled.
    */
   public void teleopPeriodic() {
-    if(limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
-      setXBoxRumble(0.4);
-      isRumbling = true;
-    } else if (isRumbling) {
+    if (!rumbling && intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
+      setXBoxRumble(1);
+    } else if (rumbling && intake.intakeGetPercentOutput() != Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
+      setXBoxRumble(0);
+    }
+
+    if (!rumbling && limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
+      setXBoxRumble(0.5);
+    } else if (rumbling && (!limeLight.seesTarget() || Math.abs(limeLight.getXOffset()) <= 1)) {
       setXBoxRumble(0);
     }
   }
