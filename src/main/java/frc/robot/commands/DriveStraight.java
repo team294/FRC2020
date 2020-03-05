@@ -93,6 +93,7 @@ public class DriveStraight extends CommandBase {
   public DriveStraight(boolean sweetSpot, TargetType angleType, double angle, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.sweetSpot = sweetSpot;
+    this.target = 0.0;
     this.driveTrain = driveTrain;
     this.limeLight = limeLight;
     this.log = log;
@@ -167,8 +168,8 @@ public class DriveStraight extends CommandBase {
         angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + limeLight.getXOffset());
     }
 
-    if(sweetSpot){
-      target = Units.inchesToMeters(limeLight.getSweetSpot() * 12);
+    if (sweetSpot && limeLight.seesTarget()) {
+        target = Units.inchesToMeters(limeLight.getSweetSpot() * 12);
     }
 
     direction = Math.signum(target);
