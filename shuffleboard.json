@@ -1178,6 +1178,16 @@
                   "_title": "Feeder Manual SetPoint RPM"
                 },
                 {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder RPM",
+                  "_title": "Feeder RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Error",
+                  "_title": "Feeder Error"
+                },
+                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint",
                   "_title": "Feeder Manual SetPoint"
@@ -1193,13 +1203,91 @@
           "6,0": {
             "size": [
               2,
-              4
+              6
             ],
             "content": {
               "_type": "Subsystem Layout",
               "_title": "Shooter",
               "Layout/Label position": "LEFT",
-              "_children": []
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Forward Calibrate",
+                  "_title": "Shooter SHOOT"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
+                  "_title": "Shooter STOP"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter SetPoint RPM",
+                  "_title": "Shooter SetPoint RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM",
+                  "_title": "Shooter RPM"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter PID Error",
+                  "_title": "Shooter PID Error"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint",
+                  "_title": "Shooter Manual SetPoint"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
+                  "_title": "Shooter STOP"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Shooter DistToRPM",
+                  "_title": "Shooter DistToRPM"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, UNLOCK",
+                  "_title": "Hood CLOSE, UNLOCK"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, LOCK",
+                  "_title": "Hood CLOSE, LOCK"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
+                  "_title": "Hood OPEN"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Cell Present",
+                  "_title": "Cell Present",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence 2800",
+                  "_title": "ShootSequence 2800"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence DIST",
+                  "_title": "ShootSequence DIST"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence STOP",
+                  "_title": "ShootSequence STOP"
+                }
+              ]
             }
           },
           "8,0": {
@@ -1211,7 +1299,52 @@
               "_type": "Subsystem Layout",
               "_title": "Climb",
               "Layout/Label position": "LEFT",
-              "_children": []
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbPistons EXTEND",
+                  "_title": "ClimbPistons EXTEND"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbPistons RETRACT",
+                  "_title": "ClimbPistons RETRACT"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight 0.8%",
+                  "_title": "ClimbRight 0.8%"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
+                  "_title": "ClimbR Limit",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight -0.8%",
+                  "_title": "ClimbRight -0.8%"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft 0.8%",
+                  "_title": "ClimbLeft 0.8%"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
+                  "_title": "ClimbL Limit",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft -0.8%",
+                  "_title": "ClimbLeft -0.8%"
+                }
+              ]
             }
           }
         }
