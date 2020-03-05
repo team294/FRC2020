@@ -25,6 +25,7 @@ public class ClimbSetVelocity extends CommandBase {
    * @param velocity velocity (inches/second)
    * @param position target position (inches)
    * @param climb climb subsystem
+   * @param log filelog utility
    */
   public ClimbSetVelocity(double velocity, double position, Climb climb, FileLog log) {
     this.climb = climb;
@@ -41,9 +42,11 @@ public class ClimbSetVelocity extends CommandBase {
    * @param down true = climb going down (lifting), false = climb going up (latching)
    * @param position target position (inches)
    * @param climb climb subsystem
+   * @param log filelog utility
    */
-  public ClimbSetVelocity(boolean down, double position, Climb climb) {
+  public ClimbSetVelocity(boolean down, double position, Climb climb, FileLog log) {
     this.climb = climb;
+    this.log = log;
     if (down) this.velocity = ClimbConstants.defaultVelocity;
     else this.velocity = -1 * ClimbConstants.defaultVelocity;
     this.position = position;
