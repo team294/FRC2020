@@ -7,6 +7,7 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
@@ -24,7 +25,7 @@ public class AutoTrussPickup extends SequentialCommandGroup {
     // start with edge of bumpers to the left edge of the center line, intake facing towards truss, line up straight
     
     addCommands(
-
+      new ConditionalCommand(new SequentialCommandGroup(
       new Wait(waitTime),
 
       new DriveZeroGyro(180, driveTrain, log),
@@ -57,6 +58,7 @@ public class AutoTrussPickup extends SequentialCommandGroup {
       ),
       
       new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1)// stop all motors
+      ), new DriveStraight(-2, TargetType.kAbsolute, 0, 1, 1, true, driveTrain, limeLight, log), () -> driveTrain.isGyroReading())
       
     );
   }
