@@ -11,9 +11,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.Climb;
+import frc.robot.utilities.FileLog;
 
 public class ClimbSetPercentOutput extends CommandBase {
   private Climb climb;
+  private FileLog log;
   private double percent, timeRemaining;
 
   /**
@@ -22,8 +24,9 @@ public class ClimbSetPercentOutput extends CommandBase {
    * @param percent percent output (0 to 1)
    * @param climb climb subsystem
    */
-  public ClimbSetPercentOutput(double percent, Climb climb) {
+  public ClimbSetPercentOutput(double percent, Climb climb, FileLog log) {
     this.climb = climb;
+    this.log = log;
     this.percent = percent;
     timeRemaining = DriverStation.getInstance().getMatchTime();
     addRequirements(climb);
@@ -32,6 +35,7 @@ public class ClimbSetPercentOutput extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "ClimbSetPercentOut", "Init", "Target %", percent);
     // if it is the last 30 seconds of the match and the piston is extended, set left and right motor perecnt output
     if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition())
       climb.climbMotorsSetPercentOutput(percent);
