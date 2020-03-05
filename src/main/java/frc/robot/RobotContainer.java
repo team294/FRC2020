@@ -136,6 +136,7 @@ public class RobotContainer {
     SmartDashboard.putData("DriveStraightRel", new DriveStraight(3, TargetType.kRelative, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveStraightAbs", new DriveStraight(3, TargetType.kAbsolute, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveStraightVis", new DriveStraight(3, TargetType.kVision, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("Drive Vision Assist", new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 45, 200, 0.5, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 90, 90, 200, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kAbsolute, 90, 90, 200, 1, driveTrain, limeLight, log));
@@ -255,7 +256,7 @@ public class RobotContainer {
     // right[1].whenPressed(new Wait(0));
 
     // joystick right button
-    // left[2].whenPressed(new Wait(0));
+    left[2].whenHeld(new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
   }
 
