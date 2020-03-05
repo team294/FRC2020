@@ -111,14 +111,14 @@ public class RobotContainer {
     SmartDashboard.putData("LEDRainbow", new LEDSetPattern(LED.rainbowLibrary, 1, 0.5, led, log));
 
     // climber subsystem
-    SmartDashboard.putData("ClimbLeft 0.8%", new ClimbLeftSetPercentOutput(0.8, climb));
-    SmartDashboard.putData("ClimbLeft -0.8%", new ClimbLeftSetPercentOutput(-0.8, climb));
-    SmartDashboard.putData("ClimbLeft -6 ips", new ClimbLeftSetVelocity(-6, 6, climb));
-    SmartDashboard.putData("ClimbRight 0.8%", new ClimbRightSetPercentOutput(0.8, climb));
-    SmartDashboard.putData("ClimbRight -0.8%", new ClimbRightSetPercentOutput(-0.8, climb));
-    SmartDashboard.putData("ClimbRight -6 ips", new ClimbRightSetVelocity(-6, 6, climb));
-    SmartDashboard.putData("ClimbPistons EXTEND", new ClimbPistonsSetPosition(true, climb));
-    SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb));
+    SmartDashboard.putData("ClimbLeft 0.8%", new ClimbLeftSetPercentOutput(0.8, climb, log));
+    SmartDashboard.putData("ClimbLeft -0.8%", new ClimbLeftSetPercentOutput(-0.8, climb, log));
+    SmartDashboard.putData("ClimbLeft -6 ips", new ClimbLeftSetVelocity(-6, 6, climb, log));
+    SmartDashboard.putData("ClimbRight 0.8%", new ClimbRightSetPercentOutput(0.8, climb, log));
+    SmartDashboard.putData("ClimbRight -0.8%", new ClimbRightSetPercentOutput(-0.8, climb, log));
+    SmartDashboard.putData("ClimbRight -6 ips", new ClimbRightSetVelocity(-6, 6, climb, log));
+    SmartDashboard.putData("ClimbPistons EXTEND", new ClimbPistonsSetPosition(true, climb, log));
+    SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb, log));
     
     // limelight subsystem
     SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight, log));
@@ -282,25 +282,25 @@ public class RobotContainer {
     }
 
     // top row UP, from left to right
-    coP[1].whenPressed(new ClimbPistonsSetPosition(true, climb)); // deploy climb pistons
-    coP[3].whileHeld(new ClimbLeftSetPercentOutput(0.8, climb)); // manually raise left climb arm
-    coP[5].whileHeld(new ClimbRightSetPercentOutput(0.8, climb)); // manually raise right climb arm
+    coP[1].whenPressed(new ClimbPistonsSetPosition(true, climb, log)); // deploy climb pistons
+    coP[3].whileHeld(new ClimbLeftSetPercentOutput(0.8, climb, log)); // manually raise left climb arm
+    coP[5].whileHeld(new ClimbRightSetPercentOutput(0.8, climb, log)); // manually raise right climb arm
 
     // top row DOWN, from left to right
-    coP[2].whenPressed(new ClimbPistonsSetPosition(false, climb)); // retract climb pistons
-    coP[4].whileHeld(new ClimbLeftSetPercentOutput(-0.8, climb)); // manually lower left climb arm
-    coP[6].whileHeld(new ClimbRightSetPercentOutput(-0.8, climb)); // manually lower right climb arm
+    coP[2].whenPressed(new ClimbPistonsSetPosition(false, climb, log)); // retract climb pistons
+    coP[4].whileHeld(new ClimbLeftSetPercentOutput(-0.8, climb, log)); // manually lower left climb arm
+    coP[6].whileHeld(new ClimbRightSetPercentOutput(-0.8, climb, log)); // manually lower right climb arm
 
     // top row RED SWITCH
-    coP[8].whenPressed(new ClimbSetVelocity(ClimbConstants.defaultVelocity, ClimbConstants.targetLowPosition, climb)); // climb lift sequence
+    coP[8].whenPressed(new ClimbSetVelocity(ClimbConstants.defaultVelocity, ClimbConstants.targetLowPosition, climb, log)); // climb lift sequence
 
     // middle row UP, from left to right
-    coP[9].whileHeld(new ClimbSetPercentOutput(0.8, climb));
-    coP[11].whenPressed(new ClimbSetVelocity(-1 * ClimbConstants.defaultVelocity, ClimbConstants.targetHighPosition, climb)); // climb grab sequence
+    coP[9].whileHeld(new ClimbSetPercentOutput(0.8, climb, log));
+    coP[11].whenPressed(new ClimbSetVelocity(-1 * ClimbConstants.defaultVelocity, ClimbConstants.targetHighPosition, climb, log)); // climb grab sequence
     /*coP[13].whenPressed(new Wait(0));*/
 
     // middle row DOWN, from left to right
-    coP[10].whileHeld(new ClimbSetPercentOutput(-0.4, climb));
+    coP[10].whileHeld(new ClimbSetPercentOutput(-0.4, climb, log));
     /*coP[12].whenPressed(new Wait(0));
     coP[14].whenPressed(new Wait(0));*/
 

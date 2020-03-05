@@ -96,7 +96,7 @@ public class ShooterSetPID extends CommandBase {
   @Override
   public void initialize() {
     if(rpmFromShuffleboard && !rpmFromDistance) rpm = SmartDashboard.getNumber("Shooter Manual SetPoint RPM", 2800);
-    else if(rpmFromDistance) rpm = shooter.distanceFromTargetToRPM(limeLight.getDistanceNew());
+    else if(rpmFromDistance) rpm = shooter.distanceFromTargetToRPM(limeLight.getDistance());
     shooter.setShooterPID(rpm);
     ledTimer.reset();
     ledTimer.start();
@@ -107,8 +107,8 @@ public class ShooterSetPID extends CommandBase {
   @Override
   public void execute() {
     if (!end && rpmFromDistance) {
-      if (limeLight.getDistanceNew() == 0) rpm = ShooterConstants.shooterDefaultRPM;
-      else rpm = shooter.distanceFromTargetToRPM(limeLight.getDistanceNew());
+      if (limeLight.getDistance() == 0) rpm = ShooterConstants.shooterDefaultRPM;
+      else rpm = shooter.distanceFromTargetToRPM(limeLight.getDistance());
       shooter.setShooterPID(rpm);
       if(limeLight.canTakeSnapshot()) {
         limeLight.setSnapshot(true);
