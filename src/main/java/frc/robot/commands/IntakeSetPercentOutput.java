@@ -20,11 +20,11 @@ public class IntakeSetPercentOutput extends CommandBase {
 
   /**
    * Set intake percent output using parameter percent.
-   * This command never ends.
    * @param percent percent output (0 to 1)
-   * @param intake intake subsystem to use
+   * @param end true = end command immediately, false = never end command
+   * @param intake intake subsystem
    */
-  public IntakeSetPercentOutput(double percent,boolean end, Intake intake, FileLog log) {
+  public IntakeSetPercentOutput(double percent, boolean end, Intake intake, FileLog log) {
     this.intake = intake;
     this.percent = percent;
     this.log = log;
@@ -34,8 +34,9 @@ public class IntakeSetPercentOutput extends CommandBase {
 
   /**
    * Set intake percent output using default percent from constants.
-   * This command never ends.
-   * @param intake intake subsystem to use
+   * @param end true = end command immediately, false = never end command
+   * @param intake intake subsystem
+   * @param log log utility
    */
   public IntakeSetPercentOutput(boolean end, Intake intake, FileLog log) {
     this.intake = intake;

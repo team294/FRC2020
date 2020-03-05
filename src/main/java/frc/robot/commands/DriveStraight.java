@@ -15,7 +15,6 @@ import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.*;
-
 import static frc.robot.Constants.DriveConstants.*;
 
 public class DriveStraight extends CommandBase {
@@ -38,6 +37,7 @@ public class DriveStraight extends CommandBase {
   private boolean fromShuffleboard;
   private double angleInput, angleTarget;   // angleTarget is an absolute gyro angle
   private FileLog log;
+  private boolean sweetSpot = false;
 
   private int accuracyCounter = 0;
 
@@ -46,7 +46,7 @@ public class DriveStraight extends CommandBase {
   private TrapezoidProfileBCR.State tStateNext; // next state of the system as calculated by the profile generator
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
-
+ 
   /**
    * Drives the robot straight.
    * @param target distance to travel, in meters
@@ -71,6 +71,35 @@ public class DriveStraight extends CommandBase {
     this.regenerate = regenerate;
     this.fromShuffleboard = false;
     this.target = target;
+    this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
+    this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
+    addRequirements(driveTrain);
+  }
+
+/**
+   * Use this constructor when going to the sweet spot
+   * @param sweetSpot true = will initialize target to however far away the sweet spot is
+   * @param angleType kRelative (angle is relative to current robot facing),
+   *   kAbsolute (angle is an absolute field angle; 0 = away from drive station),
+   *   kVision (use limelight to drive towards the goal)
+   * @param angle angle to drive along when driving straight (+ = left, - = right)
+   * @param maxVel max velocity in meters/second, between 0 and kMaxSpeedMetersPerSecond in Constants
+   * @param regenerate true = regenerate profile each cycle (to accurately reach target distance), false = don't regenerate (for debugging)
+   * @param driveTrain reference to the drive train subsystem
+   * @param limelight reference to the limelight subsystem
+   * @param log
+   */
+
+  public DriveStraight(boolean sweetSpot, TargetType angleType, double angle, double maxVel, double maxAccel, boolean regenerate, DriveTrain driveTrain, LimeLight limeLight, FileLog log) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    this.sweetSpot = sweetSpot;
+    this.driveTrain = driveTrain;
+    this.limeLight = limeLight;
+    this.log = log;
+    this.angleType = angleType;
+    angleInput = angle;
+    this.regenerate = regenerate;
+    this.fromShuffleboard = false;
     this.maxVel = MathUtil.clamp(Math.abs(maxVel), 0, DriveConstants.kMaxSpeedMetersPerSecond);
     this.maxAccel = MathUtil.clamp(Math.abs(maxAccel), 0, DriveConstants.kMaxAccelerationMetersPerSecondSquared);
     addRequirements(driveTrain);
@@ -138,13 +167,17 @@ public class DriveStraight extends CommandBase {
         angleTarget = driveTrain.normalizeAngle(driveTrain.getGyroRotation() + limeLight.getXOffset());
     }
 
+    if(sweetSpot){
+      target = Units.inchesToMeters(limeLight.getSweetSpot() * 12);
+    }
+
     direction = Math.signum(target);
 
     tStateFinal = new TrapezoidProfileBCR.State(target, 0.0); // initialize goal state (degrees to turn)
     tStateCurr = new TrapezoidProfileBCR.State(0.0, 0.0); // initialize initial state (relative turning, so assume initPos is 0 degrees)
     tConstraints = new TrapezoidProfileBCR.Constraints(maxVel, maxAccel); // initialize velocity and accel limits
     tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr); // generate profile
-    log.writeLog(false, "DriveStraight", "init", "Profile total time", tProfile.totalTime());
+    log.writeLog(false, "DriveStraight", "init", "Target", target, "Profile total time", tProfile.totalTime());
     
     profileStartTime = System.currentTimeMillis(); // save starting time of profile
     startDistLeft = Units.inchesToMeters(driveTrain.getLeftEncoderInches());
@@ -219,23 +252,13 @@ public class DriveStraight extends CommandBase {
     log.writeLog(false, "DriveStraight", "End");
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
-    driveTrain.setDriveModeCoast(false);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    // if((startAng + target) - Units.inchesToMeters(driveTrain.getAverageDistance()) < 0.1) {
-    //   System.out.println("Start: " + startAng);
-    //   System.out.println("theoretical: " + (startAng + target));
-    //   System.out.println("actual: " + Units.inchesToMeters(driveTrain.getAverageDistance()));
-    //   return true;
-    // }
     if(Math.abs(target - currDist) < 0.0125) {
       accuracyCounter++;
-      // System.out.println("theoretical: " + target);
-      // System.out.println("actual: " + currDist);
-      // System.out.println(accuracyCounter);
       log.writeLog(false, "DriveStraight", "WithinTolerance", "Target Dist", target, "Actual Dist", currDist, "Counter", accuracyCounter);
     } else {
       accuracyCounter = 0;
