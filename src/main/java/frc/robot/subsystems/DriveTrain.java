@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.utilities.*;
 import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.DriveConstants.*;
@@ -211,12 +211,16 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * 
+   * Drive the robot using arcade controls
    * @param speedPct
    * @param rotation
    */
   public void arcadeDrive(double speedPct, double rotation) {
-    diffDrive.arcadeDrive(speedPct, rotation * 0.5, false);    // minimize how fast turn operated from joystick
+    double maxRotation = 0.5;
+    double absSpeed = Math.abs(speedPct);
+    double rotClamp = MathUtil.clamp(rotation, Math.min(-absSpeed, -maxRotation), Math.max(absSpeed, maxRotation));
+
+    diffDrive.arcadeDrive(speedPct, rotClamp, false);    // minimize how fast turn operated from joystick
   }
 
   /**
