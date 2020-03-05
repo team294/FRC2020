@@ -37,9 +37,9 @@ import static frc.robot.Constants.DriveConstants.*;
 public class RobotContainer {
   private final FileLog log = new FileLog("A1");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
-  private final Hopper hopper = new Hopper(log);
-  private final Intake intake = new Intake(log);
   private final LED led = new LED();
+  private final Hopper hopper = new Hopper(log);
+  private final Intake intake = new Intake(log, led);
   private final Feeder feeder = new Feeder(log, tempCheck);
   private final Climb climb = new Climb(log);
   private final Shooter shooter = new Shooter(hopper, log, tempCheck, led);
@@ -58,6 +58,7 @@ public class RobotContainer {
 
   private final Timer disabledDisplayTimer = new Timer();
   private int displayCount = 1;
+  private boolean rumbling = false;
   
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
@@ -136,6 +137,7 @@ public class RobotContainer {
     SmartDashboard.putData("DriveStraightRel", new DriveStraight(3, TargetType.kRelative, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveStraightAbs", new DriveStraight(3, TargetType.kAbsolute, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveStraightVis", new DriveStraight(3, TargetType.kVision, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("Drive Vision Assist", new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 45, 200, 0.5, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 90, 90, 200, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kAbsolute, 90, 90, 200, 1, driveTrain, limeLight, log));
@@ -255,7 +257,7 @@ public class RobotContainer {
     // right[1].whenPressed(new Wait(0));
 
     // joystick right button
-    // left[2].whenPressed(new Wait(0));
+    left[2].whenHeld(new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
   }
 
@@ -318,6 +320,9 @@ public class RobotContainer {
 	public void setXBoxRumble(double percentRumble) {
 		xboxController.setRumble(RumbleType.kLeftRumble, percentRumble);
     xboxController.setRumble(RumbleType.kRightRumble, percentRumble);
+
+    if (percentRumble == 0) rumbling = false;
+    else rumbling = true;
   }
 
   /**
@@ -417,5 +422,12 @@ public class RobotContainer {
    * Method called once every scheduler cycle when teleop mode is initialized/enabled.
    */
   public void teleopPeriodic() {
+    /*if(limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
+      setXBoxRumble(0.4);
+    } else */if (!rumbling && intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
+      setXBoxRumble(1);
+    } else if (rumbling && intake.intakeGetPercentOutput() != Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
+      setXBoxRumble(0);
+    }
   }
 }
