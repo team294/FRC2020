@@ -38,7 +38,6 @@ public class VisionAssistSequence extends SequentialCommandGroup {
 
     new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) // turn shooter on until codriver turns it off manually
       
-      
     );
     
   }
