@@ -26,6 +26,7 @@ public class LimeLight extends SubsystemBase {
   private double targetExists, x, y, area, latency, pipe;
   private FileLog log;
   private LED led;
+  private double sweetSpot;
   private Timer snapshotTimer;
   private int snapshotCount = 0;
   private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
@@ -82,6 +83,14 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
+   * Distance from the robot to the shooting "sweet spot"
+   * @return distance to the "sweet spot", in feet (+ = move towards target)
+   */
+  public double getSweetSpot() {
+    return sweetSpot;
+  }
+
+  /**
    * @return latency contribution by pipeline
    */
   public double getLatency() {
@@ -90,7 +99,7 @@ public class LimeLight extends SubsystemBase {
 
   /**
    * Takes into account not being in line with the target.
-   * @return distance from camera to target, on the floor
+   * @return distance from camera to target, on the floor, in feet
    */
   public double getDistanceNew() {    //  TODO  this could return a erroneous value if vision misses a frame or is temporarily blocked.  Use avgrging or filtering
     double myDistance = (targetHeight - cameraHeight) / ((Math.tan(Math.toRadians(cameraAngle + y))) * (Math.cos(Math.toRadians(x))));
@@ -197,13 +206,14 @@ public class LimeLight extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // table.addEntryListener(Value."tl".name, this::updateValues, kNew | kUpdate);
     // read values periodically
     targetExists = tv.getDouble(1000.0);
     x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
     y = ty.getDouble(1000.0);
     area = ta.getDouble(1000.0);
     latency = tl.getDouble(1000.0);
+
+    sweetSpot = getDistanceNew() - endDistance;
 
     if (makePattern() == LED.visionTargetLibrary[15]) {
       led.setPattern(makePattern(), 0.1, 0);
@@ -212,6 +222,7 @@ public class LimeLight extends SubsystemBase {
     }
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
+
       updateLimeLightLog(false);
 
       if(!isGettingData()) {
@@ -225,6 +236,7 @@ public class LimeLight extends SubsystemBase {
       //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
       SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
       SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
+      SmartDashboard.putNumber("Limelight sweet spot", sweetSpot);
       SmartDashboard.putBoolean("Limelight Updating", isGettingData());
       SmartDashboard.putNumber("Limelight Latency", getLatency());
       SmartDashboard.putNumber("Limelight Snapshot Count", snapshotCount);
