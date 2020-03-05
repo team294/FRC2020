@@ -423,9 +423,9 @@ public class RobotContainer {
   public void teleopPeriodic() {
     /*if(limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
       setXBoxRumble(0.4);
-    } else */if (!rumbling && intake.intakeGetPercentOutput() == Constants.IntakeConstants.intakeDefaultPercentOutput) {
-      setXBoxRumble(0.8);
-    } else if (rumbling) {
+    } else */if (!rumbling && intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
+      setXBoxRumble(1);
+    } else if (rumbling && intake.intakeGetPercentOutput() != Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
       setXBoxRumble(0);
     }
   }

@@ -60,7 +60,8 @@ public class Intake extends SubsystemBase {
     if (percent == 0) {
       ledTimer.stop();
       ledTimer.reset();
-    } else if (percent == IntakeConstants.intakeDefaultPercentOutput && !ledTimer.hasElapsed(0.1)) {
+      led.setStrip("Black", 0.5, 1);
+    } else if (Math.abs(percent) == IntakeConstants.intakeDefaultPercentOutput && !ledTimer.hasElapsed(0.1)) {
       ledTimer.start();
     }
   }
