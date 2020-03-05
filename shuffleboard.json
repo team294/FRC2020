@@ -1081,13 +1081,35 @@
             ],
             "content": {
               "_type": "Subsystem Layout",
-              "_title": "DriveTrain",
+              "_title": "RobotPrefs(1) \u0026 DriveTrain (2)",
               "Layout/Label position": "LEFT",
               "_children": [
                 {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
+                  "_title": "RobotPrefs Initialized",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
                   "_type": "Command",
-                  "_source0": "network_Table:///SmartDashboard/DriveForever",
+                  "_source0": "network_table:///SmartDashboard/DriveForward",
                   "_title": "Drive Forward"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/DriveBackward",
+                  "_title": "Drive Backward"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Left Enc",
+                  "_title": "Drive Left Enc"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Right Enc",
+                  "_title": "Drive Right Enc"
                 },
                 {
                   "_type": "Boolean Box",
@@ -1095,6 +1117,21 @@
                   "_title": "Gyro Working",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/DriveTurnLeft",
+                  "_title": "Drive Turn Left"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/DriveTurnRight",
+                  "_title": "Drive Turn Right"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive Gyro Rotation",
+                  "_title": "Drive Gyro Rotation"
                 }
               ]
             }
@@ -1168,6 +1205,11 @@
                   "_title": "Feeder IN"
                 },
                 {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Feeder Encoder",
+                  "_title": "Feeder Encoder"
+                },
+                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Feeder STOP",
                   "_title": "Feeder STOP"
@@ -1203,7 +1245,7 @@
           "6,0": {
             "size": [
               2,
-              6
+              4
             ],
             "content": {
               "_type": "Subsystem Layout",
@@ -1246,24 +1288,14 @@
                   "_title": "Shooter STOP"
                 },
                 {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter Distance",
+                  "_title": "Shooter Distance"
+                },
+                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Shooter DistToRPM",
                   "_title": "Shooter DistToRPM"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, UNLOCK",
-                  "_title": "Hood CLOSE, UNLOCK"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, LOCK",
-                  "_title": "Hood CLOSE, LOCK"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
-                  "_title": "Hood OPEN"
                 },
                 {
                   "_type": "Boolean Box",
@@ -1271,26 +1303,11 @@
                   "_title": "Cell Present",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShootSequence 2800",
-                  "_title": "ShootSequence 2800"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShootSequence DIST",
-                  "_title": "ShootSequence DIST"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShootSequence STOP",
-                  "_title": "ShootSequence STOP"
                 }
               ]
             }
           },
-          "8,0": {
+          "10,0": {
             "size": [
               2,
               4
@@ -1307,11 +1324,6 @@
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ClimbPistons RETRACT",
-                  "_title": "ClimbPistons RETRACT"
-                },
-                {
-                  "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ClimbRight 0.8%",
                   "_title": "ClimbRight 0.8%"
                 },
@@ -1321,11 +1333,6 @@
                   "_title": "ClimbR Limit",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ClimbRight -0.8%",
-                  "_title": "ClimbRight -0.8%"
                 },
                 {
                   "_type": "Command",
@@ -1340,9 +1347,69 @@
                   "Colors/Color when false": "#8B0000FF"
                 },
                 {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbExtended",
+                  "_title": "ClimbExtended",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight -0.8%",
+                  "_title": "ClimbRight -0.8%"
+                },
+                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ClimbLeft -0.8%",
                   "_title": "ClimbLeft -0.8%"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ClimbPistons RETRACT",
+                  "_title": "ClimbPistons RETRACT"
+                }
+              ]
+            }
+          },
+          "8,0": {
+            "size": [
+              2,
+              4
+            ],
+            "content": {
+              "_type": "Subsystem Layout",
+              "_title": "Shoot Sequences",
+              "Layout/Label position": "BOTTOM",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, UNLOCK",
+                  "_title": "Hood CLOSE, UNLOCK"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
+                  "_title": "Hood OPEN"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, LOCK",
+                  "_title": "Hood CLOSE, LOCK"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence 2800",
+                  "_title": "ShootSequence 2800"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence DIST",
+                  "_title": "ShootSequence DIST"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence STOP",
+                  "_title": "ShootSequence STOP"
                 }
               ]
             }
