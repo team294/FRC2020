@@ -36,7 +36,7 @@ public class Wait extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return timer.hasPeriodPassed(seconds);
+    return timer.hasElapsed(seconds);
   }
 
   @Override
