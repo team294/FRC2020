@@ -52,7 +52,7 @@ public class AutoShootBackup extends SequentialCommandGroup {
               new ShootSequence(2500, shooter, feeder, hopper, intake, led, log) // shoot
             )
           ), 
-          () -> useVision && limeLight.seesTarget()
+          () -> useVision && limeLight.seesTarget() && driveTrain.isGyroReading()
         ),
       
       

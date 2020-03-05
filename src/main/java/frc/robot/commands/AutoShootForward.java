@@ -46,7 +46,7 @@ public class AutoShootForward extends SequentialCommandGroup {
             new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
             new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
             new IntakePistonSetPosition(true, intake, log) // deploy intake piston
-          )), new IntakePistonSetPosition(true, intake, log), () -> useVision && limeLight.seesTarget()
+          )), new IntakePistonSetPosition(true, intake, log), () -> useVision && limeLight.seesTarget() && driveTrain.isGyroReading()
         ),
       // turn towards target w/ vision with timeout
 
