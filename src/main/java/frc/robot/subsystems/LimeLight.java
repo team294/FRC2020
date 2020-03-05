@@ -101,19 +101,8 @@ public class LimeLight extends SubsystemBase {
    * Takes into account not being in line with the target.
    * @return distance from camera to target, on the floor, in feet
    */
-  public double getDistanceNew() {    //  TODO  this could return a erroneous value if vision misses a frame or is temporarily blocked.  Use avgrging or filtering
+  public double getDistance() {    //  TODO  this could return a erroneous value if vision misses a frame or is temporarily blocked.  Use avgrging or filtering
     double myDistance = (targetHeight - cameraHeight) / ((Math.tan(Math.toRadians(cameraAngle + y))) * (Math.cos(Math.toRadians(x))));
-    return myDistance;
-  }
-
-  /**
-   * Does not take into account not being in line with the target.
-   * Assumes camera is perfectly in line with the target, and was only used
-   * for preliminary distanceCalc tests (not for actual distance calculations).
-   * @return distance from camera to target, on the floor
-   */
-  public double getDistance() {   //TODO is this used anymore?  If so why?Newf not remove and rename ...new
-    double myDistance = (targetHeight - cameraHeight) / Math.tan(Math.toRadians(cameraAngle + y));
     return myDistance;
   }
 
@@ -213,7 +202,7 @@ public class LimeLight extends SubsystemBase {
     area = ta.getDouble(1000.0);
     latency = tl.getDouble(1000.0);
 
-    sweetSpot = getDistanceNew() - endDistance;
+    sweetSpot = getDistance() - endDistance;
 
     if (makePattern() == LED.visionTargetLibrary[15]) {
       led.setPattern(makePattern(), 0.1, 0);
@@ -234,7 +223,7 @@ public class LimeLight extends SubsystemBase {
       SmartDashboard.putNumber("LimeLight y", y);
       SmartDashboard.putBoolean("Limelight Sees Target", seesTarget());
       //SmartDashboard.putNumber("Limelight dist", getDistance()); // distance assuming we are in line with the target
-      SmartDashboard.putNumber("Limelight new distance", getDistanceNew()); // distance calculation using vision camera
+      SmartDashboard.putNumber("Limelight new distance", getDistance()); // distance calculation using vision camera
       SmartDashboard.putNumber("Limelight Actual dist", (-driveTrain.getAverageDistance()/12)); // distance calculation using drive encoders, used to test accuracy of getDistanceNew()
       SmartDashboard.putNumber("Limelight sweet spot", sweetSpot);
       SmartDashboard.putBoolean("Limelight Updating", isGettingData());
@@ -262,7 +251,7 @@ public class LimeLight extends SubsystemBase {
       "Target Area", area,
       "Latency", latency,
       "Snapshot Count", snapshotCount,
-      "Dist", getDistance(), "New Dist", getDistanceNew(), "Actual Dist", (-driveTrain.getAverageDistance()/12)
+      "Dist", getDistance(), "Encoder Dist", (-driveTrain.getAverageDistance()/12)
       );
   }
 }

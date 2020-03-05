@@ -10,9 +10,11 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.*;
+import frc.robot.utilities.FileLog;
 
 public class ClimbPistonsSetPosition extends CommandBase {
   private Climb climb;
+  private FileLog log;
   private boolean extend;
   private double matchTime;
   
@@ -22,8 +24,9 @@ public class ClimbPistonsSetPosition extends CommandBase {
    * @param extend true = extend pistons, false = retract pistons
    * @param climb climb subsystem
    */
-  public ClimbPistonsSetPosition(boolean extend, Climb climb) {
+  public ClimbPistonsSetPosition(boolean extend, Climb climb, FileLog log) {
     this.climb = climb;
+    this.log = log;
     this.extend = extend;
     this.matchTime = DriverStation.getInstance().getMatchTime();
     addRequirements(climb);
@@ -33,6 +36,7 @@ public class ClimbPistonsSetPosition extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "ClimbPistonsSetPosition", "Init", "Piston Status", (extend) ? "Extend" : "Retract");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
