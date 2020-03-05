@@ -11,9 +11,11 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants.ClimbConstants;
 import frc.robot.subsystems.Climb;
+import frc.robot.utilities.FileLog;
 
 public class ClimbLeftSetVelocity extends CommandBase {
   private Climb climb;
+  private FileLog log;
   private double velocity, position, timeRemaining;
 
   /**
@@ -23,8 +25,9 @@ public class ClimbLeftSetVelocity extends CommandBase {
    * @param position target position (inches)
    * @param climb climb subsystem
    */
-  public ClimbLeftSetVelocity(double velocity, double position, Climb climb) {
+  public ClimbLeftSetVelocity(double velocity, double position, Climb climb, FileLog log) {
     this.climb = climb;
+    this.log = log;
     this.velocity = velocity;
     this.position = position;
     addRequirements(climb);
@@ -33,6 +36,7 @@ public class ClimbLeftSetVelocity extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    log.writeLog(false, "ClimbLeftSetVelocity", "Init", "Target ips", velocity, "Target pos", position);
     timeRemaining = DriverStation.getInstance().getMatchTime();
     // if it is the last 30 seconds of the match and the piston is extended, set left motor velocity
     if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition())

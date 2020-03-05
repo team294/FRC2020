@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import frc.robot.commands.AutoOpponentTrenchPickup;
 import frc.robot.commands.AutoShootBackup;
 import frc.robot.commands.AutoShootForward;
+import frc.robot.commands.AutoShortShot;
 import frc.robot.commands.AutoOwnTrenchPickup;
 import frc.robot.commands.AutoTrussPickup;
 import frc.robot.commands.Wait;
@@ -21,6 +22,7 @@ public class AutoSelection {
 	public static final int TRUSS_PICKUP = 2;
 	public static final int OWN_TRENCH_PICKUP = 3;
 	public static final int SHOOT_FORWARD = 4;
+	public static final int SHORT_SHOT = 5;
 	
 
 	private Trajectory[] trajectoryCache = new Trajectory[1];
@@ -76,6 +78,11 @@ public class AutoSelection {
 			log.writeLogEcho(true, "AutoSelect", "run OwnTrenchPickup");
 			autonomousCommand = new AutoOwnTrenchPickup(waitTime, useVision, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
 		} 
+
+		if (autoPlan == SHORT_SHOT){
+			log.writeLogEcho(true, "AutoSelect", "run ShortShot");
+			autonomousCommand = new AutoShortShot(waitTime, useVision, driveTrain, limeLight, log, shooter, feeder, hopper, intake, led);
+		}
 
 		if (autonomousCommand == null) {
 			log.writeLogEcho(true, "AutoSelect", "No autocommand found");
