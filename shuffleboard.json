@@ -1143,7 +1143,7 @@
             ],
             "content": {
               "_type": "Subsystem Layout",
-              "_title": "Intake \u0026 Hopper",
+              "_title": "Intake (3) \u0026 Hopper (4)",
               "Layout/Label position": "LEFT",
               "_children": [
                 {
@@ -1196,7 +1196,7 @@
             ],
             "content": {
               "_type": "Subsystem Layout",
-              "_title": "Feeder",
+              "_title": "Feeder (5)",
               "Layout/Label position": "LEFT",
               "_children": [
                 {
@@ -1249,7 +1249,7 @@
             ],
             "content": {
               "_type": "Subsystem Layout",
-              "_title": "Shooter",
+              "_title": "Shooter (6)",
               "Layout/Label position": "LEFT",
               "_children": [
                 {
@@ -1314,7 +1314,7 @@
             ],
             "content": {
               "_type": "Subsystem Layout",
-              "_title": "Climb",
+              "_title": "Climb (8)",
               "Layout/Label position": "LEFT",
               "_children": [
                 {
@@ -1378,7 +1378,7 @@
             ],
             "content": {
               "_type": "Subsystem Layout",
-              "_title": "Shoot Sequences",
+              "_title": "Shoot Sequences (7)",
               "Layout/Label position": "BOTTOM",
               "_children": [
                 {
