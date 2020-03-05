@@ -257,6 +257,8 @@ public class RobotContainer {
     // joystick right button
     // left[2].whenPressed(new Wait(0));
     right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
+    right[1].whenPressed(new DriveJogTurn(true,  driveTrain, log ));
+    left[1].whenPressed(new DriveJogTurn(false,  driveTrain, log ));
   }
 
   /** 
