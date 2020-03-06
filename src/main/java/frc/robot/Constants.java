@@ -93,6 +93,9 @@ public final class Constants {
         public static final double endDistance = 18; // distance of the "sweet spot", in feet
         public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shot
         
+        // Flashlight constants
+        public static final int relayFlashlight = 0;
+
         // *******************************
         // The constants below are DEFAULT VALUES. Change these value in RobotPrefrences
         // for each robot, not in this code!

@@ -7,7 +7,10 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.Relay;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.Relay.Direction;
+import edu.wpi.first.wpilibj.Relay.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,11 +27,13 @@ public class LimeLight extends SubsystemBase {
   private static NetworkTable table = tableInstance.getTable("limelight");
   private NetworkTableEntry tv, tx, ty, ta, tl, pipeline;
   private double targetExists, x, y, area, latency, pipe;
+  private Relay flashlight = new Relay(relayFlashlight, Direction.kBoth);
   private FileLog log;
   private LED led;
   private double sweetSpot;
   private Timer snapshotTimer;
   private int snapshotCount = 0;
+  private boolean setFlashAuto = true;
   private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
 
   /*
@@ -159,6 +164,25 @@ public class LimeLight extends SubsystemBase {
   }
 
   /**
+   * @param on true = turn on the flashlight, false = turns off the flashlight
+   */
+  public void setFlashlight(boolean on) {
+    if(on) {
+      flashlight.set(Value.kForward);
+    } else {
+      flashlight.set(Value.kReverse);
+    }
+  }
+
+  /**
+   * @param auto true = automatically turn on the flashlight when we lose vision
+   * false = allow driver to turn flashlight on/off
+   */
+  public void setFlashlightAuto(boolean auto) {
+    setFlashAuto = auto;
+  }
+
+  /**
    * Choose which LED pattern to display, based on the x offset from camera.
    * @return Color array of the pattern
    */
@@ -208,6 +232,10 @@ public class LimeLight extends SubsystemBase {
       led.setPattern(makePattern(), 0.1, 0);
     } else {
       led.setPattern(makePattern(), 0.5, 0);
+    }
+
+    if(!isGettingData() && setFlashAuto) {
+      setFlashlight(true);
     }
 
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
