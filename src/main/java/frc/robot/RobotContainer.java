@@ -121,7 +121,7 @@ public class RobotContainer {
     SmartDashboard.putData("ClimbPistons RETRACT", new ClimbPistonsSetPosition(false, climb, log));
     
     // limelight subsystem
-    SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight, log));
+    SmartDashboard.putData("Limelight Reset Snapshot Count", new LimeLightSnapshotCountReset(limeLight, log));
     //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
 
     // command sequences
@@ -383,10 +383,10 @@ public class RobotContainer {
    * Method called once every scheduler cycle when robot is disabled.
    */
   public void disabledPeriodic() {
-    if(displayCount > 1) displayCount = 0;
-    led.setPattern(LED.teamFlashingColorsLibrary[displayCount], 0.5, 1);
+    if(displayCount > 3) displayCount = 0; // displayCount > 1 for flashing
+    led.setPattern(LED.teamMovingColorsLibrary[displayCount], 0.5, 1);
 
-    if(disabledDisplayTimer.advanceIfElapsed(0.25)) {
+    if(disabledDisplayTimer.advanceIfElapsed(0.05)) { //0.25 for flashing
       displayCount++;
     }
   }
