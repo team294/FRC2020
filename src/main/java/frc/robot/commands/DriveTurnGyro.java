@@ -220,12 +220,13 @@ public class DriveTurnGyro extends CommandBase {
     driveTrain.setRightMotorOutput(+aFF + pFB);
 
     if (regenerate) {
-      tStateCurr = new TrapezoidProfileBCR.State(currAngle, currVelocity);
+      // tStateCurr = new TrapezoidProfileBCR.State(currAngle, currVelocity);   // using currVelocity is problematic since the current velocity has lots of noise
+      tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
       tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
       profileStartTime = currProfileTime;
     }
 
-    log.writeLog(false, "DriveTurnGyro", "profile", "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+    log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
   }
 
