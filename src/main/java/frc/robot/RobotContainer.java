@@ -314,8 +314,8 @@ public class RobotContainer {
     coP[7].whenPressed(new ShooterSetVoltage(0, shooter, log)); // stop shooter
 
     // bottom row UP then DOWN, from LEFT to RIGHT
-    /*coP[15].whenPressed(new Wait(0));
-    coP[16].whenPressed(new Wait(0));*/
+    coP[15].whenPressed(new ClimbPistonUnlock(false, climb)); // lock climb lock
+    coP[16].whenPressed(new ClimbPistonUnlock(true, climb)); // unlock climb lock
   }
 
   /**

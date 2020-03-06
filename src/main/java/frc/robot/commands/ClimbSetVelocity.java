@@ -60,6 +60,7 @@ public class ClimbSetVelocity extends CommandBase {
     timeRemaining = DriverStation.getInstance().getMatchTime();
     // if it is the last 30 seconds of the match and the piston is extended, set right motor velocity
     if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition()) {
+      climb.unlockClimbPiston(true);
       climb.climbMotorsSetVelocity(velocity);
     }
   }
