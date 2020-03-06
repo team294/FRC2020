@@ -289,8 +289,8 @@ public class RobotContainer {
     coP[1].whenPressed(new ClimbPistonsSetPosition(true, climb, log)); // deploy climb pistons
     coP[2].whenPressed(new ClimbPistonsSetPosition(false, climb, log)); // retract climb pistons
 
-    coP[3].whenPressed(new ClimbSetVelocity(true, ClimbConstants.latchHeight, climb, log)); // raise climb arms to default latching height
-    coP[4].whenPressed(new ClimbSetVelocity(true, ClimbConstants.latchExtensionHeight, climb, log)); // raise climb arms to slightly above default latching height
+    coP[3].whenPressed(new ClimbSetVelocity(false, ClimbConstants.latchHeight, climb, log)); // raise climb arms to default latching height
+    coP[4].whenPressed(new ClimbSetVelocity(false, ClimbConstants.latchExtensionHeight, climb, log)); // raise climb arms to slightly above default latching height
 
     coP[5].whileHeld(new ClimbSetPercentOutput(0.4, climb, log)); // manually raise climb arms, slowly
     coP[6].whileHeld(new ClimbSetPercentOutput(-0.4, climb, log)); // manually lower climb arms, slowly

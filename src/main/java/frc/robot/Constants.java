@@ -79,7 +79,7 @@ public final class Constants {
         public static final double ticksPerInch = 2048 * 54 / 2 / Math.PI; // ticksPerRotation * gearRatio(54:1) / pi / radius
         public static final double positionTolerance = 1; // inches from the target position to stop applying power to the motor
         public static final double maxHeight = 33;
-        public static final double liftHeight = 3; // height to bring climb down to when lifting robot, in inches
+        public static final double liftHeight = 5; // height to bring climb down to when lifting robot, in inches
         public static final double latchHeight = 25; // default height to bring climb up to latch on, in inches
         public static final double latchExtensionHeight = 28; // height slightly above default height to bring climb up to latch on, in inches
         public static final double defaultVelocity = -6;

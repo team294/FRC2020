@@ -73,6 +73,7 @@ public class ClimbSetVelocity extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     climb.climbMotorRightSetPercentOutput(0);
+    climb.climbMotorLeftSetPercentOutput(0);
   }
 
   // Returns true when the command should end.
@@ -80,11 +81,8 @@ public class ClimbSetVelocity extends CommandBase {
   public boolean isFinished() {
     // if it is the last 30 seconds of the match and the piston is extended, check for being at target position
     if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition()) {
-      if (Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance) climb.climbMotorRightSetPercentOutput(0);
-      if (Math.abs(climb.getLeftEncoderInches() - position) <= ClimbConstants.positionTolerance) climb.climbMotorLeftSetPercentOutput(0);
-      
-      if ((Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance)
-        && (Math.abs(climb.getLeftEncoderInches() - position) <= ClimbConstants.positionTolerance)) return true;
+      if (Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance || 
+        Math.abs(climb.getLeftEncoderInches() - position) <= ClimbConstants.positionTolerance) return true;
       else return false;
     } else return true;
   }
