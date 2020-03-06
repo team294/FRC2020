@@ -507,10 +507,10 @@
         "hgap": 16.0,
         "vgap": 16.0,
         "tiles": {
-          "2,0": {
+          "13,0": {
             "size": [
-              11,
-              5
+              13,
+              6
             ],
             "content": {
               "_type": "Camera Stream",
@@ -526,7 +526,7 @@
               "imageHeight": 0
             }
           },
-          "1,5": {
+          "1,4": {
             "size": [
               1,
               1
@@ -540,7 +540,7 @@
           "0,0": {
             "size": [
               2,
-              2
+              1
             ],
             "content": {
               "_type": "Boolean Box",
@@ -550,7 +550,7 @@
               "Colors/Color when false": "#8B0000FF"
             }
           },
-          "0,2": {
+          "0,1": {
             "size": [
               1,
               1
@@ -563,7 +563,7 @@
               "Colors/Color when false": "#4D4D4DFF"
             }
           },
-          "0,3": {
+          "0,2": {
             "size": [
               2,
               1
@@ -574,7 +574,7 @@
               "_title": "Problem Subsystem"
             }
           },
-          "0,4": {
+          "0,3": {
             "size": [
               2,
               1
@@ -585,7 +585,7 @@
               "_title": "Autonomous routine"
             }
           },
-          "0,5": {
+          "0,4": {
             "size": [
               1,
               1
@@ -612,7 +612,7 @@
               "Visuals/Show text": true
             }
           },
-          "1,2": {
+          "1,1": {
             "size": [
               1,
               1
@@ -621,6 +621,51 @@
               "_type": "Boolean Box",
               "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
               "_title": "Prefs Initialized",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "2,0": {
+            "size": [
+              11,
+              5
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight",
+              "_title": "limelight",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "0,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
+              "_title": "ClimbLeft Limit",
+              "Colors/Color when true": "#7CFC00FF",
+              "Colors/Color when false": "#8B0000FF"
+            }
+          },
+          "1,5": {
+            "size": [
+              1,
+              1
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
+              "_title": "ClimbRight Limit",
               "Colors/Color when true": "#7CFC00FF",
               "Colors/Color when false": "#8B0000FF"
             }
@@ -1419,9 +1464,9 @@
     }
   ],
   "windowGeometry": {
-    "x": -8.0,
-    "y": -8.0,
-    "width": 1936.0,
-    "height": 1056.0
+    "x": -7.0,
+    "y": 2.0,
+    "width": 3849.0,
+    "height": 1045.0
   }
 }
