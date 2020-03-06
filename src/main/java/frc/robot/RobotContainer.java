@@ -223,7 +223,6 @@ public class RobotContainer {
     // LB = 5, RB = 6
     xb[5].whileHeld(new ShootSequenceSetup(false, shooter, limeLight, led, log)); // close shot setup
     xb[5].whenReleased(new ShootSequence(shooter, feeder, hopper, intake, limeLight, led, log)); // shooting sequence
-    // xb[6].whileHeld(new ShooterSetPID(true, false, shooter, limeLight, led)); // set shooter rpm
     xb[6].whileHeld(new ShootSequenceSetup(true, shooter, limeLight, led, log)); // normal and far shot setup
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log)); // shooting sequence
 
@@ -242,7 +241,7 @@ public class RobotContainer {
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
-    // xbLT.whenActive(new ShooterHoodPistonSequence(true, true, shooter)); // close shooter hood and lock angle
+    // xbLT.whenActive(new Wait(0));
     xbRT.whenActive(new ShootSequenceStop(shooter, feeder, hopper, intake, led, log)); // stop motors and set shooter to low rpm
   }
 
@@ -288,36 +287,35 @@ public class RobotContainer {
       coP[i] = new JoystickButton(coPanel, i);
     }
 
-    // top row UP, from left to right
+    // top row UP then DOWN, from LEFT to RIGHT
     coP[1].whenPressed(new ClimbPistonsSetPosition(true, climb, log)); // deploy climb pistons
-    coP[3].whileHeld(new ClimbLeftSetPercentOutput(0.8, climb, log)); // manually raise left climb arm
-    coP[5].whileHeld(new ClimbRightSetPercentOutput(0.8, climb, log)); // manually raise right climb arm
-
-    // top row DOWN, from left to right
     coP[2].whenPressed(new ClimbPistonsSetPosition(false, climb, log)); // retract climb pistons
-    coP[4].whileHeld(new ClimbLeftSetPercentOutput(-0.8, climb, log)); // manually lower left climb arm
-    coP[6].whileHeld(new ClimbRightSetPercentOutput(-0.8, climb, log)); // manually lower right climb arm
 
+    coP[3].whenPressed(new ClimbSetVelocity(false, ClimbConstants.latchHeight, climb, log)); // raise climb arms to default latching height
+    coP[4].whenPressed(new ClimbSetVelocity(false, ClimbConstants.latchExtensionHeight, climb, log)); // raise climb arms to slightly above default latching height
+
+    coP[5].whileHeld(new ClimbSetPercentOutput(0.4, climb, log)); // manually raise climb arms, slowly
+    coP[6].whileHeld(new ClimbSetPercentOutput(-0.4, climb, log)); // manually lower climb arms, slowly
+    
     // top row RED SWITCH
-    coP[8].whenPressed(new ClimbSetVelocity(ClimbConstants.defaultVelocity, ClimbConstants.targetLowPosition, climb, log)); // climb lift sequence
+    coP[8].whenPressed(new ClimbLiftSequence(climb, led, log)); // climb lift sequence (rainbow LEDs and climb arms lower to lifting height)
+    // coP[8].whenPressed(new ClimbSetVelocity(true, ClimbConstants.liftHeight, climb)); // climb arms lower to lifting height
 
-    // middle row UP, from left to right
-    coP[9].whileHeld(new ClimbSetPercentOutput(0.8, climb, log));
-    coP[11].whenPressed(new ClimbSetVelocity(-1 * ClimbConstants.defaultVelocity, ClimbConstants.targetHighPosition, climb, log)); // climb grab sequence
-    /*coP[13].whenPressed(new Wait(0));*/
+    // middle row UP then DOWN, from LEFT to RIGHT
+    coP[9].whileHeld(new ClimbLeftSetPercentOutput(0.4, climb, log)); // manually raise left climb arm, slowly
+    coP[10].whileHeld(new ClimbLeftSetPercentOutput(-0.4, climb, log)); // manually lower left climb arm, slowly
 
-    // middle row DOWN, from left to right
-    coP[10].whileHeld(new ClimbSetPercentOutput(-0.4, climb, log));
-    /*coP[12].whenPressed(new Wait(0));
-    coP[14].whenPressed(new Wait(0));*/
+    coP[11].whileHeld(new ClimbRightSetPercentOutput(0.4, climb, log)); // manually raise right climb arm, slowly
+    coP[12].whileHeld(new ClimbRightSetPercentOutput(-0.4, climb, log)); // manually lower right climb arm, slowly
+
+    coP[13].whileHeld(new ClimbSetPercentOutput(0.8, climb, log)); // manually raise climb arms, quickly
+    coP[14].whileHeld(new ClimbSetPercentOutput(-0.8, climb, log)); // manually lower climb arms, quickly
 
     // middle row UP OR DOWN, fourth button
     coP[7].whenPressed(new ShooterSetVoltage(0, shooter, log)); // stop shooter
 
-    // bottom row UP, from left to right
+    // bottom row UP then DOWN, from LEFT to RIGHT
     /*coP[15].whenPressed(new Wait(0));
-
-    // bottom row DOWN, from left to right
     coP[16].whenPressed(new Wait(0));*/
   }
 
