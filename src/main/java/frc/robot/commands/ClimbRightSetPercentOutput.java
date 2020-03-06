@@ -37,8 +37,10 @@ public class ClimbRightSetPercentOutput extends CommandBase {
   public void initialize() {
     log.writeLog(false, "ClimbRightSetPercentOut", "Init", "Target %", percent);
     // if it is the last 30 seconds of the match and the piston is extended, set left and right motor perecnt output
-    if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition())
+    if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition()) {
+      climb.unlockClimbPiston(true);
       climb.climbMotorRightSetPercentOutput(percent);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.

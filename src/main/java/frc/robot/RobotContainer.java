@@ -200,7 +200,7 @@ public class RobotContainer {
   private void configureXboxButtons() {
     JoystickButton[] xb = new JoystickButton[11];
     Trigger xbPOVUp = new POVTrigger(xboxController, 0);
-    // Trigger xbPOVRight = new POVTrigger(xboxController, 90);
+    Trigger xbPOVRight = new POVTrigger(xboxController, 90);
     Trigger xbPOVDown = new POVTrigger(xboxController, 180);
     Trigger xbPOVLeft = new POVTrigger(xboxController, 270);
     // Trigger xbLT = new AxisTrigger(xboxController, 2, 0.9);
@@ -212,16 +212,16 @@ public class RobotContainer {
 
     // A = 1, B = 2, X = 3, Y = 4
     xb[1].toggleWhenPressed(new IntakeSequence(intake, log)); // deploy intake and run rollers in
-    xb[2].whileHeld(new ShootSequenceSetup(false, shooter, led, log)); // autoline setup with fixed RPM
+    xb[2].whenHeld(new ShootSequenceSetup(false, shooter, led, log)); // autoline setup with fixed RPM
     xb[2].whenReleased(new ShootSequence(false, shooter, feeder, hopper, intake, led, log)); // shoot with fixed RPM from autoline
     xb[3].whenPressed(new IntakePistonSetPosition(false, intake, log)); // retract intake
-    xb[4].whileHeld(new ShootSequenceSetup(true, shooter, led, log)); // trench setup with fixed RPM
+    xb[4].whenHeld(new ShootSequenceSetup(true, shooter, led, log)); // trench setup with fixed RPM
     xb[4].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, led, log)); // shoot with fixed RPM from trench
 
     // LB = 5, RB = 6
-    xb[5].whileHeld(new ShootSequenceSetup(false, shooter, limeLight, led, log)); // close shot setup
+    xb[5].whenHeld(new ShootSequenceSetup(false, shooter, limeLight, led, log)); // close shot setup
     xb[5].whenReleased(new ShootSequence(shooter, feeder, hopper, intake, limeLight, led, log)); // shooting sequence
-    xb[6].whileHeld(new ShootSequenceSetup(true, shooter, limeLight, led, log)); // normal and far shot setup
+    xb[6].whenHeld(new ShootSequenceSetup(true, shooter, limeLight, led, log)); // normal and far shot setup
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log)); // shooting sequence
 
     // back = 7, start = 8 
@@ -236,6 +236,7 @@ public class RobotContainer {
     xbPOVUp.whenActive(new ShooterHoodPistonSequence(false, false, shooter, log)); // open the shooter hood
     xbPOVDown.whenActive(new ShooterHoodPistonSequence(true, false, shooter, log)); // close and unlock shooter hood
     xbPOVLeft.whenActive(new ShooterHoodPistonSequence(true, true, shooter, log)); // close and lock shooter hood
+    xbPOVRight.whenActive(new IntakePistonSetPosition(true, intake, log));   // Deploy intake but do not start intake motors
     // xbPOVRight.whenActive(new Wait(0));
 
     // left and right triggers
@@ -262,9 +263,8 @@ public class RobotContainer {
     // joystick right button
     left[2].whenHeld(new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
     right[2].whenHeld(new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
-    // right[2].whenReleased(new DriveSetPercentOutput(0.0, 0.0, driveTrain, log).withTimeout(0.05));
-    right[1].whenPressed(new DriveJogTurn(true,  driveTrain, log ));
-    left[1].whenPressed(new DriveJogTurn(false,  driveTrain, log ));
+    right[1].whileHeld(new DriveJogTurn(true,  driveTrain, log ));
+    left[1].whileHeld(new DriveJogTurn(false,  driveTrain, log ));
   }
 
   /** 
@@ -293,29 +293,29 @@ public class RobotContainer {
     coP[3].whenPressed(new ClimbSetVelocity(false, ClimbConstants.latchHeight, climb, log)); // raise climb arms to default latching height
     coP[4].whenPressed(new ClimbSetVelocity(false, ClimbConstants.latchExtensionHeight, climb, log)); // raise climb arms to slightly above default latching height
 
-    coP[5].whileHeld(new ClimbSetPercentOutput(0.4, climb, log)); // manually raise climb arms, slowly
-    coP[6].whileHeld(new ClimbSetPercentOutput(-0.4, climb, log)); // manually lower climb arms, slowly
+    coP[5].whenHeld(new ClimbSetPercentOutput(0.4, climb, log)); // manually raise climb arms, slowly
+    coP[6].whenHeld(new ClimbSetPercentOutput(-0.4, climb, log)); // manually lower climb arms, slowly
     
     // top row RED SWITCH
     coP[8].whenPressed(new ClimbLiftSequence(climb, led, log)); // climb lift sequence (rainbow LEDs and climb arms lower to lifting height)
     // coP[8].whenPressed(new ClimbSetVelocity(true, ClimbConstants.liftHeight, climb)); // climb arms lower to lifting height
 
     // middle row UP then DOWN, from LEFT to RIGHT
-    coP[9].whileHeld(new ClimbLeftSetPercentOutput(0.4, climb, log)); // manually raise left climb arm, slowly
-    coP[10].whileHeld(new ClimbLeftSetPercentOutput(-0.4, climb, log)); // manually lower left climb arm, slowly
+    coP[9].whenHeld(new ClimbLeftSetPercentOutput(0.4, climb, log)); // manually raise left climb arm, slowly
+    coP[10].whenHeld(new ClimbLeftSetPercentOutput(-0.4, climb, log)); // manually lower left climb arm, slowly
 
-    coP[11].whileHeld(new ClimbRightSetPercentOutput(0.4, climb, log)); // manually raise right climb arm, slowly
-    coP[12].whileHeld(new ClimbRightSetPercentOutput(-0.4, climb, log)); // manually lower right climb arm, slowly
+    coP[11].whenHeld(new ClimbRightSetPercentOutput(0.4, climb, log)); // manually raise right climb arm, slowly
+    coP[12].whenHeld(new ClimbRightSetPercentOutput(-0.4, climb, log)); // manually lower right climb arm, slowly
 
-    coP[13].whileHeld(new ClimbSetPercentOutput(0.8, climb, log)); // manually raise climb arms, quickly
-    coP[14].whileHeld(new ClimbSetPercentOutput(-0.8, climb, log)); // manually lower climb arms, quickly
+    coP[13].whenHeld(new ClimbSetPercentOutput(0.8, climb, log)); // manually raise climb arms, quickly
+    coP[14].whenHeld(new ClimbSetPercentOutput(-0.8, climb, log)); // manually lower climb arms, quickly
 
     // middle row UP OR DOWN, fourth button
     coP[7].whenPressed(new ShooterSetVoltage(0, shooter, log)); // stop shooter
 
     // bottom row UP then DOWN, from LEFT to RIGHT
-    /*coP[15].whenPressed(new Wait(0));
-    coP[16].whenPressed(new Wait(0));*/
+    coP[15].whenPressed(new ClimbPistonUnlock(false, climb)); // lock climb lock
+    coP[16].whenPressed(new ClimbPistonUnlock(true, climb)); // unlock climb lock
   }
 
   /**

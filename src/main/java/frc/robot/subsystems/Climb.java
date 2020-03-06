@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.VelocityMeasPeriod;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +27,7 @@ public class Climb extends SubsystemBase {
   private final WPI_TalonFX climbMotorLeft = new WPI_TalonFX(canClimbMotorLeft); // 50 to 1 gear ratio, 1 inch per second
   private final WPI_TalonFX climbMotorRight = new WPI_TalonFX(canClimbMotorRight);
   private final DoubleSolenoid climbPistons = new DoubleSolenoid(pcmClimbPistonsOut, pcmClimbPistonsIn);
+  private final Solenoid climbLockPiston = new Solenoid(pcmClimbPistonLock);
   private final TalonFXSensorCollection leftLimit, rightLimit;
 
   private FileLog log;
@@ -84,6 +86,8 @@ public class Climb extends SubsystemBase {
     climbMotorRight.configPeakOutputForward(kMaxOutput);
     climbMotorRight.configPeakOutputReverse(kMinOutput);
     climbMotorRight.setSensorPhase(false);
+
+    unlockClimbPiston(true);
   }
 
   /***************************
@@ -282,6 +286,20 @@ public class Climb extends SubsystemBase {
    */
   public void climbMotorRightSetPosition(double inches) {
     climbMotorRight.set(ControlMode.Position, inchesToEncoderTicks(inches));
+  }
+
+  /**
+   * @param unlock true = unlock (retract), false = lock (extend)
+   */
+  public void unlockClimbPiston(boolean unlock) {
+    climbLockPiston.set(unlock);
+  }
+
+  /**
+   * @return true = unlocked (retracted), false = locked (extended)
+   */
+  public boolean isClimbPistonUnlocked() {
+    return climbLockPiston.get();
   }
 
   @Override
