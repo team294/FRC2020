@@ -20,15 +20,35 @@ public class ClimbSetVelocity extends CommandBase {
 
   /**
    * Set both climb arm velocities.
-   * This command ends when the right climb arm gets within the tolerance of the target position.
+   * This command ends when the both climb arms gets within the tolerance of the target position.
+   * However, it will stop applying power to an arm if it reaches the target position sooner.
    * @param velocity velocity (inches/second)
    * @param position target position (inches)
    * @param climb climb subsystem
+   * @param log filelog utility
    */
   public ClimbSetVelocity(double velocity, double position, Climb climb, FileLog log) {
     this.climb = climb;
     this.log = log;
     this.velocity = velocity;
+    this.position = position;
+    addRequirements(climb);
+  }
+
+  /**
+   * Set both climb arm velocities with the default velocity.
+   * This command ends when the both climb arms gets within the tolerance of the target position.
+   * However, it will stop applying power to an arm if it reaches the target position sooner.
+   * @param down true = climb going down (lifting), false = climb going up (latching)
+   * @param position target position (inches)
+   * @param climb climb subsystem
+   * @param log filelog utility
+   */
+  public ClimbSetVelocity(boolean down, double position, Climb climb, FileLog log) {
+    this.climb = climb;
+    this.log = log;
+    if (down) this.velocity = ClimbConstants.defaultVelocity;
+    else this.velocity = -1 * ClimbConstants.defaultVelocity;
     this.position = position;
     addRequirements(climb);
   }
@@ -53,6 +73,7 @@ public class ClimbSetVelocity extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     climb.climbMotorRightSetPercentOutput(0);
+    climb.climbMotorLeftSetPercentOutput(0);
   }
 
   // Returns true when the command should end.
@@ -60,11 +81,8 @@ public class ClimbSetVelocity extends CommandBase {
   public boolean isFinished() {
     // if it is the last 30 seconds of the match and the piston is extended, check for being at target position
     if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition()) {
-      if (Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance) climb.climbMotorRightSetPercentOutput(0);
-      if (Math.abs(climb.getLeftEncoderInches() - position) <= ClimbConstants.positionTolerance) climb.climbMotorLeftSetPercentOutput(0);
-      
-      if ((Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance)
-        && (Math.abs(climb.getLeftEncoderInches() - position) <= ClimbConstants.positionTolerance)) return true;
+      if (Math.abs(climb.getRightEncoderInches() - position) <= ClimbConstants.positionTolerance || 
+        Math.abs(climb.getLeftEncoderInches() - position) <= ClimbConstants.positionTolerance) return true;
       else return false;
     } else return true;
   }
