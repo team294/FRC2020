@@ -11,14 +11,14 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.LimeLight;
 import frc.robot.utilities.FileLog;
 
-public class LimelightSnapshotCountReset extends CommandBase {
+public class LimeLightSnapshotCountReset extends CommandBase {
   /**
    * Resets number tracking how many snapshots we have taken so far
    */
   LimeLight limeLight;
   FileLog log;
 
-  public LimelightSnapshotCountReset(LimeLight limeLight, FileLog log) {
+  public LimeLightSnapshotCountReset(LimeLight limeLight, FileLog log) {
     this.limeLight = limeLight;
     this.log = log;
     // Use addRequirements() here to declare subsystem dependencies.
