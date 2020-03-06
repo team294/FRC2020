@@ -122,6 +122,8 @@ public class RobotContainer {
     
     // limelight subsystem
     SmartDashboard.putData("Limelight Reset Snapshot Count", new LimelightSnapshotCountReset(limeLight, log));
+    SmartDashboard.putData("Limelight Flashlight On", new LimeLightSetFlashlight(true, true, limeLight, log));
+    SmartDashboard.putData("Limelight Flashlight Off", new LimeLightSetFlashlight(false, true, limeLight, log));
     //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
 
     // command sequences
@@ -226,7 +228,7 @@ public class RobotContainer {
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log)); // shooting sequence
 
     // back = 7, start = 8 
-    // xb[7].whenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, intake)); // run rollers out
+    xb[7].toggleWhenPressed(new LimeLightSetFlashlight(true, false, limeLight, log)); // run rollers out
     xb[8].toggleWhenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake, log)); // run rollers out
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
