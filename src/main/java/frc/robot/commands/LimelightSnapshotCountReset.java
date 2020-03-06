@@ -27,7 +27,7 @@ public class LimeLightSnapshotCountReset extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    log.writeLog(false, "LimlightSnapshotCountReset", "Init");
+    log.writeLog(false, "LimelightSnapshotCountReset", "Init");
     limeLight.resetSnapshotCount();
   }
 
