@@ -389,7 +389,7 @@
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "Problem Exists",
               "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#4D4D4DFF"
+              "Colors/Color when false": "#00FF00FF"
             }
           },
           "1,0": {
@@ -560,7 +560,7 @@
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "Problem Exists",
               "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#4D4D4DFF"
+              "Colors/Color when false": "#00FF00FF"
             }
           },
           "0,3": {
@@ -1036,7 +1036,7 @@
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "problemExists",
               "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#4D4D4DFF"
+              "Colors/Color when false": "#00FF00FF"
             }
           },
           "5,0": {
@@ -1148,6 +1148,11 @@
               "_children": [
                 {
                   "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
+                  "_title": "IntakePiston RETRACT"
+                },
+                {
+                  "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
                   "_title": "IntakePiston EXTEND"
                 },
@@ -1185,6 +1190,11 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
                   "_title": "IntakePiston RETRACT"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
+                  "_title": "IntakePiston EXTEND"
                 }
               ]
             }
@@ -1298,6 +1308,11 @@
                   "_title": "Shooter DistToRPM"
                 },
                 {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Shooter RPM from Dist",
+                  "_title": "Shooter RPM from Dist"
+                },
+                {
                   "_type": "Boolean Box",
                   "_source0": "network_table:///SmartDashboard/Cell Present",
                   "_title": "Cell Present",
@@ -1323,14 +1338,26 @@
                   "_title": "ClimbPistons EXTEND"
                 },
                 {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
+                  "_title": "ClimbR Limit",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
+                },
+                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ClimbRight 0.8%",
                   "_title": "ClimbRight 0.8%"
                 },
                 {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight Position",
+                  "_title": "ClimbR Position"
+                },
+                {
                   "_type": "Boolean Box",
-                  "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
-                  "_title": "ClimbR Limit",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
+                  "_title": "ClimbL Limit",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
                 },
@@ -1340,11 +1367,9 @@
                   "_title": "ClimbLeft 0.8%"
                 },
                 {
-                  "_type": "Boolean Box",
-                  "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
-                  "_title": "ClimbL Limit",
-                  "Colors/Color when true": "#7CFC00FF",
-                  "Colors/Color when false": "#8B0000FF"
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Position",
+                  "_title": "ClimbL Position"
                 },
                 {
                   "_type": "Boolean Box",
@@ -1412,6 +1437,41 @@
                   "_title": "ShootSequence STOP"
                 }
               ]
+            }
+          },
+          "4,4": {
+            "size": [
+              2,
+              2
+            ],
+            "content": {
+              "_type": "Boolean Box",
+              "_source0": "network_table:///SmartDashboard/problemExists",
+              "_title": "Problem Exists (0 \u0026 10)",
+              "Colors/Color when true": "#FF0000FF",
+              "Colors/Color when false": "#00FF00FF"
+            }
+          },
+          "6,5": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Text View",
+              "_source0": "network_table:///SmartDashboard/problemSubsystem",
+              "_title": "Problem Subsystem"
+            }
+          },
+          "6,4": {
+            "size": [
+              2,
+              1
+            ],
+            "content": {
+              "_type": "Command",
+              "_source0": "network_table:///SmartDashboard/Clear Sticky Faults",
+              "_title": "Clear Sticky Faults"
             }
           }
         }
