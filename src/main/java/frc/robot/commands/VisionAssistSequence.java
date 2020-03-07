@@ -25,6 +25,8 @@ public class VisionAssistSequence extends SequentialCommandGroup {
     // Add your commands in the super() call, e.g.
     // super(new FooCommand(), new BarCommand());
     addCommands(
+
+    new FileLogWrite(false, false, "VisionAssistSequence", "Init", log),
     
     deadline(
       new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 4, driveTrain, limeLight, log), // turn towards the general target
