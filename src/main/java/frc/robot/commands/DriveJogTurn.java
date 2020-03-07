@@ -31,7 +31,7 @@ public class DriveJogTurn extends CommandBase {
     this.log = log;
     this.jogRight = jogRight;
     this.timer = new Timer();
-   
+  
     addRequirements(driveTrain);
   }
 
@@ -39,7 +39,7 @@ public class DriveJogTurn extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    log.writeLog(false, "DriveJogTurn", "Start");
+    log.writeLog(false, "DriveJogTurn", "Init");
     timer.reset();
     timer.start();
   }
