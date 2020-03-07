@@ -34,6 +34,7 @@ public class Climb extends SubsystemBase {
 
   private double leftTargetVelocity, leftCurrVelocity, rightTargetVelocity, rightCurrVelocity;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
+  private boolean limitsEnabled = true;
   private int timeoutMs = 30;
 
   public Climb(FileLog log) {
@@ -58,6 +59,8 @@ public class Climb extends SubsystemBase {
     leftLimit = climbMotorLeft.getSensorCollection();
     rightLimit = climbMotorRight.getSensorCollection();
     
+    enableLimits(true);
+
     // PID coefficients
     kP = 0;
     kI = 0;
@@ -152,6 +155,24 @@ public class Climb extends SubsystemBase {
   public boolean getRightLimit() {
     if(rightLimit.isRevLimitSwitchClosed() == 1) return true;
     else return false;
+  }
+
+  /**
+   * Enables or disables limit switches from stopping the motors
+   * @param enable true = enable, false = disable
+   */
+  public void enableLimits(boolean enable) {
+    limitsEnabled = enable;
+    climbMotorLeft.overrideLimitSwitchesEnable(enable);
+    climbMotorRight.overrideLimitSwitchesEnable(enable);
+  }
+
+  /**
+   * Returns if limit switches are enabled from stopping the motors
+   * @return true = enabled, false = disabled
+   */
+  public boolean isLimitsEnabled() {
+    return limitsEnabled;
   }
 
   /***************************
@@ -305,8 +326,8 @@ public class Climb extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(getLeftLimit()) zeroLeftEncoder();
-    if(getRightLimit()) zeroRightEncoder();
+    if(getLeftLimit() && limitsEnabled) zeroLeftEncoder();
+    if(getRightLimit() && limitsEnabled) zeroRightEncoder();
 
     leftCurrVelocity = ticksPer100msToIPS(climbMotorLeft.getSelectedSensorVelocity());
     rightCurrVelocity = ticksPer100msToIPS(climbMotorRight.getSelectedSensorVelocity());
@@ -314,6 +335,7 @@ public class Climb extends SubsystemBase {
     if(log.getLogRotation() == log.CLIMB_CYCLE) {
       updateClimbLog(false);
 
+      SmartDashboard.putBoolean("Climb Limits Enabled", isLimitsEnabled());
       SmartDashboard.putBoolean("ClimbLeft Limit", getLeftLimit());
       SmartDashboard.putBoolean("ClimbRight Limit", getRightLimit());
       SmartDashboard.putNumber("ClimbLeft Position", getLeftEncoderInches());
@@ -336,6 +358,7 @@ public class Climb extends SubsystemBase {
       "Right Amps", climbMotorRight.getSupplyCurrent(),
       "Left Position", getLeftEncoderInches(),
       "Right Position", getRightEncoderInches(),
+      "Limit Enabled", limitsEnabled,
       "Left Limit", getLeftLimit(),
       "Right Limit", getRightLimit(),
       "Left Target Vel", leftTargetVelocity,

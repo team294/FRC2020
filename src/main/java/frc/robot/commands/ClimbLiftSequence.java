@@ -24,7 +24,8 @@ public class ClimbLiftSequence extends SequentialCommandGroup {
     addCommands(
       parallel(
         new LEDSetPattern(LED.rainbowLibrary, 1, 0.25, led, log),
-        new ClimbSetVelocity(true, ClimbConstants.liftHeight, climb, log)
+        new ClimbSetVelocity(true, ClimbConstants.liftHeight, climb, log),
+        new ClimbEnableLimits(false, climb, log)
       )
     );
   }
