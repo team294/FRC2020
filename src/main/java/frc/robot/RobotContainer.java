@@ -35,7 +35,7 @@ import static frc.robot.Constants.DriveConstants.*;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final FileLog log = new FileLog("A1");
+  private final FileLog log = new FileLog("A3");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final LED led = new LED();
   private final Hopper hopper = new Hopper(log);
@@ -177,7 +177,7 @@ public class RobotContainer {
     autoChooser.addOption("ShortShot", AutoSelection.SHORT_SHOT);
     SmartDashboard.putData("Autonomous routine", autoChooser);
     SmartDashboard.putNumber("Autonomous delay", 0);
-    SmartDashboard.putBoolean("Autonomous use vision", true);
+    SmartDashboard.putBoolean("Autonomous use vision", false);
 
     // display sticky faults
     RobotPreferences.showStickyFaults();
@@ -429,11 +429,11 @@ public class RobotContainer {
    * Method called once every scheduler cycle when teleop mode is initialized/enabled.
    */
   public void teleopPeriodic() {
-    /*if(limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
+    if (limeLight.seesTarget()) {
+      setXBoxRumble(1.0);
+    } else if (intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
       setXBoxRumble(0.4);
-    } else */if (!rumbling && intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
-      setXBoxRumble(1);
-    } else if (rumbling && intake.intakeGetPercentOutput() != Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
+    } else {
       setXBoxRumble(0);
     }
   }

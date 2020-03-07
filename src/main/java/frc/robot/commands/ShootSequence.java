@@ -30,28 +30,32 @@ public class ShootSequence extends SequentialCommandGroup {
    */
   public ShootSequence(boolean rpmFromDistance, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LimeLight limeLight, LED led, FileLog log) {
     addCommands(
-      parallel(
-        // If getting RPM from distance and within range to do unlocked hood shot,
-        // unlock the hood but close it. Otherwise, close and lock the hood.
-        new ConditionalCommand(
-          parallel(
-            new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Unlock and Close"),
-            new ShooterHoodPistonSequence(true, true, shooter, log)
+      new ConditionalCommand(
+          // If getting RPM from distance and within range to do unlocked hood shot,
+          // unlock the hood but close it. Otherwise, close and lock the hood.
+        sequence(
+          new ConditionalCommand(
+            parallel(
+              new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Unlock and Close"),
+              new ShooterHoodPistonSequence(true, true, shooter, log)
+            ),
+            parallel(
+              new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Lock and Close"),
+              new ShooterHoodPistonSequence(true, false, shooter, log)
+            ),
+            () -> rpmFromDistance && (limeLight.getDistance() > LimeLightConstants.unlockedHoodMaxDistance
+              || !limeLight.seesTarget())
           ),
+          new ShooterSetPID(rpmFromDistance, true, shooter, limeLight, led, log),
+          new FeederSetPID(FeederConstants.feederDefaultRPM, feeder, log),
+          new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
           parallel(
-            new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Lock and Close"),
-            new ShooterHoodPistonSequence(true, false, shooter, log)
-          ),
-          () -> rpmFromDistance && (limeLight.getDistance() > LimeLightConstants.unlockedHoodMaxDistance
-            || !limeLight.seesTarget())
-        )
-      ),
-      new ShooterSetPID(rpmFromDistance, true, shooter, limeLight, led, log),
-      new FeederSetPID(FeederConstants.feederDefaultRPM, feeder, log),
-      new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
-      parallel(
-        new IntakeSetPercentOutput(IntakeConstants.intakeShootingPercentOutput, false, intake, log), 
-        new HopperReverse(hopper, log)
+            new IntakeSetPercentOutput(IntakeConstants.intakeShootingPercentOutput, false, intake, log), 
+            new HopperReverse(hopper, log)
+          )
+        ),
+        new Wait(0.0),
+        () -> (rpmFromDistance && limeLight.seesTarget())
       )
     );
   }

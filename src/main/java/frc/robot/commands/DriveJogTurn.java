@@ -18,7 +18,7 @@ public class DriveJogTurn extends CommandBase {
   private final Timer timer;
   
   private double jogPercent = 0.15;  
-  private double jogTime = 0.1;
+  private double jogTime = 0.05;//  was 0.1
   private boolean jogRight = false;
 
   /**

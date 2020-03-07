@@ -41,21 +41,32 @@ public class AutoShootForward extends SequentialCommandGroup {
       new Wait(waitTime),
 
       new ConditionalCommand(
-        new SequentialCommandGroup( 
+        // With Vision
+        sequence( 
           deadline(
             new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(DriveConstants.maxSecondsForTurnGyro), 
             new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
             new IntakePistonSetPosition(true, intake, log) // deploy intake piston
-          )), new IntakePistonSetPosition(true, intake, log), () -> useVision && limeLight.seesTarget()
-        ),
-      // turn towards target w/ vision with timeout
+          ),
 
-      // start shooter and wait for 3 power cells to be shot with timeout
-      deadline(
-        new WaitForPowerCells(3, shooter, log).withTimeout(5), 
-        new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) 
+          deadline(
+            new WaitForPowerCells(3, shooter, log).withTimeout(5), 
+            new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) 
+          )
+        ), 
+
+        // Without Vision
+        sequence(
+          new IntakePistonSetPosition(true, intake, log),
+        
+          deadline(
+            new WaitForPowerCells(3, shooter, log).withTimeout(7), // wait for 3 powercells
+            new ShooterHoodPistonSequence(true, false, shooter, log), // change hood
+            new ShootSequence(2500, shooter, feeder, hopper, intake, led, log)
+          )
+        ),
+        () -> useVision && limeLight.seesTarget()
       ),
-      
 
       parallel( 
         // stop all motors
