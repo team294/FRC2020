@@ -36,7 +36,7 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
       ),
 
       deadline( // ends when we reach the two balls in the trench
-        new DriveStraight(-0.5, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
+        new DriveStraight(-0.5, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive backward out of trench
         new IntakeSequence(intake, log)
       ),
       
@@ -48,7 +48,7 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
       ),
 
       deadline( // ends when we reach the two balls in the trench
-        new DriveStraight(-2, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive forward into trench
+        new DriveStraight(-2, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log), // drive backward out of trench
         new IntakeSequence(intake, log)
       ),
 
@@ -59,7 +59,7 @@ public class AutoOpponentTrenchPickup extends SequentialCommandGroup {
           new DriveTurnGyro(TargetType.kAbsolute, -45, 400, 200, 3, driveTrain, limeLight, log), // turn towards the general target
           new ShooterSetPID(true, false, shooter, limeLight, led, log) // start shooter while shooting
         ), 
-      new ConditionalCommand(// if we have visin run auto to aim and shoot, otherwise skip this
+      new ConditionalCommand(// if we have vision run auto to aim and shoot, otherwise skip this
         new SequentialCommandGroup(
           new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision     
           deadline(

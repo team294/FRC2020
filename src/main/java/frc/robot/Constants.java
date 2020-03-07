@@ -47,7 +47,7 @@ public final class Constants {
         // public static final double currentCheck = 60; // voltage the shooter will reach if power cell is shot (for counting power cells)
         public static final double hopperPercentCheck = 0.3; // percent output hopper will reach once it is running (for counting power cells)
         
-        public static final double[][] distanceFromTargetToRPMTable = {{4,1400},{5,1500},{10,2500},{15,2900},{20,2900},{25,3100},{30,3200}};
+        public static final double[][] distanceFromTargetToRPMTable = {{4,1400*1.1},{5,1500*1.1},{10,2500*1.1},{15,2900*1.1},{20,2900*1.1},{25,3100*1.1},{30,3200*1.1}};
         // TODO figure out max distance of robot from target so table includes all necessary values
 
         public static final double maxSecondsToShoot3balls = 5.0; // max time to wait while shooting 3 balls. use this in commands to timeout
@@ -55,7 +55,7 @@ public final class Constants {
 
     public static final class FeederConstants {
         public static final int canFeederMotor = 40;
-        public static final double feederDefaultRPM = 2000;
+        public static final double feederDefaultRPM = 2000*1.5;
     }
 
     public static final class IntakeConstants {
@@ -95,6 +95,9 @@ public final class Constants {
         public static final double endDistance = 18; // distance of the "sweet spot", in feet
         public static final double unlockedHoodMaxDistance = 13.8; // greatest feet away from target that hood needs to be unlocked to make shot
         
+        // Flashlight constants
+        public static final int relayFlashlight = 0;
+
         // *******************************
         // The constants below are DEFAULT VALUES. Change these value in RobotPrefrences
         // for each robot, not in this code!

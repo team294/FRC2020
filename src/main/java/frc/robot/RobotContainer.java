@@ -35,7 +35,7 @@ import static frc.robot.Constants.DriveConstants.*;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final FileLog log = new FileLog("A1");
+  private final FileLog log = new FileLog("A3");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final LED led = new LED();
   private final Hopper hopper = new Hopper(log);
@@ -122,6 +122,8 @@ public class RobotContainer {
     
     // limelight subsystem
     SmartDashboard.putData("Limelight Reset Snapshot Count", new LimeLightSnapshotCountReset(limeLight, log));
+    SmartDashboard.putData("Limelight Flashlight On", new LimeLightSetFlashlight(true, true, limeLight, log));
+    SmartDashboard.putData("Limelight Flashlight Off", new LimeLightSetFlashlight(false, true, limeLight, log));
     //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
 
     // command sequences
@@ -175,7 +177,7 @@ public class RobotContainer {
     autoChooser.addOption("ShortShot", AutoSelection.SHORT_SHOT);
     SmartDashboard.putData("Autonomous routine", autoChooser);
     SmartDashboard.putNumber("Autonomous delay", 0);
-    SmartDashboard.putBoolean("Autonomous use vision", true);
+    SmartDashboard.putBoolean("Autonomous use vision", false);
 
     // display sticky faults
     RobotPreferences.showStickyFaults();
@@ -225,7 +227,7 @@ public class RobotContainer {
     xb[6].whenReleased(new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log)); // shooting sequence
 
     // back = 7, start = 8 
-    // xb[7].whenPressed(new Wait(0));
+    xb[7].toggleWhenPressed(new LimeLightSetFlashlight(true, false, limeLight, log)); // run rollers out
     xb[8].toggleWhenPressed(new IntakeSetPercentOutput(-1 * Constants.IntakeConstants.intakeDefaultPercentOutput, false, intake, log)); // run rollers out
 
     // left stick = 9, right stick = 10 (these are buttons when clicked)
@@ -398,6 +400,9 @@ public class RobotContainer {
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
     led.setStrip("Purple", 1);
+    
+    limeLight.setFlashlight(false);
+    limeLight.setFlashlightAuto(true);
     driveTrain.setDriveModeCoast(false);
     shooter.setShooterPID(1200);
 
@@ -419,6 +424,8 @@ public class RobotContainer {
     log.writeLogEcho(true, "Teleop", "Mode Init");
     led.setStrip("Red", 1);
 
+    limeLight.setFlashlight(false);
+    limeLight.setFlashlightAuto(true);
     driveTrain.setDriveModeCoast(false);
     shooter.setShooterPID(1200);
   }
@@ -427,11 +434,11 @@ public class RobotContainer {
    * Method called once every scheduler cycle when teleop mode is initialized/enabled.
    */
   public void teleopPeriodic() {
-    /*if(limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
+    if (limeLight.seesTarget()) {
+      setXBoxRumble(1.0);
+    } else if (intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
       setXBoxRumble(0.4);
-    } else */if (!rumbling && intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
-      setXBoxRumble(1);
-    } else if (rumbling && intake.intakeGetPercentOutput() != Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
+    } else {
       setXBoxRumble(0);
     }
   }
