@@ -400,6 +400,9 @@ public class RobotContainer {
   public void autonomousInit() {
     log.writeLogEcho(true, "Auto", "Mode Init");
     led.setStrip("Purple", 1);
+    
+    limeLight.setFlashlight(false);
+    limeLight.setFlashlightAuto(true);
     driveTrain.setDriveModeCoast(false);
     shooter.setShooterPID(1200);
 
@@ -421,6 +424,8 @@ public class RobotContainer {
     log.writeLogEcho(true, "Teleop", "Mode Init");
     led.setStrip("Red", 1);
 
+    limeLight.setFlashlight(false);
+    limeLight.setFlashlightAuto(true);
     driveTrain.setDriveModeCoast(false);
     shooter.setShooterPID(1200);
   }
