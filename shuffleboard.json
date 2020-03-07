@@ -1,6 +1,178 @@
 {
   "tabPane": [
     {
+        "title": "Driver",
+        "autoPopulate": false,
+        "autoPopulatePrefix": "",
+        "widgetPane": {
+          "gridSize": 128.0,
+          "showGrid": true,
+          "hgap": 16.0,
+          "vgap": 16.0,
+          "tiles": {
+            "2,1": {
+              "size": [
+                11,
+                5
+              ],
+              "content": {
+                "_type": "Camera Stream",
+                "_source0": "camera_server://limelight",
+                "_title": "limelight",
+                "Crosshair/Show crosshair": true,
+                "Crosshair/Crosshair color": "#FFFFFFFF",
+                "Controls/Show controls": true,
+                "Controls/Rotation": "NONE",
+                "compression": -1.0,
+                "fps": -1,
+                "imageWidth": 0,
+                "imageHeight": 0
+              }
+            },
+            "0,0": {
+              "size": [
+                2,
+                3
+              ],
+              "content": {
+                "_type": "List Layout",
+                "_title": "Autonomous",
+                "Layout/Label position": "BOTTOM",
+                "_children": [
+                  {
+                    "_type": "ComboBox Chooser",
+                    "_source0": "network_table:///SmartDashboard/Autonomous routine",
+                    "_title": "Autonomous routine"
+                  },
+                  {
+                    "_type": "Grid Layout",
+                    "_title": "Using Vision",
+                    "Layout/Number of columns": 2,
+                    "Layout/Number of rows": 1,
+                    "Layout/Label position": "HIDDEN",
+                    "_children": {
+                      "0,0": {
+                        "_type": "Boolean Box",
+                        "_source0": "network_table:///SmartDashboard/Autonomous use vision",
+                        "_title": "Use Vision",
+                        "Colors/Color when true": "#7CFC00FF",
+                        "Colors/Color when false": "#8B0000FF"
+                      },
+                      "1,0": {
+                        "_type": "Toggle Switch",
+                        "_source0": "network_table:///SmartDashboard/Autonomous use vision",
+                        "_title": "Autonomous use vision"
+                      }
+                    }
+                  },
+                  {
+                    "_type": "Text View",
+                    "_source0": "network_table:///SmartDashboard/Autonomous routine/selected",
+                    "_title": "Routine Selected"
+                  },
+                  {
+                    "_type": "Text View",
+                    "_source0": "network_table:///SmartDashboard/Autonomous delay",
+                    "_title": "Auto Delay"
+                  },
+                  {
+                    "_type": "Text View",
+                    "_source0": "network_table:///SmartDashboard/Pipeline",
+                    "_title": "Pipeline"
+                  }
+                ]
+              }
+            },
+            "0,3": {
+              "size": [
+                2,
+                2
+              ],
+              "content": {
+                "_type": "List Layout",
+                "_title": "Booleans",
+                "Layout/Label position": "HIDDEN",
+                "_children": [
+                  {
+                    "_type": "Grid Layout",
+                    "_title": "Problem Subsystem \u0026 Prefs Initalized",
+                    "Layout/Number of columns": 2,
+                    "Layout/Number of rows": 1,
+                    "Layout/Label position": "BOTTOM",
+                    "_children": {
+                      "1,0": {
+                        "_type": "Boolean Box",
+                        "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
+                        "_title": "Prefs Initialized",
+                        "Colors/Color when true": "#7CFC00FF",
+                        "Colors/Color when false": "#8B0000FF"
+                      },
+                      "0,0": {
+                        "_type": "Boolean Box",
+                        "_source0": "network_table:///SmartDashboard/problemExists",
+                        "_title": "Problem System",
+                        "Colors/Color when true": "#FF0000FF",
+                        "Colors/Color when false": "#4D4D4DFF"
+                      }
+                    }
+                  },
+                  {
+                    "_type": "Grid Layout",
+                    "_title": "Climb Limits",
+                    "Layout/Number of columns": 2,
+                    "Layout/Number of rows": 1,
+                    "Layout/Label position": "BOTTOM",
+                    "_children": {
+                      "1,0": {
+                        "_type": "Boolean Box",
+                        "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
+                        "_title": "Right Limit",
+                        "Colors/Color when true": "#7CFC00FF",
+                        "Colors/Color when false": "#8B0000FF"
+                      },
+                      "0,0": {
+                        "_type": "Boolean Box",
+                        "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
+                        "_title": "Left Limit",
+                        "Colors/Color when true": "#7CFC00FF",
+                        "Colors/Color when false": "#8B0000FF"
+                      }
+                    }
+                  }
+                ]
+              }
+            },
+            "0,5": {
+              "size": [
+                2,
+                1
+              ],
+              "content": {
+                "_type": "Text View",
+                "_source0": "network_table:///SmartDashboard/problemSubsystem",
+                "_title": "Problem Subsystem(s)"
+              }
+            },
+            "2,0": {
+              "size": [
+                11,
+                1
+              ],
+              "content": {
+                "_type": "Number Bar",
+                "_source0": "network_table:///SmartDashboard/LimeLight x",
+                "_title": "Vision Target",
+                "Range/Min": -8.0,
+                "Range/Max": 8.0,
+                "Range/Center": 0.0,
+                "Visuals/Num tick marks": 9,
+                "Visuals/Show text": true
+              }
+            }
+          }
+        }
+      },
+      {
       "title": "Pit",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
@@ -389,7 +561,7 @@
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "Problem Exists",
               "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#00FF00FF"
+              "Colors/Color when false": "#4D4D4DFF"
             }
           },
           "1,0": {
@@ -498,228 +670,6 @@
       }
     },
     {
-      "title": "Driver",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "tiles": {
-          "13,0": {
-            "size": [
-              13,
-              6
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://limelight",
-              "_title": "Limelight",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
-            }
-          },
-          "1,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Pipeline",
-              "_title": "Pipeline"
-            }
-          },
-          "0,0": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/Limelight Sees Target",
-              "_title": "Limelight Sees Target",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "0,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/problemExists",
-              "_title": "Problem Exists",
-              "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#00FF00FF"
-            }
-          },
-          "0,2": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/problemSubsystem",
-              "_title": "Problem Subsystem"
-            }
-          },
-          "0,3": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Autonomous routine",
-              "_title": "Autonomous routine"
-            }
-          },
-          "0,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Autonomous delay",
-              "_title": "Auto Delay"
-            }
-          },
-          "2,5": {
-            "size": [
-              11,
-              1
-            ],
-            "content": {
-              "_type": "Number Bar",
-              "_source0": "network_table:///SmartDashboard/LimeLight x",
-              "_title": "Vision Target",
-              "Range/Min": -8.0,
-              "Range/Max": 8.0,
-              "Range/Center": 0.0,
-              "Visuals/Num tick marks": 9,
-              "Visuals/Show text": true
-            }
-          },
-          "1,1": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/RobotPrefs Initialized",
-              "_title": "Prefs Initialized",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "2,0": {
-            "size": [
-              11,
-              5
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://limelight",
-              "_title": "limelight",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
-            }
-          },
-          "0,5": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
-              "_title": "ClimbLeft Limit",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          },
-          "1,5": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
-              "_title": "ClimbRight Limit",
-              "Colors/Color when true": "#7CFC00FF",
-              "Colors/Color when false": "#8B0000FF"
-            }
-          }
-        }
-      }
-    },
-    {
-      "title": "Auto",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "tiles": {
-          "4,0": {
-            "size": [
-              4,
-              1
-            ],
-            "content": {
-              "_type": "ComboBox Chooser",
-              "_source0": "network_table:///SmartDashboard/Autonomous routine",
-              "_title": "Autonomous routine"
-            }
-          },
-          "4,1": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Autonomous delay",
-              "_title": "Autonomous Delay"
-            }
-          },
-          "6,1": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/Autonomous use vision",
-              "_title": "Autonomous use vision"
-            }
-          }
-        }
-      }
-    },
-    {
       "title": "Calibration",
       "autoPopulate": false,
       "autoPopulatePrefix": "",
@@ -797,7 +747,7 @@
               ]
             }
           },
-          "7,0": {
+          "6,0": {
             "size": [
               2,
               4
@@ -870,7 +820,7 @@
               ]
             }
           },
-          "9,0": {
+          "8,0": {
             "size": [
               2,
               4
@@ -943,7 +893,7 @@
               ]
             }
           },
-          "11,0": {
+          "10,0": {
             "size": [
               2,
               3
@@ -1081,7 +1031,7 @@
               "_source0": "network_table:///SmartDashboard/problemExists",
               "_title": "problemExists",
               "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#00FF00FF"
+              "Colors/Color when false": "#4D4D4DFF"
             }
           },
           "5,0": {
@@ -1193,11 +1143,6 @@
               "_children": [
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
-                  "_title": "IntakePiston RETRACT"
-                },
-                {
-                  "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
                   "_title": "IntakePiston EXTEND"
                 },
@@ -1235,11 +1180,6 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
                   "_title": "IntakePiston RETRACT"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
-                  "_title": "IntakePiston EXTEND"
                 }
               ]
             }
@@ -1353,11 +1293,6 @@
                   "_title": "Shooter DistToRPM"
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter RPM from Dist",
-                  "_title": "Shooter RPM from Dist"
-                },
-                {
                   "_type": "Boolean Box",
                   "_source0": "network_table:///SmartDashboard/Cell Present",
                   "_title": "Cell Present",
@@ -1383,26 +1318,14 @@
                   "_title": "ClimbPistons EXTEND"
                 },
                 {
-                  "_type": "Boolean Box",
-                  "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
-                  "_title": "ClimbR Limit",
-                  "Colors/Color when true": "#7CFC00FF",
-                  "Colors/Color when false": "#8B0000FF"
-                },
-                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ClimbRight 0.8%",
                   "_title": "ClimbRight 0.8%"
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/ClimbRight Position",
-                  "_title": "ClimbR Position"
-                },
-                {
                   "_type": "Boolean Box",
-                  "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
-                  "_title": "ClimbL Limit",
+                  "_source0": "network_table:///SmartDashboard/ClimbRight Limit",
+                  "_title": "ClimbR Limit",
                   "Colors/Color when true": "#7CFC00FF",
                   "Colors/Color when false": "#8B0000FF"
                 },
@@ -1412,9 +1335,11 @@
                   "_title": "ClimbLeft 0.8%"
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/ClimbLeft Position",
-                  "_title": "ClimbL Position"
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/ClimbLeft Limit",
+                  "_title": "ClimbL Limit",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
                 },
                 {
                   "_type": "Boolean Box",
@@ -1483,50 +1408,15 @@
                 }
               ]
             }
-          },
-          "4,4": {
-            "size": [
-              2,
-              2
-            ],
-            "content": {
-              "_type": "Boolean Box",
-              "_source0": "network_table:///SmartDashboard/problemExists",
-              "_title": "Problem Exists (0 \u0026 10)",
-              "Colors/Color when true": "#FF0000FF",
-              "Colors/Color when false": "#00FF00FF"
-            }
-          },
-          "6,5": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Text View",
-              "_source0": "network_table:///SmartDashboard/problemSubsystem",
-              "_title": "Problem Subsystem"
-            }
-          },
-          "6,4": {
-            "size": [
-              2,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/Clear Sticky Faults",
-              "_title": "Clear Sticky Faults"
-            }
           }
         }
       }
     }
   ],
   "windowGeometry": {
-    "x": -7.0,
-    "y": 2.0,
-    "width": 3849.0,
-    "height": 1045.0
+    "x": -8.0,
+    "y": -8.0,
+    "width": 1936.0,
+    "height": 1056.0
   }
 }
