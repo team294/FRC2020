@@ -175,7 +175,7 @@ public class RobotContainer {
     autoChooser.addOption("ShortShot", AutoSelection.SHORT_SHOT);
     SmartDashboard.putData("Autonomous routine", autoChooser);
     SmartDashboard.putNumber("Autonomous delay", 0);
-    SmartDashboard.putBoolean("Autonomous use vision", true);
+    SmartDashboard.putBoolean("Autonomous use vision", false);
 
     // display sticky faults
     RobotPreferences.showStickyFaults();
