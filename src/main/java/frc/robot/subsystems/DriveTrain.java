@@ -216,7 +216,7 @@ public class DriveTrain extends SubsystemBase {
    * @param rotation
    */
   public void arcadeDrive(double speedPct, double rotation) {
-    double maxRotation = 0.3;     // was 0.5
+    double maxRotation = 0.25;     // was 0.3
     double absSpeed = Math.abs(speedPct);
     double rotClamp = MathUtil.clamp(rotation, Math.min(-absSpeed, -maxRotation), Math.max(absSpeed, maxRotation));
     diffDrive.arcadeDrive(speedPct, rotClamp, false);    // minimize how fast turn operated from joystick

@@ -39,8 +39,10 @@ public class ClimbLeftSetVelocity extends CommandBase {
     log.writeLog(false, "ClimbLeftSetVelocity", "Init", "Target ips", velocity, "Target pos", position);
     timeRemaining = DriverStation.getInstance().getMatchTime();
     // if it is the last 30 seconds of the match and the piston is extended, set left motor velocity
-    if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition())
+    if (/*timeRemaining <= 30 && */climb.climbPistonsGetPosition()) {
+      climb.unlockClimbPiston(true);
       climb.climbMotorLeftSetVelocity(velocity);
+    }
   }
 
   // Called every time the scheduler runs while the command is scheduled.

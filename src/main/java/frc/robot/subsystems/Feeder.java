@@ -90,7 +90,6 @@ public class Feeder extends SubsystemBase {
     feederMotor.set(ControlMode.Velocity, setPoint);
 
     SmartDashboard.putNumber("Feeder SetPoint RPM", FeederRPM);
-    System.out.println("Starting setFeederPID");
   }
 
   /**

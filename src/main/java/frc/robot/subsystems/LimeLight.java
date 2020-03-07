@@ -131,6 +131,9 @@ public class LimeLight extends SubsystemBase {
    * should only be called if canTakeSnapshot() is true
    */
   public void setSnapshot(boolean snapshot) {
+    // TODO disable snapshots -- this seems to cause camera lag
+    snapshot = false;
+
     if(snapshot && canTakeSnapshot()) {
       table.getEntry("snapshot").setNumber(1);
       if(table.getEntry("snapshot").getDouble(0)==1) {

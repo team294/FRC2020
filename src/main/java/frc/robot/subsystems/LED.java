@@ -119,6 +119,13 @@ public class LED extends SubsystemBase {
     {kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed},
     {kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue, kOrangeRed, kBlue}
   };
+
+  public static final Color[][] teamMovingColorsLibrary = {
+    {kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed},
+    {kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed},
+    {kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue},
+    {kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue, kBlue, kOrangeRed, kOrangeRed, kBlue}
+  };
   
   /**********************
    * Controls LED strips on the robot.

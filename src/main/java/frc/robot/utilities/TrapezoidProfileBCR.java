@@ -167,14 +167,14 @@ public class TrapezoidProfileBCR {
       fullSpeedDist = 0;
     }
 
-    System.out.println("input positions: " + m_initial.position + ", " + m_goal.position);
-    System.out.println("input velocities: " + m_initial.velocity + ", " + m_goal.velocity);
-    System.out.println("dists: " + cutoffDistBegin + ", " + fullSpeedDist + ", " + cutoffDistEnd);
+    // System.out.println("input positions: " + m_initial.position + ", " + m_goal.position);
+    // System.out.println("input velocities: " + m_initial.velocity + ", " + m_goal.velocity);
+    // System.out.println("dists: " + cutoffDistBegin + ", " + fullSpeedDist + ", " + cutoffDistEnd);
 
     m_timeToMaxVel = accelerationTime - cutoffBegin;
     m_timeToStartDeccel = m_timeToMaxVel + fullSpeedDist / m_constraints.maxVelocity;
     m_timeToEndProfile = m_timeToStartDeccel + accelerationTime - cutoffEnd;
-    System.out.println("times: " + m_timeToMaxVel + "," + m_timeToStartDeccel + ", " + m_timeToEndProfile);
+    // System.out.println("times: " + m_timeToMaxVel + "," + m_timeToStartDeccel + ", " + m_timeToEndProfile);
   }
 
   /**

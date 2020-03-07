@@ -115,7 +115,6 @@ public class Shooter extends SubsystemBase {
     shooterMotorLeft.set(ControlMode.Velocity, setPoint);
     voltageTarget = 1;
     SmartDashboard.putNumber("Shooter SetPoint RPM", shooterRPM);
-    System.out.println("Starting setShooterPID");
   }
 
   /**
@@ -135,17 +134,17 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * @return true = locked (extended), false = unlocked (retracted)
+   * @return true = unlocked (retracted), false = locked (extended)
    */
   public boolean getLockPiston() {
     return shooterLockPiston.get();
   }
 
   /**
-   * @param lock true = unlock (retract), false = lock (extend)
+   * @param unlock true = unlock (retract), false = lock (extend)
    */
-  public void setLockPiston(boolean lock) {
-    shooterLockPiston.set(lock);
+  public void setLockPiston(boolean unlock) {
+    shooterLockPiston.set(unlock);
   }
 
   /**
