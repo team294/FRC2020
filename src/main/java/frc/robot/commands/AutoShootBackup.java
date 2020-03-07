@@ -29,8 +29,7 @@ public class AutoShootBackup extends SequentialCommandGroup {
       new Wait(waitTime),
       new ConditionalCommand(
         // With Vision
-        new SequentialCommandGroup(
-          
+        sequence(
           deadline(
             new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 0.8, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
             new ShooterSetPID(true, false, shooter, limeLight, led, log),
@@ -40,10 +39,10 @@ public class AutoShootBackup extends SequentialCommandGroup {
           deadline(
           new WaitForPowerCells(3, shooter, log).withTimeout(5), // wait for 3 power cells to be shot
           new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) // start shooter
-        )
+          )
         ), 
           // Without Vision
-          new SequentialCommandGroup(
+          sequence(
             new IntakePistonSetPosition(true, intake, log), // deploy intake piston
             
             deadline(

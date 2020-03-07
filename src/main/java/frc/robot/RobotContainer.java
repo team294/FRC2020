@@ -35,7 +35,7 @@ import static frc.robot.Constants.DriveConstants.*;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final FileLog log = new FileLog("A2");
+  private final FileLog log = new FileLog("A3");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final LED led = new LED();
   private final Hopper hopper = new Hopper(log);
@@ -427,11 +427,11 @@ public class RobotContainer {
    * Method called once every scheduler cycle when teleop mode is initialized/enabled.
    */
   public void teleopPeriodic() {
-    /*if(limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) <= 1) {
+    if (limeLight.seesTarget()) {
+      setXBoxRumble(1.0);
+    } else if (intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
       setXBoxRumble(0.4);
-    } else */if (!rumbling && intake.intakeGetPercentOutput() == Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
-      setXBoxRumble(1);
-    } else if (rumbling && intake.intakeGetPercentOutput() != Math.abs(Constants.IntakeConstants.intakeDefaultPercentOutput)) {
+    } else {
       setXBoxRumble(0);
     }
   }
