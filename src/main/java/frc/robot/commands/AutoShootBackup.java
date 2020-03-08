@@ -60,10 +60,15 @@ public class AutoShootBackup extends SequentialCommandGroup {
         new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1), // stop all motors
         new DriveStraight(-1, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log) // back up 1 meter to get off auto line
       ),
-      parallel(
-        new IntakePistonSetPosition(false, intake, log),
-        new DriveTurnGyro(TargetType.kRelative, 170, 450.0, 200, true, 2, driveTrain, limeLight, log)
-      )
+      
+      new DriveTurnGyro(TargetType.kRelative, 170, 450.0, 200, true, 2, driveTrain, limeLight, log),
+      
+      deadline( // drive down trench with intake
+      new DriveStraight(2.2, TargetType.kRelative, 0.0, 2.088, 3.8, true, driveTrain, limeLight, log),
+      new IntakeSequence(intake, log)
+      ),
+
+      new DriveTurnGyro(TargetType.kRelative, -170, 400.0, 200, 4, driveTrain, limeLight, log)
     );
   }
 }
