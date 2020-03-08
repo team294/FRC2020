@@ -380,6 +380,7 @@ public class RobotContainer {
     hopper.hopperSetPercentOutput(0);
     feeder.feederSetVoltage(0);
     intake.intakeSetPercentOutput(0);
+    climb.enableHardLimits(true);
   }
 
   /**

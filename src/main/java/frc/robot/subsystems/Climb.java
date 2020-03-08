@@ -34,7 +34,7 @@ public class Climb extends SubsystemBase {
 
   private double leftTargetVelocity, leftCurrVelocity, rightTargetVelocity, rightCurrVelocity;
   private double kP, kI, kD, kFF, kMaxOutput, kMinOutput; // PID terms
-  private boolean limitsEnabled = true;
+  private boolean hardLimitsEnabled = true;
   private int timeoutMs = 30;
 
   public Climb(FileLog log) {
@@ -59,7 +59,7 @@ public class Climb extends SubsystemBase {
     leftLimit = climbMotorLeft.getSensorCollection();
     rightLimit = climbMotorRight.getSensorCollection();
     
-    enableLimits(true);
+    enableHardLimits(true);
 
     // PID coefficients
     kP = 0;
@@ -159,20 +159,24 @@ public class Climb extends SubsystemBase {
 
   /**
    * Enables or disables limit switches from stopping the motors
-   * @param enable true = enable, false = disable
+   * @param enable true = hard limits enabled/soft limits disabled, false = hard limits disabled/soft limits enabled
    */
-  public void enableLimits(boolean enable) {
-    limitsEnabled = enable;
+  public void enableHardLimits(boolean enable) {
+    hardLimitsEnabled = enable;
     climbMotorLeft.overrideLimitSwitchesEnable(enable);
     climbMotorRight.overrideLimitSwitchesEnable(enable);
+    climbMotorLeft.configReverseSoftLimitThreshold((int)inchesToEncoderTicks(1.0));
+    climbMotorRight.configReverseSoftLimitThreshold((int)inchesToEncoderTicks(1.0));
+    climbMotorLeft.configReverseSoftLimitEnable(!enable);
+    climbMotorRight.configReverseSoftLimitEnable(!enable);
   }
 
   /**
    * Returns if limit switches are enabled from stopping the motors
-   * @return true = enabled, false = disabled
+   * @return true = hard limits enabled/soft limits disabled, false = hard limits disabled/soft limits enabled
    */
-  public boolean isLimitsEnabled() {
-    return limitsEnabled;
+  public boolean isHardLimitsEnabled() {
+    return hardLimitsEnabled;
   }
 
   /***************************
@@ -326,8 +330,8 @@ public class Climb extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(getLeftLimit() && limitsEnabled) zeroLeftEncoder();
-    if(getRightLimit() && limitsEnabled) zeroRightEncoder();
+    if(getLeftLimit() && hardLimitsEnabled) zeroLeftEncoder();
+    if(getRightLimit() && hardLimitsEnabled) zeroRightEncoder();
 
     leftCurrVelocity = ticksPer100msToIPS(climbMotorLeft.getSelectedSensorVelocity());
     rightCurrVelocity = ticksPer100msToIPS(climbMotorRight.getSelectedSensorVelocity());
@@ -335,7 +339,7 @@ public class Climb extends SubsystemBase {
     if(log.getLogRotation() == log.CLIMB_CYCLE) {
       updateClimbLog(false);
 
-      SmartDashboard.putBoolean("Climb Limits Enabled", isLimitsEnabled());
+      SmartDashboard.putBoolean("Climb Limits Enabled", isHardLimitsEnabled());
       SmartDashboard.putBoolean("ClimbLeft Limit", getLeftLimit());
       SmartDashboard.putBoolean("ClimbRight Limit", getRightLimit());
       SmartDashboard.putNumber("ClimbLeft Position", getLeftEncoderInches());
@@ -358,7 +362,7 @@ public class Climb extends SubsystemBase {
       "Right Amps", climbMotorRight.getSupplyCurrent(),
       "Left Position", getLeftEncoderInches(),
       "Right Position", getRightEncoderInches(),
-      "Limit Enabled", limitsEnabled,
+      "Limit Enabled", hardLimitsEnabled,
       "Left Limit", getLeftLimit(),
       "Right Limit", getRightLimit(),
       "Left Target Vel", leftTargetVelocity,

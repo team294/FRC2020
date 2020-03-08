@@ -27,7 +27,7 @@ public class ClimbEnableLimits extends CommandBase {
   @Override
   public void initialize() {
     log.writeLog(false, "ClimbEnableLimits", "Init", "Enable", enable);
-    climb.enableLimits(enable);
+    climb.enableHardLimits(enable);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
