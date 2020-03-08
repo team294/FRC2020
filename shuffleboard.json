@@ -203,25 +203,6 @@
               "imageWidth": 0,
               "imageHeight": 0
             }
-          },
-          "18,0": {
-            "size": [
-              8,
-              6
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://limelight",
-              "_title": "limelight",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
-              "imageWidth": 0,
-              "imageHeight": 0
-            }
           }
         }
       }
@@ -1077,72 +1058,6 @@
                 }
               ]
             }
-          },
-          "10,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/AAA",
-              "_title": "/SmartDashboard/AAA"
-            }
-          },
-          "5,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Right Slow",
-              "_title": "SmartDashboard/TurnCal Right Slow"
-            }
-          },
-          "6,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Left Fast",
-              "_title": "SmartDashboard/TurnCal Left Fast"
-            }
-          },
-          "7,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Right Fast",
-              "_title": "SmartDashboard/TurnCal Right Fast"
-            }
-          },
-          "8,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Left Step0.2",
-              "_title": "SmartDashboard/TurnCal Left Step0.2"
-            }
-          },
-          "9,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Left Step0.3",
-              "_title": "SmartDashboard/TurnCal Left Step0.3"
-            }
           }
         }
       }
@@ -1458,6 +1373,25 @@
                   "_title": "ShootSequence STOP"
                 }
               ]
+            }
+          },
+          "10,0": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight",
+              "_title": "limelight",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
             }
           },
           "8,0": {
