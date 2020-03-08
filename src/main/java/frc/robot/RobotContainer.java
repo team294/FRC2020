@@ -35,7 +35,7 @@ import static frc.robot.Constants.DriveConstants.*;
  * (including subsystems, commands, and button mappings) should be declared here.
  */
 public class RobotContainer {
-  private final FileLog log = new FileLog("A3");
+  private final FileLog log = new FileLog("A4");
   private final TemperatureCheck tempCheck = new TemperatureCheck();
   private final LED led = new LED();
   private final Hopper hopper = new Hopper(log);
@@ -388,6 +388,7 @@ public class RobotContainer {
     hopper.hopperSetPercentOutput(0);
     feeder.feederSetVoltage(0);
     intake.intakeSetPercentOutput(0);
+    climb.enableHardLimits(true);
   }
 
   /**

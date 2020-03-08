@@ -42,7 +42,7 @@ public class AutoTrussPickup extends SequentialCommandGroup {
       ),
 
       deadline(
-        new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, 3, driveTrain, limeLight, log), // turn towards general target
+        new DriveTurnGyro(TargetType.kAbsolute, -15, 400, 200, 3, driveTrain, limeLight, log).withTimeout(3), // turn towards general target
         new ShooterSetPID(true, false, shooter, limeLight, led, log)
       ),
 
