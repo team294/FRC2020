@@ -47,9 +47,9 @@ public class DriveTurnVisionNew extends CommandBase {
     }
 
     if(targetRel < 0) {
-      direction = -1;
-    } else {
       direction = 1;
+    } else {
+      direction = -1;
     }
 
     currAng = driveTrain.getGyroRotation();
@@ -63,11 +63,14 @@ public class DriveTurnVisionNew extends CommandBase {
   @Override
   public void execute() {
     if(Math.abs(targetAbs - currAng) < 1) {
+      log.writeLog(false, "DriveTurnVisionNew", "Motor %", 0.0);
       driveTrain.arcadeDrive(0, 0);
     } else if (!timer.hasElapsed(0.05)) {
       driveTrain.arcadeDrive(0, (0.15 * direction));
+      log.writeLog(false, "DriveTurnVisionNew", "Motor %", 0.15);
     } else {
       driveTrain.arcadeDrive(0, (0.1 * direction));
+      log.writeLog(false, "DriveTurnVisionNew", "Motor %", 0.1);
     }
   }
 
@@ -81,6 +84,7 @@ public class DriveTurnVisionNew extends CommandBase {
   @Override
   public boolean isFinished() {
     if(Math.abs(targetAbs-currAng) < 1) {
+      log.writeLog(false, "DriveTurnVisionNew", "WithinToleranceCount", accuracyCounter);
       accuracyCounter++;
     } else {
       accuracyCounter = 0;
