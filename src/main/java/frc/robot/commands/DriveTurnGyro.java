@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
@@ -50,7 +51,8 @@ public class DriveTurnGyro extends CommandBase {
 
   private TrapezoidProfileBCR tProfile; // wpilib trapezoid profile generator
   private TrapezoidProfileBCR.State tStateCurr; // initial state of the system (position in deg and time in sec)
-  private TrapezoidProfileBCR.State tStateNext; // next state of the system as calculated by the profile generator
+  private TrapezoidProfileBCR.State tStateNext; // next state of the system (next loop cycle) as calculated by the profile generator
+  private TrapezoidProfileBCR.State tStateForecast; // state of the system in the future, as calculated by the profile generator
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
@@ -205,11 +207,15 @@ public class DriveTurnGyro extends CommandBase {
       }    
     }
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
-    tStateNext = tProfile.calculate(timeSinceStart + 0.010);
+    tStateNext = tProfile.calculate(timeSinceStart);        // This is where the robot should be now
+    tStateForecast = tProfile.calculate(timeSinceStart + tLagAngular);  // This is where the robot should be next cycle (or farther in the future if the robot has lag or backlash)
 
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
-    aFF = (kSAngular * Math.signum(targetVel)) + (targetVel * kVAngular) + (targetAccel * kAAngular);
+    double forecastVel = tStateForecast.velocity;
+    double forecastAccel = (forecastVel-targetVel)/tLagAngular;
+
+    aFF = (kSAngular * Math.signum(forecastVel)) + (forecastVel * kVAngular) + (forecastAccel * kAAngular);
 
     // SmartDashboard.putNumber("TurnGyro target angle", tStateNext.position);
 
@@ -226,7 +232,12 @@ public class DriveTurnGyro extends CommandBase {
       profileStartTime = currProfileTime;
     }
 
-    log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+    SmartDashboard.putNumber("TurnGyro Curr Velocity", currVelocity);
+    SmartDashboard.putNumber("TurnGyro Target Velocity", targetVel);
+
+    log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, 
+      "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+      "posF", tStateForecast.position, "velF", forecastVel, "accF", forecastAccel,
       "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
   }
 

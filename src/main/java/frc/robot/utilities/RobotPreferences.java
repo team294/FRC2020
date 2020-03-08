@@ -54,7 +54,8 @@ public class RobotPreferences {
         DriveConstants.kPAngular = readDouble("Drive.kPAngular", DriveConstants.kPAngular);
         DriveConstants.kIAngular = readDouble("Drive.kIAngular", DriveConstants.kIAngular);
         DriveConstants.kDAngular = readDouble("Drive.kDAngular", DriveConstants.kDAngular);
-
+        DriveConstants.tLagAngular = readDouble("Drive.tLagAngular", DriveConstants.tLagAngular);
+        
         DriveConstants.updateDerivedConstants();
     }
 

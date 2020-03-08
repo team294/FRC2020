@@ -164,6 +164,8 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Drive kP Angular", kPAngular);
     SmartDashboard.putNumber("Drive kI Angular", kIAngular);
     SmartDashboard.putNumber("Drive kD Angular", kDAngular);
+    SmartDashboard.putNumber("Drive tLag Angular", tLagAngular);
+    
   }
 
   /**
@@ -551,7 +553,8 @@ public class DriveTrain extends SubsystemBase {
       kPAngular = SmartDashboard.getNumber("Drive kP Angular", kPAngular);
       kIAngular = SmartDashboard.getNumber("Drive kI Angular", kIAngular);
       kDAngular = SmartDashboard.getNumber("Drive kD Angular", kDAngular);
-      
+      tLagAngular = SmartDashboard.getNumber("Drive tLag Angular", tLagAngular);
+       
       // Update data on SmartDashboard
       SmartDashboard.putNumber("Drive Right Raw", getRightEncoderRaw());
       SmartDashboard.putNumber("Drive Left Raw", getLeftEncoderRaw());

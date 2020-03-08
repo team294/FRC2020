@@ -176,6 +176,7 @@ public final class Constants {
         public static double kPAngular = 0.0005;   // was 0.001
         public static double kDAngular = 0;
         public static double kIAngular = 0;
+        public static double tLagAngular = 0.120;          // Lag time to start/stop turning
         public static final double maxSecondsForTurnGyro = 2.0; // max time to wait for turn gyro. use this in commands to timeout
 
         // DriveStraight constants
