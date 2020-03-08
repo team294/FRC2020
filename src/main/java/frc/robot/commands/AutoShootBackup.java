@@ -62,7 +62,7 @@ public class AutoShootBackup extends SequentialCommandGroup {
       ),
       parallel(
         new IntakePistonSetPosition(false, intake, log),
-        new DriveTurnGyro(TargetType.kRelative, 180, 450.0, 200, true, 2, driveTrain, limeLight, log)
+        new DriveTurnGyro(TargetType.kRelative, 170, 450.0, 200, true, 2, driveTrain, limeLight, log)
       )
     );
   }
