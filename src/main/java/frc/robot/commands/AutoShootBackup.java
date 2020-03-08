@@ -59,6 +59,10 @@ public class AutoShootBackup extends SequentialCommandGroup {
       parallel(
         new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1), // stop all motors
         new DriveStraight(-1, TargetType.kRelative, 0.0, 2.61, 3.8, true, driveTrain, limeLight, log) // back up 1 meter to get off auto line
+      ),
+      parallel(
+        new IntakePistonSetPosition(false, intake, log),
+        new DriveTurnGyro(TargetType.kRelative, 180, 450.0, 200, true, 2, driveTrain, limeLight, log)
       )
     );
   }

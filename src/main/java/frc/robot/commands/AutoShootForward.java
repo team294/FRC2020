@@ -73,8 +73,11 @@ public class AutoShootForward extends SequentialCommandGroup {
         new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1), 
         // go forward 2 meters to get off auto line
         new DriveStraight(2,TargetType.kRelative, 0, 2.61, 3.8, true, driveTrain, limeLight, log)
-      ) 
-
+      ),
+      parallel(
+        new IntakePistonSetPosition(false, intake, log),
+        new DriveTurnGyro(TargetType.kRelative, 180, 450.0, 200, true, 2, driveTrain, limeLight, log)
+      )
     );
   }
 }
