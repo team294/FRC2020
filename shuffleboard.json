@@ -200,25 +200,6 @@
               "Controls/Rotation": "NONE",
               "compression": -1.0,
               "fps": -1,
-              "imageWidth": -1,
-              "imageHeight": -1
-            }
-          },
-          "18,0": {
-            "size": [
-              8,
-              6
-            ],
-            "content": {
-              "_type": "Camera Stream",
-              "_source0": "camera_server://limelight",
-              "_title": "limelight",
-              "Crosshair/Show crosshair": true,
-              "Crosshair/Crosshair color": "#FFFFFFFF",
-              "Controls/Show controls": true,
-              "Controls/Rotation": "NONE",
-              "compression": -1.0,
-              "fps": -1,
               "imageWidth": 0,
               "imageHeight": 0
             }
@@ -1077,72 +1058,6 @@
                 }
               ]
             }
-          },
-          "10,3": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/AAA",
-              "_title": "/SmartDashboard/AAA"
-            }
-          },
-          "5,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Right Slow",
-              "_title": "SmartDashboard/TurnCal Right Slow"
-            }
-          },
-          "6,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Left Fast",
-              "_title": "SmartDashboard/TurnCal Left Fast"
-            }
-          },
-          "7,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Right Fast",
-              "_title": "SmartDashboard/TurnCal Right Fast"
-            }
-          },
-          "8,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Left Step0.2",
-              "_title": "SmartDashboard/TurnCal Left Step0.2"
-            }
-          },
-          "9,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/TurnCal Left Step0.3",
-              "_title": "SmartDashboard/TurnCal Left Step0.3"
-            }
           }
         }
       }
@@ -1223,6 +1138,18 @@
                   "Colors/Color when false": "#8B0000FF"
                 },
                 {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/problemExists",
+                  "_title": "Problem System",
+                  "Colors/Color when true": "#FF0000FF",
+                  "Colors/Color when false": "#00FF00FF"
+                },
+                {
+                  "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/problemSubsystem",
+                  "_title": "Problem Subsystem(s)"
+                },
+                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/DriveForward",
                   "_title": "Drive Forward"
@@ -1279,6 +1206,11 @@
               "_children": [
                 {
                   "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
+                  "_title": "IntakePiston RETRACT"
+                },
+                {
+                  "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
                   "_title": "IntakePiston EXTEND"
                 },
@@ -1316,6 +1248,11 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/IntakePiston RETRACT",
                   "_title": "IntakePiston RETRACT"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/IntakePiston EXTEND",
+                  "_title": "IntakePiston EXTEND"
                 }
               ]
             }
@@ -1327,23 +1264,13 @@
             ],
             "content": {
               "_type": "Subsystem Layout",
-              "_title": "Feeder (5)",
+              "_title": "Feeder (5) \u0026 Flashlight",
               "Layout/Label position": "LEFT",
               "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Feeder Forward Calibrate",
-                  "_title": "Feeder IN"
-                },
                 {
                   "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/Feeder Encoder",
                   "_title": "Feeder Encoder"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Feeder STOP",
-                  "_title": "Feeder STOP"
                 },
                 {
                   "_type": "Text View",
@@ -1356,11 +1283,6 @@
                   "_title": "Feeder RPM"
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Feeder Error",
-                  "_title": "Feeder Error"
-                },
-                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Feeder Manual SetPoint",
                   "_title": "Feeder Manual SetPoint"
@@ -1369,6 +1291,16 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Feeder STOP",
                   "_title": "Feeder STOP"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Limelight Flashlight On",
+                  "_title": "Limelight Flashlight On"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Limelight Flashlight Off",
+                  "_title": "Limelight Flashlight Off"
                 }
               ]
             }
@@ -1385,13 +1317,30 @@
               "_children": [
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter Forward Calibrate",
-                  "_title": "Shooter SHOOT"
+                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
+                  "_title": "Shooter STOP"
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter STOP",
-                  "_title": "Shooter STOP"
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, UNLOCK",
+                  "_title": "Hood CLOSE, UNLOCK"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, LOCK",
+                  "_title": "Hood CLOSE, LOCK"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
+                  "_title": "Hood OPEN"
+                },
+                {
+                  "_type": "Boolean Box",
+                  "_source0": "network_table:///SmartDashboard/Cell Present",
+                  "_title": "Cell Present",
+                  "Colors/Color when true": "#7CFC00FF",
+                  "Colors/Color when false": "#8B0000FF"
                 },
                 {
                   "_type": "Text View",
@@ -1404,11 +1353,6 @@
                   "_title": "Shooter RPM"
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter PID Error",
-                  "_title": "Shooter PID Error"
-                },
-                {
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/Shooter Manual SetPoint",
                   "_title": "Shooter Manual SetPoint"
@@ -1419,26 +1363,38 @@
                   "_title": "Shooter STOP"
                 },
                 {
-                  "_type": "Text View",
-                  "_source0": "network_table:///SmartDashboard/Shooter Distance",
-                  "_title": "Shooter Distance"
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/ShootSequence 2800",
+                  "_title": "ShootSequence 2800"
                 },
                 {
                   "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/Shooter DistToRPM",
-                  "_title": "Shooter DistToRPM"
-                },
-                {
-                  "_type": "Boolean Box",
-                  "_source0": "network_table:///SmartDashboard/Cell Present",
-                  "_title": "Cell Present",
-                  "Colors/Color when true": "#7CFC00FF",
-                  "Colors/Color when false": "#8B0000FF"
+                  "_source0": "network_table:///SmartDashboard/ShootSequence STOP",
+                  "_title": "ShootSequence STOP"
                 }
               ]
             }
           },
           "10,0": {
+            "size": [
+              3,
+              3
+            ],
+            "content": {
+              "_type": "Camera Stream",
+              "_source0": "camera_server://limelight",
+              "_title": "limelight",
+              "Crosshair/Show crosshair": true,
+              "Crosshair/Crosshair color": "#FFFFFFFF",
+              "Controls/Show controls": true,
+              "Controls/Rotation": "NONE",
+              "compression": -1.0,
+              "fps": -1,
+              "imageWidth": 0,
+              "imageHeight": 0
+            }
+          },
+          "8,0": {
             "size": [
               2,
               4
@@ -1501,85 +1457,8 @@
                 }
               ]
             }
-          },
-          "8,0": {
-            "size": [
-              2,
-              4
-            ],
-            "content": {
-              "_type": "Subsystem Layout",
-              "_title": "Shoot Sequences (7)",
-              "Layout/Label position": "BOTTOM",
-              "_children": [
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, UNLOCK",
-                  "_title": "Hood CLOSE, UNLOCK"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterHood OPEN",
-                  "_title": "Hood OPEN"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShooterHood CLOSE, LOCK",
-                  "_title": "Hood CLOSE, LOCK"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShootSequence 2800",
-                  "_title": "ShootSequence 2800"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShootSequence DIST",
-                  "_title": "ShootSequence DIST"
-                },
-                {
-                  "_type": "Command",
-                  "_source0": "network_table:///SmartDashboard/ShootSequence STOP",
-                  "_title": "ShootSequence STOP"
-                }
-              ]
-            }
-          },
-          "4,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/Limelight Flashlight On",
-              "_title": "/SmartDashboard/Limelight Flashlight On"
-            }
-          },
-          "5,4": {
-            "size": [
-              1,
-              1
-            ],
-            "content": {
-              "_type": "Command",
-              "_source0": "network_table:///SmartDashboard/Limelight Flashlight Off",
-              "_title": "/SmartDashboard/Limelight Flashlight Off"
-            }
           }
         }
-      }
-    },
-    {
-      "title": "Tab 6",
-      "autoPopulate": false,
-      "autoPopulatePrefix": "",
-      "widgetPane": {
-        "gridSize": 128.0,
-        "showGrid": true,
-        "hgap": 16.0,
-        "vgap": 16.0,
-        "tiles": {}
       }
     }
   ],
