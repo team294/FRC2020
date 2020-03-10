@@ -8,29 +8,26 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Climb;
 
-/**
- * Command to set the feeder piston position.
- */
-public class FeederSetPiston extends CommandBase {
-  Feeder feeder;
-  boolean retract;
-  
+public class ClimbPistonUnlock extends CommandBase {
+  private Climb climb;
+  private boolean unlock;
+ 
   /**
-   * @param retract true = retract, false = extend
-   * @param feeder feeder subsystem to use
+   * Set the climb lock piston position.
+   * @param unlock true = unlock (retract), false = lock (extend)
+   * @param climb
    */
-  public FeederSetPiston(boolean retract, Feeder feeder) {
-    this.retract = retract;
-    this.feeder = feeder;
-    addRequirements(feeder);
+  public ClimbPistonUnlock(boolean unlock, Climb climb) {
+    this.climb = climb;
+    this.unlock = unlock;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.setFeederPiston(retract);
+    climb.unlockClimbPiston(unlock);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

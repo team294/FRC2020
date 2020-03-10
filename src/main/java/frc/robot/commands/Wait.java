@@ -10,19 +10,17 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-/**
- * Command to do nothing and end after a specified duration (useful for command groups).
- */
 public class Wait extends CommandBase {
+  private double seconds;
   private Timer timer;
-  private double duration;
 
   /**
+   * Do nothing and end after a specified duration.
    * @param seconds timer duration, in seconds
    */
   public Wait(double seconds) {
+    this.seconds = seconds;
     this.timer = new Timer();
-    this.duration = seconds;
   }
 
   @Override
@@ -38,7 +36,7 @@ public class Wait extends CommandBase {
 
   @Override
   public boolean isFinished() {
-    return timer.hasPeriodPassed(duration);
+    return timer.hasElapsed(seconds);
   }
 
   @Override

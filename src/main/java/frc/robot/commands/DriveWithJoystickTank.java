@@ -47,10 +47,9 @@ public class DriveWithJoystickTank extends CommandBase {
     leftPercent = -leftJoystick.getY();
     rightPercent = -rightJoystick.getY();
 
-    log.writeLog(false, "DriveWithJoystickTank", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
-
-    if(Math.abs(leftPercent) < 0.05) leftPercent = 0;
-    if(Math.abs(rightPercent) < 0.05) rightPercent = 0;
+    if(log.getLogRotation() == log.DRIVE_CYCLE) {
+      log.writeLog(false, "DriveWithJoystickTank", "Joystick", "L Joystick", leftPercent, "R Joystick", rightPercent);
+    }
 
     driveTrain.tankDrive(leftPercent, rightPercent);
   }

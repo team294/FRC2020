@@ -9,52 +9,62 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.HopperConstants;
 import frc.robot.subsystems.Hopper;
-import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
 public class HopperReverse extends CommandBase {
   private Hopper hopper;
-  private Shooter shooter;
-  private Timer shooterTimer, hopperTimer;
+  private FileLog log;
+  private Timer timerReverse, timerForward;
 
-  public HopperReverse(Hopper hopper, Shooter shooter) {
+  /**
+   * Pulse hopper by reversing it periodically.
+   * This command never ends.
+   * @param hopper hopper subsystem
+   */
+  public HopperReverse(Hopper hopper, FileLog log) {
     this.hopper = hopper;
-    this.shooter = shooter;
-    shooterTimer = new Timer();
-    hopperTimer = new Timer();
+    this.log = log;
+    this.timerReverse = new Timer();
+    this.timerForward = new Timer();
     addRequirements(hopper);
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    hopperTimer.reset();
-    shooterTimer.reset();
-    shooterTimer.start();
+    timerReverse.reset();
+    timerForward.reset();
+    timerReverse.start(); // start reverse timer, assuming that hopper is currently running reverse
+
+    log.writeLog(false, "HopperReverse", "Init");
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (shooterTimer.hasPeriodPassed(0.75) && shooter.getVoltage() < ShooterConstants.voltageCheck && hopperTimer.get() == 0) {
-      hopperTimer.start();
-      hopper.hopperSetPercentOutput(-0.8);
-    } else if (hopperTimer.hasPeriodPassed(1)) {
-      hopperTimer.stop();
-      shooterTimer.stop();
-      hopperTimer.reset();
-      shooterTimer.reset();
-      shooterTimer.start();
-      hopper.hopperSetPercentOutput(0.8);
+    // if hopper has been running forward for 1 second, run reverse, reset forward timer, and start reverse timer
+    if (timerForward.hasElapsed(1)) {
+      timerForward.stop();
+      timerForward.reset();
+      timerReverse.start();
+      hopper.hopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput);
+    }
+    // if hopper has been running reverse for 0.5 seconds, run forward, reset reverse timer, and start forward timer
+    else if (timerReverse.hasElapsed(0.5)) {
+      timerReverse.stop();
+      timerReverse.reset();
+      timerForward.start();
+      hopper.hopperSetPercentOutput(HopperConstants.hopperDefaultPercentOutput);
     }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    hopperTimer.stop();
-    shooterTimer.stop();
+    timerReverse.stop();
+    timerForward.stop();
   }
 
   // Returns true when the command should end.

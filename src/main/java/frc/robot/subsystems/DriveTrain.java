@@ -15,8 +15,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.SerialPort;
 import edu.wpi.first.wpilibj.LinearFilter;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
@@ -26,20 +26,18 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.robot.utilities.*;
+import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.DriveConstants.*;
 
-
 public class DriveTrain extends SubsystemBase {
-  private final FileLog log;
-
   private final WPI_TalonFX leftMotor1;
   private final WPI_TalonFX leftMotor2;
   private final WPI_TalonFX rightMotor1;
   private final WPI_TalonFX rightMotor2;
 
-  private final DifferentialDrive driveTrain;
+  private final DifferentialDrive diffDrive;
   private final DifferentialDriveOdometry odometry;
 
   private double leftEncoderZero = 0;
@@ -48,8 +46,9 @@ public class DriveTrain extends SubsystemBase {
   private final AHRS ahrs;
   private double yawZero = 0;
 
-  private Timer autoTimer;
-
+  private FileLog log;
+  private TemperatureCheck tempCheck;
+  
   // variables to help calculate angular velocity for turnGyro
   private double prevAng; // last recorded gyro angle
   private double currAng; // current recorded gyro angle
@@ -57,15 +56,19 @@ public class DriveTrain extends SubsystemBase {
   private double currTime; // current time gyro angle is being recorded
   private double angularVelocity;  // Robot angular velocity in degrees per second
   private LinearFilter lfRunningAvg = LinearFilter.movingAverage(4); //calculate running average to smooth quantization error in angular velocity calc
-
   
-  public DriveTrain(FileLog log, RobotPreferences robotPrefs) {
+  public DriveTrain(FileLog log, TemperatureCheck tempCheck) {
     this.log = log; // save reference to the fileLog
+    this.tempCheck = tempCheck;
 
     // configure navX
     AHRS gyro = null;
 		try {
-      gyro = new AHRS(I2C.Port.kMXP);
+      if (prototypeBot) {
+        gyro = new AHRS(I2C.Port.kMXP);
+      } else {
+        gyro = new AHRS(SerialPort.Port.kUSB);
+      }
       gyro.zeroYaw();
 		} catch (RuntimeException ex) {
 			DriverStation.reportError("Error instantiating navX MXP:  " + ex.getMessage(), true);
@@ -89,13 +92,13 @@ public class DriveTrain extends SubsystemBase {
     leftMotor2.follow(leftMotor1);
     rightMotor2.follow(rightMotor1);
 
-    if (robotPrefs.prototypeBot) {
+    // Drive train is reversed on competition robot
+    if (prototypeBot) {
       leftMotor1.setInverted(true);
       leftMotor2.setInverted(true);
       rightMotor1.setInverted(true);
       rightMotor2.setInverted(true);
-    }
-    else{ 
+    } else { 
       leftMotor1.setInverted(false);
       leftMotor2.setInverted(false);
       rightMotor1.setInverted(false);
@@ -110,21 +113,33 @@ public class DriveTrain extends SubsystemBase {
     leftMotor1.setSensorPhase(false);
     rightMotor1.setSensorPhase(false);
 
-    leftMotor1.configVoltageCompSaturation(12.0);
-    leftMotor2.configVoltageCompSaturation(12.0);
-    rightMotor1.configVoltageCompSaturation(12.0);
-    rightMotor2.configVoltageCompSaturation(12.0);
+    leftMotor1.configNeutralDeadband(0.0);
+    leftMotor2.configNeutralDeadband(0.0);
+    rightMotor1.configNeutralDeadband(0.0);
+    rightMotor2.configNeutralDeadband(0.0);
+
+    leftMotor1.configVoltageCompSaturation(compensationVoltage);
+    leftMotor2.configVoltageCompSaturation(compensationVoltage);
+    rightMotor1.configVoltageCompSaturation(compensationVoltage);
+    rightMotor2.configVoltageCompSaturation(compensationVoltage);
 
     setVoltageCompensation(true);
 
-    // create the drive train AFTER configuring the motors
-    driveTrain = new DifferentialDrive(leftMotor1, rightMotor1);
-    driveTrain.setDeadband(0.05);
+    leftMotor1.configOpenloopRamp(0.4);
+    leftMotor2.configOpenloopRamp(0.4);
+    rightMotor1.configOpenloopRamp(0.4);
+    rightMotor2.configOpenloopRamp(0.4);
+
+    // create the differential drive AFTER configuring the motors
+    diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
+    diffDrive.setRightSideInverted(true);
+    diffDrive.setDeadband(0.0);
     
     zeroLeftEncoder();
     zeroRightEncoder();
     zeroGyroRotation();
 
+    // Sets initial position to (0,0) facing 0 degrees
     odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getGyroRotation()));
 
     // initialize angular velocity variables
@@ -133,6 +148,22 @@ public class DriveTrain extends SubsystemBase {
     prevTime = System.currentTimeMillis();
     currTime = System.currentTimeMillis();
     lfRunningAvg.reset();
+
+    // display PID coefficients on SmartDashboard
+    SmartDashboard.putNumber("Drive kV Linear", kVLinear); // Linear coefficients
+    SmartDashboard.putNumber("Drive kA Linear", kALinear);
+    SmartDashboard.putNumber("Drive kS Linear", kSLinear);
+    SmartDashboard.putNumber("Drive kP Linear", kPLinear);
+    SmartDashboard.putNumber("Drive kI Linear", kILinear);
+    SmartDashboard.putNumber("Drive kD Linear", kDLinear);
+    SmartDashboard.putNumber("Drive kAng Linear", kAngLinear);
+
+    SmartDashboard.putNumber("Drive kV Angular", kVAngular); // Angular coefficients
+    SmartDashboard.putNumber("Drive kA Angular", kAAngular);
+    SmartDashboard.putNumber("Drive kS Angular", kSAngular);
+    SmartDashboard.putNumber("Drive kP Angular", kPAngular);
+    SmartDashboard.putNumber("Drive kI Angular", kIAngular);
+    SmartDashboard.putNumber("Drive kD Angular", kDAngular);
   }
 
   /**
@@ -142,7 +173,7 @@ public class DriveTrain extends SubsystemBase {
    * @param rightPercent The robot's right side percent along the X axis [-1.0..1.0]. Forward is positive.
    */
   public void tankDrive(double leftPercent, double rightPercent) {
-    driveTrain.tankDrive(leftPercent, rightPercent, true);
+    diffDrive.tankDrive(leftPercent, rightPercent, true);
   }
 
   /**
@@ -152,7 +183,7 @@ public class DriveTrain extends SubsystemBase {
    * @param squareInputs If set, decreases the input sensitivity at low speeds.
    */
   public void tankDrive(double leftPercent, double rightPercent, boolean squareInputs) {
-    driveTrain.tankDrive(leftPercent, rightPercent, squareInputs);
+    diffDrive.tankDrive(leftPercent, rightPercent, squareInputs);
   }
 
   /**
@@ -160,7 +191,7 @@ public class DriveTrain extends SubsystemBase {
    * ensure that motor will not cut out due to differential drive safety.
    */
   public void feedTheDog() {
-    driveTrain.feed();
+    diffDrive.feed();
   }
 
   /**
@@ -179,8 +210,16 @@ public class DriveTrain extends SubsystemBase {
     feedTheDog();
   }
 
+  /**
+   * Drive the robot using arcade controls
+   * @param speedPct
+   * @param rotation
+   */
   public void arcadeDrive(double speedPct, double rotation) {
-    driveTrain.arcadeDrive(speedPct, rotation * 0.7, false);    // minimize how fast turn operated from joystick
+    double maxRotation = 0.25;     // was 0.3
+    double absSpeed = Math.abs(speedPct);
+    double rotClamp = MathUtil.clamp(rotation, Math.min(-absSpeed, -maxRotation), Math.max(absSpeed, maxRotation));
+    diffDrive.arcadeDrive(speedPct, rotClamp, false);    // minimize how fast turn operated from joystick
   }
 
   /**
@@ -204,21 +243,21 @@ public class DriveTrain extends SubsystemBase {
    * @return right encoder position, in ticks
    */
   public double getRightEncoderRaw() {
-    return rightMotor1.getSelectedSensorPosition(0);
+    return -rightMotor1.getSelectedSensorPosition(0);
   }
 
   /**
-   * @return left encoder velocity, in ticks per 100ms
+   * @return left encoder velocity, in ticks per 100ms (+ = forward)
    */
   public double getLeftEncoderVelocityRaw() {
     return leftMotor1.getSelectedSensorVelocity(0);
   }
 
   /**
-   * @return right encoder velocity, in ticks per 100ms
+   * @return right encoder velocity, in ticks per 100ms (+ = forward)
    */
   public double getRightEncoderVelocityRaw() {
-    return rightMotor1.getSelectedSensorVelocity(0);
+    return -rightMotor1.getSelectedSensorVelocity(0);
   }
 
   /**
@@ -265,7 +304,7 @@ public class DriveTrain extends SubsystemBase {
 	 * @return encoder position, in ticks
 	 */
   public double getRightEncoderTicks() {
-    return -(getRightEncoderRaw() - rightEncoderZero);
+    return getRightEncoderRaw() - rightEncoderZero;
   }
 
   /**
@@ -291,14 +330,14 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @return left encoder velocity, in inches per second
+   * @return left encoder velocity, in inches per second (+ = forward)
    */
   public double getLeftEncoderVelocity() {
     return encoderTicksToInches(getLeftEncoderVelocityRaw()) * 10;
   }
 
   /**
-   * @return right encoder velocity, in inches per second
+   * @return right encoder velocity, in inches per second (+ = forward)
    */
   public double getRightEncoderVelocity() {
     return encoderTicksToInches(getRightEncoderVelocityRaw()) * 10;
@@ -308,7 +347,7 @@ public class DriveTrain extends SubsystemBase {
    * @return average velocity, in inches per second
    */
   public double getAverageEncoderVelocity(){
-    return (-getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
+    return (getRightEncoderVelocity() + getLeftEncoderVelocity()) / 2;
   }
 
   /**
@@ -321,31 +360,31 @@ public class DriveTrain extends SubsystemBase {
 
   /**
    * Gets the raw gyro angle (can be greater than 360).
+   * Angle is negated from the gyro, so that + = left and - = right
    * @return raw gyro angle, in degrees.
    */
   public double getGyroRaw() {
-    return ahrs.getAngle();
+    return -ahrs.getAngle();
   }
 
   /**
-	 * Zero the gyro position in software.
+	 * Zero the gyro position in software to the current angle.
 	 */
 	public void zeroGyroRotation() {
     yawZero = getGyroRaw(); // set yawZero to gyro angle
   }
   
   /**
-	 * Resets the gyro position in software to a specified angle.
-	 * @param currentHeading gyro heading to reset to, in degrees
+	 * Zero the gyro position in software against a specified angle.
+	 * @param currentHeading current robot angle compared to the zero angle
 	 */
-	public void setGyroRotation(double currentHeading) {
+	public void zeroGyroRotation(double currentHeading) {
 		// set yawZero to gryo angle, offset to currentHeading
 		yawZero = getGyroRaw() - currentHeading;
-		// System.err.println("PLZ Never Zero the Gyro Rotation it is not good");
   }
 
   /**
-	 * @return gyro angle from -180 to 180, in degrees
+	 * @return gyro angle from 180 to -180, in degrees (postitive is left, negative is right)
 	 */
 	public double getGyroRotation() {
 		double angle = getGyroRaw() - yawZero;
@@ -354,6 +393,18 @@ public class DriveTrain extends SubsystemBase {
 		return angle;
   }
 
+  /**
+   * Verifies if Gyro is still reading
+   * @return true = gryo is connected to Rio
+   */
+  public boolean isGyroReading() {
+    return ahrs.isConnected();
+  }
+
+  /**
+   * @return gyro angular velocity (with some averaging to reduce noise), in degrees per second.
+   * Positive is turning left, negative is turning right.
+   */
   public double getAngularVelocity () {
     return angularVelocity;
   }
@@ -401,23 +452,52 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.config_kD(0, kD);
     rightMotor1.config_kF(0, kF);
 
+    SmartDashboard.putNumber("Drive kP Linear", kP);
+    SmartDashboard.putNumber("Drive kI Linear", kI);
+    SmartDashboard.putNumber("Drive kD Linear", kD);
+
     leftMotor1.selectProfileSlot(0, 0);
     rightMotor1.selectProfileSlot(0, 0);
   }
 
   /**
-   * Sets Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
+   * Resets the Talon PIDs.  Use this when re-starting the PIDs.
+   */
+  public void resetTalonPIDs() {
+    leftMotor1.setIntegralAccumulator(0);
+    rightMotor1.setIntegralAccumulator(0);
+  }
+
+  /**
+   * Sets the left Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
+   * @param targetVel Target velocity, in inches per second
+   * @param aFF Feed foward term to add to the contorl loop (-1 to +1)
+   */
+  public void setLeftTalonPIDVelocity(double targetVel, double aFF) {
+    leftMotor1.set(ControlMode.Velocity, 
+      targetVel * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF);
+    feedTheDog();
+  }
+
+  /**
+   * Sets the right Talon to velocity closed-loop control mode with target velocity and feed-forward constant.
    * @param targetVel Target velocity, in inches per second
    * @param aFF Feed foward term to add to the contorl loop (-1 to +1)
    * @param reverseRight True = reverse velocity and FF term for right Talon
    */
-  public void setTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
+  public void setRightTalonPIDVelocity(double targetVel, double aFF, boolean reverseRight) {
     int direction = (reverseRight) ? -1 : 1;
-    leftMotor1.set(ControlMode.Velocity, 
-      targetVel / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF);
     rightMotor1.set(ControlMode.Velocity, 
-      targetVel*direction  / kEncoderDistanceInchesPerPulse / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
+      targetVel*direction  * ticksPerInch / 10.0, DemandType.ArbitraryFeedForward, aFF*direction);
     feedTheDog();
+  }
+
+  public double getLeftOutputVoltage() {
+    return leftMotor1.getMotorOutputVoltage();
+  }
+
+  public double getLeftBusVoltage() {
+    return leftMotor1.getBusVoltage();
   }
 
   public double getLeftOutputPercent() {
@@ -432,63 +512,92 @@ public class DriveTrain extends SubsystemBase {
     return leftMotor1.getClosedLoopTarget();
   }
 
-  /**
-   * Writes information about the drive train to the filelog
-   * @param logWhenDisabled true will log when disabled, false will discard the string
-   */
-  public void updateDriveLog(boolean logWhenDisabled) {
-    log.writeLog(logWhenDisabled, "Drive", "updates", 
-      "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
-      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
-      "L1 Temp",leftMotor1.getTemperature(), "L2 Temp",leftMotor2.getTemperature(),
-      "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
-      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), 
-      "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
-      "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
-      "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
-      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), "Time", System.currentTimeMillis()
-      );
-  }
-
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    // Update robot odometry
     double degrees = getGyroRotation();
     double leftMeters = Units.inchesToMeters(getLeftEncoderInches());
     double rightMeters = Units.inchesToMeters(getRightEncoderInches());
+    odometry.update(Rotation2d.fromDegrees(degrees), leftMeters, rightMeters);
 
-    updateDriveLog(false);
-
-    SmartDashboard.putNumber("Right Encoder", getRightEncoderInches());
-    SmartDashboard.putNumber("Left Encoder", getLeftEncoderInches());
-    SmartDashboard.putNumber("Gyro Rotation", getGyroRotation());
-    SmartDashboard.putNumber("Raw Gyro", getGyroRaw());
-
-    odometry.update(Rotation2d.fromDegrees(-degrees), leftMeters, rightMeters);
-    //odometry.update(Rotation2d.fromDegrees(0), leftMeters, rightMeters);
-
-    // TODO keep in code until values can be tuned for ACTUAL 2020 robot
-     // save new current value for calculating angVel
-     currAng = getGyroRaw();
-     currTime = System.currentTimeMillis();
+    // save current angle and time for calculating angVel
+    currAng = getGyroRaw();
+    currTime = System.currentTimeMillis();
  
-     // calculate angVel
-     angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
- 
-     // convert angVel to degrees per sec & put on SmartDashboard
-     SmartDashboard.putNumber("AngVel", angularVelocity);
- 
-     // save current angVel values as previous values for next calculation
-     prevAng = currAng;
-     prevTime = currTime; 
+    // calculate angVel in degrees per second
+    angularVelocity =  lfRunningAvg.calculate( (currAng - prevAng) / (currTime - prevTime) * 1000 );
+     
+    if(log.getLogRotation() == log.DRIVE_CYCLE) {
+      updateDriveLog(false);
+
+      if(!isGyroReading()) {
+        RobotPreferences.recordStickyFaults("Gyro", log);
+      }
+
+      // read PID coefficients from SmartDashboard
+      kVLinear = SmartDashboard.getNumber("Drive kV Linear", kVLinear);
+      kALinear = SmartDashboard.getNumber("Drive kA Linear", kALinear);
+      kSLinear = SmartDashboard.getNumber("Drive kS Linear", kSLinear);
+      kPLinear = SmartDashboard.getNumber("Drive kP Linear", kPLinear);
+      kILinear = SmartDashboard.getNumber("Drive kI Linear", kILinear);
+      kDLinear = SmartDashboard.getNumber("Drive kD Linear", kDLinear);
+      kAngLinear = SmartDashboard.getNumber("Drive kAng Linear", kAngLinear);
+
+      kVAngular = SmartDashboard.getNumber("Drive kV Angular", kVAngular);
+      kAAngular = SmartDashboard.getNumber("Drive kA Angular", kAAngular);
+      kSAngular = SmartDashboard.getNumber("Drive kS Angular", kSAngular);
+      kPAngular = SmartDashboard.getNumber("Drive kP Angular", kPAngular);
+      kIAngular = SmartDashboard.getNumber("Drive kI Angular", kIAngular);
+      kDAngular = SmartDashboard.getNumber("Drive kD Angular", kDAngular);
+      
+      // Update data on SmartDashboard
+      SmartDashboard.putNumber("Drive Right Raw", getRightEncoderRaw());
+      SmartDashboard.putNumber("Drive Left Raw", getLeftEncoderRaw());
+      SmartDashboard.putNumber("Drive Right Enc", getRightEncoderInches());
+      SmartDashboard.putNumber("Drive Left Enc", getLeftEncoderInches());
+      SmartDashboard.putNumber("Drive Average Dist in Meters", Units.inchesToMeters(getAverageDistance()));
+      SmartDashboard.putNumber("Drive Left Velocity", getLeftEncoderVelocity());
+      SmartDashboard.putNumber("Drive Right Velocity", getRightEncoderVelocity());
+      SmartDashboard.putNumber("Drive Gyro Rotation", degrees);
+      SmartDashboard.putNumber("Drive AngVel", angularVelocity);
+      SmartDashboard.putNumber("Drive Raw Gyro", getGyroRaw());
+      SmartDashboard.putBoolean("Drive isGyroReading", isGyroReading());
+
+      // position from odometry (helpful for autos)
+      var translation = odometry.getPoseMeters().getTranslation();
+      SmartDashboard.putNumber("Drive Odometry X",translation.getX());
+      SmartDashboard.putNumber("Drive Odometry Y",translation.getY());
+    }
+
+    // save current angVel values as previous values for next calculation
+    prevAng = currAng;
+    prevTime = currTime; 
   }
 
+  /**
+   * Get current robot location and facing on the field
+   * @return current robot pose
+   */
   public Pose2d getPose() {
-    /*System.out.println("Position" + odometry.getPoseMeters());
-    System.out.println("Gyro Rotation " + getGyroRotation() + ", Right Meters " + 
-      inchesToMeters(getRightEncoderInches()) + ", Left Meters " + 
-      inchesToMeters(getLeftEncoderInches()));*/
     return odometry.getPoseMeters();
+  }
+
+  /**
+   * Resets the robot pose on the field to the given location and rotation
+   * <p>Note:  This method resets the encoders to 0 and sets the gyro
+   * to the current robot rotation.
+   * <p>Robot X: 0 = middle of robot, wherever the robot starts auto mode (+=away from our drivestation)
+   * <p>Robot Y: 0 = middle of robot, wherever the robot starts auto mode (+=left when looking from our drivestation)
+   * <p>Robot angle: 0 = facing away from our drivestation
+   * @param robotPoseInMeters Current robot pose, in meters
+   */
+  public void resetPose(Pose2d robotPoseInMeters) {
+    zeroLeftEncoder();
+    zeroRightEncoder();
+    zeroGyroRotation(robotPoseInMeters.getRotation().getDegrees());
+    odometry.resetPosition(robotPoseInMeters, Rotation2d.fromDegrees(getGyroRotation()));
   }
 
   /**
@@ -499,37 +608,49 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * Start the timer for the autonomous period. Useful for comparing to generated trajectories.
+   * Writes information about the drive train to the filelog
+   * @param logWhenDisabled true will log when disabled, false will discard the string
    */
-  public void startAutoTimer() {
-    if (this.autoTimer == null) this.autoTimer = new Timer();
-    this.autoTimer.reset();
-    this.autoTimer.start();
+  public void updateDriveLog(boolean logWhenDisabled) {
+    var translation = odometry.getPoseMeters().getTranslation();
+    log.writeLog(logWhenDisabled, "Drive", "updates", 
+      "L1 Volts", leftMotor1.getMotorOutputVoltage(), "L2 Volts", leftMotor2.getMotorOutputVoltage(),
+      "L1 Amps", leftMotor1.getSupplyCurrent(), "L2 Amps", leftMotor2.getSupplyCurrent(),
+      "L1 Temp",leftMotor1.getTemperature(), "L2 Temp",leftMotor2.getTemperature(),
+      "R1 Volts", rightMotor1.getMotorOutputVoltage(), "R2 Volts", rightMotor2.getMotorOutputVoltage(),
+      "R1 Amps", rightMotor1.getSupplyCurrent(), "R2 Amps", rightMotor2.getSupplyCurrent(), 
+      "R1 Temp",rightMotor1.getTemperature(), "R2 Temp",rightMotor2.getTemperature(),
+      "Left Inches", getLeftEncoderInches(), "L Vel", getLeftEncoderVelocity(),
+      "Right Inches", getRightEncoderInches(), "R Vel", getRightEncoderVelocity(),
+      "Gyro Angle", getGyroRotation(), "RawGyro", getGyroRaw(), 
+      "Gyro Velocity", angularVelocity, 
+      "Odometry X", translation.getX(), "Odometry Y", translation.getY()
+      );
   }
 
   /**
-   * Set the voltage for the left and right motors (compensates for the current bus voltage)
-   * @param leftVolts volts to output to the left motor
-   * @param rightVolts volts to output to the right motor
+   * Update TemperatureCheck utility with motors that are and are not overheating.
    */
-  public void tankDriveVolts(double leftVolts, double rightVolts) {
-    if (autoTimer == null) {
-      this.startAutoTimer();
-    }
+  public void updateOverheatingMotors() {
+    if (leftMotor1.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveLeft1");
+    if (leftMotor2.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveLeft2");
+    
+    if (rightMotor1.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveRight1");
+    if (rightMotor2.getTemperature() >= temperatureCheck)
+      tempCheck.recordOverheatingMotor("DriveRight2");
 
-    leftMotor1.setVoltage(leftVolts);
-    rightMotor1.setVoltage(rightVolts);
-    feedTheDog();
 
-    log.writeLogEcho(true, "TankDriveVolts", "Update", 
-      "Time", autoTimer.get(), 
-      "L Meters", Units.inchesToMeters(getLeftEncoderInches()),
-      "R Meters", Units.inchesToMeters(getRightEncoderInches()), 
-      "L Velocity", Units.inchesToMeters(getLeftEncoderVelocity()), 
-      "R Velocity", Units.inchesToMeters(getRightEncoderVelocity()), 
-      "L Volts", leftVolts, 
-      "R Volts", rightVolts, 
-      "Gyro", getGyroRotation());
+    if (leftMotor1.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveLeft1");
+    if (leftMotor1.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveLeft2");
 
+    if (rightMotor1.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveRight1");
+    if (rightMotor2.getTemperature() < temperatureCheck)
+      tempCheck.notOverheatingMotor("DriveRight2");
   }
 }

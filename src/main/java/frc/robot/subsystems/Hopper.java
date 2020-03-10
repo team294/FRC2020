@@ -9,19 +9,34 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.utilities.FileLog;
+import frc.robot.Constants.RobotConstants;
 
 import static frc.robot.Constants.HopperConstants.*;
 
 public class Hopper extends SubsystemBase {
-  private final WPI_VictorSPX hopperMotor = new WPI_VictorSPX(canHopperMotor);
+  private final BaseMotorController hopperMotor;
+  private FileLog log;
   
-  public Hopper() {
+  public Hopper(FileLog log) {
+    this.log = log;
+    if (RobotConstants.prototypeBot) { 
+      hopperMotor = new WPI_VictorSPX(canHopperMotor);
+    }
+    else {
+      hopperMotor = new WPI_TalonSRX(canHopperMotor);
+    }
+
     hopperMotor.configFactoryDefault();
-    hopperMotor.setInverted(false);
+    hopperMotor.setInverted(true);
     hopperMotor.setNeutralMode(NeutralMode.Brake);
+    hopperMotor.configOpenloopRamp(0.15); // seconds from neutral to full
   }
 
   /**
@@ -31,8 +46,32 @@ public class Hopper extends SubsystemBase {
     hopperMotor.set(ControlMode.PercentOutput, percent);
   }
 
+  /**
+   * @return motor percent output (0 to 1)
+   */
+  public double hopperGetPercentOutput() {
+    return hopperMotor.getMotorOutputPercent();
+  }
+
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if(log.getLogRotation() == log.HOPPER_CYCLE) {
+      updateHopperLog(false);
+
+      SmartDashboard.putNumber("Hopper % Output", hopperMotor.getMotorOutputPercent());
+      SmartDashboard.putNumber("Hopper Voltage", hopperMotor.getMotorOutputVoltage());
+    }
+  }
+
+  /**
+   * Write information about hopper to fileLog.
+   * @param logWhenDisabled true = log when disabled, false = discard the string
+   */
+	public void updateHopperLog(boolean logWhenDisabled) {
+		log.writeLog(logWhenDisabled, "Hopper", "Update Variables",  
+      "Motor Volt", hopperMotor.getMotorOutputVoltage(), 
+      "Motor Output %", hopperMotor.getMotorOutputPercent()
+    );
   }
 }

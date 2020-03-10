@@ -8,25 +8,29 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.subsystems.Test;
+import frc.robot.subsystems.Shooter;
+import frc.robot.utilities.FileLog;
 
-public class setTestMotor extends CommandBase {
+public class WaitForPowerCells extends CommandBase {
+  private Shooter shooter;
+  private FileLog log;
+  private int cells;
+
   /**
-   * Creates a new setTestMotor.
+   * Wait until parameter number of power cells are shot.
+   * @param cells number of power cells to wait for
+   * @param shooter shooter subsystem
    */
-  private Test test;
-  private double percent;
-
-  public setTestMotor(Test test, double percent) {
-    // Use addRequirements() here to declare subsystem dependencies.
-    this.test = test;
-    this.percent = percent;
+  public WaitForPowerCells(int cells, Shooter shooter, FileLog log) {
+    this.shooter = shooter;
+    this.log = log;
+    this.cells = cells;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    test.setMotor(percent);
+    log.writeLog(false, "WaitForPowerCells", "Init", "TargetCell #", cells);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -42,6 +46,10 @@ public class setTestMotor extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    if (cells <= shooter.getPowerCellsShot()){
+      shooter.setPowerCellsShot(0);
+      return true;
+    } 
+    else return false;
   }
 }
