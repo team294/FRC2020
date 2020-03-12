@@ -214,7 +214,7 @@ public class LimeLight extends SubsystemBase {
 
   /**
    * @return true when limelight is connected & reading data
-   * false when limelight is disconnected or not reading any data
+   * false when limelight is disconnected or not reading any data   TODO when would x be 1064??
    */
   public boolean isGettingData() {
     return (x != 1064 && y != 1000);
