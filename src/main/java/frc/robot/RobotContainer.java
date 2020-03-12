@@ -387,12 +387,22 @@ public class RobotContainer {
    * Method called once every scheduler cycle when robot is disabled.
    */
   public void disabledPeriodic() {
-    if(displayCount > 3) displayCount = 0; // displayCount > 1 for flashing
-    led.setPattern(LED.teamMovingColorsLibrary[displayCount], 0.5, 1);
-
-    if(disabledDisplayTimer.advanceIfElapsed(0.05)) { //0.25 for flashing
-      displayCount++;
+    boolean error = true;
+    if ((driveTrain.getLeftBusVoltage() > 8.0) && (driveTrain.isGyroReading() == true)) error = false;    // The CAN bus and Gyro are working
+  
+    if((error && displayCount > 1) || (!error && displayCount > 3)) displayCount = 0; // displayCount > 1 for flashing
+    if (error == false) {
+      led.setPattern(LED.teamMovingColorsLibrary[displayCount], 0.5, 1);
+      if(disabledDisplayTimer.advanceIfElapsed(0.05)) { //0.25 for flashing
+        displayCount++;
+      }
     }
+    else {
+      led.setStrip("Red", displayCount, 1);
+      if(disabledDisplayTimer.advanceIfElapsed(0.25)) {
+        displayCount++;
+      } 
+    }  //    TODO May want to flash this
   }
   
   /**
