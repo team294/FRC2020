@@ -217,7 +217,7 @@ public class LimeLight extends SubsystemBase {
    * false when limelight is disconnected or not reading any data   TODO when would x be 1064??
    */
   public boolean isGettingData() {
-    return (x != 1064 && y != 1000);
+    return (x != (1000 * LimeLightConstants.angleMultiplier) && y != 1000);
   }
 
   @Override
