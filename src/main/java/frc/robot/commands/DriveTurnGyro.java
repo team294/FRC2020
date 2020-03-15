@@ -234,8 +234,8 @@ public class DriveTurnGyro extends CommandBase {
       profileStartTime = currProfileTime;
     }
 
-    SmartDashboard.putNumber("TurnGyro Curr Velocity", currVelocity);
-    SmartDashboard.putNumber("TurnGyro Target Velocity", targetVel);
+    // SmartDashboard.putNumber("TurnGyro Curr Velocity", currVelocity);
+    // SmartDashboard.putNumber("TurnGyro Target Velocity", targetVel);
 
     log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, 
       "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
