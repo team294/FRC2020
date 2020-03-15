@@ -124,11 +124,7 @@ public class DriveTrain extends SubsystemBase {
     rightMotor2.configVoltageCompSaturation(compensationVoltage);
 
     setVoltageCompensation(true);
-
-    leftMotor1.configOpenloopRamp(0.4);
-    leftMotor2.configOpenloopRamp(0.4);
-    rightMotor1.configOpenloopRamp(0.4);
-    rightMotor2.configOpenloopRamp(0.4);
+    setOpenLoopRampLimit(true);
 
     // create the differential drive AFTER configuring the motors
     diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
@@ -225,13 +221,24 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @param turnOn true = turn on voltage compensation, false = don't turn on voltage compensation
+   * @param turnOn true = turn on voltage compensation, false = turn off voltage compensation
    */
   public void setVoltageCompensation(boolean turnOn) {
     leftMotor1.enableVoltageCompensation(turnOn);
     leftMotor2.enableVoltageCompensation(turnOn);
     rightMotor1.enableVoltageCompensation(turnOn);
     rightMotor2.enableVoltageCompensation(turnOn);
+  }
+  
+  /**
+   * @param turnOn true = turn on open loop ramp rate limit, false = turn off open loop ramp rate limit
+   */
+  public void setOpenLoopRampLimit(boolean turnOn) {
+    double ramp = turnOn ? 0.4 : 0.0;
+    leftMotor1.configOpenloopRamp(ramp);
+    leftMotor2.configOpenloopRamp(ramp);
+    rightMotor1.configOpenloopRamp(ramp);
+    rightMotor2.configOpenloopRamp(ramp);
   }
 
   /**
@@ -504,6 +511,26 @@ public class DriveTrain extends SubsystemBase {
 
   public double getLeftOutputPercent() {
     return leftMotor1.getMotorOutputPercent();
+  }
+
+  public double getLeftStatorCurrent() {
+    return leftMotor1.getStatorCurrent();
+  }
+
+  public double getRightOutputVoltage() {
+    return rightMotor1.getMotorOutputVoltage();
+  }
+
+  public double getRightBusVoltage() {
+    return rightMotor1.getBusVoltage();
+  }
+
+  public double getRightOutputPercent() {
+    return rightMotor1.getMotorOutputPercent();
+  }
+
+  public double getRightStatorCurrent() {
+    return rightMotor1.getStatorCurrent();
   }
 
   public double getTalonLeftClosedLoopError() {

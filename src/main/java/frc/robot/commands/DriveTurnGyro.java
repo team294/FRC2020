@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import frc.robot.Constants.RobotConstants;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.Constants.TargetType;
 import frc.robot.subsystems.*;
@@ -145,7 +144,8 @@ public class DriveTurnGyro extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.setDriveModeCoast(true);
+    driveTrain.setDriveModeCoast(false);
+    driveTrain.setOpenLoopRampLimit(false);
 
     if(fromShuffleboard) {
       target = SmartDashboard.getNumber("TurnGyro Manual Target Ang", 90);
@@ -249,6 +249,7 @@ public class DriveTurnGyro extends CommandBase {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
     driveTrain.setDriveModeCoast(false);
+    driveTrain.setOpenLoopRampLimit(true);
 
     log.writeLog(false, "DriveTurnGyro", "End");
   }

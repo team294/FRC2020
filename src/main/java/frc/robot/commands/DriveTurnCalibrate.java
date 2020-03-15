@@ -48,6 +48,7 @@ public class DriveTurnCalibrate extends CommandBase {
     timer.start();
     motorPctOut = 0;
     gyroStart = driveTrain.getGyroRotation();
+    driveTrain.setOpenLoopRampLimit(false);
 
     log.writeLog(false, "DriveTurnCalibrate", "init", "maxPctOut", maxPctOut, "rampTime", rampTime, "rampRate", rampRate, "direction", direction);
   }
@@ -58,6 +59,8 @@ public class DriveTurnCalibrate extends CommandBase {
     double curTime = timer.get();
 
     log.writeLog(false, "DriveTurnCalibrate", "execute", "time", curTime, "pctOut", motorPctOut, 
+      "Vleft", driveTrain.getLeftOutputVoltage(), "VRight", driveTrain.getRightOutputVoltage(),
+      "Ileft", driveTrain.getLeftStatorCurrent(), "IRight", driveTrain.getRightStatorCurrent(),
       "gyro", driveTrain.normalizeAngle(driveTrain.getGyroRotation()-gyroStart),
       "gyro vel", driveTrain.getAngularVelocity(),
       "Lpos", driveTrain.getLeftEncoderInches(), "Lvel", driveTrain.getLeftEncoderVelocity(),
@@ -74,6 +77,7 @@ public class DriveTurnCalibrate extends CommandBase {
   @Override
   public void end(boolean interrupted) {
     timer.stop();
+    driveTrain.setOpenLoopRampLimit(true);
   }
 
   // Returns true when the command should end.
