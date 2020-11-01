@@ -123,6 +123,12 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.configVoltageCompSaturation(compensationVoltage);
     rightMotor2.configVoltageCompSaturation(compensationVoltage);
 
+    // Change number of samples in the rolling average for voltage compensation (default = 12?)
+    // leftMotor1.configVoltageMeasurementFilter(4);
+    // leftMotor2.configVoltageMeasurementFilter(4);
+    // rightMotor1.configVoltageMeasurementFilter(4);
+    // rightMotor2.configVoltageMeasurementFilter(4);
+
     setVoltageCompensation(true);
     setOpenLoopRampLimit(true);
 

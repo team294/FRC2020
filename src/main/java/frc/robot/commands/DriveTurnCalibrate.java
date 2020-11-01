@@ -58,7 +58,9 @@ public class DriveTurnCalibrate extends CommandBase {
   public void execute() {
     double curTime = timer.get();
 
-    log.writeLog(false, "DriveTurnCalibrate", "execute", "time", curTime, "pctOut", motorPctOut, 
+    log.writeLog(false, "DriveTurnCalibrate", "execute", "time", curTime, 
+      "pctOut", motorPctOut,
+      "VbusLeft", driveTrain.getLeftBusVoltage(), "VbusRight", driveTrain.getRightBusVoltage(),
       "Vleft", driveTrain.getLeftOutputVoltage(), "VRight", driveTrain.getRightOutputVoltage(),
       "Ileft", driveTrain.getLeftStatorCurrent(), "IRight", driveTrain.getRightStatorCurrent(),
       "gyro", driveTrain.normalizeAngle(driveTrain.getGyroRotation()-gyroStart),
