@@ -425,6 +425,13 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
+   * @return angular velocity from motor velocity readings (NOT from gyro)
+   */
+  public double getAngularVelocityFromWheels () {
+    return ((getRightEncoderVelocity() - getLeftEncoderVelocity()) / 2) * wheelInchesToGyroDegrees;
+  }
+
+  /**
 	 * Converts input angle to a number between -179.999 and +180.0.
 	 * @return normalized angle
 	 */

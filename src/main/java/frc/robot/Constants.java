@@ -179,6 +179,8 @@ public final class Constants {
         public static double tLagAngular = 0.120;          // Lag time to start/stop turning
         public static final double maxSecondsForTurnGyro = 2.0; // max time to wait for turn gyro. use this in commands to timeout
 
+        public static double wheelInchesToGyroDegrees = 4.205; // converts from inches traveled by the wheels when spinning in place to degrees turned
+
         // DriveStraight constants
         public static double kMaxSpeedMetersPerSecond = 5.22; // 5.0 on practice bot, 5.22 on competition bot
         public static double kMaxAccelerationMetersPerSecondSquared = 3.8; // 3.8 on practice bot, 3.8 on competition bot

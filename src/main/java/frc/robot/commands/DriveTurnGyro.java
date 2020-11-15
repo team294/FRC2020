@@ -177,7 +177,7 @@ public class DriveTurnGyro extends CommandBase {
     direction = Math.signum(targetRel);
 
     tStateFinal = new TrapezoidProfileBCR.State(targetRel, 0.0); // initialize goal state (degrees to turn)
-    tStateCurr = new TrapezoidProfileBCR.State(0.0, driveTrain.getAngularVelocity()); // initialize initial state (relative turning, so assume initPos is 0 degrees)
+    tStateCurr = new TrapezoidProfileBCR.State(0.0, driveTrain.getAngularVelocityFromWheels()); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
     // initialize velocity and accel limits
     tConstraints = new TrapezoidProfileBCR.Constraints(maxVel , maxAccel);
@@ -197,7 +197,7 @@ public class DriveTurnGyro extends CommandBase {
     // currAngle is relative to the startAngle.  +90 to -270 if turning left, -90 to +270 if turning right.
     currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
     currAngle += (direction*currAngle<-90) ? direction*360.0 : 0; 
-    currVelocity = driveTrain.getAngularVelocity();
+    currVelocity = driveTrain.getAngularVelocityFromWheels();
     
     if (targetType == TargetType.kVision) {
       targetRel = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());

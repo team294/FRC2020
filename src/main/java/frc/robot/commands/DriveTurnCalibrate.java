@@ -65,6 +65,7 @@ public class DriveTurnCalibrate extends CommandBase {
       "Ileft", driveTrain.getLeftStatorCurrent(), "IRight", driveTrain.getRightStatorCurrent(),
       "gyro", driveTrain.normalizeAngle(driveTrain.getGyroRotation()-gyroStart),
       "gyro vel", driveTrain.getAngularVelocity(),
+      "ang vel from wheels", driveTrain.getAngularVelocityFromWheels(),
       "Lpos", driveTrain.getLeftEncoderInches(), "Lvel", driveTrain.getLeftEncoderVelocity(),
       "Rpos", driveTrain.getRightEncoderInches(), "Rvel", driveTrain.getRightEncoderVelocity()
     );
