@@ -34,7 +34,7 @@ public class DriveTurnGyro extends CommandBase {
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
   private double startAngle, targetRel; // starting angle in degrees, target angle relative to start angle
-  private double currAngle, currVelocity;
+  private double currAngle, currVelocity, currVelocityGyro;
   private double timeSinceStart;
   private TargetType targetType;
   private boolean regenerate;
@@ -198,6 +198,7 @@ public class DriveTurnGyro extends CommandBase {
     currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
     currAngle += (direction*currAngle<-90) ? direction*360.0 : 0; 
     currVelocity = driveTrain.getAngularVelocityFromWheels();
+    currVelocityGyro = driveTrain.getAngularVelocity();
     
     if (targetType == TargetType.kVision) {
       targetRel = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
@@ -240,7 +241,7 @@ public class DriveTurnGyro extends CommandBase {
     log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, 
       "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posF", tStateForecast.position, "velF", forecastVel, "accF", forecastAccel,
-      "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
+      "posA", currAngle, "velAWheel", currVelocity, "velAGyro", currVelocityGyro, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
   }
 
   // Called once the command ends or is interrupted.
