@@ -26,7 +26,7 @@ public class DriveTurnGyro extends CommandBase {
 
   private DriveTrain driveTrain; // reference to driveTrain
   private double target; // how many more degrees to the right to turn
-  private double direction; // -1 = turn to the left, +1 = turn to the right
+  private double direction; // +1 = turn to the left, -1 = turn to the right
   private double maxVel; // max velocity, between 0 and kMaxAngularVelocity in Constants
   private double maxAccel; // max acceleration, between 0 and kMaxAngularAcceleration in Constants
   private long profileStartTime; // initial time (time of starting point)
@@ -194,7 +194,7 @@ public class DriveTurnGyro extends CommandBase {
   @Override
   public void execute() {
     currProfileTime = System.currentTimeMillis();
-    // currAngle is relative to the startAngle.  +90 to -270 if turning left, -90 to +270 if turning right.
+    // currAngle is relative to the startAngle.  -90 to +270 if turning left, +90 to -270 if turning right.
     currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
     currAngle += (direction*currAngle<-90) ? direction*360.0 : 0; 
     currVelocity = driveTrain.getAngularVelocityFromWheels();
@@ -214,7 +214,7 @@ public class DriveTurnGyro extends CommandBase {
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
     double forecastVel = tStateForecast.velocity;
-    double forecastAccel = (forecastVel-targetVel)/tLagAngular;
+    double forecastAccel = (forecastVel-currVelocity)/tLagAngular;
 
     // aFF = (kSAngular * Math.signum(forecastVel)) + (forecastVel * kVAngular) + (forecastAccel * kAAngular);
     aFF = (forecastVel * kVAngular) + (forecastAccel * kAAngular);
@@ -222,15 +222,16 @@ public class DriveTurnGyro extends CommandBase {
 
     // SmartDashboard.putNumber("TurnGyro target angle", tStateNext.position);
 
-    pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
-    //pFB = 0; 
+    //TODO Turn on feedback */
+    //pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
+    pFB = 0; 
 
     driveTrain.setLeftMotorOutput(-aFF - pFB);
     driveTrain.setRightMotorOutput(+aFF + pFB);
 
     if (regenerate) {
-      // tStateCurr = new TrapezoidProfileBCR.State(currAngle, currVelocity);   // using currVelocity is problematic since the current velocity has lots of noise
-      tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
+      tStateCurr = new TrapezoidProfileBCR.State(currAngle, currVelocity);   // using currVelocity is problematic since the current velocity has lots of noise
+      // tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
       tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
       profileStartTime = currProfileTime;
     }
