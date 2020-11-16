@@ -217,7 +217,7 @@ public class DriveTurnGyro extends CommandBase {
     double forecastAccel = (forecastVel-currVelocity)/tLagAngular;
 
     // aFF = (kSAngular * Math.signum(forecastVel)) + (forecastVel * kVAngular) + (forecastAccel * kAAngular);
-    aFF = (forecastVel * kVAngular) + (forecastAccel * kAAngular);
+    aFF = (forecastVel * kVAngular) + (targetAccel * kAAngular);
     aFF += kSAngular * Math.signum(aFF);
 
     // SmartDashboard.putNumber("TurnGyro target angle", tStateNext.position);
