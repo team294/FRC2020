@@ -214,7 +214,7 @@ public class DriveTurnGyro extends CommandBase {
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
     double forecastVel = tStateForecast.velocity;
-    double forecastAccel = MathUtil.clamp((forecastVel-currVelocity)/tLagAngular, -maxAccel, maxAccel);
+    double forecastAccel = MathUtil.clamp((forecastVel-targetVel)/tLagAngular, -maxAccel, maxAccel);
 
     // aFF = (kSAngular * Math.signum(forecastVel)) + (forecastVel * kVAngular) + (forecastAccel * kAAngular);
     aFF = (forecastVel * kVAngular) + (forecastAccel * kAAngular);
@@ -223,8 +223,8 @@ public class DriveTurnGyro extends CommandBase {
     // SmartDashboard.putNumber("TurnGyro target angle", tStateNext.position);
 
     //TODO Turn on feedback */
-    //pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
-    pFB = 0; 
+    pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
+    // pFB = 0; 
 
     driveTrain.setLeftMotorOutput(-aFF - pFB);
     driveTrain.setRightMotorOutput(+aFF + pFB);
