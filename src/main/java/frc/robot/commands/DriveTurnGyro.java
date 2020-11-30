@@ -157,7 +157,7 @@ public class DriveTurnGyro extends CommandBase {
       angleTolerance = Math.abs(angleTolerance);
     }
     // If constants were updated from Shuffleboard, then update PID
-    pidAngVel.setPID(kPAngular, kIAngular, kDAngular);
+    pidAngVel.setPID(kPAngular, 0, kDAngular);
     pidAngVel.reset();
 
 
