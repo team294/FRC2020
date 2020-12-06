@@ -215,7 +215,7 @@ public class DriveTurnGyro extends CommandBase {
     tStateNext = tProfile.calculate(timeSinceStart);        // This is where the robot should be now
     tStateForecast = tProfile.calculate(timeSinceStart + tLagAngular);  // This is where the robot should be next cycle (or farther in the future if the robot has lag or backlash)
 
-    if(tStateCurr.equals(tStateNext) && targetType == TargetType.kVision){
+    if(tProfile.isFinished(timeSinceStart) && targetType == TargetType.kVision){
       feedbackFlag = true;
     }
 
@@ -224,13 +224,11 @@ public class DriveTurnGyro extends CommandBase {
     double forecastVel = tStateForecast.velocity;
     double forecastAccel = MathUtil.clamp((forecastVel-targetVel)/tLagAngular, -maxAccel, maxAccel);
 
-    //TODO Turn on feedback */
-    pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel) + kIAngular * (tStateNext.position - currAngle), -0.1, 0.1);
-    // pFB = 0; 
+    
 
     if(!feedbackFlag){
-      pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
-      //pFB = 0; 
+      pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel) + kIAngular * (tStateNext.position - currAngle), -0.1, 0.1);
+      // pFB = 0; 
     } else {
       pFB = kIAngular * driveTrain.normalizeAngle(limeLight.getXOffset());
     }
@@ -259,7 +257,7 @@ public class DriveTurnGyro extends CommandBase {
       "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posF", tStateForecast.position, "velF", forecastVel, "accF", forecastAccel,
       "posA", currAngle, "velAWheel", currVelocity, "velAGyro", currVelocityGyro, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
-    tStateCurr = tStateNext;
+    
   }
 
   // Called once the command ends or is interrupted.
@@ -276,7 +274,10 @@ public class DriveTurnGyro extends CommandBase {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(Math.abs(targetRel - currAngle) < angleTolerance) {
+    
+    
+    if((Math.abs(targetRel - currAngle) < angleTolerance && targetType != TargetType.kVision) || 
+    (targetType == TargetType.kVision && Math.abs(limeLight.getXOffset()) < angleTolerance && limeLight.seesTarget())) {
       accuracyCounter++;
       log.writeLog(false, "DriveTurnGyro", "WithinTolerance", "Target Ang", targetRel, "Actual Ang", currAngle, "Counter", accuracyCounter);
     } else {
