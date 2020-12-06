@@ -43,6 +43,7 @@ public class DriveTurnGyro extends CommandBase {
   private LimeLight limeLight;
   private PIDController pidAngVel;
   private double angleTolerance;
+  private boolean feedbackFlag;
 
   private double aFF, pFB;  // variables for arbitrary feed forward and feedback power
 
@@ -144,6 +145,7 @@ public class DriveTurnGyro extends CommandBase {
   @Override
   public void initialize() {
     driveTrain.setDriveModeCoast(true);
+    feedbackFlag = false;
 
     if(fromShuffleboard) {
       target = SmartDashboard.getNumber("TurnGyro Manual Target Ang", 90);
@@ -207,14 +209,23 @@ public class DriveTurnGyro extends CommandBase {
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
     tStateNext = tProfile.calculate(timeSinceStart + 0.010);
 
+    if(tStateCurr.equals(tStateNext) && targetType == TargetType.kVision){
+      feedbackFlag = true;
+    }
+
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
     aFF = (kSAngular * Math.signum(targetVel)) + (targetVel * kVAngular) + (targetAccel * kAAngular);
 
     // SmartDashboard.putNumber("TurnGyro target angle", tStateNext.position);
 
-    pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
-    //pFB = 0; 
+    if(!feedbackFlag){
+      pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
+      //pFB = 0; 
+    } else {
+      pFB = kIAngular * driveTrain.normalizeAngle(limeLight.getXOffset());
+    }
+    
 
     driveTrain.setLeftMotorOutput(-aFF - pFB);
     driveTrain.setRightMotorOutput(+aFF + pFB);
@@ -226,8 +237,14 @@ public class DriveTurnGyro extends CommandBase {
       profileStartTime = currProfileTime;
     }
 
+    
+
+    
+
     log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
+    
+    tStateCurr = tStateNext;
   }
 
   // Called once the command ends or is interrupted.
