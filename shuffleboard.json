@@ -850,6 +850,11 @@
                 },
                 {
                   "_type": "Text View",
+                  "_source0": "network_table:///SmartDashboard/Drive tLag Angular",
+                  "_title": "Drive tLag Angular"
+                },
+                {
+                  "_type": "Text View",
                   "_source0": "network_table:///SmartDashboard/TurnGyro Manual Target Ang",
                   "_title": "Turn Manual Target Angle"
                 },

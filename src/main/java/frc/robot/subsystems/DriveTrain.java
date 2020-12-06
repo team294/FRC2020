@@ -123,12 +123,14 @@ public class DriveTrain extends SubsystemBase {
     rightMotor1.configVoltageCompSaturation(compensationVoltage);
     rightMotor2.configVoltageCompSaturation(compensationVoltage);
 
-    setVoltageCompensation(true);
+    // Change number of samples in the rolling average for voltage compensation (default = 12?)
+    // leftMotor1.configVoltageMeasurementFilter(4);
+    // leftMotor2.configVoltageMeasurementFilter(4);
+    // rightMotor1.configVoltageMeasurementFilter(4);
+    // rightMotor2.configVoltageMeasurementFilter(4);
 
-    leftMotor1.configOpenloopRamp(0.4);
-    leftMotor2.configOpenloopRamp(0.4);
-    rightMotor1.configOpenloopRamp(0.4);
-    rightMotor2.configOpenloopRamp(0.4);
+    setVoltageCompensation(true);
+    setOpenLoopRampLimit(true);
 
     // create the differential drive AFTER configuring the motors
     diffDrive = new DifferentialDrive(leftMotor1, rightMotor1);
@@ -164,6 +166,8 @@ public class DriveTrain extends SubsystemBase {
     SmartDashboard.putNumber("Drive kP Angular", kPAngular);
     SmartDashboard.putNumber("Drive kI Angular", kIAngular);
     SmartDashboard.putNumber("Drive kD Angular", kDAngular);
+    SmartDashboard.putNumber("Drive tLag Angular", tLagAngular);
+    
   }
 
   /**
@@ -223,13 +227,24 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
-   * @param turnOn true = turn on voltage compensation, false = don't turn on voltage compensation
+   * @param turnOn true = turn on voltage compensation, false = turn off voltage compensation
    */
   public void setVoltageCompensation(boolean turnOn) {
     leftMotor1.enableVoltageCompensation(turnOn);
     leftMotor2.enableVoltageCompensation(turnOn);
     rightMotor1.enableVoltageCompensation(turnOn);
     rightMotor2.enableVoltageCompensation(turnOn);
+  }
+  
+  /**
+   * @param turnOn true = turn on open loop ramp rate limit, false = turn off open loop ramp rate limit
+   */
+  public void setOpenLoopRampLimit(boolean turnOn) {
+    double ramp = turnOn ? 0.4 : 0.0;
+    leftMotor1.configOpenloopRamp(ramp);
+    leftMotor2.configOpenloopRamp(ramp);
+    rightMotor1.configOpenloopRamp(ramp);
+    rightMotor2.configOpenloopRamp(ramp);
   }
 
   /**
@@ -410,6 +425,13 @@ public class DriveTrain extends SubsystemBase {
   }
 
   /**
+   * @return angular velocity from motor velocity readings (NOT from gyro)
+   */
+  public double getAngularVelocityFromWheels () {
+    return ((getRightEncoderVelocity() - getLeftEncoderVelocity()) / 2) * wheelInchesToGyroDegrees;
+  }
+
+  /**
 	 * Converts input angle to a number between -179.999 and +180.0.
 	 * @return normalized angle
 	 */
@@ -504,6 +526,26 @@ public class DriveTrain extends SubsystemBase {
     return leftMotor1.getMotorOutputPercent();
   }
 
+  public double getLeftStatorCurrent() {
+    return leftMotor1.getStatorCurrent();
+  }
+
+  public double getRightOutputVoltage() {
+    return rightMotor1.getMotorOutputVoltage();
+  }
+
+  public double getRightBusVoltage() {
+    return rightMotor1.getBusVoltage();
+  }
+
+  public double getRightOutputPercent() {
+    return rightMotor1.getMotorOutputPercent();
+  }
+
+  public double getRightStatorCurrent() {
+    return rightMotor1.getStatorCurrent();
+  }
+
   public double getTalonLeftClosedLoopError() {
     return leftMotor1.getClosedLoopError();
   }
@@ -551,7 +593,8 @@ public class DriveTrain extends SubsystemBase {
       kPAngular = SmartDashboard.getNumber("Drive kP Angular", kPAngular);
       kIAngular = SmartDashboard.getNumber("Drive kI Angular", kIAngular);
       kDAngular = SmartDashboard.getNumber("Drive kD Angular", kDAngular);
-      
+      tLagAngular = SmartDashboard.getNumber("Drive tLag Angular", tLagAngular);
+       
       // Update data on SmartDashboard
       SmartDashboard.putNumber("Drive Right Raw", getRightEncoderRaw());
       SmartDashboard.putNumber("Drive Left Raw", getLeftEncoderRaw());

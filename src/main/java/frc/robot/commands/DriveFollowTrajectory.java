@@ -138,13 +138,15 @@ public class DriveFollowTrajectory extends CommandBase {
       case kWPILib:
         m_leftController.reset();
         m_rightController.reset();
+        driveTrain.setOpenLoopRampLimit(false);
         break;
       case kTalon:
         driveTrain.setTalonPIDConstants(DriveConstants.kPLinear, DriveConstants.kILinear, DriveConstants.kDLinear, 0);
         driveTrain.resetTalonPIDs();
         break;
       case kNone:
-        break;
+        driveTrain.setOpenLoopRampLimit(false);
+      break;
     }
   }
 
@@ -229,6 +231,7 @@ public class DriveFollowTrajectory extends CommandBase {
   public void end(boolean interrupted) {
     log.writeLog(false, "DriveFollowTrajectory", "End");
     m_timer.stop();
+    driveTrain.setOpenLoopRampLimit(true);
   }
 
   // Returns true when the command should end.

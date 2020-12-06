@@ -221,6 +221,7 @@ public class DriveStraight extends CommandBase {
     double aFFR = (kSLinear * Math.signum(targetVelR)) + (targetVelR * kVLinear) + (targetAccel * kALinear);
 
     // For calibrating:  driving with feedforward only
+    // driveTrain.setOpenLoopRampLimit(false);
     // driveTrain.setLeftMotorOutput(aFFL);
     // driveTrain.setRightMotorOutput(aFFR);
 
