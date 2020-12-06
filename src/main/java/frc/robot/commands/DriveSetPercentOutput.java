@@ -32,6 +32,7 @@ public class DriveSetPercentOutput extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driveTrain.setOpenLoopRampLimit(true);
     driveTrain.setLeftMotorOutput(lPercent);
     driveTrain.setRightMotorOutput(rPercent);
     log.writeLog(false, "DriveSetPercentOutput", "Init", "Target % L", lPercent, "Target % R", rPercent);

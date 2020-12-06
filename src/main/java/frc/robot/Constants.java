@@ -170,13 +170,16 @@ public final class Constants {
         // turnGyro constants
         public static double kMaxAngularVelocity = 1125; // degrees per second TODO calculate on actual 2020 robot
         public static double kMaxAngularAcceleration = 200; // degrees per second per second 200 on competition bot
-        public static double kVAngular = 0.001; // 0.000850 on practice bot, 0.001 on competition bot
-        public static double kAAngular = 0.0001;  // 0.0001 on practice bot, 0.0001 on competition bot
-        public static double kSAngular = 0.0348;   // 0.0568 on practice bot, 0.0348 (try 0.0500) on competition bot
-        public static double kPAngular = 0.0005;   // was 0.001
+        public static double kVAngular = 0.00108; // 0.00108 calibrated on competition bot
+        public static double kAAngular = 0.00015;  // 0.00015 calibrated on competition bot
+        public static double kSAngular = 0.056;   // 0.056 calibrated on competition bot
+        public static double kPAngular = 0.001;   // 0.001 calibrated on competition bot (higher values get unstable)
         public static double kDAngular = 0;
-        public static double kIAngular = 0;
+        public static double kIAngular = 0.015;   // 0.015 calibrated on competition bot (good for +/-2 degree accuracy, may oscillate some for +/-1 degree)
+        public static double tLagAngular = 0.020;          // Lag time to start/stop turning, or just one cycle forcast through scheduler
         public static final double maxSecondsForTurnGyro = 2.0; // max time to wait for turn gyro. use this in commands to timeout
+
+        public static double wheelInchesToGyroDegrees = 4.205; // converts from inches traveled by the wheels when spinning in place to degrees turned
 
         // DriveStraight constants
         public static double kMaxSpeedMetersPerSecond = 5.22; // 5.0 on practice bot, 5.22 on competition bot

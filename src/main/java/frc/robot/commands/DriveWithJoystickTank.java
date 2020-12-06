@@ -39,6 +39,8 @@ public class DriveWithJoystickTank extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    driveTrain.setDriveModeCoast(false);
+    driveTrain.setOpenLoopRampLimit(true);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

@@ -26,7 +26,7 @@ public class DriveTurnGyro extends CommandBase {
 
   private DriveTrain driveTrain; // reference to driveTrain
   private double target; // how many more degrees to the right to turn
-  private double direction; // -1 = turn to the left, +1 = turn to the right
+  private double direction; // +1 = turn to the left, -1 = turn to the right
   private double maxVel; // max velocity, between 0 and kMaxAngularVelocity in Constants
   private double maxAccel; // max acceleration, between 0 and kMaxAngularAcceleration in Constants
   private long profileStartTime; // initial time (time of starting point)
@@ -34,7 +34,7 @@ public class DriveTurnGyro extends CommandBase {
   private double targetVel; // velocity to reach by the end of the profile in deg/sec (probably 0 deg/sec)
   private double targetAccel;
   private double startAngle, targetRel; // starting angle in degrees, target angle relative to start angle
-  private double currAngle, currVelocity;
+  private double currAngle, currVelocity, currVelocityGyro;
   private double timeSinceStart;
   private TargetType targetType;
   private boolean regenerate;
@@ -51,7 +51,8 @@ public class DriveTurnGyro extends CommandBase {
 
   private TrapezoidProfileBCR tProfile; // wpilib trapezoid profile generator
   private TrapezoidProfileBCR.State tStateCurr; // initial state of the system (position in deg and time in sec)
-  private TrapezoidProfileBCR.State tStateNext; // next state of the system as calculated by the profile generator
+  private TrapezoidProfileBCR.State tStateNext; // next state of the system (next loop cycle) as calculated by the profile generator
+  private TrapezoidProfileBCR.State tStateForecast; // state of the system in the future, as calculated by the profile generator
   private TrapezoidProfileBCR.State tStateFinal; // goal state of the system (position in deg and time in sec)
   private TrapezoidProfileBCR.Constraints tConstraints; // max vel (deg/sec) and max accel (deg/sec/sec) of the system
 
@@ -85,7 +86,7 @@ public class DriveTurnGyro extends CommandBase {
 
     aFF = 0.0;
 
-    pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
+    pidAngVel = new PIDController(kPAngular, 0, kDAngular);
   }
 
   /**
@@ -121,7 +122,7 @@ public class DriveTurnGyro extends CommandBase {
 
     aFF = 0.0;
 
-    pidAngVel = new PIDController(kPAngular, kIAngular, kDAngular);
+    pidAngVel = new PIDController(kPAngular, 0, kDAngular);
   }
  
   /**
@@ -144,8 +145,10 @@ public class DriveTurnGyro extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    driveTrain.setDriveModeCoast(true);
+    
     feedbackFlag = false;
+    driveTrain.setDriveModeCoast(false);
+    driveTrain.setOpenLoopRampLimit(false);
 
     if(fromShuffleboard) {
       target = SmartDashboard.getNumber("TurnGyro Manual Target Ang", 90);
@@ -157,8 +160,9 @@ public class DriveTurnGyro extends CommandBase {
       angleTolerance = Math.abs(angleTolerance);
     }
     // If constants were updated from Shuffleboard, then update PID
-    pidAngVel.setPID(kPAngular, kIAngular, kDAngular);
+    pidAngVel.setPID(kPAngular, 0, kDAngular);
     pidAngVel.reset();
+
 
     startAngle = driveTrain.getGyroRotation();
 
@@ -177,7 +181,7 @@ public class DriveTurnGyro extends CommandBase {
     direction = Math.signum(targetRel);
 
     tStateFinal = new TrapezoidProfileBCR.State(targetRel, 0.0); // initialize goal state (degrees to turn)
-    tStateCurr = new TrapezoidProfileBCR.State(0.0, driveTrain.getAngularVelocity()); // initialize initial state (relative turning, so assume initPos is 0 degrees)
+    tStateCurr = new TrapezoidProfileBCR.State(0.0, driveTrain.getAngularVelocityFromWheels()); // initialize initial state (relative turning, so assume initPos is 0 degrees)
 
     // initialize velocity and accel limits
     tConstraints = new TrapezoidProfileBCR.Constraints(maxVel , maxAccel);
@@ -194,10 +198,11 @@ public class DriveTurnGyro extends CommandBase {
   @Override
   public void execute() {
     currProfileTime = System.currentTimeMillis();
-    // currAngle is relative to the startAngle.  +90 to -270 if turning left, -90 to +270 if turning right.
+    // currAngle is relative to the startAngle.  -90 to +270 if turning left, +90 to -270 if turning right.
     currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
     currAngle += (direction*currAngle<-90) ? direction*360.0 : 0; 
-    currVelocity = driveTrain.getAngularVelocity();
+    currVelocity = driveTrain.getAngularVelocityFromWheels();
+    currVelocityGyro = driveTrain.getAngularVelocity();
     
     if (targetType == TargetType.kVision) {
       targetRel = driveTrain.normalizeAngle(currAngle + limeLight.getXOffset());
@@ -207,7 +212,8 @@ public class DriveTurnGyro extends CommandBase {
       }    
     }
     timeSinceStart = (double)(currProfileTime - profileStartTime) * 0.001;
-    tStateNext = tProfile.calculate(timeSinceStart + 0.010);
+    tStateNext = tProfile.calculate(timeSinceStart);        // This is where the robot should be now
+    tStateForecast = tProfile.calculate(timeSinceStart + tLagAngular);  // This is where the robot should be next cycle (or farther in the future if the robot has lag or backlash)
 
     if(tStateCurr.equals(tStateNext) && targetType == TargetType.kVision){
       feedbackFlag = true;
@@ -215,9 +221,12 @@ public class DriveTurnGyro extends CommandBase {
 
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
-    aFF = (kSAngular * Math.signum(targetVel)) + (targetVel * kVAngular) + (targetAccel * kAAngular);
+    double forecastVel = tStateForecast.velocity;
+    double forecastAccel = MathUtil.clamp((forecastVel-targetVel)/tLagAngular, -maxAccel, maxAccel);
 
-    // SmartDashboard.putNumber("TurnGyro target angle", tStateNext.position);
+    //TODO Turn on feedback */
+    pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel) + kIAngular * (tStateNext.position - currAngle), -0.1, 0.1);
+    // pFB = 0; 
 
     if(!feedbackFlag){
       pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel), -0.1, 0.1);
@@ -226,24 +235,30 @@ public class DriveTurnGyro extends CommandBase {
       pFB = kIAngular * driveTrain.normalizeAngle(limeLight.getXOffset());
     }
     
+    // aFF = (kSAngular * Math.signum(forecastVel)) + (forecastVel * kVAngular) + (forecastAccel * kAAngular);
+    aFF = (forecastVel * kVAngular) + (forecastAccel * kAAngular);
+    aFF += kSAngular * Math.signum(aFF + pFB);
+
+    // SmartDashboard.putNumber("TurnGyro target angle", tStateNext.position);
 
     driveTrain.setLeftMotorOutput(-aFF - pFB);
     driveTrain.setRightMotorOutput(+aFF + pFB);
 
     if (regenerate) {
-      // tStateCurr = new TrapezoidProfileBCR.State(currAngle, currVelocity);   // using currVelocity is problematic since the current velocity has lots of noise
-      tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
+      tStateCurr = new TrapezoidProfileBCR.State(currAngle, currVelocity);   // using currVelocity is problematic since the current velocity has lots of noise
+      // tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
       tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
       profileStartTime = currProfileTime;
     }
 
     
+    // SmartDashboard.putNumber("TurnGyro Curr Velocity", currVelocity);
+    // SmartDashboard.putNumber("TurnGyro Target Velocity", targetVel);
 
-    
-
-    log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
-      "posA", currAngle, "velA", currVelocity, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
-    
+    log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, 
+      "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
+      "posF", tStateForecast.position, "velF", forecastVel, "accF", forecastAccel,
+      "posA", currAngle, "velAWheel", currVelocity, "velAGyro", currVelocityGyro, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
     tStateCurr = tStateNext;
   }
 
@@ -253,6 +268,7 @@ public class DriveTurnGyro extends CommandBase {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
     driveTrain.setDriveModeCoast(false);
+    driveTrain.setOpenLoopRampLimit(true);
 
     log.writeLog(false, "DriveTurnGyro", "End");
   }

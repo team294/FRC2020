@@ -42,6 +42,7 @@ public class DriveJogTurn extends CommandBase {
     log.writeLog(false, "DriveJogTurn", "Start");
     timer.reset();
     timer.start();
+    driveTrain.setOpenLoopRampLimit(false);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -58,6 +59,7 @@ public class DriveJogTurn extends CommandBase {
     driveTrain.setLeftMotorOutput(0);
     driveTrain.setRightMotorOutput(0);
     driveTrain.setDriveModeCoast(false);
+    driveTrain.setOpenLoopRampLimit(true);
   }
 
   // Returns true when the command should end.

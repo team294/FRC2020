@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ClimbConstants;
@@ -146,9 +147,21 @@ public class RobotContainer {
     SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 45, 200, 0.5, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 90, 90, 200, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kAbsolute, 90, 90, 200, 1, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnCal Left Slow", new DriveTurnCalibrate(0.3, 35, 0.01, true, driveTrain, log));
+    SmartDashboard.putData("TurnCal Right Slow", new DriveTurnCalibrate(0.3, 35, 0.01, false, driveTrain, log));
+    SmartDashboard.putData("TurnCal Left Fast", new DriveTurnCalibrate(0.3, 10, 0.05, true, driveTrain, log));
+    SmartDashboard.putData("TurnCal Right Fast", new DriveTurnCalibrate(0.3, 10, 0.05, false, driveTrain, log));
+    SmartDashboard.putData("TurnCal Left Step0.2", new DriveTurnCalibrate(0.2, 6, 3, true, driveTrain, log));
+    SmartDashboard.putData("TurnCal Right Step0.2", new DriveTurnCalibrate(0.2, 6, 3, false, driveTrain, log));
+    SmartDashboard.putData("TurnCal Left Step0.3", new DriveTurnCalibrate(0.3, 6, 3, true, driveTrain, log));
+    SmartDashboard.putData("TurnCal Right Step0.3", new DriveTurnCalibrate(0.3, 6, 3, false, driveTrain, log));
+    SmartDashboard.putData("TurnCal Left-Right", new SequentialCommandGroup(
+      new DriveTurnCalibrate(0.3, 3, 15, true, driveTrain, log),
+      new DriveTurnCalibrate(0.3, 3, 15, false, driveTrain, log)
+    ) );
 
     // drive profile calibration buttons
-    SmartDashboard.putData("TurnGyroManual", new DriveTurnGyro(TargetType.kRelative, true, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnGyroManual", new DriveTurnGyro(TargetType.kRelative, false, driveTrain, limeLight, log));
     SmartDashboard.putNumber("TurnGyro Manual Target Ang", 90);
     SmartDashboard.putNumber("TurnGyro Manual MaxVel", kMaxAngularVelocity*0.08);
     SmartDashboard.putNumber("TurnGyro Manual MaxAccel", kMaxAngularAcceleration);
