@@ -43,9 +43,7 @@ public class DriveTurnGyro extends CommandBase {
   private LimeLight limeLight;
   private PIDController pidAngVel;
   private double angleTolerance;
-  private boolean feedbackFlag;
-
-  private double aFF, pFB;  // variables for arbitrary feed forward and feedback power
+  private boolean feedbackUsingVision;
 
   private int accuracyCounter = 0;
 
@@ -84,8 +82,6 @@ public class DriveTurnGyro extends CommandBase {
 
     addRequirements(driveTrain, limeLight);
 
-    aFF = 0.0;
-
     pidAngVel = new PIDController(kPAngular, 0, kDAngular);
   }
 
@@ -120,8 +116,6 @@ public class DriveTurnGyro extends CommandBase {
       SmartDashboard.putNumber("TurnGyro Manual Tolerance", 2);
     }
 
-    aFF = 0.0;
-
     pidAngVel = new PIDController(kPAngular, 0, kDAngular);
   }
  
@@ -146,7 +140,7 @@ public class DriveTurnGyro extends CommandBase {
   @Override
   public void initialize() {
     
-    feedbackFlag = false;
+    feedbackUsingVision = false;
     driveTrain.setDriveModeCoast(false);
     driveTrain.setOpenLoopRampLimit(false);
 
@@ -197,6 +191,8 @@ public class DriveTurnGyro extends CommandBase {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double pFF, pFB, pDB;  // variables for feed forward power, feedback power, and deadband power
+
     currProfileTime = System.currentTimeMillis();
     // currAngle is relative to the startAngle.  -90 to +270 if turning left, +90 to -270 if turning right.
     currAngle = driveTrain.normalizeAngle(driveTrain.getGyroRotation() - startAngle);
@@ -216,47 +212,42 @@ public class DriveTurnGyro extends CommandBase {
     tStateForecast = tProfile.calculate(timeSinceStart + tLagAngular);  // This is where the robot should be next cycle (or farther in the future if the robot has lag or backlash)
 
     if(tProfile.isFinished(timeSinceStart) && targetType == TargetType.kVision){
-      feedbackFlag = true;
+      // If we completed the trapezoid profile and we are using vision, then
+      // fine-tune angle using feedback based on live camera feedback
+      feedbackUsingVision = true;
     }
 
     targetVel = tStateNext.velocity;
     targetAccel = tStateNext.acceleration;
     double forecastVel = tStateForecast.velocity;
-    double forecastAccel = MathUtil.clamp((forecastVel-targetVel)/tLagAngular, -maxAccel, maxAccel);
+    double forecastAccel = MathUtil.clamp((forecastVel-targetVel)/tLagAngular, -maxAccel, maxAccel);    
 
-    
-
-    if(!feedbackFlag){
+    if(!feedbackUsingVision){
+      // Normal feedback for following trapezoid profile
       pFB = MathUtil.clamp(pidAngVel.calculate(currVelocity, targetVel) + kIAngular * (tStateNext.position - currAngle), -0.1, 0.1);
-      // pFB = 0; 
     } else {
+      // Live camera feedback
       pFB = kIAngular * driveTrain.normalizeAngle(limeLight.getXOffset());
     }
     
-    // aFF = (kSAngular * Math.signum(forecastVel)) + (forecastVel * kVAngular) + (forecastAccel * kAAngular);
-    aFF = (forecastVel * kVAngular) + (forecastAccel * kAAngular);
-    aFF += kSAngular * Math.signum(aFF + pFB);
+    // Feed-forward percent voltage to drive motors
+    pFF = (forecastVel * kVAngular) + (forecastAccel * kAAngular);
+    pDB = kSAngular * Math.signum(pFF + pFB);
 
-    // SmartDashboard.putNumber("TurnGyro target angle", tStateNext.position);
-
-    driveTrain.setLeftMotorOutput(-aFF - pFB);
-    driveTrain.setRightMotorOutput(+aFF + pFB);
+    driveTrain.setLeftMotorOutput(-pFF - pFB - pDB);
+    driveTrain.setRightMotorOutput(+pFF + pFB + pDB);
 
     if (regenerate) {
-      tStateCurr = new TrapezoidProfileBCR.State(currAngle, currVelocity);   // using currVelocity is problematic since the current velocity has lots of noise
+      tStateCurr = new TrapezoidProfileBCR.State(currAngle, currVelocity);
       // tStateCurr = new TrapezoidProfileBCR.State(currAngle, targetVel);
       tProfile = new TrapezoidProfileBCR(tConstraints, tStateFinal, tStateCurr);
       profileStartTime = currProfileTime;
     }
 
-    
-    // SmartDashboard.putNumber("TurnGyro Curr Velocity", currVelocity);
-    // SmartDashboard.putNumber("TurnGyro Target Velocity", targetVel);
-
     log.writeLog(false, "DriveTurnGyro", "profile", "target", targetRel, 
       "posT", tStateNext.position, "velT", targetVel, "accT", targetAccel,
       "posF", tStateForecast.position, "velF", forecastVel, "accF", forecastAccel,
-      "posA", currAngle, "velAWheel", currVelocity, "velAGyro", currVelocityGyro, "aFF", aFF, "pFB", pFB, "pTotal", aFF+pFB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
+      "posA", currAngle, "velAWheel", currVelocity, "velAGyro", currVelocityGyro, "pFF", pFF, "pFB", pFB, "pTotal", pFF+pFB+pDB, "LL x", limeLight.getXOffset(), "LL y", limeLight.getYOffset());
     
   }
 
@@ -275,11 +266,12 @@ public class DriveTurnGyro extends CommandBase {
   @Override
   public boolean isFinished() {
     
-    
-    if((Math.abs(targetRel - currAngle) < angleTolerance && targetType != TargetType.kVision) || 
-    (targetType == TargetType.kVision && Math.abs(limeLight.getXOffset()) < angleTolerance && limeLight.seesTarget())) {
+    if ((targetType != TargetType.kVision && Math.abs(targetRel - currAngle) < angleTolerance) || 
+        (targetType == TargetType.kVision && limeLight.seesTarget() && Math.abs(limeLight.getXOffset()) < angleTolerance) ||
+        (targetType == TargetType.kVision && !limeLight.seesTarget() && feedbackUsingVision) ) {
       accuracyCounter++;
-      log.writeLog(false, "DriveTurnGyro", "WithinTolerance", "Target Ang", targetRel, "Actual Ang", currAngle, "Counter", accuracyCounter);
+      log.writeLog(false, "DriveTurnGyro", "WithinTolerance", "Target Ang", targetRel, "Actual Ang", currAngle, 
+        "LimeLight Xoff", limeLight.getXOffset(), "Counter", accuracyCounter);
     } else {
       accuracyCounter = 0;
     }
