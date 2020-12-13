@@ -144,7 +144,7 @@ public class RobotContainer {
     SmartDashboard.putData("DriveStraightAbs", new DriveStraight(3, TargetType.kAbsolute, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("DriveStraightVis", new DriveStraight(3, TargetType.kVision, 0.0, 2.66, 3.8, true, driveTrain, limeLight, log));
     SmartDashboard.putData("Drive Vision Assist", new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
-    SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 45, 200, 0.5, driveTrain, limeLight, log));
+    SmartDashboard.putData("TurnVision", new DriveTurnGyro(TargetType.kVision, 0, 90, 200, false, 2, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnRelative", new DriveTurnGyro(TargetType.kRelative, 90, 90, 200, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnAbsolute", new DriveTurnGyro(TargetType.kAbsolute, 90, 90, 200, 1, driveTrain, limeLight, log));
     SmartDashboard.putData("TurnCal Left Slow", new DriveTurnCalibrate(0.3, 35, 0.01, true, driveTrain, log));
