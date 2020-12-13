@@ -122,6 +122,9 @@ public class ShooterSetPID extends CommandBase {
       if(ledColor.equals("Blue")) ledColor = "Black";
       else ledColor = "Blue";
     }
+
+    shooter.updateShooterLog(false);
+
   }
 
   // Called once the command ends or is interrupted.
