@@ -44,7 +44,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
           
           new ShootSequenceStop(shooter, feeder, hopper, intake, led, log).withTimeout(0.1), // stop all motors
 
-          new DriveTurnGyro(TargetType.kAbsolute, 180, 150.0, 200, 1, driveTrain, limeLight, log).withTimeout(1.5) // turn towards trench
+          new DriveTurnGyro(TargetType.kAbsolute, 180, 150.0, 200, 1, driveTrain, limeLight, log).withTimeout(2.0) // turn towards trench
         ),
         new Wait(15),
         () -> useVision && limeLight.seesTarget()
@@ -55,7 +55,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
             new IntakeSequence(intake, log)
       ),
           
-      new DriveTurnGyro(TargetType.kAbsolute, 15, 150.0, 200, 4, driveTrain, limeLight, log),
+      new DriveTurnGyro(TargetType.kAbsolute, 15, 150.0, 200, 4, driveTrain, limeLight, log).withTimeout(2.0),
 
       new ConditionalCommand(
         // with Vision
