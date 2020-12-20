@@ -50,16 +50,16 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
         () -> useVision && limeLight.seesTarget()
       ),
 
+      deadline( // drive down trench with intake
+            new DriveStraight(4.7494, TargetType.kRelative, 0.0, 2.088, 3.8, true, driveTrain, limeLight, log),
+            new IntakeSequence(intake, log)
+      ),
+          
+      new DriveTurnGyro(TargetType.kAbsolute, 15, 400.0, 200, 4, driveTrain, limeLight, log),
+
       new ConditionalCommand(
         // with Vision
         new SequentialCommandGroup(
-          deadline( // drive down trench with intake
-            new DriveStraight(4.7494, TargetType.kRelative, 0.0, 2.088, 3.8, true, driveTrain, limeLight, log),
-            new IntakeSequence(intake, log)
-          ),
-          
-          new DriveTurnGyro(TargetType.kAbsolute, 15, 400.0, 200, 4, driveTrain, limeLight, log),
-    
           deadline(
             new DriveTurnGyro(TargetType.kVision, 0, 450.0, 200, 1, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
             new ShooterSetPID(true, false, shooter, limeLight, led, log) // start shooter
