@@ -28,14 +28,9 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       new Wait(waitTime),
 
       deadline(
+        new DriveTurnGyro(TargetType.kAbsolute, 22, 400.0, 200, 2, driveTrain, limeLight, log).withTimeout(1.5),
         new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
-        new IntakePistonSetPosition(true, intake, log), // deploy intake piston
-        new ConditionalCommand(
-          new DriveTurnGyro(TargetType.kAbsolute, 5, 400.0, 200, 3, driveTrain, limeLight, log).withTimeout(0.5),
-          new Wait(0),
-          () -> !limeLight.seesTarget()
-        )
-           // turn so we can see target
+        new IntakePistonSetPosition(true, intake, log) // deploy intake piston
       ),
 
       new ConditionalCommand(
