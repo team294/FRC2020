@@ -51,7 +51,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       ),
 
       deadline( // drive down trench with intake
-            new DriveStraight(4.7494, TargetType.kRelative, 0.0, 2.088, 3.8, true, driveTrain, limeLight, log),
+            new DriveStraight(4.7494, TargetType.kAbsolute, 180.0, 2.088, 3.8, true, driveTrain, limeLight, log),
             new IntakeSequence(intake, log)
       ),
           
