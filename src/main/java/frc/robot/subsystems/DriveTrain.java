@@ -538,6 +538,10 @@ public class DriveTrain extends SubsystemBase {
     return rightMotor1.getBusVoltage();
   }
 
+  public double getRightTemp() {
+    return rightMotor1.getTemperature();
+  }
+
   public double getRightOutputPercent() {
     return rightMotor1.getMotorOutputPercent();
   }
