@@ -612,6 +612,10 @@ public class DriveTrain extends SubsystemBase {
       var translation = odometry.getPoseMeters().getTranslation();
       SmartDashboard.putNumber("Drive Odometry X",translation.getX());
       SmartDashboard.putNumber("Drive Odometry Y",translation.getY());
+
+      //Values for bugfixing
+      SmartDashboard.putNumber("Drive Motor Temp", leftMotor1.getTemperature());
+      SmartDashboard.putNumber("Drive Bus Volt", leftMotor1.getBusVoltage());
     }
 
     // save current angVel values as previous values for next calculation
