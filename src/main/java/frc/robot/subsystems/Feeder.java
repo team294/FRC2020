@@ -49,7 +49,7 @@ public class Feeder extends SubsystemBase {
     kP = 0.1;
     kI = 0;
     kD = 0;
-    kFF = 0.056;
+    kFF = 0.047;
     kMaxOutput = 1; 
     kMinOutput = 0;
 
