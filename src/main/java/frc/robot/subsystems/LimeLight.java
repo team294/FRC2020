@@ -204,7 +204,7 @@ public class LimeLight extends SubsystemBase {
     }
     return myPattern;
   }
-
+//TODO increase limelight logging and edit seesTarget to check last three periodic for target
   /**
    * @return true when limelight sees a target, false when not seeing a target
    */
