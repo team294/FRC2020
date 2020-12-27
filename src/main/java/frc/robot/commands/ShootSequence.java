@@ -36,18 +36,18 @@ public class ShootSequence extends SequentialCommandGroup {
         sequence(
           new ConditionalCommand(
             parallel(
-              new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Unlock and Close"),
+              new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Lock and Close"),
               new ShooterHoodPistonSequence(true, true, shooter, log)
             ),
             parallel(
-              new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Lock and Close"),
+              new FileLogWrite(false, false, "ShootSequence", "Start", log, "rpmFromDistance", rpmFromDistance, "Hood", "Unlock and Close"),
               new ShooterHoodPistonSequence(true, false, shooter, log)
             ),
             () -> rpmFromDistance && (limeLight.getDistance() > LimeLightConstants.unlockedHoodMaxDistance
               || !limeLight.seesTarget())
           ),
           new ShooterSetPID(rpmFromDistance, true, shooter, limeLight, led, log),
-          new FeederSetPID(FeederConstants.feederDefaultRPM, feeder, log),
+          new FeederSetPID(FeederConstants.feederDefaultRPM, feeder, log).withTimeout(1),
           new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
           parallel(
             new IntakeSetPercentOutput(IntakeConstants.intakeShootingPercentOutput, false, intake, log), 

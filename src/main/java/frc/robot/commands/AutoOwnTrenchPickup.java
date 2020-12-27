@@ -38,7 +38,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
           new DriveTurnGyro(TargetType.kVision, 0, 150.0, 200, 1, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
 
           deadline(
-            new WaitForPowerCells(3, shooter, log).withTimeout(4), // wait for 3 power cells to be shot
+            new WaitForPowerCells(3, shooter, log).withTimeout(3), // wait for 3 power cells to be shot
             new ShootSequence(true, shooter, feeder, hopper, intake, limeLight, led, log) // start shooter
           ),
           
