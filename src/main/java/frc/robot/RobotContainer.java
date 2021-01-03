@@ -125,6 +125,8 @@ public class RobotContainer {
     SmartDashboard.putData("Limelight Reset Snapshot Count", new LimeLightSnapshotCountReset(limeLight, log));
     SmartDashboard.putData("Limelight Flashlight On", new LimeLightSetFlashlight(true, true, limeLight, log));
     SmartDashboard.putData("Limelight Flashlight Off", new LimeLightSetFlashlight(false, true, limeLight, log));
+    SmartDashboard.putData("Limelight FastLogging On", new LogEnableFastLogging(true, limeLight, log));
+    SmartDashboard.putData("Limelight FastLogging Off", new LogEnableFastLogging(false, limeLight, log));
     //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
 
     // command sequences

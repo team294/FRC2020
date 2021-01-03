@@ -38,7 +38,7 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       new LogEnableFastLogging(false, limeLight, log),
 
       new ConditionalCommand(
-        new SequentialCommandGroup(
+        sequence(
           new DriveTurnGyro(TargetType.kVision, 0, 150.0, 200, 1, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
 
           deadline(
@@ -50,7 +50,10 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
 
           new DriveTurnGyro(TargetType.kAbsolute, 180, 150.0, 200, 1, driveTrain, limeLight, log).withTimeout(2.0) // turn towards trench
         ),
-        new Wait(15),
+        sequence(
+          new FileLogWrite(false, false, "AutoOwnTrenchPickup", "1st shot doesn't see target", log),
+          new Wait(15)          
+        ),
         () -> useVision && limeLight.seesTarget()
       ),
 
