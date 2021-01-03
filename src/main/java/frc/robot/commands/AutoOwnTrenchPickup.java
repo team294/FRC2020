@@ -34,6 +34,13 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
         new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
         new IntakePistonSetPosition(true, intake, log) // deploy intake piston
       ),
+      
+      // if the intake blocks the limeLight while deploying, we want to wait until we see the target before moving on
+      new ConditionalCommand(
+        new LimeLightWaitForTarget(limeLight).withTimeout(2),
+        new Wait(0),
+        () -> useVision
+      ),
 
       new LogEnableFastLogging(false, limeLight, log),
 
