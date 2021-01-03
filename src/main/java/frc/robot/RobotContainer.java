@@ -401,7 +401,7 @@ public class RobotContainer {
    */
   public void disabledPeriodic() {
     boolean error = true;
-    if ((driveTrain.getLeftBusVoltage() > 8.0) && (driveTrain.isGyroReading() == true)) error = false;    // The CAN bus and Gyro are working
+    if ((driveTrain.getLeftBusVoltage() > 8.0) && (driveTrain.isGyroReading() == true) && (driveTrain.getRightTemp() > 5.0)) error = false;    // The CAN bus and Gyro are working
   
     if((error && displayCount > 1) || (!error && displayCount > 3)) displayCount = 0; // displayCount > 1 for flashing
     if (error == false) {
@@ -415,6 +415,7 @@ public class RobotContainer {
       if(disabledDisplayTimer.advanceIfElapsed(0.25)) {
         displayCount++;
       } 
+      RobotPreferences.recordStickyFaults("CAN Bus", log);
     }  //    TODO May want to flash this
   }
   
