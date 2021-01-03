@@ -142,6 +142,11 @@ public class Feeder extends SubsystemBase implements Loggable {
     }
   }
 
+  @Override
+  public void enableFastLogging(boolean enabled) {
+    fastLogging = enabled;
+  }
+
   /**
    * Write information about feeder to filelog.
    * @param logWhenDisabled true = log when disabled, false = discard the string
