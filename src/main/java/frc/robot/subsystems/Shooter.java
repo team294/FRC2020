@@ -20,12 +20,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.Loggable;
 import frc.robot.utilities.TemperatureCheck;
 
 import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.ShooterConstants.*;
 
-public class Shooter extends SubsystemBase {
+public class Shooter extends SubsystemBase implements Loggable {
   private final WPI_TalonFX shooterMotorLeft = new WPI_TalonFX(canShooterMotorLeft);
   private final WPI_TalonFX shooterMotorRight = new WPI_TalonFX(canShooterMotorRight);
   private final DoubleSolenoid shooterHoodPiston = new DoubleSolenoid(pcmShooterHoodPistonOut, pcmShooterHoodPistonIn); // piston to open and close hood
@@ -43,6 +44,7 @@ public class Shooter extends SubsystemBase {
   private int cellsShot = 0; // counter of total number of power cells shot (reset when shooter is set to 0 volts)
   private int prevCellsShot = 0; // counter of the previous number of power cells shot ()
   private boolean prevCellState = false; // used to indicate whether triggers of photo switch are new power cells
+  private boolean fastLogging = false; // true is enabled to run every cycle; false follows normal logging cycles
   
   public Shooter(Hopper hopper, FileLog log, TemperatureCheck tempCheck, LED led) {
     this.log = log; // save reference to the fileLog
@@ -231,8 +233,11 @@ public class Shooter extends SubsystemBase {
     if (voltageTarget == 0) cellsShot = 0;
     if(voltageTarget == 0 && (cellsShot != prevCellsShot)) led.setBallLights(cellsShot);
 
-    if(log.getLogRotation() == log.SHOOTER_CYCLE) {
+    if(fastLogging || log.getLogRotation() == log.SHOOTER_CYCLE) {
       updateShooterLog(false);
+    }
+    
+    if(log.getLogRotation() == log.SHOOTER_CYCLE) {
 
       // read PID coefficients from SmartDashboard
       double ff = SmartDashboard.getNumber("Shooter FF", 0);
@@ -264,6 +269,11 @@ public class Shooter extends SubsystemBase {
 
     prevCellState = getCell();
     prevCellsShot = cellsShot;
+  }
+
+  @Override
+  public void enableFastLogging(boolean enabled) {
+    fastLogging = enabled;
   }
 
   /**

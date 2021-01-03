@@ -16,13 +16,15 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.Loggable;
 import frc.robot.Constants.RobotConstants;
 
 import static frc.robot.Constants.HopperConstants.*;
 
-public class Hopper extends SubsystemBase {
+public class Hopper extends SubsystemBase implements Loggable {
   private final BaseMotorController hopperMotor;
   private FileLog log;
+  private boolean fastLogging = false;
   
   public Hopper(FileLog log) {
     this.log = log;
@@ -56,12 +58,19 @@ public class Hopper extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(log.getLogRotation() == log.HOPPER_CYCLE) {
-      updateHopperLog(false);
 
+    if(fastLogging || log.getLogRotation() == log.HOPPER_CYCLE) {
+      updateHopperLog(false);
+    }
+    if(log.getLogRotation() == log.HOPPER_CYCLE) {
       SmartDashboard.putNumber("Hopper % Output", hopperMotor.getMotorOutputPercent());
       SmartDashboard.putNumber("Hopper Voltage", hopperMotor.getMotorOutputVoltage());
     }
+  }
+
+  @Override
+  public void enableFastLogging(boolean enabled) {
+    fastLogging = enabled;
   }
 
   /**

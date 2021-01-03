@@ -16,13 +16,14 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.Loggable;
 import frc.robot.utilities.RobotPreferences;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import static frc.robot.Constants.LimeLightConstants.*;
 
-public class LimeLight extends SubsystemBase {
+public class LimeLight extends SubsystemBase implements Loggable {
   private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
   private static NetworkTable table = tableInstance.getTable("limelight");
   private NetworkTableEntry tv, tx, ty, ta, tl, pipeline;
@@ -34,6 +35,7 @@ public class LimeLight extends SubsystemBase {
   private Timer snapshotTimer;
   private int snapshotCount = 0;
   private boolean setFlashAuto = true;
+  private boolean fastLogging = false;
   private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
 
   /*
@@ -240,10 +242,13 @@ public class LimeLight extends SubsystemBase {
     if(!isGettingData() && setFlashAuto) {
       setFlashlight(true);
     }
-
+    
+    if (fastLogging || log.getLogRotation() == log.LIMELIGHT_CYCLE) {
+      updateLimeLightLog(false);
+    }
+    
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
 
-      updateLimeLightLog(false);
 
       if(!isGettingData()) {
         RobotPreferences.recordStickyFaults("LimeLight", log);
@@ -268,6 +273,11 @@ public class LimeLight extends SubsystemBase {
         setPipe(pipe);
       }
     }
+  }
+
+  @Override
+  public void enableFastLogging(boolean enabled) {
+    fastLogging = enabled;
   }
 
   /**

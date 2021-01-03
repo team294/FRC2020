@@ -169,6 +169,7 @@ public class DriveTurnGyro extends CommandBase {
         break;
       case kVision:
         targetRel = driveTrain.normalizeAngle(limeLight.getXOffset());
+        limeLight.enableFastLogging(true);
         break;
     }
 
@@ -258,7 +259,11 @@ public class DriveTurnGyro extends CommandBase {
     driveTrain.setRightMotorOutput(0);
     driveTrain.setDriveModeCoast(false);
     driveTrain.setOpenLoopRampLimit(true);
-
+    
+    if (targetType == TargetType.kVision) {
+      limeLight.enableFastLogging(false);
+    }
+    
     log.writeLog(false, "DriveTurnGyro", "End");
   }
 
