@@ -16,12 +16,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.Loggable;
 import frc.robot.utilities.TemperatureCheck;
 
 import static frc.robot.Constants.RobotConstants.*;
 import static frc.robot.Constants.FeederConstants.*;
 
-public class Feeder extends SubsystemBase {
+public class Feeder extends SubsystemBase implements Loggable {
   private final WPI_TalonFX feederMotor = new WPI_TalonFX(canFeederMotor); // 9:1 gear ratio
 
   private double measuredVelocityRaw, measuredRPM, feederRPM, setPoint;
@@ -29,6 +30,7 @@ public class Feeder extends SubsystemBase {
   private int timeoutMs = 0;  // was 30, changed to 0 for testing
   private double ticksPer100ms = 600.0 / 2048.0; // convert raw units to RPM (2048 ticks per revolution)
   private double ff, p, i, d; // for shuffleboard
+  private boolean fastLogging = false;
 
   private FileLog log;
   private TemperatureCheck tempCheck;
@@ -112,8 +114,11 @@ public class Feeder extends SubsystemBase {
     measuredVelocityRaw = feederMotor.getSelectedSensorVelocity(0);
     measuredRPM = measuredVelocityRaw * ticksPer100ms; // converts ticks per 100ms to RPM
 
+    if(fastLogging || log.getLogRotation() == log.FEEDER_CYCLE) {
+      updateFeederLog(false); 
+    }
+    
     if(log.getLogRotation() == log.FEEDER_CYCLE) {
-      updateFeederLog(false);
 
       // read PID coefficients from SmartDashboard
       ff = SmartDashboard.getNumber("Feeder FF", 0);
@@ -135,6 +140,11 @@ public class Feeder extends SubsystemBase {
       SmartDashboard.putNumber("Feeder Error", getFeederPIDError());
       SmartDashboard.putNumber("Feeder PercentOutput", feederMotor.getMotorOutputPercent());
     }
+  }
+
+  @Override
+  public void enableFastLogging(boolean enabled) {
+    fastLogging = enabled;
   }
 
   /**

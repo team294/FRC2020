@@ -27,14 +27,25 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
       new DriveZeroGyro(driveTrain, log),
       new Wait(waitTime),
 
+      new LogEnableFastLogging(true, limeLight, log),
+
       deadline(
         new DriveTurnGyro(TargetType.kAbsolute, 22, 150.0, 200, 2, driveTrain, limeLight, log).withTimeout(1.5),
         new ShooterSetPID(true, false, shooter, limeLight, led, log), // start shooter
         new IntakePistonSetPosition(true, intake, log) // deploy intake piston
       ),
+      
+      // if the intake blocks the limeLight while deploying, we want to wait until we see the target before moving on
+      new ConditionalCommand(
+        new LimeLightWaitForTarget(limeLight).withTimeout(2),
+        new Wait(0),
+        () -> useVision
+      ),
+
+      new LogEnableFastLogging(false, limeLight, log),
 
       new ConditionalCommand(
-        new SequentialCommandGroup(
+        sequence(
           new DriveTurnGyro(TargetType.kVision, 0, 150.0, 200, 1, driveTrain, limeLight, log).withTimeout(2), // turn towards target w/ vision
 
           deadline(
@@ -46,7 +57,10 @@ public class AutoOwnTrenchPickup extends SequentialCommandGroup {
 
           new DriveTurnGyro(TargetType.kAbsolute, 180, 150.0, 200, 1, driveTrain, limeLight, log).withTimeout(2.0) // turn towards trench
         ),
-        new Wait(15),
+        sequence(
+          new FileLogWrite(false, false, "AutoOwnTrenchPickup", "1st shot doesn't see target", log),
+          new Wait(15)          
+        ),
         () -> useVision && limeLight.seesTarget()
       ),
 

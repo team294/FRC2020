@@ -125,6 +125,8 @@ public class RobotContainer {
     SmartDashboard.putData("Limelight Reset Snapshot Count", new LimeLightSnapshotCountReset(limeLight, log));
     SmartDashboard.putData("Limelight Flashlight On", new LimeLightSetFlashlight(true, true, limeLight, log));
     SmartDashboard.putData("Limelight Flashlight Off", new LimeLightSetFlashlight(false, true, limeLight, log));
+    SmartDashboard.putData("Limelight FastLogging On", new LogEnableFastLogging(true, limeLight, log));
+    SmartDashboard.putData("Limelight FastLogging Off", new LogEnableFastLogging(false, limeLight, log));
     //SmartDashboard.putData("Limelight Snapshot Test" , new LimeLightSnapshotTest(limeLight)); // uncomment if limelight snapshot-taking has to be tested
 
     // command sequences
@@ -277,7 +279,7 @@ public class RobotContainer {
 
     // joystick right button
     left[2].whenHeld(new VisionAssistSequence(driveTrain, limeLight, log, shooter, feeder, led, hopper, intake));
-    right[2].whileHeld(new DriveTurnGyro(TargetType.kVision, 0, 450, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
+    right[2].whileHeld(new DriveTurnGyro(TargetType.kVision, 0, 150, 200, 1, driveTrain, limeLight, log)); // turn gyro with vision
     right[1].whenHeld(new DriveJogTurn(true,  driveTrain, log ));
     left[1].whenHeld(new DriveJogTurn(false,  driveTrain, log ));
   }

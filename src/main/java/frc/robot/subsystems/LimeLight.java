@@ -16,13 +16,14 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.LimeLightConstants;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.Loggable;
 import frc.robot.utilities.RobotPreferences;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import static frc.robot.Constants.LimeLightConstants.*;
 
-public class LimeLight extends SubsystemBase {
+public class LimeLight extends SubsystemBase implements Loggable {
   private static NetworkTableInstance tableInstance = NetworkTableInstance.getDefault();
   private static NetworkTable table = tableInstance.getTable("limelight");
   private NetworkTableEntry tv, tx, ty, ta, tl, pipeline;
@@ -33,7 +34,9 @@ public class LimeLight extends SubsystemBase {
   private double sweetSpot;
   private Timer snapshotTimer;
   private int snapshotCount = 0;
+  private int networkTableReadCounter = 0;
   private boolean setFlashAuto = true;
+  private boolean fastLogging = false;
   private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
 
   /*
@@ -223,11 +226,31 @@ public class LimeLight extends SubsystemBase {
   @Override
   public void periodic() {
     // read values periodically
-    targetExists = tv.getDouble(1000.0);
-    x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
-    y = ty.getDouble(1000.0);
-    area = ta.getDouble(1000.0);
-    latency = tl.getDouble(1000.0);
+    double targetExistsNew, xNew, yNew, areaNew, latencyNew; 
+    targetExistsNew = tv.getDouble(1000.0);
+    xNew = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
+    yNew = ty.getDouble(1000.0);
+    areaNew = ta.getDouble(1000.0);
+    latencyNew = tl.getDouble(1000.0);
+    networkTableReadCounter = 0;
+  
+    // Check if the Limelight updated the NetworkTable while we were reading values, to ensure that all
+    // of the data (targetExists, X, Y, etc) are from the same vision frame.
+    do {
+      targetExists = targetExistsNew;
+      x = xNew;
+      y = yNew;
+      area = areaNew;
+      latency = latencyNew;
+
+      targetExistsNew = tv.getDouble(1000.0);
+      xNew = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
+      yNew = ty.getDouble(1000.0);
+      areaNew = ta.getDouble(1000.0);
+      latencyNew = tl.getDouble(1000.0);
+      networkTableReadCounter++;
+    } while(networkTableReadCounter<= 5 && (targetExistsNew != targetExists || xNew != x || yNew != y
+    || areaNew != area || latencyNew != latency));
 
     sweetSpot = getDistance() - endDistance;
 
@@ -240,10 +263,13 @@ public class LimeLight extends SubsystemBase {
     if(!isGettingData() && setFlashAuto) {
       setFlashlight(true);
     }
-
+    
+    if (fastLogging || log.getLogRotation() == log.LIMELIGHT_CYCLE) {
+      updateLimeLightLog(false);
+    }
+    
     if (log.getLogRotation() == log.LIMELIGHT_CYCLE) {
 
-      updateLimeLightLog(false);
 
       if(!isGettingData()) {
         RobotPreferences.recordStickyFaults("LimeLight", log);
@@ -270,6 +296,11 @@ public class LimeLight extends SubsystemBase {
     }
   }
 
+  @Override
+  public void enableFastLogging(boolean enabled) {
+    fastLogging = enabled;
+  }
+
   /**
    * Write information about limelight to fileLog.
    * @param logWhenDisabled true = log when disabled, false = discard the string
@@ -281,6 +312,7 @@ public class LimeLight extends SubsystemBase {
       "Center Offset Y", y,
       "Target Area", area,
       "Latency", latency,
+      "Network Table Read Counter", networkTableReadCounter,
       "Snapshot Count", snapshotCount,
       "Dist", getDistance(), "Encoder Dist", (-driveTrain.getAverageDistance()/12)
       );

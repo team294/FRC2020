@@ -16,6 +16,7 @@ import frc.robot.Constants.LimeLightConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.*;
 import frc.robot.utilities.FileLog;
+import frc.robot.utilities.Loggable;
 
 public class ShootSequence extends SequentialCommandGroup {
   /**
@@ -46,13 +47,21 @@ public class ShootSequence extends SequentialCommandGroup {
             () -> rpmFromDistance && (limeLight.getDistance() > LimeLightConstants.unlockedHoodMaxDistance
               || !limeLight.seesTarget())
           ),
+
+          new LogEnableFastLogging(true, shooter, log),
+          new LogEnableFastLogging(true, feeder, log),
+          new LogEnableFastLogging(true, hopper, log),
+          
           new ShooterSetPID(rpmFromDistance, true, shooter, limeLight, led, log),
           new FeederSetPID(FeederConstants.feederDefaultRPM, feeder, log).withTimeout(1),
           new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
           parallel(
             new IntakeSetPercentOutput(IntakeConstants.intakeShootingPercentOutput, false, intake, log), 
             new HopperReverse(hopper, log)
-          )
+            ),
+          new LogEnableFastLogging(false, shooter, log),
+          new LogEnableFastLogging(false, feeder, log),
+          new LogEnableFastLogging(false, hopper, log)
         ),
         new Wait(0.0),
         () -> (rpmFromDistance && limeLight.seesTarget())
@@ -73,13 +82,21 @@ public class ShootSequence extends SequentialCommandGroup {
   public ShootSequence(int rpm, Shooter shooter, Feeder feeder, Hopper hopper, Intake intake, LED led, FileLog log) {
     addCommands( 
       new FileLogWrite(false, false, "ShootSequence", "Start", log, "RPM", rpm),
+
+      new LogEnableFastLogging(true, shooter, log),
+      new LogEnableFastLogging(true, feeder, log),
+      new LogEnableFastLogging(true, hopper, log),
+
       new ShooterSetPID(rpm, shooter, led, log),
       new FeederSetPID(feeder, log),
       new HopperSetPercentOutput(-1 * HopperConstants.hopperDefaultPercentOutput, true, hopper, log),
       parallel(
         new IntakeSetPercentOutput(IntakeConstants.intakeShootingPercentOutput, false, intake, log), 
         new HopperReverse(hopper, log)
-      )
+      ),
+      new LogEnableFastLogging(false, shooter, log),
+      new LogEnableFastLogging(false, feeder, log),
+      new LogEnableFastLogging(false, hopper, log)
     );
   }
 
@@ -100,6 +117,10 @@ public class ShootSequence extends SequentialCommandGroup {
     addCommands( 
       // If shooting from the trench, close the hood, lock it, and set shooter RPM. 
       // Otherwise, close the hood, leave it unlocked, and set shooter RPM.
+      new LogEnableFastLogging(true, shooter, log),
+      new LogEnableFastLogging(true, feeder, log),
+      new LogEnableFastLogging(true, hopper, log),
+
       new ConditionalCommand(
         sequence(
           new FileLogWrite(false, false, "ShootSequence", "Start", log, "ShootFrom", "Trench", "Hood", "Lock and Close"),
@@ -118,7 +139,10 @@ public class ShootSequence extends SequentialCommandGroup {
       parallel(
         new IntakeSetPercentOutput(IntakeConstants.intakeShootingPercentOutput, false, intake, log), 
         new HopperReverse(hopper,log)
-      )
+      ),
+      new LogEnableFastLogging(false, shooter, log),
+      new LogEnableFastLogging(false, feeder, log),
+      new LogEnableFastLogging(false, hopper, log)
     );
   }
 
@@ -140,6 +164,11 @@ public class ShootSequence extends SequentialCommandGroup {
         new ConditionalCommand(new Wait(0.3), new Wait(0), () -> !shooter.getHoodPiston()),
         new ShooterHoodPistonSequence(false, false, shooter, log) 
       ),
+
+      new LogEnableFastLogging(true, shooter, log),
+      new LogEnableFastLogging(true, feeder, log),
+      new LogEnableFastLogging(true, hopper, log),
+
       new ConditionalCommand(
         new ShooterSetPID(ShooterConstants.shooterDefaultShortRPM, shooter, led, log),
         new ShooterSetPID(true, true, shooter, limeLight, led, log),
@@ -150,7 +179,10 @@ public class ShootSequence extends SequentialCommandGroup {
       parallel(
         new IntakeSetPercentOutput(IntakeConstants.intakeShootingPercentOutput, false, intake, log), 
         new HopperReverse(hopper, log)
-      )
+      ),
+      new LogEnableFastLogging(false, shooter, log),
+      new LogEnableFastLogging(false, feeder, log),
+      new LogEnableFastLogging(false, hopper, log)
     );
   }
 }

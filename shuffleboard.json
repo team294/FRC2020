@@ -1115,12 +1115,12 @@
           "7,1": {
             "size": [
               2,
-              2
+              1
             ],
             "content": {
               "_type": "List Layout",
               "_title": " CAN Bus",
-              "Layout/Label position": "BOTTOM",
+              "Layout/Label position": "LEFT",
               "_children": [
                 {
                   "_type": "Text View",
@@ -1482,6 +1482,29 @@
                   "_type": "Command",
                   "_source0": "network_table:///SmartDashboard/ClimbPistons RETRACT",
                   "_title": "ClimbPistons RETRACT"
+                }
+              ]
+            }
+          },
+          "10,3": {
+            "size": [
+              3,
+              1
+            ],
+            "content": {
+              "_type": "List Layout",
+              "_title": "LimeLight Logging",
+              "Layout/Label position": "LEFT",
+              "_children": [
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Limelight FastLogging On",
+                  "_title": "Limelight FastLogging On"
+                },
+                {
+                  "_type": "Command",
+                  "_source0": "network_table:///SmartDashboard/Limelight FastLogging Off",
+                  "_title": "Limelight FastLogging Off"
                 }
               ]
             }
