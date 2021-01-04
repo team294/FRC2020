@@ -34,6 +34,7 @@ public class LimeLight extends SubsystemBase implements Loggable {
   private double sweetSpot;
   private Timer snapshotTimer;
   private int snapshotCount = 0;
+  private int networkTableReadCounter = 0;
   private boolean setFlashAuto = true;
   private boolean fastLogging = false;
   private DriveTrain driveTrain; // for testing distance calculation TODO take out once dist calc is finished
@@ -225,11 +226,30 @@ public class LimeLight extends SubsystemBase implements Loggable {
   @Override
   public void periodic() {
     // read values periodically
-    targetExists = tv.getDouble(1000.0);
-    x = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
-    y = ty.getDouble(1000.0);
-    area = ta.getDouble(1000.0);
-    latency = tl.getDouble(1000.0);
+    double targetExistsNew, xNew, yNew, areaNew, latencyNew; 
+    targetExistsNew = tv.getDouble(1000.0);
+    xNew = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
+    yNew = ty.getDouble(1000.0);
+    areaNew = ta.getDouble(1000.0);
+    latencyNew = tl.getDouble(1000.0);
+    networkTableReadCounter = 0;
+  
+
+    do {
+      targetExists = targetExistsNew;
+      x = xNew;
+      y = yNew;
+      area = areaNew;
+      latency = latencyNew;
+
+      targetExistsNew = tv.getDouble(1000.0);
+      xNew = -tx.getDouble(1000.0) * LimeLightConstants.angleMultiplier;
+      yNew = ty.getDouble(1000.0);
+      areaNew = ta.getDouble(1000.0);
+      latencyNew = tl.getDouble(1000.0);
+      networkTableReadCounter++;
+    } while(networkTableReadCounter<= 5 && (targetExistsNew != targetExists || xNew != x || yNew != y
+    || areaNew != area || latencyNew != latency));
 
     sweetSpot = getDistance() - endDistance;
 
@@ -291,6 +311,7 @@ public class LimeLight extends SubsystemBase implements Loggable {
       "Center Offset Y", y,
       "Target Area", area,
       "Latency", latency,
+      "Network Table Read Counter", networkTableReadCounter,
       "Snapshot Count", snapshotCount,
       "Dist", getDistance(), "Encoder Dist", (-driveTrain.getAverageDistance()/12)
       );
