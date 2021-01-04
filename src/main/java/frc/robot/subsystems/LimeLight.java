@@ -234,7 +234,8 @@ public class LimeLight extends SubsystemBase implements Loggable {
     latencyNew = tl.getDouble(1000.0);
     networkTableReadCounter = 0;
   
-
+    // Check if the Limelight updated the NetworkTable while we were reading values, to ensure that all
+    // of the data (targetExists, X, Y, etc) are from the same vision frame.
     do {
       targetExists = targetExistsNew;
       x = xNew;
